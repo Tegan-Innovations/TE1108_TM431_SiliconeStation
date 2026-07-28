@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_MachineAlarm" Id="{38311637-dcf3-4c8e-899b-871a91dc014c}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_MachineAlarm :
+(
+	None := 0,
+    SafetyNotReady := 1000,
+    MainDoorNotSafe := 1001,
+    IndexTimeout := 1100,
+    IndexNotLocked := 1101,
+    ProcessCylinderTimeout := 1200,
+    IvekCommunicationLost := 1300,
+    IvekNotConfigured := 1301,
+    IvekFault := 1302,
+    IvekRecipeMismatch := 1303,
+    DispenseTimeout := 1304,
+    ProcessPartMissing := 1400,
+    ProcessedPartNotRemoved := 1401,
+    RejectNotConfirmed := 1402
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

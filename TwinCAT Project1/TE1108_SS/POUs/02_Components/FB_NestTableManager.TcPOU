@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_NestTableManager" Id="{09f0063d-2876-4ea3-8f96-9e3892567937}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_NestTableManager
+VAR
+    aNestInternal          : ARRAY[1..4] OF ST_Nest;
+    aPositionToNest        : ARRAY[1..4] OF UINT := [1,2,3,4];
+    bInitialised           : BOOL;
+    bPreviousIndexComplete : BOOL;
+    bIndexCompletePulse    : BOOL;
+    i                      : INT;
+    uiNest                 : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="ClearOperatorNest" Id="{d4dc5783-ebb9-4f71-bf6e-3c634e383e9d}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearOperatorNest
+VAR_INPUT ePosition : E_TablePosition; END_VAR
+VAR uiId : UINT; END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[uiId := GetNestIdAtPosition(ePosition);
+IF uiId >= 1 AND uiId <= 4 THEN
+    aNestInternal[uiId].stResult.bValid := FALSE;
+    aNestInternal[uiId].bProcessComplete := FALSE;
+    aNestInternal[uiId].bDispositionSent := FALSE;
+    aNestInternal[uiId].bOperatorExchangeComplete := FALSE;
+    aNestInternal[uiId].eDisposition := E_PartDisposition.None;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Cyclic" Id="{de27be2a-8360-45f0-a441-d7a982c88486}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
+VAR_INPUT
+    bIndexStable         : BOOL;
+    bIndexComplete       : BOOL;
+    bGearboxAssemblyPartPresent : BOOL;
+    bReservoirPartPresent  : BOOL;
+    eOperatorPosition    : E_TablePosition;
+    eProcessPosition     : E_TablePosition;
+    aNestEnabled         : ARRAY[1..4] OF BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT bInitialised THEN
+    FOR i := 1 TO 4 DO
+        aNestInternal[i].nId := INT_TO_UINT(i);
+        aNestInternal[i].ePosition := UINT_TO_E_TablePosition(INT_TO_UINT(i));
+        aNestInternal[i].bEnabled := aNestEnabled[i];
+    END_FOR
+    bInitialised := TRUE;
+END_IF
+
+FOR i := 1 TO 4 DO aNestInternal[i].bEnabled := aNestEnabled[i]; END_FOR
+
+bIndexCompletePulse := bIndexComplete AND NOT bPreviousIndexComplete;
+bPreviousIndexComplete := bIndexComplete;
+
+IF bIndexCompletePulse THEN
+    uiNest := aPositionToNest[4];
+    aPositionToNest[4] := aPositionToNest[3];
+    aPositionToNest[3] := aPositionToNest[2];
+    aPositionToNest[2] := aPositionToNest[1];
+    aPositionToNest[1] := uiNest;
+END_IF
+
+FOR i := 1 TO 4 DO
+    aNestInternal[aPositionToNest[i]].ePosition := UINT_TO_E_TablePosition(INT_TO_UINT(i));
+    aNestInternal[i].bPartLoadedPulse := FALSE;
+    aNestInternal[i].bPartRemovedPulse := FALSE;
+END_FOR
+
+IF bIndexStable THEN
+    uiNest := aPositionToNest[TO_UINT(eOperatorPosition)];
+    aNestInternal[uiNest].bPartLoadedPulse := bGearboxAssemblyPartPresent AND NOT aNestInternal[uiNest].bPreviousPartPresent;
+    aNestInternal[uiNest].bPartRemovedPulse := NOT bGearboxAssemblyPartPresent AND aNestInternal[uiNest].bPreviousPartPresent;
+    aNestInternal[uiNest].bPartPresent := bGearboxAssemblyPartPresent;
+    aNestInternal[uiNest].bPreviousPartPresent := bGearboxAssemblyPartPresent;
+
+    uiNest := aPositionToNest[TO_UINT(eProcessPosition)];
+    aNestInternal[uiNest].bPartPresent := bReservoirPartPresent;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetAllNests" Id="{040243fe-9195-4d5a-9ec4-ac09c7b1f29a}">
+      <Declaration><![CDATA[METHOD PUBLIC GetAllNests : ARRAY[1..4] OF ST_Nest
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetAllNests := aNestInternal;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetNestAtPosition" Id="{0745dbbc-9394-432e-878b-30be589989e2}">
+      <Declaration><![CDATA[METHOD PUBLIC GetNestAtPosition : ST_Nest
+VAR_INPUT ePosition : E_TablePosition; END_VAR
+VAR uiId : UINT; END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[uiId := GetNestIdAtPosition(ePosition);
+IF uiId >= 1 AND uiId <= 4 THEN GetNestAtPosition := aNestInternal[uiId]; END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetNestIdAtPosition" Id="{63b89a52-07a6-4e44-b561-4ccffa7ada5e}">
+      <Declaration><![CDATA[METHOD PUBLIC GetNestIdAtPosition : UINT
+VAR_INPUT ePosition : E_TablePosition; END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF ePosition >= E_TablePosition.Position1 AND ePosition <= E_TablePosition.Position4 THEN
+    GetNestIdAtPosition := aPositionToNest[TO_UINT(ePosition)];
+ELSE
+    GetNestIdAtPosition := 0;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="MarkDispositionComplete" Id="{c70a4344-213e-4717-8088-9601e267aed7}">
+      <Declaration><![CDATA[METHOD PUBLIC MarkDispositionComplete
+VAR_INPUT ePosition : E_TablePosition; END_VAR
+VAR uiId : UINT; END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[uiId := GetNestIdAtPosition(ePosition);
+IF uiId >= 1 AND uiId <= 4 THEN
+    aNestInternal[uiId].bDispositionSent := TRUE;
+    aNestInternal[uiId].bOperatorExchangeComplete := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StoreResultAtPosition" Id="{ddb2e5e3-90e7-449e-bf71-eb713c031025}">
+      <Declaration><![CDATA[METHOD PUBLIC StoreResultAtPosition : BOOL
+VAR_INPUT ePosition : E_TablePosition; stResult : ST_ProcessResult; END_VAR
+VAR uiId : UINT; END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[uiId := GetNestIdAtPosition(ePosition);
+IF uiId >= 1 AND uiId <= 4 THEN
+    aNestInternal[uiId].stResult := stResult;
+    aNestInternal[uiId].bProcessComplete := stResult.bValid;
+    aNestInternal[uiId].bProcessRequired := FALSE;
+    IF stResult.bValid AND stResult.bPassed THEN aNestInternal[uiId].eDisposition := E_PartDisposition.Pass;
+    ELSIF stResult.bValid THEN aNestInternal[uiId].eDisposition := E_PartDisposition.Reject;
+    END_IF
+    StoreResultAtPosition := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

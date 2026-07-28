@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_SimulatedProcessEquipment" Id="{c73d2e61-13e5-49d3-9472-ef88ed21cc93}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SimulatedProcessEquipment IMPLEMENTS I_ProcessEquipment
+VAR
+    eState : E_ProcessEquipmentState := E_ProcessEquipmentState.Ready;
+    stResult : ST_ProcessResult;
+    tonProcess : TON;
+    bStartPending : BOOL;
+    bForcePass : BOOL := TRUE;
+    bForceFault : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Cyclic" Id="{3d89a91f-d8dd-4ac4-8fca-5735d3b47a29}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eState OF
+E_ProcessEquipmentState.Ready:
+    IF bStartPending THEN bStartPending := FALSE; stResult.bValid := FALSE; eState := E_ProcessEquipmentState.Busy; END_IF
+E_ProcessEquipmentState.Busy:
+    tonProcess(IN := TRUE, PT := T#2S);
+    IF bForceFault THEN eState := E_ProcessEquipmentState.Fault;
+    ELSIF tonProcess.Q THEN
+        tonProcess(IN := FALSE);
+        stResult.bValid := TRUE; stResult.bPassed := bForcePass;
+        IF bForcePass THEN stResult.eCode := E_ProcessResultCode.Pass; ELSE stResult.eCode := E_ProcessResultCode.Fail; END_IF
+        stResult.sDetail := 'Simulated silicone process result';
+        eState := E_ProcessEquipmentState.Completed;
+    END_IF
+E_ProcessEquipmentState.Completed: ;
+E_ProcessEquipmentState.Fault: ;
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetResult" Id="{8b4228d5-23b0-4ebf-aea9-cdf926af415c}">
+      <Declaration><![CDATA[METHOD PUBLIC GetResult : ST_ProcessResult
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetResult := stResult;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetState" Id="{0ac6846f-e961-4778-b458-42a285c55751}">
+      <Declaration><![CDATA[METHOD PUBLIC GetState : E_ProcessEquipmentState
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetState := eState;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsBusy" Id="{5a13f073-7ce0-49bc-9ebf-8dc4899ad23d}">
+      <Declaration><![CDATA[METHOD PUBLIC IsBusy : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsBusy := eState = E_ProcessEquipmentState.Busy;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsDone" Id="{ef1ae204-e0a9-42bf-b4a5-1dbbba34b97c}">
+      <Declaration><![CDATA[METHOD PUBLIC IsDone : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsDone := eState = E_ProcessEquipmentState.Completed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsFaulted" Id="{21a3e40a-a951-46f5-8ee0-f7cd74f7fd4c}">
+      <Declaration><![CDATA[METHOD PUBLIC IsFaulted : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsFaulted := eState = E_ProcessEquipmentState.Fault;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsReady" Id="{ad960a28-5048-49d7-a298-d3d0751caf0f}">
+      <Declaration><![CDATA[METHOD PUBLIC IsReady : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsReady := eState = E_ProcessEquipmentState.Ready;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestReset" Id="{cb5d5bfa-434e-41c2-b66e-2a4f6fb92a29}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestReset
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bForceFault := FALSE; stResult.bValid := FALSE; eState := E_ProcessEquipmentState.Ready;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestStart" Id="{9a67b0a8-a4c5-442a-8334-305fa330e01f}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestStart : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState = E_ProcessEquipmentState.Ready THEN bStartPending := TRUE; RequestStart := TRUE; END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestStop" Id="{e46c98cf-541e-44ca-b173-a79a66c20042}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestStop
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bStartPending := FALSE; tonProcess(IN := FALSE); eState := E_ProcessEquipmentState.Ready;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetRecipe" Id="{f7145259-8bd9-45fb-a7ad-40d0a3b804d9}">
+      <Declaration><![CDATA[METHOD PUBLIC SetRecipe : BOOL
+VAR_INPUT usiRecipe : USINT; END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stResult.usiRecipe := usiRecipe; SetRecipe := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetSimulationResult" Id="{5a1b7d3f-eaf2-481a-b1ba-b528770787e9}">
+      <Declaration><![CDATA[METHOD PUBLIC SetSimulationResult
+VAR_INPUT bPass : BOOL; bFault : BOOL; END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bForcePass := bPass; bForceFault := bFault;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

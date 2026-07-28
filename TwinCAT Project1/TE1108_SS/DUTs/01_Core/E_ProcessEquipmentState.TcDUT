@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_ProcessEquipmentState" Id="{134d59f2-c603-49ba-9f29-983a2a0426da}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_ProcessEquipmentState :
+(
+	Offline := 0,
+    Initialising,
+    Ready,
+    Starting,
+    Busy,
+    Completed,
+    Stopping,
+    Fault
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

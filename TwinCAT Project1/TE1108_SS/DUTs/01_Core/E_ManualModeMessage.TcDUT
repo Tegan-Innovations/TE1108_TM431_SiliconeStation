@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_ManualModeMessage" Id="{308fc17b-9a07-42e8-a90b-4d3c55f95de1}">
+    <Declaration>{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_ManualModeMessage :
+(
+    None                         := 0,
+    ManualReady                  := 10,
+    SafetyNotAvailable           := 20,
+    IndexCommandActive           := 30,
+    IndexCommandNotPermitted     := 40,
+    TransferNestSupportCylinderExtending            := 50,
+    TransferNestSupportCylinderRetracting           := 60,
+    CylinderCommandNotPermitted  := 70,
+    MainDoorUnlockRequested      := 80,
+    DoorCommandNotPermitted      := 90,
+    EquipmentStarting            := 100,
+    EquipmentStopping            := 110,
+    EquipmentResetting           := 120,
+    EquipmentCommandNotPermitted := 130,
+    WaitingSafeExit              := 140,
+    ComponentFaulted             := 999
+);
+END_TYPE</Declaration>
+  </DUT>
+</TcPlcObject>

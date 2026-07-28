@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_IvekDigiSpense4000" Id="{0298a882-1014-4595-8d70-84acebf38c05}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_IvekDigiSpense4000 IMPLEMENTS I_ProcessEquipment
+VAR_INPUT
+    stCyclicIn       : ST_IvekCyclicInput;
+    bCommunicationOk: BOOL;
+END_VAR
+VAR_OUTPUT
+    stCyclicOut      : ST_IvekCyclicOutput;
+END_VAR
+VAR
+    eState           	: E_ProcessEquipmentState := E_ProcessEquipmentState.Offline;
+    stResult         	: ST_ProcessResult;
+    stBits           	: ST_IvekCommandBits;
+    usiRequestedRecipe 	: USINT;
+    bStartPending    	: BOOL;
+    bStopPending     	: BOOL;
+    bResetPending    	: BOOL;
+    bWasBusy         	: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Cyclic" Id="{c32afd88-dc64-4fdd-9954-5e3239145fb1}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD PUBLIC Cyclic
+VAR 
+	bBusyNow : BOOL; 
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stCyclicOut.udiCommands := 0;
+stCyclicOut.udiCommandsExt := 0;
+stCyclicOut.usiRecipeGet := 0;
+stCyclicOut.usiRecipeSave := 0;
+
+IF NOT bCommunicationOk THEN
+    eState := E_ProcessEquipmentState.Offline;
+    stResult.bValid := FALSE;
+    RETURN;
+END_IF
+
+IF stCyclicIn.udiFaultCode <> 0 OR stCyclicIn.eStatusState = E_IvekStatusState.Faulted THEN
+    eState := E_ProcessEquipmentState.Fault;
+    stResult.bValid := TRUE;
+    stResult.bPassed := FALSE;
+    stResult.eCode := E_ProcessResultCode.EquipmentFault;
+    stResult.udiFaultCode := stCyclicIn.udiFaultCode;
+    stResult.udiAlertCode := stCyclicIn.udiAlertCode;
+END_IF
+
+IF usiRequestedRecipe <> 0 AND stCyclicIn.usiCurrentRecipe <> usiRequestedRecipe THEN
+    stCyclicOut.usiRecipeGet := usiRequestedRecipe;
+END_IF
+
+IF bResetPending THEN
+    stCyclicOut.udiCommands := stCyclicOut.udiCommands OR SHL(UDINT#1, stBits.nClearFaultBit);
+    bResetPending := FALSE;
+END_IF
+
+IF bStopPending THEN
+    stCyclicOut.udiCommands := stCyclicOut.udiCommands OR SHL(UDINT#1, stBits.nStopBit);
+    bStopPending := FALSE;
+END_IF
+
+IF bStartPending AND stCyclicIn.eStatusState = E_IvekStatusState.Idle AND stCyclicIn.udiFaultCode = 0 THEN
+    stResult.bValid := FALSE;
+    stCyclicOut.udiCommands := stCyclicOut.udiCommands OR SHL(UDINT#1, stBits.nDispenseBit);
+    bStartPending := FALSE;
+    eState := E_ProcessEquipmentState.Starting;
+END_IF
+
+bBusyNow := stCyclicIn.eStatusState = E_IvekStatusState.Dispensing
+          OR stCyclicIn.eStatusState = E_IvekStatusState.Metering
+          OR stCyclicIn.eStatusState = E_IvekStatusState.DrawbackDwell
+          OR stCyclicIn.eStatusState = E_IvekStatusState.Drawback
+          OR stCyclicIn.eStatusState = E_IvekStatusState.PreOpDwell
+          OR stCyclicIn.eStatusState = E_IvekStatusState.PostOpDwell;
+
+IF bBusyNow THEN
+    eState := E_ProcessEquipmentState.Busy;
+ELSIF bWasBusy AND stCyclicIn.eStatusState = E_IvekStatusState.Idle AND stCyclicIn.udiFaultCode = 0 THEN
+    eState := E_ProcessEquipmentState.Completed;
+    stResult.bValid := TRUE;
+    stResult.bPassed := TRUE;
+    stResult.eCode := E_ProcessResultCode.Pass;
+    stResult.udiAlertCode := stCyclicIn.udiAlertCode;
+    stResult.usiRecipe := stCyclicIn.usiCurrentRecipe;
+ELSIF stCyclicIn.eStatusState = E_IvekStatusState.Idle AND eState <> E_ProcessEquipmentState.Completed THEN
+    eState := E_ProcessEquipmentState.Ready;
+END_IF
+bWasBusy := bBusyNow;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetResult" Id="{6c617372-4319-4105-8089-1c8db87cd044}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD GetResult : ST_ProcessResult
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetResult := stResult;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetState" Id="{d5c14fc7-4d0c-4fa3-9256-a919f3b00863}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD GetState : E_ProcessEquipmentState
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetState := eState;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsBusy" Id="{8a4a06a1-5909-44b1-857c-bfbe9bd61b7b}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD IsBusy : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsBusy := eState = E_ProcessEquipmentState.Busy OR eState = E_ProcessEquipmentState.Starting;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsDone" Id="{22422bc0-0d5f-4507-9fc6-120c8b2058cc}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD IsDone : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsDone := eState = E_ProcessEquipmentState.Completed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsFaulted" Id="{af3e5a6f-eb39-4b94-950b-40e089d13122}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD IsFaulted : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsFaulted := eState = E_ProcessEquipmentState.Fault OR eState = E_ProcessEquipmentState.Offline;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsReady" Id="{8da797f5-6f28-43ff-9f90-32f041bcee29}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD IsReady : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsReady := eState = E_ProcessEquipmentState.Ready;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestReset" Id="{29e8b202-0a45-4daf-99bc-b1cd932e589a}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD RequestReset
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bResetPending := TRUE;
+stResult.bValid := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestStart" Id="{8cd77aa2-fac1-4034-8e11-0c1b95070903}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD RequestStart : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF eState = E_ProcessEquipmentState.Ready AND NOT bStartPending THEN
+    bStartPending := TRUE;
+    RequestStart := TRUE;
+ELSE
+    RequestStart := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestStop" Id="{2f198f52-cb40-4a00-b70a-00e02e51c9f6}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD RequestStop
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bStopPending := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetRecipe" Id="{e92ce7bd-5044-43bd-bc81-d09af2d49c4b}">
+      <Declaration><![CDATA[{warning 'Add method implementation '}
+METHOD SetRecipe : BOOL
+VAR_INPUT
+	usiRecipe	: USINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF usiRecipe >= 1 AND usiRecipe <= 32 THEN
+    usiRequestedRecipe := usiRecipe;
+    SetRecipe := TRUE;
+ELSE
+    SetRecipe := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

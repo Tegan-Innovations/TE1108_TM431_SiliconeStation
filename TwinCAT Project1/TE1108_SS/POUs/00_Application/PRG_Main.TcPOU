@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="PRG_Main" Id="{f4d87ecd-c7bb-4ae4-b2e0-8161ff139d95}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Main
+VAR
+	fbMachine : FB_IndexedSiliconeMachine;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Recommended task order:
+// 1. PRG_IoMapping reads physical inputs at the beginning of the task.
+// 2. PRG_HmiInterface builds application commands.
+// 3. PRG_Main executes the reusable machine object.
+// 4. PRG_HmiInterface publishes status.
+// 5. PRG_IoMapping writes physical outputs at the end of the task.
+
+fbMachine.Cyclic(
+    stInputs      := GVL_MASTER.stInputs,
+    stCommand     := GVL_MASTER.stCommand,
+    stConfig      := GVL_Config.stMachine,
+    stIvekInput   := GVL_MASTER.stIvekInput,
+    bIvekCommsOk  := GVL_MASTER.bIvekCommsOk,
+    stOutputs     => GVL_MASTER.stOutputs,
+    stStatus      => GVL_MASTER.stStatus,
+    stIvekOutput  => GVL_MASTER.stIvekOutput);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

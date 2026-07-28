@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="MAIN" Id="{0f620eb5-7d69-4225-a13a-f11962f5e0d4}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Deterministic execution order in the 10 ms PLC task.
+PRG_TerminalMapping.ReadInputs();
+PRG_ReadInputs();
+PRG_HmiCommands();
+PRG_Main();
+PRG_Events();
+PRG_HmiStatus();
+PRG_WriteOutputs();
+PRG_TerminalMapping.WriteOutputs();]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

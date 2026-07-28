@@ -1,0 +1,38 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+
+# TwinCAT temporary and generated files
+_CompileInfo/
+*.compileinfo
+*.tclrs
+*.tpy
+*.tmcRefac
+*.library
+*.compiled-library
+*.bak
+*.~u
+*.~*
+*.tmp
+*.temp
+
+# TwinCAT boot/generated files
+_Plcs/
+
+# Logs
+*.log
+
+# Windows
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_HmiStatus" Id="{ef688c1f-87ce-4c21-8080-519a1f7ee46a}">
+    <Declaration>TYPE ST_HmiStatus :
+STRUCT
+    stMachine                       : ST_MachineStatus;
+    stSafety                        : ST_SafetyStatus;
+    stIndex                         : ST_IndexStatus;
+    stProcessStation                : ST_ProcessStationStatus;
+    stMainDoorLock                  : ST_MainDoorLockStatus;
+    eInitialisingWaitReason         : E_InitialisingWaitReason;
+    eStoppingWaitReason             : E_StoppingWaitReason;
+    stProcessCycle                  : ST_ProcessCycleStatus;
+    eCurrentIndexPosition           : E_TablePosition;
+    bIndexPositionValid             : BOOL;
+    bTwoHandsSafe                   : BOOL;
+    bGearboxAssemblyPartPresent            : BOOL;
+    bReservoirPartPresent             : BOOL;
+    bRejectChutePartPresent              : BOOL;
+    bIndexReady                     : BOOL;
+    bIndexLocked                    : BOOL;
+    bIndexCompletedSensor           : BOOL;
+    bIndexSupportExtended           : BOOL;
+    bIndexSupportRetracted          : BOOL;
+    bMainDoorClosed                 : BOOL;
+    bMainDoorLocked                 : BOOL;
+    bStartButtonActive              : BOOL;
+    bStopButtonActive               : BOOL;
+    bResetButtonActive              : BOOL;
+    bStartButtonLamp                : BOOL;
+    bUp24VPowerSupplyOk             : BOOL;
+    bUs24VPowerSupplyOk             : BOOL;
+    bIvekHeaterControllerAlarm      : BOOL;
+    bSiliconeMinimumLevelSensor1    : BOOL;
+    bSiliconeMinimumLevelSensor2    : BOOL;
+    bMainDoorDiagnosticOk           : BOOL;
+    bMs6FeedbackOk                  : BOOL;
+    bAirExhausted                   : BOOL;
+    uiMainAirPressureRaw            : UINT;
+    uiSiliconePressureRaw           : UINT;
+    uiNozzlePressureRaw             : UINT;
+    uiVacuumPressureRaw             : UINT;
+    bTransferNestSupportCylinderExtended          : BOOL;
+    bTransferNestSupportCylinderRetracted         : BOOL;
+    bLeftFlapSafe                   : BOOL;
+    bRightFlapSafe                  : BOOL;
+    bIvekCommunicationOk            : BOOL;
+    eIvekStatusState                : E_IvekStatusState;
+    udiIvekStatusFlags              : UDINT;
+    udiIvekStatusFlagsExt           : UDINT;
+    udiIvekFaultCode                : UDINT;
+    udiIvekAlertCode                : UDINT;
+    usiIvekCurrentRecipe            : USINT;
+    stPuckLocker                    : ST_PuckLockerStatus;
+    eOperatorInstruction            : E_OperatorInstruction;
+    stOperatorStation                : ST_OperatorStationStatus;
+    stManualMode                    : ST_ManualModeStatus;
+    aNest                           : ARRAY[1..4] OF ST_Nest;
+    stAlarms                        : ST_AlarmManagerStatus;
+    sMachineMessage                : STRING(160);
+    sOperatorMessage               : STRING(255);
+END_STRUCT
+END_TYPE</Declaration>
+  </DUT>
+</TcPlcObject>

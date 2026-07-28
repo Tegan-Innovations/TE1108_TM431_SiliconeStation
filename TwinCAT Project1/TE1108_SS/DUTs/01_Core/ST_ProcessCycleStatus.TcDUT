@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_ProcessCycleStatus" Id="{2e2ea3aa-1e0a-4f05-a304-4b64a12f3e81}">
+    <Declaration><![CDATA[TYPE ST_ProcessCycleStatus :
+STRUCT
+    eState              : E_CycleState;
+    eMessage            : E_ProcessCycleMessage;
+    bActive             : BOOL;
+    bIdle               : BOOL;
+    bCompletePulse      : BOOL;
+    bFaulted            : BOOL;
+    bWaitingForPart     : BOOL;
+    bWaitingForOperator : BOOL;
+    bWaitingForIndex    : BOOL;
+    sMessage            : STRING(255);
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

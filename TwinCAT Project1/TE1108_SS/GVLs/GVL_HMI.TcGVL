@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <GVL Name="GVL_HMI" Id="{fe693b0e-dd13-4420-86c3-7f656326a462}">
+    <Declaration>{attribute 'qualified_only'}
+VAR_GLOBAL
+    // TcHMI writes commands only here and reads status only here.
+    stCommands       : ST_HmiCommands;
+    stStatus         : ST_HmiStatus;
+
+    // Dynamic machine-state banner. Names retained from the Kistler HMI.
+    StatusHMI        : ST_StatusBanner;
+
+    // Structures retained from the Kistler HMI concept for alarm/message grids.
+    // Replace the placeholder types with the existing TE1108 DUTs when imported.
+    // StatusHMI       : ST_StatusBanner;
+    // arrAlarmHistory : ARRAY[1..100] OF ST_AlarmHistory;
+    // astActiveEvents : ARRAY[0..50] OF ST_ActiveEvents;
+
+
+    astActiveEvents  : ARRAY[0..50] OF ST_ActiveEvents;
+    astEventsHistory : ARRAY[0..200] OF ST_EventsHistory;
+    stEventsAssigment: ST_EventsAssigmentGeneral;
+    sSystemTime      : STRING(255);
+    sSystemDate      : STRING(255);
+    stStatistics     : ST_HmiStatistics;
+    bBlink_1Hz       : BOOL;
+END_VAR
+
+VAR_GLOBAL CONSTANT
+    // Existing TcHMI color constants retained for screen reuse.
+    sWHITE           : STRING(40) := '{"color":"rgba(255,255,255,255)"}';
+    sBLACK           : STRING(40) := '{"color":"rgba(0,0,0,1)"}';
+    sYELLOW          : STRING(40) := '{"color":"rgba(255,255,0,1)"}';
+    sGREEN           : STRING(40) := '{"color":"rgba(70,166,63,1)"}';
+    sORANGE          : STRING(40) := '{"color":"rgba(255,153,51,1)"}';
+    sRED             : STRING(40) := '{"color":"rgba(255,0,0,1)"}';
+    sBLUE            : STRING(40) := '{"color":"rgba(0,162,232,1)"}';
+    sGREY            : STRING(40) := '{"color":"rgba(164,158,158,1)"}';
+    sDARKGREY        : STRING(40) := '{"color":"rgba(50,50,50,1)"}';
+    sTRANSP          : STRING(40) := '{"color":"rgba(255,255,255,0)"}';
+    sGREENPass       : STRING(40) := '{"color":"rgba(0,153,51,1)"}';
+    sREDFail         : STRING(40) := '{"color":"rgba(244,68,68,255)"}';
+    sBLUEInProgress  : STRING(40) := '{"color":"rgba(54,100,221,1)"}';
+
+    nBLACK           : DWORD := 16#FF000000;
+    nWHITE           : DWORD := 16#FFFFFFFF;
+    nYELLOW          : DWORD := 16#FFFFFF00;
+    nGREEN           : DWORD := 16#FF008A00;
+    nORANGE          : DWORD := 16#FFFFA500;
+    nRED             : DWORD := 16#FFFF0000;
+    nBLUE            : DWORD := 16#FF0000FF;
+    nGREY            : DWORD := 16#FFA9A9A9;
+    nDARKGREY        : DWORD := 16#FF808080;
+    nTRANSP          : DWORD := 16#00FFFFFF;
+
+    sSoftwareVersion : STRING := '0.13.0';
+    sSystemName      : STRING := 'Indexed Silicone Application Machine';
+    sProjectID       : STRING := 'TBD';
+END_VAR</Declaration>
+  </GVL>
+</TcPlcObject>

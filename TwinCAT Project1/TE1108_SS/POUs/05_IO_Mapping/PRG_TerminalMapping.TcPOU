@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="PRG_TerminalMapping" Id="{7aa70a09-865b-4c80-8264-2867e47e0f23}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_TerminalMapping
+VAR
+    uiIndexPositionCode : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// ============================================================================
+// TE1108 Silicone Station - EPLAN Rev 1.0 terminal mapping
+//
+// ReadInputs:
+//   EtherCAT inputs and TwinSAFE aliases -> GVL_IO.stInputs
+//
+// WriteOutputs:
+//   GVL_IO.stOutputs -> EtherCAT outputs and TwinSAFE request aliases
+//
+// Execution order:
+//   PRG_TerminalMapping.ReadInputs();
+//   application logic;
+//   PRG_TerminalMapping.WriteOutputs();
+// ============================================================================
+]]></ST>
+    </Implementation>
+    <Method Name="ReadInputs" Id="{f0a59f2b-b078-4cda-8914-06278c9b0ffc}">
+      <Declaration><![CDATA[METHOD PUBLIC ReadInputs
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// ---------------------------------------------------------------------------
+// Term 7 - EL1809 (EPLAN page 13)
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.bStartButton := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch1;
+GVL_IO.stInputs.bStopButton := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch2;
+GVL_IO.stInputs.bUp24VPowerSupplyOk := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch3;
+GVL_IO.stInputs.bUs24VPowerSupplyOk := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch4;
+GVL_IO.stInputs.bIvekHeaterControllerAlarm := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch5;
+
+GVL_IO.stInputs.bIndexPositionSensor1 := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch6;
+GVL_IO.stInputs.bIndexPositionSensor2 := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch7;
+GVL_IO.stInputs.bIndexPositionSensor3 := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch8;
+GVL_IO.stInputs.bIndexCompletedSensor := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch9;
+GVL_IO.stInputs.bIndexLocked := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch10;
+GVL_IO.stInputs.bIndexReady := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch11;
+
+GVL_IO.stInputs.bGearboxAssemblyPartPresent := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch12;
+GVL_IO.stInputs.bReservoirPartPresent := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch13;
+GVL_IO.stInputs.bRejectChutePartPresent := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch14;
+GVL_IO.stInputs.bSiliconeMinimumLevelSensor1 := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch15;
+GVL_IO.stInputs.bSiliconeMinimumLevelSensor2 := GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch16;
+
+// Application aliases. Confirm station naming during commissioning.
+GVL_IO.stInputs.bGearboxAssemblyPartPresent := GVL_IO.stInputs.bGearboxAssemblyPartPresent;
+GVL_IO.stInputs.bReservoirPartPresent := GVL_IO.stInputs.bReservoirPartPresent;
+
+// Position inputs are documented as binary weights 1, 2 and 4.
+uiIndexPositionCode := UINT#0;
+IF GVL_IO.stInputs.bIndexPositionSensor1 THEN
+    uiIndexPositionCode := uiIndexPositionCode + UINT#1;
+END_IF
+IF GVL_IO.stInputs.bIndexPositionSensor2 THEN
+    uiIndexPositionCode := uiIndexPositionCode + UINT#2;
+END_IF
+IF GVL_IO.stInputs.bIndexPositionSensor3 THEN
+    uiIndexPositionCode := uiIndexPositionCode + UINT#4;
+END_IF
+GVL_IO.stInputs.eIndexPosition := UINT_TO_E_TablePosition(uiIndexPositionCode);
+
+// ---------------------------------------------------------------------------
+// Term 8 - EL1809 (EPLAN page 15)
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.bIndexSupportRetracted := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1;
+GVL_IO.stInputs.bIndexSupportExtended := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch2;
+GVL_IO.stInputs.bTransferNestSupportCylinderRetracted := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3;
+GVL_IO.stInputs.bTransferNestSupportCylinderExtended := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4;
+
+// ---------------------------------------------------------------------------
+// Analog inputs - raw process values (EPLAN pages 21 and 22)
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.uiMainAirPressureRaw := GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch1;
+GVL_IO.stInputs.uiSiliconePressureRaw := GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch2;
+GVL_IO.stInputs.uiNozzlePressureRaw := GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch3;
+GVL_IO.stInputs.uiVacuumPressureRaw := GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch1;
+
+// ---------------------------------------------------------------------------
+// TwinSAFE -> PLC validated aliases
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.bResetButton := GVL_Safety.bResetButtonPressed;
+GVL_IO.stInputs.bTwoHandsSafe := GVL_Safety.bTwoHandSafe;
+GVL_IO.stInputs.bSafetyOk := GVL_Safety.bSafetyOk;
+GVL_IO.stInputs.bEmergencyStopOk := GVL_Safety.bEmergencyStopOk;
+GVL_IO.stInputs.bMainDoorSafe := GVL_Safety.bMainDoorSafe;
+GVL_IO.stInputs.bLeftFlapSafe := GVL_Safety.bLeftFlapSafe;
+GVL_IO.stInputs.bRightFlapSafe := GVL_Safety.bRightFlapSafe;
+GVL_IO.stInputs.bFlapsSafe := GVL_Safety.bFlapsSafe;
+GVL_IO.stInputs.bFsoeOk := GVL_Safety.bFsoeOk;
+GVL_IO.stInputs.bSafetyLogicOk := GVL_Safety.bSafetyLogicOk;
+GVL_IO.stInputs.bAirSupplyOk := GVL_Safety.bAirSupplySafe;
+GVL_IO.stInputs.bMainDoorClosed := GVL_Safety.bMainDoorClosed;
+GVL_IO.stInputs.bMainDoorLocked := GVL_Safety.bMainDoorLocked;
+GVL_IO.stInputs.bMainDoorDiagnosticOk := GVL_Safety.bMainDoorDiagnosticOk;
+GVL_IO.stInputs.bMs6FeedbackOk := GVL_Safety.bMs6FeedbackOk;
+GVL_IO.stInputs.bAirExhausted := GVL_Safety.bAirExhausted;
+
+// Puck locker hardware is not present in EPLAN Rev 1.0.
+GVL_IO.stInputs.bPuckSensorUp := FALSE;
+GVL_IO.stInputs.bPuckSensorDown := FALSE;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WriteOutputs" Id="{4e3bd4ad-ac4e-448e-a2a8-70de4747ca16}">
+      <Declaration><![CDATA[METHOD PUBLIC WriteOutputs
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// ---------------------------------------------------------------------------
+// Standard PLC -> TwinSAFE request aliases
+// TwinSAFE owns Term 6 EL2904 outputs (air supply and front-door control).
+// ---------------------------------------------------------------------------
+GVL_Safety.bSafetyRunRequest := GVL_IO.stOutputs.bSafetyRunRequest;
+GVL_Safety.bSafetyResetRequest := GVL_IO.stOutputs.bSafetyResetRequest;
+GVL_Safety.bAirSupplyEnableRequest := GVL_IO.stOutputs.bAirSupplyEnable;
+GVL_Safety.bMainDoorLockRequest := GVL_IO.stOutputs.bMainDoorLockRequest;
+
+// ---------------------------------------------------------------------------
+// Term 9 - EL2809-0015 (EPLAN page 17)
+// ---------------------------------------------------------------------------
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1 := GVL_IO.stOutputs.bLedStart;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch2 := GVL_IO.stOutputs.bLedReset;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch3 := GVL_IO.stOutputs.bLedFail;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch4 := GVL_IO.stOutputs.bLedPass;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch5 := GVL_IO.stOutputs.bInternalLight;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch6 := GVL_IO.stOutputs.bNestLight OR GVL_IO.stOutputs.bExternalLight;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch7 := GVL_IO.stOutputs.bVacuumPumpEnable;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch8 := GVL_IO.stOutputs.bVacuumAirSolenoid1;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch9 := GVL_IO.stOutputs.bVacuumAirSolenoid2;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch10 := FALSE;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch11 := FALSE;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch12 := FALSE;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch13 := FALSE;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch14 := FALSE;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch15 := FALSE;
+GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch16 := FALSE;
+
+// ---------------------------------------------------------------------------
+// Term 10 - EL2809-0015 (EPLAN page 19)
+// Note the EPLAN order: Ch1 = Port B, Ch2 = Port A.
+// ---------------------------------------------------------------------------
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1 := GVL_IO.stOutputs.bIndexStopPortB;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch2 := GVL_IO.stOutputs.bIndexRotatePortA;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch3 := GVL_IO.stOutputs.bIndexSupportExtend;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch4 := GVL_IO.stOutputs.bIndexSupportRetract;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch5 := GVL_IO.stOutputs.bTransferNestSupportCylinderExtend;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch6 := GVL_IO.stOutputs.bTransferNestSupportCylinderRetract;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch7 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch8 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch9 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch12 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch13 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch14 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch15 := FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch16 := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

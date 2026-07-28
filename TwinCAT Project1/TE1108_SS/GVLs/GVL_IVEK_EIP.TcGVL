@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <GVL Name="GVL_IVEK_EIP" Id="{a5662b0f-baef-49d8-9edc-9e90ad76a9c6}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	// Map/link these fields to the EDS-generated EtherNet/IP process image.
+    // The exact byte offsets and assembly sizes must be confirmed using the IVEK EDS/firmware manual.
+    stInput         AT %I* : ST_IvekCyclicInput;
+    stOutput        AT %Q* : ST_IvekCyclicOutput;
+
+    // Communication health from the EtherNet/IP scanner/device state.
+    bCommunicationOk : BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_ManualModeState" Id="{1c7dc974-5d84-4873-8795-91f27f2da1bf}">
+    <Declaration>{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_ManualModeState :
+(
+    Disabled      := 0,
+    Ready         := 10,
+    CommandActive := 20,
+    Stopping      := 30,
+    Fault         := 999
+);
+END_TYPE</Declaration>
+  </DUT>
+</TcPlcObject>

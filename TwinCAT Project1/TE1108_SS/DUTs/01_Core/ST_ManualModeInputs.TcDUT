@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_ManualModeInputs" Id="{18456921-6213-41f6-a504-07e7e56d014a}">
+    <Declaration>TYPE ST_ManualModeInputs :
+STRUCT
+    bSafetyOk                  : BOOL;
+    bMotionSafetyPermitted     : BOOL;
+    bTwoHandsSafe              : BOOL;
+    bProcessSafetyPermitted    : BOOL;
+    bMainDoorSafe              : BOOL;
+    bIndexReady                : BOOL;
+    bIndexLocked               : BOOL;
+    bIndexBusy                 : BOOL;
+    bIndexFaulted              : BOOL;
+    bTransferNestSupportCylinderExtended     : BOOL;
+    bTransferNestSupportCylinderRetracted    : BOOL;
+    bProcessStationFaulted     : BOOL;
+    bEquipmentReady            : BOOL;
+    bEquipmentBusy             : BOOL;
+    bEquipmentFaulted          : BOOL;
+    bReservoirPartPresent        : BOOL;
+END_STRUCT
+END_TYPE</Declaration>
+  </DUT>
+</TcPlcObject>

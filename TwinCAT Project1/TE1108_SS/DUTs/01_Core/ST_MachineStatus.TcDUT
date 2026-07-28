@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_MachineStatus" Id="{f4291e0c-7f34-4828-9807-36e2caee1fcf}">
+    <Declaration>TYPE ST_MachineStatus :
+STRUCT
+    eMachineState          : E_MachineState;
+    eCycleState            : E_CycleState;
+    stProcessStation       : ST_ProcessStationStatus;
+    stMainDoorLock         : ST_MainDoorLockStatus;
+    eInitialisingWaitReason : E_InitialisingWaitReason;
+    eStoppingWaitReason     : E_StoppingWaitReason;
+    stProcessCycle         : ST_ProcessCycleStatus;
+    eIndexState            : E_IndexState;
+    stIndexStatus          : ST_IndexStatus;
+    eEquipmentState        : E_ProcessEquipmentState;
+    eOperatorExchangeState : E_OperatorExchangeState;
+    eOperatorInstruction   : E_OperatorInstruction;
+    stOperatorStation      : ST_OperatorStationStatus;
+    eManualModeState        : E_ManualModeState;
+    stManualMode            : ST_ManualModeStatus;
+    bReady                 : BOOL;
+    bBusy                  : BOOL;
+    bFaulted               : BOOL;
+    bInitialisationTimeoutFault : BOOL;
+    bStoppingTimeoutFault       : BOOL;
+    bSafetyStopRequested   : BOOL;
+    bSafetyRunRequested    : BOOL;
+    bEventFault            : BOOL;
+    bCycleStopRequested    : BOOL;
+    bIndexPermissive       : BOOL;
+    bProcessPermissive     : BOOL;
+    stPermissives          : ST_MachinePermissives;
+    stLastResult           : ST_ProcessResult;
+    stPuckLocker           : ST_PuckLockerStatus;
+    stAlarms               : ST_AlarmManagerStatus;
+    aNest                  : ARRAY[1..4] OF ST_Nest;
+    udiAlarmCode           : UDINT;
+    sMachineMessage        : STRING(160);
+    sOperatorMessage       : STRING(255);
+END_STRUCT
+END_TYPE
+</Declaration>
+  </DUT>
+</TcPlcObject>

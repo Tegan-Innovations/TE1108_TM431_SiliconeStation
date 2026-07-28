@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_ProcessStationState" Id="{2a6dd419-37a2-48b7-a5bf-1ce3bf82791c}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_ProcessStationState :
+(
+    Disabled := 0,
+    Idle := 10,
+    Advancing := 20,
+    Advanced := 30,
+    StartingEquipment := 40,
+    Processing := 50,
+    StoppingEquipment := 60,
+    Retracting := 70,
+    Complete := 80,
+    Fault := 999
+);
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

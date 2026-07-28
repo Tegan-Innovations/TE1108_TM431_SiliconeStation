@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_PuckLockerState" Id="{5b694b6c-b804-44be-8188-365659e87a4b}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_PuckLockerState :
+(
+    Disabled := 0,
+    WaitingForPuck := 10,
+    LockingPuck := 20,
+    Locked := 30,
+    WaitingForPartRemoval := 35,
+    ReleasingPuck := 40,
+    UnexpectedPuckRemovalFault := 99
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

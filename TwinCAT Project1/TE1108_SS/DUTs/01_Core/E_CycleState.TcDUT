@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_CycleState" Id="{058363c4-b976-456f-9e90-e45d5a8c0fea}">
+    <Declaration>{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_CycleState :
+(
+    ResetCycle := 0,
+    Idle := 10,
+    EvaluateIndexPosition := 15,
+    WaitIndexPositionRecovery := 16,
+    RequestIndexPositionRecovery := 17,
+    WaitIndexPositionRecovered := 18,
+    EvaluateProcessNest := 20,
+    SkipProcessNest := 30,
+    PrepareProcessStation := 40,
+    WaitProcessStationReady := 50,
+    StartProcessStation := 60,
+    WaitProcessStationRunning := 70,
+    WaitProcessStationComplete := 80,
+    CaptureProcessResult := 90,
+    StoreProcessResult := 100,
+    PrepareOperatorExchange := 110,
+    WaitOperatorExchange := 120,
+    ConfirmOperatorExchange := 130,
+    ValidateIndexPermissives := 140,
+    RequestIndex := 150,
+    WaitIndexStart := 160,
+    WaitIndexComplete := 170,
+    UpdateNestPositions := 180,
+    Complete := 190,
+    ControlledStop := 900,
+    Fault := 999
+);
+END_TYPE</Declaration>
+  </DUT>
+</TcPlcObject>

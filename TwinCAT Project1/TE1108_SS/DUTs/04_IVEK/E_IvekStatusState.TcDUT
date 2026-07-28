@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_IvekStatusState" Id="{2ec36296-d46e-4bb1-a52f-f2249485e5e0}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_IvekStatusState :
+(
+	Idle := 0,
+    Priming := 1,
+    Dispensing := 2,
+    Metering := 3,
+    DrawbackDwell := 4,
+    Drawback := 5,
+    Faulted := 6,
+    Referencing := 7,
+    Initialising := 8,
+    PreOpDwell := 9,
+    PostOpDwell := 10,
+    MotionLocked := 22,
+    NotConfigured := 23,
+    ClearingFault := 26
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

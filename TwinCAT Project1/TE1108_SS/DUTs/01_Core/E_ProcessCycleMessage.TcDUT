@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_ProcessCycleMessage" Id="{6a920b80-05ec-47d5-ade5-8e978e635974}">
+    <Declaration>{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_ProcessCycleMessage :
+(
+    None := 0,
+    WaitingCycleConditions,
+    IndexPositionUnknown,
+    WaitingTwoHandForIndexRecovery,
+    RecoveringIndexPosition,
+    WaitingPartAtProcess,
+    SkippingEmptyOrProcessedNest,
+    PreparingProcessStation,
+    ExtendingTransferNestSupportCylinder,
+    StartingProcessEquipment,
+    SiliconeApplicationInProgress,
+    CapturingProcessResult,
+    RetractingTransferNestSupportCylinder,
+    StoringProcessResult,
+    WaitingOperatorExchange,
+    WaitingTwoHandForIndex,
+    IndexingTable,
+    ControlledStopping,
+    ProcessCycleFault
+);
+END_TYPE</Declaration>
+  </DUT>
+</TcPlcObject>

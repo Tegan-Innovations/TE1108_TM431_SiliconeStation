@@ -1,0 +1,271 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_OperatorStation" Id="{2c967b62-a173-4dd3-9c1d-bfbb663c0215}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_OperatorStation
+VAR
+    eState                    : E_OperatorExchangeState := E_OperatorExchangeState.Idle;
+    eInstruction              : E_OperatorInstruction;
+    sMessage                  : STRING(255);
+    stStatusInternal          : ST_OperatorStationStatus;
+    bExchangeComplete         : BOOL;
+    bPartRemovedConfirmed     : BOOL;
+    bRejectConfirmed          : BOOL;
+    bRejectArmed              : BOOL;
+    bRejectEdgeAccepted       : BOOL;
+    bPreviousRejectSensor     : BOOL;
+    bRejectPulse              : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Cyclic" Id="{0c713c3d-a462-493a-8e33-fea5d7ea48d3}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
+VAR_INPUT
+    bAutomaticActive       : BOOL;
+    bIndexStable           : BOOL;
+    stOperatorNest         : ST_Nest;
+    bGearboxAssemblyPartPresent   : BOOL;
+    bRejectChutePartPresent     : BOOL;
+    bPuckLockerEnabled     : BOOL;
+    bPuckDetected          : BOOL;
+    bPuckLocked            : BOOL;
+    ePuckLockerState       : E_PuckLockerState;
+    bRequireRejectConfirm  : BOOL;
+    bAllowEmptyNestIndex   : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// Reject confirmation is intentionally edge-based.
+// A reject edge is only armed after the operator nest has become empty.
+bRejectPulse := bRejectChutePartPresent AND NOT bPreviousRejectSensor;
+bPreviousRejectSensor := bRejectChutePartPresent;
+bRejectEdgeAccepted := FALSE;
+
+IF NOT bAutomaticActive THEN
+    eState := E_OperatorExchangeState.Idle;
+    bExchangeComplete := FALSE;
+    bPartRemovedConfirmed := FALSE;
+    bRejectConfirmed := FALSE;
+    bRejectArmed := FALSE;
+    eInstruction := E_OperatorInstruction.None;
+    sMessage := '';
+ELSE
+    CASE eState OF
+        E_OperatorExchangeState.Idle:
+            bExchangeComplete := FALSE;
+            eInstruction := E_OperatorInstruction.None;
+            sMessage := '';
+            IF bIndexStable THEN
+                eState := E_OperatorExchangeState.EvaluateNest;
+            END_IF
+
+        E_OperatorExchangeState.EvaluateNest:
+            bExchangeComplete := FALSE;
+            bPartRemovedConfirmed := FALSE;
+            bRejectConfirmed := FALSE;
+            bRejectArmed := FALSE;
+
+            IF stOperatorNest.stResult.bValid THEN
+                IF bGearboxAssemblyPartPresent THEN
+                    eState := E_OperatorExchangeState.WaitingForPartRemoval;
+                ELSE
+                    // The part is already absent. Removal is confirmed, but an
+                    // already-active reject chute sensor is never accepted.
+                    bPartRemovedConfirmed := TRUE;
+                    IF NOT stOperatorNest.stResult.bPassed AND bRequireRejectConfirm THEN
+                        eState := E_OperatorExchangeState.WaitingForRejectConfirmation;
+                    ELSIF stOperatorNest.stResult.bPassed AND bPuckLockerEnabled THEN
+                        eState := E_OperatorExchangeState.WaitingForPuckRemoval;
+                    ELSE
+                        eState := E_OperatorExchangeState.WaitingForPartLoading;
+                    END_IF
+                END_IF
+            ELSE
+                eState := E_OperatorExchangeState.WaitingForPartLoading;
+            END_IF
+
+        E_OperatorExchangeState.WaitingForPartRemoval:
+            IF stOperatorNest.stResult.bPassed THEN
+                eInstruction := E_OperatorInstruction.RemovePassedPart;
+                sMessage := 'Remove passed part from operator nest';
+            ELSE
+                eInstruction := E_OperatorInstruction.RemoveFailedPart;
+                sMessage := 'Remove failed part from operator nest';
+            END_IF
+
+            IF NOT bGearboxAssemblyPartPresent THEN
+                bPartRemovedConfirmed := TRUE;
+                bRejectArmed := FALSE;
+
+                IF NOT stOperatorNest.stResult.bPassed AND bRequireRejectConfirm THEN
+                    eState := E_OperatorExchangeState.WaitingForRejectConfirmation;
+                ELSIF stOperatorNest.stResult.bPassed AND bPuckLockerEnabled THEN
+                    eState := E_OperatorExchangeState.WaitingForPuckRemoval;
+                ELSE
+                    eState := E_OperatorExchangeState.WaitingForPartLoading;
+                END_IF
+            END_IF
+
+        E_OperatorExchangeState.WaitingForRejectConfirmation:
+            eInstruction := E_OperatorInstruction.PlacePartInRejectBin;
+
+            // The reject input must first be LOW after nest removal. This prevents
+            // a part placed in the bin before the nest sensor reaches zero from
+            // being accepted.
+            IF NOT bRejectChutePartPresent THEN
+                bRejectArmed := TRUE;
+            END_IF
+
+            IF NOT bRejectArmed THEN
+                sMessage := 'Remove failed part from reject bin, then place it back after the nest is empty';
+            ELSE
+                sMessage := 'Place failed part in reject bin';
+            END_IF
+
+            IF bPartRemovedConfirmed AND bRejectArmed AND bRejectPulse THEN
+                bRejectConfirmed := TRUE;
+                bRejectEdgeAccepted := TRUE;
+            END_IF
+
+            IF bPartRemovedConfirmed AND bRejectConfirmed THEN
+                // FAIL never releases the puck. When the locker is enabled, the
+                // existing puck must still be present and locked before indexing.
+                IF NOT bPuckLockerEnabled
+                   OR (bPuckDetected
+                       AND bPuckLocked
+                       AND ePuckLockerState = E_PuckLockerState.Locked)
+                THEN
+                    eState := E_OperatorExchangeState.ExchangeComplete;
+                ELSE
+                    sMessage := 'Restore the puck and wait until it is locked';
+                END_IF
+            END_IF
+
+        E_OperatorExchangeState.WaitingForPuckRemoval:
+            eInstruction := E_OperatorInstruction.RemoveReleasedPuck;
+            sMessage := 'Remove released puck';
+            IF (ePuckLockerState = E_PuckLockerState.WaitingForPuck) AND NOT bPuckDetected THEN
+                eState := E_OperatorExchangeState.WaitingForNewPuck;
+            END_IF
+
+        E_OperatorExchangeState.WaitingForNewPuck:
+            eInstruction := E_OperatorInstruction.LoadNewPuck;
+            sMessage := 'Load new puck';
+            IF bPuckDetected THEN
+                eState := E_OperatorExchangeState.WaitingForPuckLocked;
+            END_IF
+
+        E_OperatorExchangeState.WaitingForPuckLocked:
+            eInstruction := E_OperatorInstruction.WaitPuckLocking;
+            sMessage := 'Waiting for puck locker to lock the new puck';
+            IF bPuckLocked AND ePuckLockerState = E_PuckLockerState.Locked THEN
+                eState := E_OperatorExchangeState.WaitingForPartLoading;
+            END_IF
+
+        E_OperatorExchangeState.WaitingForPartLoading:
+            IF bAllowEmptyNestIndex THEN
+                eInstruction := E_OperatorInstruction.ReadyToIndexEmpty;
+                sMessage := 'Load a new part or continue with an empty nest';
+                bExchangeComplete := TRUE;
+                eState := E_OperatorExchangeState.ExchangeComplete;
+            ELSE
+                eInstruction := E_OperatorInstruction.LoadPart;
+                sMessage := 'Load new part';
+                IF bGearboxAssemblyPartPresent THEN
+                    bExchangeComplete := TRUE;
+                    eState := E_OperatorExchangeState.ExchangeComplete;
+                END_IF
+            END_IF
+
+        E_OperatorExchangeState.ExchangeComplete:
+            eInstruction := E_OperatorInstruction.ReadyToIndex;
+            sMessage := 'Operator exchange complete';
+            bExchangeComplete := TRUE;
+            IF NOT bIndexStable THEN
+                eState := E_OperatorExchangeState.WaitingForTableIndexComplete;
+            END_IF
+
+        E_OperatorExchangeState.WaitingForTableIndexComplete:
+            eInstruction := E_OperatorInstruction.TableIndexing;
+            sMessage := 'Table indexing';
+            IF bIndexStable THEN
+                bExchangeComplete := FALSE;
+                bPartRemovedConfirmed := FALSE;
+                bRejectConfirmed := FALSE;
+                bRejectArmed := FALSE;
+                eState := E_OperatorExchangeState.EvaluateNest;
+            END_IF
+
+        E_OperatorExchangeState.Fault:
+            bExchangeComplete := FALSE;
+            eInstruction := E_OperatorInstruction.None;
+            sMessage := 'Operator exchange fault';
+    END_CASE
+END_IF
+
+stStatusInternal.eState := eState;
+stStatusInternal.eInstruction := eInstruction;
+stStatusInternal.bExchangeComplete := bExchangeComplete;
+stStatusInternal.bIndexPermissive := bExchangeComplete AND eState = E_OperatorExchangeState.ExchangeComplete;
+stStatusInternal.bPartRemovedConfirmed := bPartRemovedConfirmed;
+stStatusInternal.bRejectConfirmed := bRejectConfirmed;
+stStatusInternal.bRejectArmed := bRejectArmed;
+stStatusInternal.bRejectEdgeAccepted := bRejectEdgeAccepted;
+stStatusInternal.bRejectWaitingForClear := (eState = E_OperatorExchangeState.WaitingForRejectConfirmation) AND NOT bRejectArmed;
+stStatusInternal.bPuckLockerEnabled := bPuckLockerEnabled;
+stStatusInternal.bPuckDetected := bPuckDetected;
+stStatusInternal.bPuckLocked := bPuckLocked;
+stStatusInternal.bPuckReleaseComplete := (ePuckLockerState = E_PuckLockerState.WaitingForPuck) AND NOT bPuckDetected;
+stStatusInternal.bGearboxAssemblyPartPresent := bGearboxAssemblyPartPresent;
+stStatusInternal.bRejectChutePartPresent := bRejectChutePartPresent;
+stStatusInternal.bResultValid := stOperatorNest.stResult.bValid;
+stStatusInternal.bResultPassed := stOperatorNest.stResult.bPassed;
+stStatusInternal.sMessage := sMessage;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetInstruction" Id="{2034d533-b044-4c41-a727-b56a5384cce6}">
+      <Declaration><![CDATA[METHOD PUBLIC GetInstruction : E_OperatorInstruction
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetInstruction := eInstruction;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetMessage" Id="{f4a3f09e-742b-4482-b624-2cff7a47a468}">
+      <Declaration><![CDATA[METHOD PUBLIC GetMessage : STRING(255)
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetMessage := sMessage;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetState" Id="{06e24a3c-75a3-4ce3-adc8-f813c2b175e6}">
+      <Declaration><![CDATA[METHOD PUBLIC GetState : E_OperatorExchangeState
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetState := eState;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetStatus" Id="{ec2efa24-24b7-4fad-b980-a91c4f46131d}">
+      <Declaration><![CDATA[METHOD PUBLIC GetStatus : ST_OperatorStationStatus
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetStatus := stStatusInternal;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IndexPermissive" Id="{aa2cf093-7c9d-46e0-bfb7-4810ac3575fe}">
+      <Declaration><![CDATA[METHOD PUBLIC IndexPermissive : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IndexPermissive := bExchangeComplete AND eState = E_OperatorExchangeState.ExchangeComplete;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsComplete" Id="{55505d0e-8d4e-411a-a4e9-96c98a1d4c97}">
+      <Declaration><![CDATA[METHOD PUBLIC IsComplete : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsComplete := bExchangeComplete;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_ProcessCycle" Id="{622f2bef-5510-4430-be8a-312a17e95422}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ProcessCycle
+VAR
+    eState            : E_CycleState := E_CycleState.ResetCycle;
+    stRequestsInternal: ST_ProcessCycleRequests;
+    stStatusInternal  : ST_ProcessCycleStatus;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Cyclic" Id="{e84fc6ef-4070-40dd-8010-e10d3773e159}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
+VAR_INPUT
+    bEnable      : BOOL;
+    bStopRequest : BOOL;
+    bResetRequest: BOOL;
+    stInputs     : ST_ProcessCycleInputs;
+END_VAR
+VAR_OUTPUT
+    stRequests   : ST_ProcessCycleRequests;
+    stStatus     : ST_ProcessCycleStatus;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// The Process Cycle coordinates objects; it does not operate physical outputs directly.
+stRequestsInternal.bStartProcessStation := FALSE;
+stRequestsInternal.bStopProcessStation := FALSE;
+stRequestsInternal.bCaptureProcessResult := FALSE;
+stRequestsInternal.bStoreProcessResult := FALSE;
+stRequestsInternal.bPrepareOperatorExchange := FALSE;
+stRequestsInternal.bConfirmOperatorExchange := FALSE;
+stRequestsInternal.bRequestIndex := FALSE;
+stRequestsInternal.bRequestIndexRecovery := FALSE;
+stRequestsInternal.bUpdateNestPositions := FALSE;
+stStatusInternal.bCompletePulse := FALSE;
+
+IF bResetRequest THEN
+    eState := E_CycleState.ResetCycle;
+ELSIF bStopRequest AND (eState <> E_CycleState.ResetCycle) AND (eState <> E_CycleState.Idle) THEN
+    eState := E_CycleState.ControlledStop;
+ELSIF NOT bEnable THEN
+    eState := E_CycleState.ResetCycle;
+END_IF
+
+CASE eState OF
+    E_CycleState.ResetCycle:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.None;
+        IF bEnable AND stInputs.bSafetyOk THEN
+            eState := E_CycleState.Idle;
+        END_IF
+
+    E_CycleState.Idle:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.WaitingCycleConditions;
+        IF bEnable AND stInputs.bSafetyOk AND stInputs.bIndexReady THEN
+            eState := E_CycleState.EvaluateIndexPosition;
+        END_IF
+
+
+    E_CycleState.EvaluateIndexPosition:
+        IF stInputs.bIndexPositionValid THEN
+            eState := E_CycleState.EvaluateProcessNest;
+        ELSE
+            eState := E_CycleState.WaitIndexPositionRecovery;
+        END_IF
+
+    E_CycleState.WaitIndexPositionRecovery:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.WaitingTwoHandForIndexRecovery;
+        IF stInputs.bIndexFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bTwoHandsSafe
+           AND stInputs.bIndexMoveAllowed
+           AND stInputs.bIndexReady
+        THEN
+            eState := E_CycleState.RequestIndexPositionRecovery;
+        END_IF
+
+    E_CycleState.RequestIndexPositionRecovery:
+        stRequestsInternal.bRequestIndexRecovery := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.RecoveringIndexPosition;
+        IF stInputs.bIndexRecoveryRequestAccepted THEN
+            eState := E_CycleState.WaitIndexPositionRecovered;
+        END_IF
+
+    E_CycleState.WaitIndexPositionRecovered:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.RecoveringIndexPosition;
+        IF stInputs.bIndexFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bIndexDone AND stInputs.bIndexPositionValid THEN
+            eState := E_CycleState.EvaluateProcessNest;
+        END_IF
+
+    E_CycleState.EvaluateProcessNest:
+        IF NOT stInputs.bProcessNestEnabled
+           OR NOT stInputs.bReservoirPartPresent
+           OR stInputs.bProcessResultAlreadyValid
+        THEN
+            eState := E_CycleState.SkipProcessNest;
+        ELSE
+            eState := E_CycleState.PrepareProcessStation;
+        END_IF
+
+    E_CycleState.SkipProcessNest:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.SkippingEmptyOrProcessedNest;
+        eState := E_CycleState.PrepareOperatorExchange;
+
+    E_CycleState.PrepareProcessStation:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.PreparingProcessStation;
+        IF stInputs.bProcessStationReady THEN
+            eState := E_CycleState.StartProcessStation;
+        ELSE
+            eState := E_CycleState.WaitProcessStationReady;
+        END_IF
+
+    E_CycleState.WaitProcessStationReady:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.ExtendingTransferNestSupportCylinder;
+        IF stInputs.bProcessStationFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bProcessStationReady THEN
+            eState := E_CycleState.StartProcessStation;
+        END_IF
+
+    E_CycleState.StartProcessStation:
+        stRequestsInternal.bStartProcessStation := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.StartingProcessEquipment;
+        eState := E_CycleState.WaitProcessStationRunning;
+
+    E_CycleState.WaitProcessStationRunning:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.StartingProcessEquipment;
+        IF stInputs.bProcessStationFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bProcessStationBusy OR stInputs.bProcessStationComplete THEN
+            eState := E_CycleState.WaitProcessStationComplete;
+        END_IF
+
+    E_CycleState.WaitProcessStationComplete:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.SiliconeApplicationInProgress;
+        IF stInputs.bProcessStationFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bProcessStationComplete THEN
+            eState := E_CycleState.CaptureProcessResult;
+        END_IF
+
+    E_CycleState.CaptureProcessResult:
+        stRequestsInternal.bCaptureProcessResult := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.CapturingProcessResult;
+        eState := E_CycleState.StoreProcessResult;
+
+    E_CycleState.StoreProcessResult:
+        stRequestsInternal.bStoreProcessResult := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.StoringProcessResult;
+        IF stInputs.bResultStored THEN
+            eState := E_CycleState.PrepareOperatorExchange;
+        END_IF
+
+    E_CycleState.PrepareOperatorExchange:
+        stRequestsInternal.bPrepareOperatorExchange := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.WaitingOperatorExchange;
+        eState := E_CycleState.WaitOperatorExchange;
+
+    E_CycleState.WaitOperatorExchange:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.WaitingOperatorExchange;
+        IF stInputs.bOperatorExchangeComplete THEN
+            eState := E_CycleState.ConfirmOperatorExchange;
+        END_IF
+
+    E_CycleState.ConfirmOperatorExchange:
+        stRequestsInternal.bConfirmOperatorExchange := TRUE;
+        eState := E_CycleState.ValidateIndexPermissives;
+
+    E_CycleState.ValidateIndexPermissives:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.WaitingTwoHandForIndex;
+        IF stInputs.bIndexFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bIndexMoveAllowed AND stInputs.bIndexReady AND stInputs.bTwoHandsSafe THEN
+            eState := E_CycleState.RequestIndex;
+        END_IF
+
+    E_CycleState.RequestIndex:
+        stRequestsInternal.bRequestIndex := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.IndexingTable;
+        IF stInputs.bIndexRequestAccepted THEN
+            eState := E_CycleState.WaitIndexStart;
+        END_IF
+
+    E_CycleState.WaitIndexStart:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.IndexingTable;
+        IF stInputs.bIndexFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bIndexBusy OR stInputs.bIndexDone THEN
+            eState := E_CycleState.WaitIndexComplete;
+        END_IF
+
+    E_CycleState.WaitIndexComplete:
+        stStatusInternal.eMessage := E_ProcessCycleMessage.IndexingTable;
+        IF stInputs.bIndexFaulted THEN
+            eState := E_CycleState.Fault;
+        ELSIF stInputs.bIndexDone THEN
+            eState := E_CycleState.UpdateNestPositions;
+        END_IF
+
+    E_CycleState.UpdateNestPositions:
+        stRequestsInternal.bUpdateNestPositions := TRUE;
+        eState := E_CycleState.Complete;
+
+    E_CycleState.Complete:
+        stStatusInternal.bCompletePulse := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.None;
+        eState := E_CycleState.Idle;
+
+    E_CycleState.ControlledStop:
+        stRequestsInternal.bStopProcessStation := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.ControlledStopping;
+        IF NOT stInputs.bProcessStationBusy AND NOT stInputs.bIndexBusy THEN
+            eState := E_CycleState.ResetCycle;
+        END_IF
+
+    E_CycleState.Fault:
+        stRequestsInternal.bStopProcessStation := TRUE;
+        stStatusInternal.eMessage := E_ProcessCycleMessage.ProcessCycleFault;
+END_CASE
+
+stStatusInternal.eState := eState;
+stStatusInternal.bActive := bEnable AND (eState <> E_CycleState.ResetCycle) AND (eState <> E_CycleState.Idle);
+stStatusInternal.bIdle := eState = E_CycleState.Idle;
+stStatusInternal.bFaulted := eState = E_CycleState.Fault;
+stStatusInternal.bWaitingForPart := (eState = E_CycleState.EvaluateProcessNest) AND NOT stInputs.bReservoirPartPresent;
+stStatusInternal.bWaitingForOperator := (eState = E_CycleState.PrepareOperatorExchange) OR (eState = E_CycleState.WaitOperatorExchange);
+stStatusInternal.bWaitingForIndex := (eState = E_CycleState.WaitIndexPositionRecovery) OR (eState = E_CycleState.RequestIndexPositionRecovery) OR (eState = E_CycleState.WaitIndexPositionRecovered) OR (eState = E_CycleState.ValidateIndexPermissives) OR (eState = E_CycleState.RequestIndex) OR (eState = E_CycleState.WaitIndexStart) OR (eState = E_CycleState.WaitIndexComplete);
+
+CASE stStatusInternal.eMessage OF
+    E_ProcessCycleMessage.WaitingCycleConditions: stStatusInternal.sMessage := 'Waiting for automatic cycle conditions';
+    E_ProcessCycleMessage.IndexPositionUnknown: stStatusInternal.sMessage := 'Index table position unknown';
+    E_ProcessCycleMessage.WaitingTwoHandForIndexRecovery: stStatusInternal.sMessage := 'Index table is between positions - press and hold both two-hand buttons to move to the next position';
+    E_ProcessCycleMessage.RecoveringIndexPosition: stStatusInternal.sMessage := 'Recovering index position - keep both hands pressed until the table is locked';
+    E_ProcessCycleMessage.WaitingPartAtProcess: stStatusInternal.sMessage := 'Waiting for part at process station';
+    E_ProcessCycleMessage.SkippingEmptyOrProcessedNest: stStatusInternal.sMessage := 'Process nest empty, disabled or already processed';
+    E_ProcessCycleMessage.PreparingProcessStation: stStatusInternal.sMessage := 'Preparing silicone application station';
+    E_ProcessCycleMessage.ExtendingTransferNestSupportCylinder: stStatusInternal.sMessage := 'Advancing transfer nest support cylinder';
+    E_ProcessCycleMessage.StartingProcessEquipment: stStatusInternal.sMessage := 'Starting silicone application equipment';
+    E_ProcessCycleMessage.SiliconeApplicationInProgress: stStatusInternal.sMessage := 'Silicone application in progress';
+    E_ProcessCycleMessage.CapturingProcessResult: stStatusInternal.sMessage := 'Capturing process result';
+    E_ProcessCycleMessage.RetractingTransferNestSupportCylinder: stStatusInternal.sMessage := 'Retracting transfer nest support cylinder';
+    E_ProcessCycleMessage.StoringProcessResult: stStatusInternal.sMessage := 'Storing result in process nest';
+    E_ProcessCycleMessage.WaitingOperatorExchange: stStatusInternal.sMessage := 'Waiting for operator load and unload sequence';
+    E_ProcessCycleMessage.WaitingTwoHandForIndex: stStatusInternal.sMessage := 'Press and hold both two-hand buttons to index table';
+    E_ProcessCycleMessage.IndexingTable: stStatusInternal.sMessage := 'Index table moving';
+    E_ProcessCycleMessage.ControlledStopping: stStatusInternal.sMessage := 'Stopping automatic cycle safely';
+    E_ProcessCycleMessage.ProcessCycleFault: stStatusInternal.sMessage := 'Automatic process cycle fault';
+ELSE
+    stStatusInternal.sMessage := '';
+END_CASE
+
+stRequests := stRequestsInternal;
+stStatus := stStatusInternal;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialise" Id="{927d8406-5eba-41e0-aa89-1016258d8a70}">
+      <Declaration><![CDATA[METHOD PUBLIC Initialise]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eState := E_CycleState.ResetCycle;
+stRequestsInternal.bStartProcessStation := FALSE;
+stRequestsInternal.bStopProcessStation := FALSE;
+stRequestsInternal.bCaptureProcessResult := FALSE;
+stRequestsInternal.bStoreProcessResult := FALSE;
+stRequestsInternal.bPrepareOperatorExchange := FALSE;
+stRequestsInternal.bConfirmOperatorExchange := FALSE;
+stRequestsInternal.bRequestIndex := FALSE;
+stRequestsInternal.bRequestIndexRecovery := FALSE;
+stRequestsInternal.bUpdateNestPositions := FALSE;
+stStatusInternal.bCompletePulse := FALSE;
+stStatusInternal.bFaulted := FALSE;
+stStatusInternal.eMessage := E_ProcessCycleMessage.None;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

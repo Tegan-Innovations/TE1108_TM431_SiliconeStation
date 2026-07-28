@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_ProcessStationFault" Id="{d2248432-6c4b-49de-a850-19bd9a7de95b}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_ProcessStationFault :
+(
+    None := 0,
+    CylinderExtendTimeout := 10,
+    CylinderRetractTimeout := 20,
+    CylinderSensorMismatch := 30,
+    CommandConflict := 40,
+    IndexNotLocked := 50,
+    SafetyLostDuringMovement := 60,
+    EquipmentFault := 70,
+    ProcessTimeout := 80
+);
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

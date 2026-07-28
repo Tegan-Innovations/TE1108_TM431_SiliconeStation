@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_ManualModeStatus" Id="{69e8599d-00b6-491b-94f6-86fee5a77320}">
+    <Declaration>TYPE ST_ManualModeStatus :
+STRUCT
+    eState                     : E_ManualModeState;
+    eMessage                   : E_ManualModeMessage;
+    bActive                    : BOOL;
+    bSafeToExit                : BOOL;
+    bIndexPermissive           : BOOL;
+    bCylinderExtendPermissive  : BOOL;
+    bCylinderRetractPermissive : BOOL;
+    bDoorUnlockPermissive      : BOOL;
+    bEquipmentStartPermissive  : BOOL;
+    bCommandRejected           : BOOL;
+    sMessage                   : STRING(255);
+END_STRUCT
+END_TYPE</Declaration>
+  </DUT>
+</TcPlcObject>

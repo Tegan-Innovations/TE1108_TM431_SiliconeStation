@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <GVL Name="GVL_Config" Id="{f141ae71-1c9f-467e-81e3-4b3a0848fd67}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL PERSISTENT RETAIN
+    // Machine behavior configuration. Values should be editable only by authorised users.
+    stMachine : ST_MachineConfig := (
+        tInitialiseTimeout   := T#30S,
+        tStoppingTimeout     := T#15S,
+        tIndexTimeout        := T#10S,
+        tCylinderTimeout     := T#5S,
+        tProcessTimeout      := T#60S,
+        tOperatorIdleTimeout := T#30S,
+        eOperatorPosition    := E_TablePosition.Position4,
+        eProcessPosition     := E_TablePosition.Position2,
+        eRejectPosition      := E_TablePosition.Position4,
+        bAllowEmptyNestIndex := TRUE,
+        bRequireRejectConfirm:= TRUE
+    );
+
+    usiDefaultIvekRecipe     : USINT := 1;
+    aNestEnabled             : ARRAY[1..4] OF BOOL := [TRUE, TRUE, TRUE, TRUE];
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
