@@ -1,11 +1,16 @@
-# Visual Studio
+### Visual Studio ###
+
 .vs/
+**/.vs/
+
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-# Build outputs
+
+### Build outputs ###
+
 bin/
 obj/
 Debug/
@@ -13,26 +18,78 @@ Release/
 x64/
 x86/
 
-# TwinCAT temporary and generated files
-_CompileInfo/
-*.compileinfo
-*.tclrs
+
+### TwinCAT 3 PLC ###
+
+*.plcproj.bak
+*.plcproj.orig
+
+*.tsproj.bak
+*.tsproj.b?k
+*.tsproj.orig
+
+*.tspproj.bak
+
+*.xti.bak
+*.xti.bk?
+*.xti.orig
+
+*.xtv
+*.xtv.bak
+*.xtv.bk?
+*.xt?.bk?
+*.xt?.orig
+
 *.tpy
-*.tmcRefac
+*.tclrs
 *.library
 *.compiled-library
+*.compileinfo
+*.asm
+*.core
+
+LineIDs.dbg
+LineIDs.dbg.bak
+
+
+### TwinCAT temporary files ###
+
+*.tmcRefac
 *.bak
 *.~u
+*.project.~u
 *.~*
 *.tmp
 *.temp
 
-# TwinCAT boot/generated files
-_Plcs/
 
-# Logs
+### TwinCAT generated folders ###
+
+**/_Boot/
+**/_CompileInfo/
+**/_Libraries/
+**/_ModuleInstall/
+**/_Deployment/
+**/_Repository/
+**/_Plcs/
+
+
+### TwinCAT Multiuser ###
+
+**/.TcGit/
+
+
+### TwinCAT Measurement ###
+
+*.vsm
+
+
+### Logs ###
+
 *.log
 
-# Windows
+
+### Windows ###
+
 Thumbs.db
 Desktop.ini
