@@ -244,9 +244,7 @@ E_MachineState.Stopped:
     tonStopping(IN := FALSE);
     ipEquipment.RequestStop();
 
-    IF stCommand.bManualRequest AND stInputs.stSafety.bSafetyOk THEN
-        eMachineState := E_MachineState.Manual;
-    ELSIF stCommand.bReset AND stInputs.stSafety.bSafetyOk THEN
+    IF stCommand.bReset AND stInputs.stSafety.bSafetyOk THEN
         eMachineState := E_MachineState.Initialising;
     END_IF
 
@@ -297,6 +295,15 @@ E_MachineState.ReadyToStart:
         eMachineState := E_MachineState.Fault;
     ELSIF stCommand.bStop THEN
         eMachineState := E_MachineState.Stopping;
+	ELSIF stCommand.bManualRequest
+        AND stInputs.stSafety.bSafetyOk
+        AND NOT stInputs.bEventFault
+        AND NOT stIndexStatus.bBusy
+        AND NOT fbProcessStation.IsFaulted()
+        AND NOT ipEquipment.IsFaulted()
+    THEN
+        fbManualMode.Initialise();
+        eMachineState := E_MachineState.Manual;
     ELSIF stCommand.bStart
        AND fbIndex.IsReady()
        AND ipEquipment.IsReady()

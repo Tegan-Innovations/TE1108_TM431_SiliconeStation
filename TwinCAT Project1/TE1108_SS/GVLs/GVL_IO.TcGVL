@@ -5,8 +5,8 @@
 VAR_GLOBAL
     // Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
     // Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.
-    stInputs     : ST_PhysicalInputs;
-    stOutputs    : ST_PhysicalOutputs;   
+    stInputs        AT %I*   : ST_PhysicalInputs;
+    stOutputs       AT %Q*   : ST_PhysicalOutputs;   
 
 END_VAR]]></Declaration>
   </GVL>
