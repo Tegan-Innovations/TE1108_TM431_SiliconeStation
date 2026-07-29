@@ -1021,12 +1021,12 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-002000000002}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..1] OF BIT</Name>
-			<BitSize>2</BitSize>
+			<Name GUID="{18071995-0000-0000-0000-002000000003}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..2] OF BIT</Name>
+			<BitSize>3</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
 			<ArrayInfo>
 				<LBound>0</LBound>
-				<Elements>2</Elements>
+				<Elements>3</Elements>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
@@ -1874,23 +1874,20 @@
 								<Entry Name="TwinSafeGroup1.Safety_OK_8" Index="#x7000" Sub="#x01">
 									<Type>BIT</Type>
 								</Entry>
-								<Entry Name="TwinSafeGroup1.bResetSafety_10" Index="#x7000" Sub="#x02">
+								<Entry Name="TwinSafeGroup1.System_Safe_OK_11" Index="#x7000" Sub="#x02">
 									<Type>BIT</Type>
 								</Entry>
-								<Entry Name="TwinSafeGroup1.System_Safe_OK_11" Index="#x7000" Sub="#x03">
+								<Entry Name="TwinSafeGroup1.TouchButton_OK_29" Index="#x7000" Sub="#x03">
 									<Type>BIT</Type>
 								</Entry>
-								<Entry Name="TwinSafeGroup1.TouchButton_OK_29" Index="#x7000" Sub="#x04">
+								<Entry Name="TwinSafeGroup1.MainDoorLocked_33" Index="#x7000" Sub="#x04">
 									<Type>BIT</Type>
 								</Entry>
-								<Entry Name="TwinSafeGroup1.MainDoorLocked_33" Index="#x7000" Sub="#x05">
-									<Type>BIT</Type>
-								</Entry>
-								<Entry Name="TwinSafeGroup1.AirSupply_OK_37" Index="#x7000" Sub="#x06">
+								<Entry Name="TwinSafeGroup1.AirSupply_OK_37" Index="#x7000" Sub="#x05">
 									<Type>BIT</Type>
 								</Entry>
 								<Entry>
-									<Type GUID="{18071995-0000-0000-0000-002000000002}">ARRAY [0..1] OF BIT</Type>
+									<Type GUID="{18071995-0000-0000-0000-002000000003}">ARRAY [0..2] OF BIT</Type>
 								</Entry>
 							</Pdo>
 							<Pdo Name="StandardOutputs" Index="#x17f0" InOut="1" Flags="#x2011" SyncMan="2">
@@ -3379,6 +3376,27 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TIPC^TE1108_SS^TE1108_SS Instance">
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 10 (EL2809-0015)">
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1" VarB="Channel 1^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch2" VarB="Channel 2^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch3" VarB="Channel 3^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch4" VarB="Channel 4^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch5" VarB="Channel 5^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch6" VarB="Channel 6^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch7" VarB="Channel 7^Output"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 11 (EL3058)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch1" VarB="AI Standard Channel 1^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch2" VarB="AI Standard Channel 2^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch3" VarB="AI Standard Channel 3^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch4" VarB="AI Standard Channel 4^Value"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 12 (EL3064)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch1" VarB="AI Standard Channel 1^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch2" VarB="AI Standard Channel 2^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch3" VarB="AI Standard Channel 3^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch4" VarB="AI Standard Channel 4^Value"/>
+			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 3 (EL6910)">
 				<Link VarA="PlcTask Inputs^GVL_IO.stInputs^bSafetyLogicOk" VarB="StandardInputs^TwinSafeGroup1.System_Safe_OK_11"/>
 				<Link VarA="PlcTask Inputs^GVL_IO.stInputs^bSafetyOk" VarB="StandardInputs^TwinSafeGroup1.Safety_OK_8"/>
@@ -3387,6 +3405,44 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bMainDoorLocked" VarB="StandardInputs^TwinSafeGroup1.MainDoorLocked_33"/>
 				<Link VarA="PlcTask Outputs^GVL_IO.stOutputs^bSafetyRunRequest" VarB="StandardOutputs^TwinSafeGroup1.SafetyRun_2"/>
 				<Link VarA="PlcTask Outputs^GVL_Safety.bAirSupplyEnableRequest" VarB="StandardOutputs^TwinSafeGroup1.AirSupplyEnabled_25"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 7 (EL1809)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch1" VarB="Channel 1^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch10" VarB="Channel 10^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch11" VarB="Channel 11^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch12" VarB="Channel 12^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch13" VarB="Channel 13^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch14" VarB="Channel 14^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch15" VarB="Channel 15^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch16" VarB="Channel 16^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch2" VarB="Channel 2^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch3" VarB="Channel 3^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch4" VarB="Channel 4^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch5" VarB="Channel 5^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch6" VarB="Channel 6^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch7" VarB="Channel 7^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch8" VarB="Channel 8^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch9" VarB="Channel 9^Input"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 8 (EL1809)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1" VarB="Channel 1^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch2" VarB="Channel 2^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3" VarB="Channel 3^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4" VarB="Channel 4^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch5" VarB="Channel 5^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch6" VarB="Channel 6^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch7" VarB="Channel 7^Input"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 9 (EL2809-0015)">
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1" VarB="Channel 1^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch2" VarB="Channel 2^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch3" VarB="Channel 3^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch4" VarB="Channel 4^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch5" VarB="Channel 5^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch6" VarB="Channel 6^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch7" VarB="Channel 7^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch8" VarB="Channel 8^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch9" VarB="Channel 9^Output"/>
 			</OwnerB>
 		</OwnerA>
 	</Mappings>
