@@ -58,6 +58,7 @@ VAR
 	fbEventFaultTrigger 					: R_TRIG;
 	tpSafetyRunDrop     					: TP;
 	bSafetyDropRequest 						: BOOL;
+	bAirAndDoorEnable 						: BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -71,12 +72,15 @@ VAR_INPUT
     stConfig       : ST_MachineConfig;
     stIvekInput    : ST_IvekCyclicInput;
     bIvekCommsOk   : BOOL;
+	
 END_VAR
 VAR_OUTPUT
     stOutputs      : ST_MachineOutputs;
     stStatus       : ST_MachineStatus;
     stIvekOutput   : ST_IvekCyclicOutput;
 END_VAR
+
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[// =========================================================
@@ -108,6 +112,14 @@ bSafetyDropRequest := FALSE;
 bMachineStateEntry := eMachineState <> ePreviousMachineState;
 bProcessStartPulse := FALSE;
 bProcessStartPulse := FALSE;
+
+// Shared request: air enabled and automatic door locking use the same states.
+bAirAndDoorEnable :=
+    (eMachineState = E_MachineState.Initialising)
+    OR (eMachineState = E_MachineState.ReadyToStart)
+    OR (eMachineState = E_MachineState.AutoCycle)
+    OR (eMachineState = E_MachineState.Manual);
+
 stIndexStatus := fbIndex.GetStatus();
 bIndexStable := stIndexStatus.bProcessPositionReady AND stInputs.bIndexReady AND stInputs.bIndexLocked;
 bIndexDone := fbIndex.IsDone();
@@ -302,7 +314,7 @@ CASE eMachineState OF
 		eStoppingWaitReason := E_StoppingWaitReason.None;
 		
 	
-//     IF stIndexStatus.bBusy THEN 
+ //    IF stIndexStatus.bBusy THEN 
 // 		eStoppingWaitReason := E_StoppingWaitReason.IndexStillMoving;
 // 		
 //     ELSIF NOT stInputs.bTransferNestSupportCylinderRetracted THEN 
@@ -311,10 +323,10 @@ CASE eMachineState OF
 //     ELSIF ipEquipment.IsBusy() THEN 
 // 		eStoppingWaitReason := E_StoppingWaitReason.ProcessEquipmentStopping;
 // 		
-//     ELSIF (stMainDoorLockStatus.eState = E_MainDoorLockState.Locking) 
-// 		OR (stMainDoorLockStatus.eState = E_MainDoorLockState.Unlocking) THEN 
-// 			eStoppingWaitReason := E_StoppingWaitReason.MainDoorTransition;
-//     END_IF
+      IF (stMainDoorLockStatus.eState = E_MainDoorLockState.Locking) 
+ 		OR (stMainDoorLockStatus.eState = E_MainDoorLockState.Unlocking) THEN 
+			eStoppingWaitReason := E_StoppingWaitReason.MainDoorTransition;
+      END_IF
 // 	
     bStoppingComplete := eStoppingWaitReason = E_StoppingWaitReason.None;
 	
@@ -344,7 +356,7 @@ CASE eMachineState OF
 // 			fbProcessCycle.Initialise();
 // 			fbManualMode.Initialise();
 // 			fbProcessStation.Initialise();
-// 			fbMainDoorLock.Initialise();
+ 			fbMainDoorLock.Initialise();
 // 			bResultStoredFeedback := FALSE;
 			bIndexRequestAcceptedFeedback := FALSE;
  			bIndexRecoveryRequestAcceptedFeedback := FALSE;
@@ -353,7 +365,7 @@ CASE eMachineState OF
 // 		ipEquipment.RequestReset();
  		stIndexStatus := fbIndex.GetStatus();
 // 		stProcessStationStatus := fbProcessStation.GetStatus();
-// 		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
+ 		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
  		eInitialisingWaitReason := E_InitialisingWaitReason.None;
 		
 		
@@ -364,11 +376,18 @@ CASE eMachineState OF
 // 		ELSIF 
  		ELSIF NOT stInputs.bTransferNestSupportCylinderRetracted THEN 
 			eInitialisingWaitReason := E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted;
+			
 // 		ELSIF fbProcessStation.IsFaulted() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessStationFaulted;
-// 		ELSIF fbMainDoorLock.IsFaulted() THEN eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorFaulted;
+ 		ELSIF fbMainDoorLock.IsFaulted() THEN 
+			eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorFaulted;
+		
+		ELSIF NOT fbMainDoorLock.IsReadyForAutomatic() THEN
+    		eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorNotReady;
+			
 // 		ELSIF stPuckStatus.bUnexpectedRemovalFault OR stPuckStatus.bPuckSensorMismatch THEN eInitialisingWaitReason := E_InitialisingWaitReason.PuckLockerFaulted;
 // 		ELSIF NOT ipEquipment.IsReady() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessEquipmentNotReady;
- 		END_IF
+ 		
+		END_IF
 
 
  		bInitialisationComplete := eInitialisingWaitReason = E_InitialisingWaitReason.None;
@@ -402,7 +421,7 @@ CASE eMachineState OF
 		ELSIF stCommand.bStart
 		  // AND fbIndex.IsReady()
 		  // AND ipEquipment.IsReady()
-		  // AND fbMainDoorLock.IsReadyForAutomatic()
+		 AND fbMainDoorLock.IsReadyForAutomatic()
 		THEN
 			eCycleState := E_CycleState.Idle;
 			eMachineState := E_MachineState.AutoCycle;
@@ -579,20 +598,32 @@ stProcessStationStatus := fbProcessStation.GetStatus();
 // =========================================================
 
 fbMainDoorLock.Cyclic(
-    bEnableAutomatic := eMachineState = E_MachineState.AutoCycle OR eMachineState = E_MachineState.ReadyToStart,
-    bManualEnable := eMachineState = E_MachineState.Manual,
-    bManualLockRequest := stManualModeRequests.bMainDoorLockRequest,
-    bManualUnlockRequest := NOT stManualModeRequests.bMainDoorLockRequest,
-    bStopRequest := eMachineState = E_MachineState.Stopping OR eMachineState = E_MachineState.Stopped,
+    bEnableAutomatic := bAirAndDoorEnable,
+
+    bManualEnable := FALSE,
+    bManualLockRequest := FALSE,
+    bManualUnlockRequest := FALSE,
+
+    bStopRequest :=
+        (eMachineState = E_MachineState.Fault)
+        OR (eMachineState = E_MachineState.Stopping)
+        OR (eMachineState = E_MachineState.Stopped),
+
     bResetRequest := stCommand.bReset,
+
     bDoorClosed := stInputs.bMainDoorClosed,
     bDoorLocked := stInputs.bMainDoorLocked,
     bDoorSafe := stInputs.stSafety.bMainDoorSafe,
+
     bIndexBusy := stIndexStatus.bBusy,
     bProcessSafePosition := fbProcessStation.IsSafePosition(),
+
     tLockTimeout := stConfig.tDoorLockTimeout,
     tUnlockTimeout := stConfig.tDoorUnlockTimeout,
-    bLockOutput => stOutputsInternal.bMainDoorLockRequest);
+
+    bLockOutput => stOutputsInternal.bMainDoorLockRequest
+);
+
 stMainDoorLockStatus := fbMainDoorLock.GetStatus();
 
 // =========================================================
@@ -664,13 +695,7 @@ stOutputsInternal.bSafetyRunRequest := NOT tpSafetyRunDrop.Q;
 stOutputsInternal.bSafetyResetRequest := stCommand.bReset AND NOT stInputs.stSafety.bSafetyOk;
 
 stOutputsInternal.bSafetyErrorAcknowledgementRequest :=stOutputsInternal.bSafetyResetRequest;
-stOutputsInternal.bAirSupplyEnable :=
-    (eMachineState = E_MachineState.Initialising)
-    OR (eMachineState = E_MachineState.ReadyToStart)
-    OR (eMachineState = E_MachineState.AutoCycle)
-    OR (eMachineState = E_MachineState.Manual)
-	OR (eMachineState = E_MachineState.Stopped)
-    OR (eMachineState = E_MachineState.Stopping);
+stOutputsInternal.bAirSupplyEnable := bAirAndDoorEnable;
 	
 	
 stOutputsInternal.bLedStart := eMachineState = E_MachineState.ReadyToStart;
@@ -747,6 +772,7 @@ ELSIF eMachineState = E_MachineState.Manual THEN
     stStatus.sMachineMessage := stManualModeStatus.sMessage;
 ELSIF eMachineState = E_MachineState.Initialising THEN
     CASE eInitialisingWaitReason OF
+		E_InitialisingWaitReason.MainDoorNotReady:stStatus.sMachineMessage :='System initialising - waiting for main door to lock';
         E_InitialisingWaitReason.SafetyNotReady: stStatus.sMachineMessage := 'System initialising - waiting for Safety OK';
         E_InitialisingWaitReason.FsoeNotReady: stStatus.sMachineMessage := 'System initialising - waiting for FSoE';
         E_InitialisingWaitReason.SafetyLogicNotReady: stStatus.sMachineMessage := 'System initialising - waiting for TwinSAFE logic';
