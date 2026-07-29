@@ -33,7 +33,7 @@ END_VAR
 // Term 7 - EL1809 (EPLAN page 13)
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.bStartButton 					:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch1;
-GVL_IO.stInputs.bStopButton 					:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch2;
+GVL_IO.stInputs.bStopButton 					:= NOT GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch2;
 GVL_IO.stInputs.bUp24VPowerSupplyOk 			:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch3;
 GVL_IO.stInputs.bUs24VPowerSupplyOk 			:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch4;
 GVL_IO.stInputs.bIvekHeaterControllerAlarm 		:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch5;
@@ -94,13 +94,13 @@ GVL_IO.stInputs.uiVacuumPressureRaw 						:= GVL_EtherCAT.stTerm12_EL3064.iEL306
 GVL_IO.stInputs.bResetButton 								:= GVL_Safety.bResetButtonPressed;
 GVL_IO.stInputs.bTwoHandsSafe 								:= GVL_Safety.bTwoHandSafe;
 GVL_IO.stInputs.bSafetyOk 									:= GVL_Safety.bSafetyOk;
-GVL_IO.stInputs.bEmergencyStopOk 							:= GVL_Safety.bEmergencyStopOk;
-GVL_IO.stInputs.bMainDoorSafe 								:= GVL_Safety.bMainDoorSafe;
-GVL_IO.stInputs.bLeftFlapSafe 								:= GVL_Safety.bLeftFlapSafe;
-GVL_IO.stInputs.bRightFlapSafe 								:= GVL_Safety.bRightFlapSafe;
-GVL_IO.stInputs.bFlapsSafe 									:= GVL_Safety.bFlapsSafe;
-GVL_IO.stInputs.bFsoeOk 									:= GVL_Safety.bFsoeOk;
-GVL_IO.stInputs.bSafetyLogicOk 								:= GVL_Safety.bSafetyLogicOk;
+//GVL_IO.stInputs.bEmergencyStopOk 							:= GVL_Safety.bEmergencyStopOk;
+//GVL_IO.stInputs.bMainDoorSafe 								:= GVL_Safety.bMainDoorSafe;
+//GVL_IO.stInputs.bLeftFlapSafe 								:= GVL_Safety.bLeftFlapSafe;
+//GVL_IO.stInputs.bRightFlapSafe 								:= GVL_Safety.bRightFlapSafe;
+//GVL_IO.stInputs.bFlapsSafe 									:= GVL_Safety.bFlapsSafe;
+//GVL_IO.stInputs.bFsoeOk 									:= GVL_Safety.bFsoeOk;
+//GVL_IO.stInputs.bSafetyLogicOk 								:= GVL_Safety.bSafetyLogicOk;
 GVL_IO.stInputs.bAirSupplyOk 								:= GVL_Safety.bAirSupplySafe;
 GVL_IO.stInputs.bMainDoorClosed 							:= GVL_Safety.bMainDoorClosed;
 GVL_IO.stInputs.bMainDoorLocked 							:= GVL_Safety.bMainDoorLocked;
@@ -129,6 +129,10 @@ GVL_Safety.bSafetyResetRequest 					:= GVL_IO.stOutputs.bSafetyResetRequest;
 GVL_Safety.bAirSupplyEnableRequest 				:= GVL_IO.stOutputs.bAirSupplyEnable;
 GVL_Safety.bMainDoorLockRequest 				:= GVL_IO.stOutputs.bMainDoorLockRequest;
 
+// ---------------------------------------------------------------------------
+// Safety 
+// ---------------------------------------------------------------------------
+GVL_Safety.bSafetyErrorAcknowledgementRequest 	:= GVL_IO.stOutputs.bSafetyErrorAcknowledgementRequest;
 // ---------------------------------------------------------------------------
 // Term 9 - EL2809-0015 (EPLAN page 17)
 // ---------------------------------------------------------------------------

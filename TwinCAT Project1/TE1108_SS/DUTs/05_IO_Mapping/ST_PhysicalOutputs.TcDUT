@@ -1,13 +1,14 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_PhysicalOutputs" Id="{5be9d8d5-b1c5-4f48-835f-66078c4a0779}">
-    <Declaration>TYPE ST_PhysicalOutputs :
+    <Declaration><![CDATA[TYPE ST_PhysicalOutputs :
 STRUCT
-    // PLC -&gt; TwinSAFE requests
+    // PLC -> TwinSAFE requests
     bSafetyRunRequest             : BOOL;
     bSafetyResetRequest           : BOOL;
     bAirSupplyEnable              : BOOL;
     bMainDoorLockRequest          : BOOL;
+	bSafetyErrorAcknowledgementRequest : BOOL;
 
     // Standard outputs
     bIndexRotatePortA             : BOOL;
@@ -33,6 +34,6 @@ STRUCT
     bPuckLockerPinUp              : BOOL;
 END_STRUCT
 END_TYPE
-</Declaration>
+]]></Declaration>
   </DUT>
 </TcPlcObject>

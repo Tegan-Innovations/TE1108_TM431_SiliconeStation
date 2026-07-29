@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_SafetyStatus" Id="{e684c374-1ec9-452e-aadc-0d23f66ef757}">
     <Declaration><![CDATA[TYPE ST_SafetyStatus :
@@ -7,7 +7,7 @@ STRUCT
     bSafetyOk                  : BOOL;
 
     // Individual TwinSAFE diagnostic aliases.
-    bEmergencyStopOk           : BOOL;
+    //bEmergencyStopOk           : BOOL;
     bMainDoorSafe              : BOOL;
     bLeftFlapSafe              : BOOL;
     bRightFlapSafe             : BOOL;

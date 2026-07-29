@@ -11,13 +11,13 @@ STRUCT
     bResetButton                  : BOOL;
     bTwoHandsSafe                 : BOOL;
     bSafetyOk                     : BOOL;
-    bEmergencyStopOk              : BOOL;
-    bMainDoorSafe                 : BOOL;
-    bLeftFlapSafe                 : BOOL;
-    bRightFlapSafe                : BOOL;
-    bFlapsSafe                    : BOOL;
-    bFsoeOk                       : BOOL;
-    bSafetyLogicOk                : BOOL;
+    //bEmergencyStopOk              : BOOL;
+    //bMainDoorSafe                 : BOOL;
+    //bLeftFlapSafe                 : BOOL;
+    //bRightFlapSafe                : BOOL;
+    //bFlapsSafe                    : BOOL;
+    //bFsoeOk                       : BOOL;
+    //bSafetyLogicOk                : BOOL;
     bAirSupplyOk                  : BOOL;
 
     // Power and auxiliary diagnostics

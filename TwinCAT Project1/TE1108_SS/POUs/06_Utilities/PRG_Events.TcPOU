@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <POU Name="PRG_Events" Id="{e737e082-d667-460d-b7e6-01e02be943ba}" SpecialFunc="None">
-    <Declaration>PROGRAM PRG_Events
+    <Declaration><![CDATA[PROGRAM PRG_Events
 VAR
     fbEventsManager : FB_EventsManager;
     tonDoorNotSafe  : TON;
@@ -13,13 +13,13 @@ VAR
     tonIndexPositionInvalid : TON;
     tonIndexSupportMismatch : TON;
     tonTransferSupportMismatch : TON;
-END_VAR</Declaration>
+END_VAR]]></Declaration>
     <Implementation>
-      <ST>// Station 0 - General and safety
-GVL_MASTER.stStationEvents[0].aEvents[0].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[0].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bEmergencyStopOk;
-GVL_MASTER.stStationEvents[0].aEvents[0].bEventText := 'Emergency stop activated';
-GVL_MASTER.stStationEvents[0].aEvents[0].sSolution := 'Release the emergency stop and reset the machine';
+      <ST><![CDATA[// Station 0 - General and safety
+// GVL_MASTER.stStationEvents[0].aEvents[0].bFault := TRUE;
+// GVL_MASTER.stStationEvents[0].aEvents[0].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bEmergencyStopOk;
+// GVL_MASTER.stStationEvents[0].aEvents[0].bEventText := 'Emergency stop activated';
+// GVL_MASTER.stStationEvents[0].aEvents[0].sSolution := 'Release the emergency stop and reset the machine';
 
 GVL_MASTER.stStationEvents[0].aEvents[1].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[1].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bFsoeOk;
@@ -38,12 +38,12 @@ GVL_MASTER.stStationEvents[0].aEvents[3].bEventText := 'Main safety door not saf
 GVL_MASTER.stStationEvents[0].aEvents[3].sSolution := 'Close and lock the main door, then reset the machine';
 
 GVL_MASTER.stStationEvents[0].aEvents[4].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[4].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bLeftFlapSafe AND GVL_MASTER.stStatus.eMachineState &lt;&gt; E_MachineState.PowerUp;
+GVL_MASTER.stStationEvents[0].aEvents[4].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bLeftFlapSafe AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
 GVL_MASTER.stStationEvents[0].aEvents[4].bEventText := 'Left safety flap activated';
 GVL_MASTER.stStationEvents[0].aEvents[4].sSolution := 'Clear the left flap, inspect the safety device and reset the safety circuit';
 
 GVL_MASTER.stStationEvents[0].aEvents[5].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[5].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bRightFlapSafe AND GVL_MASTER.stStatus.eMachineState &lt;&gt; E_MachineState.PowerUp;
+GVL_MASTER.stStationEvents[0].aEvents[5].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bRightFlapSafe AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
 GVL_MASTER.stStationEvents[0].aEvents[5].bEventText := 'Right safety flap activated';
 GVL_MASTER.stStationEvents[0].aEvents[5].sSolution := 'Clear the right flap, inspect the safety device and reset the safety circuit';
 
@@ -63,13 +63,13 @@ GVL_MASTER.stStationEvents[0].aEvents[8].bEventText := 'System stopping timeout'
 GVL_MASTER.stStationEvents[0].aEvents[8].sSolution := 'Check process equipment stop, transfer nest support cylinder retraction and index table status';
 
 // EPLAN power and pneumatic diagnostics (Term 7 / TwinSAFE aliases)
-tonUpSupplyLost(IN := NOT GVL_MASTER.stInputs.bUp24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState &lt;&gt; E_MachineState.PowerUp, PT := T#1S);
+tonUpSupplyLost(IN := NOT GVL_MASTER.stInputs.bUp24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[10].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[10].bEventFlag := tonUpSupplyLost.Q;
 GVL_MASTER.stStationEvents[0].aEvents[10].bEventText := '24 V Up power supply not healthy';
 GVL_MASTER.stStationEvents[0].aEvents[10].sSolution := 'Check PSU 1, DC-OK signal, fuse and Term 7 Channel 3 wiring';
 
-tonUsSupplyLost(IN := NOT GVL_MASTER.stInputs.bUs24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState &lt;&gt; E_MachineState.PowerUp, PT := T#1S);
+tonUsSupplyLost(IN := NOT GVL_MASTER.stInputs.bUs24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[11].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[11].bEventFlag := tonUsSupplyLost.Q;
 GVL_MASTER.stStationEvents[0].aEvents[11].bEventText := '24 V Us power supply not healthy';
@@ -81,7 +81,7 @@ GVL_MASTER.stStationEvents[0].aEvents[12].bEventFlag := tonAirSupplyLost.Q;
 GVL_MASTER.stStationEvents[0].aEvents[12].bEventText := 'Festo MS6 air supply not safe';
 GVL_MASTER.stStationEvents[0].aEvents[12].sSolution := 'Check the MS6 enable/reset circuit, air pressure and TwinSAFE diagnostics';
 
-tonDoorDiagnostic(IN := NOT GVL_MASTER.stInputs.bMainDoorDiagnosticOk AND GVL_MASTER.stStatus.eMachineState &lt;&gt; E_MachineState.PowerUp, PT := T#1S);
+tonDoorDiagnostic(IN := NOT GVL_MASTER.stInputs.bMainDoorDiagnosticOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[13].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[13].bEventFlag := tonDoorDiagnostic.Q;
 GVL_MASTER.stStationEvents[0].aEvents[13].bEventText := 'Front door interlock diagnostic fault';
@@ -248,14 +248,14 @@ fbEventsManager(
     stStationEvents := GVL_MASTER.stStationEvents,
     stEventsAssigment := GVL_MASTER.stEventsAssigment,
     bResetFaults := GVL_MASTER.stCommand.bReset,
-    bMachineFault =&gt; GVL_MASTER.bMachineFault,
-    bCycleStopRequest =&gt; GVL_MASTER.bCycleStopRequest,
-    astActiveEvents =&gt; GVL_MASTER.astActiveEvents,
-    astEventsHistory =&gt; GVL_Persistent.astEventsHistory);
+    bMachineFault => GVL_MASTER.bMachineFault,
+    bCycleStopRequest => GVL_MASTER.bCycleStopRequest,
+    astActiveEvents => GVL_MASTER.astActiveEvents,
+    astEventsHistory => GVL_Persistent.astEventsHistory);
 
 GVL_HMI.astActiveEvents := GVL_MASTER.astActiveEvents;
 GVL_HMI.astEventsHistory := GVL_Persistent.astEventsHistory;
-GVL_HMI.stEventsAssigment := GVL_MASTER.stEventsAssigment;</ST>
+GVL_HMI.stEventsAssigment := GVL_MASTER.stEventsAssigment;]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
