@@ -770,38 +770,68 @@ stStatus.stPermissives := stPermissives;
 stStatus.stLastResult := stLastResult;
 stStatus.stPuckLocker := stPuckStatus;
 // =========================================================
-// LEGACY ALARM STATUS COMPATIBILITY
+// ACTIVE FAULT SUMMARY FOR MAIN HMI GRID
 // =========================================================
 
-// Legacy alarm-summary fields retained for HMI compatibility.
-// These fields reflect the current machine and safety state until the
-// Events Manager becomes the single source of alarm information.
-stStatus.stAlarms.bHasFault := eMachineState = E_MachineState.Fault;
-stStatus.stAlarms.bHasSafetyStopFault := NOT stInputs.stSafety.bSafetyOk;
-stStatus.stAlarms.uiActiveCount := 0;
+// This summary represents only the faults currently responsible for the
+// machine Fault state. The Events system keeps the complete alarm history
+// independently for the dedicated Alarm page.
+IF eMachineState = E_MachineState.Fault THEN
 
-IF NOT stInputs.stSafety.bSafetyOk THEN
-    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
-END_IF
+    stStatus.stAlarms.bHasFault := TRUE;
+    stStatus.stAlarms.bHasSafetyStopFault :=
+        NOT stInputs.stSafety.bSafetyOk;
 
-IF bInitialisationTimeoutFault THEN
-    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
-END_IF
+    stStatus.stAlarms.uiActiveCount := 0;
 
-IF bStoppingTimeoutFault THEN
-    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
-END_IF
+    IF NOT stInputs.stSafety.bSafetyOk THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
 
-IF fbMainDoorLock.IsFaulted() THEN
-    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
-END_IF
+    IF bInitialisationTimeoutFault THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
 
-IF fbIndex.IsFaulted() THEN
-    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
-END_IF
+    IF bStoppingTimeoutFault THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
 
-IF fbProcessStation.IsFaulted() THEN
-    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+    IF fbMainDoorLock.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF fbIndex.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF fbProcessStation.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF ipEquipment.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF stInputs.bEventFault THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+ELSE
+
+    // Clear only the active-fault summary used by the main screen.
+    // Do not acknowledge, clear or delete the Events history here.
+    stStatus.stAlarms.bHasFault := FALSE;
+    stStatus.stAlarms.bHasSafetyStopFault := FALSE;
+    stStatus.stAlarms.uiActiveCount := 0;
+
 END_IF
 
 stStatus.stAlarms.eHighestAlarm := E_AlarmId.None;

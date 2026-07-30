@@ -9,6 +9,7 @@ VAR_INPUT
 	bDataWritedInCSV		: BOOL;
 	nArraySize				: DINT;
 	bMachineMessage			: STRING;
+	eMachineState 			: E_MachineState;
 END_VAR
 VAR_OUTPUT
     bMachineFault            : BOOL;
@@ -54,85 +55,210 @@ astActiveEvents[0].sSolution := '';]]></ST>
     </Implementation>
     <Action Name="ACT_ActiveEvents_DataHistory" Id="{61da313d-b258-4798-832e-c39696bf6052}">
       <Implementation>
-        <ST><![CDATA[// Reset has priority. Active rows are rebuilt only after Reset is released.
-IF bResetFaults THEN
+        <ST><![CDATA[// ============================================================================
+// ACTIVE EVENTS AND EVENT HISTORY
+// ============================================================================
+//
+// astActiveEvents[0]:
+//     Reserved for the current machine message.
+//
+// astActiveEvents[1..50]:
+//     Faults/events currently displayed on the main screen.
+//
+// astEventsHistory:
+//     Complete event history. It is never cleared when the machine leaves Fault.
+//
+// Active fault rows are displayed only while the machine is in Fault.
+// When the machine leaves Fault, only the main-screen active rows are cleared.
+// ============================================================================
+
+
+// -----------------------------------------------------------------------------
+// MACHINE IS NOT IN FAULT
+// -----------------------------------------------------------------------------
+// Clear only the active-event rows shown on the main screen.
+//
+// Row 0 is intentionally preserved because it contains the current machine
+// message.
+//
+// The historical array astEventsHistory is not modified.
+// -----------------------------------------------------------------------------
+IF eMachineState <> E_MachineState.Fault THEN
+
     FOR l := 1 TO 50 DO
+
         astActiveEvents[l].sEventTex := '';
         astActiveEvents[l].sType := '';
         astActiveEvents[l].abType := 0;
         astActiveEvents[l].sSolution := '';
+
     END_FOR
 
+
+    // Rearm the event detection so that a future Fault can be inserted again
+    // into the active grid and into the historical event list.
     FOR k[0] := 0 TO nArraySize DO
+
         FOR k[1] := 0 TO 100 DO
+
             stStationEvents[k[0]].aEvents[k[1]].bActive := FALSE;
+
         END_FOR
+
     END_FOR
+
+
+    // Active-event rows start from index 1.
+    // Index 0 remains reserved for the machine message.
     l := 0;
 
+
+// -----------------------------------------------------------------------------
+// MACHINE IS IN FAULT
+// -----------------------------------------------------------------------------
+// Build the active-event grid and register newly detected events in history.
+// -----------------------------------------------------------------------------
 ELSIF bPulse THEN
+
     FOR k[0] := 0 TO nArraySize DO
+
         FOR k[1] := 0 TO 100 DO
+
             IF NOT stStationEvents[k[0]].aEvents[k[1]].bActive
-               AND stStationEvents[k[0]].aEvents[k[1]].bEventFlag
+                AND stStationEvents[k[0]].aEvents[k[1]].bEventFlag
             THEN
+
+
+                // =============================================================
+                // FAULT
+                // =============================================================
                 IF stStationEvents[k[0]].aEvents[k[1]].bFault THEN
+
+                    // Add the event to the active grid on the main screen.
                     IF l < 50 THEN
+
                         l := l + 1;
-                        astActiveEvents[l].sEventTex := stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+                        astActiveEvents[l].sEventTex :=
+                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
                         astActiveEvents[l].sType := 'Fault';
                         astActiveEvents[l].abType := 1;
-                        astActiveEvents[l].sSolution := stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
+                        astActiveEvents[l].sSolution :=
+                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
                     END_IF
+
+
+                    // Shift the history and insert the newest event at index 0.
                     FOR n := 200 TO 1 BY -1 DO
+
                         astEventsHistory[n] := astEventsHistory[n - 1];
+
                     END_FOR
-                    astEventsHistory[0].sEventTex := stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+
+                    astEventsHistory[0].sEventTex :=
+                        stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
                     astEventsHistory[0].sType := 'Fault';
                     astEventsHistory[0].abType := 1;
                     astEventsHistory[0].sDate := sSystemDate;
                     astEventsHistory[0].sTime := sSystemTime;
+
                     stStationEvents[k[0]].aEvents[k[1]].bActive := TRUE;
 
+
+                // =============================================================
+                // CYCLE STOP REQUEST
+                // =============================================================
                 ELSIF stStationEvents[k[0]].aEvents[k[1]].bCycleStopRequest THEN
+
+                    // Add the event to the active grid on the main screen.
                     IF l < 50 THEN
+
                         l := l + 1;
-                        astActiveEvents[l].sEventTex := stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+                        astActiveEvents[l].sEventTex :=
+                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
                         astActiveEvents[l].sType := 'Cycle Stop Request';
                         astActiveEvents[l].abType := 2;
-                        astActiveEvents[l].sSolution := stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
+                        astActiveEvents[l].sSolution :=
+                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
                     END_IF
+
+
+                    // Shift the history and insert the newest event at index 0.
                     FOR n := 200 TO 1 BY -1 DO
+
                         astEventsHistory[n] := astEventsHistory[n - 1];
+
                     END_FOR
-                    astEventsHistory[0].sEventTex := stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+
+                    astEventsHistory[0].sEventTex :=
+                        stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
                     astEventsHistory[0].sType := 'Cycle Stop Request';
                     astEventsHistory[0].abType := 2;
                     astEventsHistory[0].sDate := sSystemDate;
                     astEventsHistory[0].sTime := sSystemTime;
+
                     stStationEvents[k[0]].aEvents[k[1]].bActive := TRUE;
 
+
+                // =============================================================
+                // MESSAGE
+                // =============================================================
                 ELSIF stStationEvents[k[0]].aEvents[k[1]].bMessage THEN
+
+                    // Add the event to the active grid on the main screen.
                     IF l < 50 THEN
+
                         l := l + 1;
-                        astActiveEvents[l].sEventTex := stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+                        astActiveEvents[l].sEventTex :=
+                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
                         astActiveEvents[l].sType := 'Message';
                         astActiveEvents[l].abType := 3;
-                        astActiveEvents[l].sSolution := stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
+                        astActiveEvents[l].sSolution :=
+                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
                     END_IF
+
+
+                    // Shift the history and insert the newest event at index 0.
                     FOR n := 200 TO 1 BY -1 DO
+
                         astEventsHistory[n] := astEventsHistory[n - 1];
+
                     END_FOR
-                    astEventsHistory[0].sEventTex := stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+
+                    astEventsHistory[0].sEventTex :=
+                        stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
                     astEventsHistory[0].sType := 'Message';
                     astEventsHistory[0].abType := 3;
                     astEventsHistory[0].sDate := sSystemDate;
                     astEventsHistory[0].sTime := sSystemTime;
+
                     stStationEvents[k[0]].aEvents[k[1]].bActive := TRUE;
+
                 END_IF
+
             END_IF
+
         END_FOR
+
     END_FOR
+
 END_IF]]></ST>
       </Implementation>
     </Action>

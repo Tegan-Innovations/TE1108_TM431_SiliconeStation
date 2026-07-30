@@ -245,17 +245,14 @@ fbEventsManager(
     bDataWritedInCSV := FALSE,
     nArraySize := 3,
     bMachineMessage := GVL_MASTER.stStatus.sMachineMessage,
+    eMachineState := GVL_MASTER.stStatus.eMachineState,
     stStationEvents := GVL_MASTER.stStationEvents,
     stEventsAssigment := GVL_MASTER.stEventsAssigment,
     bResetFaults := GVL_MASTER.stCommand.bReset,
     bMachineFault => GVL_MASTER.bMachineFault,
     bCycleStopRequest => GVL_MASTER.bCycleStopRequest,
     astActiveEvents => GVL_MASTER.astActiveEvents,
-    astEventsHistory => GVL_Persistent.astEventsHistory);
-
-GVL_HMI.astActiveEvents := GVL_MASTER.astActiveEvents;
-GVL_HMI.astEventsHistory := GVL_Persistent.astEventsHistory;
-GVL_HMI.stEventsAssigment := GVL_MASTER.stEventsAssigment;]]></ST>
+    astEventsHistory => GVL_Persistent.astEventsHistory);]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
