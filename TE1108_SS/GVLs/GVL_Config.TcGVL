@@ -11,6 +11,10 @@ VAR_GLOBAL PERSISTENT RETAIN
         tCylinderTimeout     := T#5S,
         tProcessTimeout      := T#60S,
         tOperatorIdleTimeout := T#30S,
+		tDoorLockTimeout     := T#10S,
+    	tDoorUnlockTimeout   := T#10S,
+		
+		
         eOperatorPosition    := E_TablePosition.Position4,
         eProcessPosition     := E_TablePosition.Position2,
         eRejectPosition      := E_TablePosition.Position4,

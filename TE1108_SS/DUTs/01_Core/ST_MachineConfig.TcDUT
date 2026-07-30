@@ -11,8 +11,8 @@ STRUCT
     tIndexSupportTimeout        : TIME := T#5S;
     tTwoHandHold                : TIME := T#500MS;
     tTwoHandRecoveryTimeout     : TIME := T#10S;
-    tDoorLockTimeout            : TIME := T#5S;
-    tDoorUnlockTimeout          : TIME := T#5S;
+    tDoorLockTimeout            : TIME := T#10S;
+    tDoorUnlockTimeout          : TIME := T#10S;
     tCylinderTimeout            : TIME := T#5S;
     tProcessTimeout             : TIME := T#60S;
     tOperatorIdleTimeout        : TIME := T#30S;
@@ -30,6 +30,7 @@ STRUCT
 	
 	
 END_STRUCT
-END_TYPE]]></Declaration>
+END_TYPE
+]]></Declaration>
   </DUT>
 </TcPlcObject>

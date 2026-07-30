@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_MachineInputs" Id="{2ac5c147-5176-4b29-b405-f833d8595045}">
-    <Declaration>TYPE ST_MachineInputs :
+    <Declaration><![CDATA[TYPE ST_MachineInputs :
 STRUCT
     stSafety                  : ST_SafetyStatus;
     bStartButton              : BOOL;
@@ -34,11 +34,12 @@ STRUCT
     bIndexSupportExtended     : BOOL;
     bIndexSupportRetracted    : BOOL;
     eIndexPosition            : E_TablePosition;
-    bMainDoorClosed          : BOOL;
-    bMainDoorLocked          : BOOL;
+    bMainDoorClosed           : BOOL;
+    bMainDoorLocked           : BOOL;
+	bMainDoorUnsafe           : BOOL;
     bTransferNestSupportCylinderExtended    : BOOL;
     bTransferNestSupportCylinderRetracted   : BOOL;
 END_STRUCT
-END_TYPE</Declaration>
+END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>

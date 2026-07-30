@@ -52,6 +52,8 @@ VAR
     bResultStoredFeedback       			: BOOL;
     bIndexRequestAcceptedFeedback 			: BOOL;
     bIndexRecoveryRequestAcceptedFeedback 	: BOOL;
+	
+	
     tonInitialising         				: TON;
     tonStopping             				: TON;
 	
@@ -59,6 +61,11 @@ VAR
 	tpSafetyRunDrop     					: TP;
 	bSafetyDropRequest 						: BOOL;
 	bAirAndDoorEnable 						: BOOL;
+	bAirSupplyLatched 						: BOOL;
+	bAirSupplyEnable 						: BOOL;
+	
+	
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -79,8 +86,6 @@ VAR_OUTPUT
     stStatus       : ST_MachineStatus;
     stIvekOutput   : ST_IvekCyclicOutput;
 END_VAR
-
-
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[// =========================================================
@@ -111,9 +116,8 @@ bSafetyDropRequest := FALSE;
 
 bMachineStateEntry := eMachineState <> ePreviousMachineState;
 bProcessStartPulse := FALSE;
-bProcessStartPulse := FALSE;
 
-// Shared request: air enabled and automatic door locking use the same states.
+// Automatic door-lock request. Air supply is managed independently by the machine states below.
 bAirAndDoorEnable :=
     (eMachineState = E_MachineState.Initialising)
     OR (eMachineState = E_MachineState.ReadyToStart)
@@ -276,6 +280,9 @@ CASE eMachineState OF
 	
 
 	E_MachineState.PowerUp:
+		// Air is not enabled during PowerUp or the first transition to Stopped.
+		bAirSupplyEnable := FALSE;
+
 		// Same machine lifecycle used by the Kistler: always enter a controlled stop first.
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
@@ -283,24 +290,27 @@ CASE eMachineState OF
 		eMachineState := E_MachineState.Stopping;
 
 	E_MachineState.Fault:
+		// Any machine fault removes the standard PLC air request.
+		bAirSupplyEnable := FALSE;
+
 		// Fault blocks automatic operation. The safe chain is only dropped for alarms
 		// explicitly classified as SafetyStop by the alarm manager.
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 		ipEquipment.RequestStop();
 	
-		// Reset clears component fault latches and the event manager clears each
-		// station latch only when no classified fault condition remains active.
+		// Reset clears the internal component fault latches. Recovery is allowed
+		// only when the normalized reset command is active and TwinSAFE is healthy.
 		IF stCommand.bReset THEN
 			fbIndex.Reset();
 			ipEquipment.RequestReset();
 			bInitialisationTimeoutFault := FALSE;
 			bStoppingTimeoutFault := FALSE;
 			eCycleState := E_CycleState.Idle;
-		END_IF
 
-		IF stInputs.stSafety.bSafetyOk AND GVL_Safety.bResetButtonPressed THEN
-			eMachineState := E_MachineState.Stopping;
+			IF stInputs.stSafety.bSafetyOk THEN
+				eMachineState := E_MachineState.Stopping;
+			END_IF
 		END_IF
 	
 	E_MachineState.Stopping:
@@ -337,18 +347,29 @@ CASE eMachineState OF
     ELSIF tonStopping.Q THEN
         bStoppingTimeoutFault := TRUE;
         bSafetyDropRequest := TRUE;
+        eMachineState := E_MachineState.Fault;
     END_IF
 	
 	E_MachineState.Stopped:
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 		//ipEquipment.RequestStop();
+
+		// Air may remain enabled after returning from an active machine state,
+		// provided that the main door remains closed. Opening the door removes
+		// the request. Closing it again does not restore the air in Stopped.
+		IF NOT stInputs.bMainDoorClosed THEN
+			bAirSupplyEnable := FALSE;
+		END_IF
 	
 		IF stCommand.bReset AND stInputs.stSafety.bSafetyOk THEN
 			eMachineState := E_MachineState.Initialising;
 		END_IF
 // 	
 	E_MachineState.Initialising:
+		// Initialising is the only state that initially enables the air supply.
+		bAirSupplyEnable := TRUE;
+
 // 		// Initialising normalises software objects once and never moves the index.
 		tonStopping(IN := FALSE);
 		tonInitialising(IN := TRUE, PT := stConfig.tInitialiseTimeout);
@@ -612,19 +633,21 @@ fbMainDoorLock.Cyclic(
     bResetRequest := stCommand.bReset,
 
     bDoorClosed := stInputs.bMainDoorClosed,
-    bDoorLocked := stInputs.bMainDoorLocked,
-    bDoorSafe := stInputs.stSafety.bMainDoorSafe,
+	bDoorLocked := stInputs.bMainDoorLocked,
+	bDoorUnsafe := stInputs.bMainDoorUnsafe,
 
     bIndexBusy := stIndexStatus.bBusy,
     bProcessSafePosition := fbProcessStation.IsSafePosition(),
 
-    tLockTimeout := stConfig.tDoorLockTimeout,
-    tUnlockTimeout := stConfig.tDoorUnlockTimeout,
-
-    bLockOutput => stOutputsInternal.bMainDoorLockRequest
+    tLockTimeout := GVL_config.stMachine.tDoorLockTimeout,
+    tUnlockTimeout := GVL_config.stMachine.tDoorUnlockTimeout
 );
 
 stMainDoorLockStatus := fbMainDoorLock.GetStatus();
+
+// The standard PLC only requests that the door be locked.
+// TwinSAFE validates the safe conditions and controls the physical locker.
+stOutputsInternal.bMainDoorLockRequest := bAirAndDoorEnable;
 
 // =========================================================
 // INDEX TABLE CONTROL
@@ -685,6 +708,7 @@ fbIndex.Cyclic(
 // =========================================================
 
 // Outputs and public status
+stOutputsInternal.bAirSupplyEnable := bAirSupplyEnable;
 stOutputsInternal.bTransferNestSupportCylinderExtend := bProcExtend;
 stOutputsInternal.bTransferNestSupportCylinderRetract := bProcRetract;
 stOutputsInternal.bPuckLockerPinUp := bPuckPinUp;
@@ -695,7 +719,8 @@ stOutputsInternal.bSafetyRunRequest := NOT tpSafetyRunDrop.Q;
 stOutputsInternal.bSafetyResetRequest := stCommand.bReset AND NOT stInputs.stSafety.bSafetyOk;
 
 stOutputsInternal.bSafetyErrorAcknowledgementRequest :=stOutputsInternal.bSafetyResetRequest;
-stOutputsInternal.bAirSupplyEnable := bAirAndDoorEnable;
+
+
 	
 	
 stOutputsInternal.bLedStart := eMachineState = E_MachineState.ReadyToStart;
@@ -748,11 +773,37 @@ stStatus.stPuckLocker := stPuckStatus;
 // LEGACY ALARM STATUS COMPATIBILITY
 // =========================================================
 
-// Legacy alarm-summary fields retained only for HMI compatibility.
-// The Events Manager is now the single source of machine fault state.
-stStatus.stAlarms.bHasFault := stInputs.bEventFault;
-stStatus.stAlarms.bHasSafetyStopFault := stInputs.bEventFault;
+// Legacy alarm-summary fields retained for HMI compatibility.
+// These fields reflect the current machine and safety state until the
+// Events Manager becomes the single source of alarm information.
+stStatus.stAlarms.bHasFault := eMachineState = E_MachineState.Fault;
+stStatus.stAlarms.bHasSafetyStopFault := NOT stInputs.stSafety.bSafetyOk;
 stStatus.stAlarms.uiActiveCount := 0;
+
+IF NOT stInputs.stSafety.bSafetyOk THEN
+    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+END_IF
+
+IF bInitialisationTimeoutFault THEN
+    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+END_IF
+
+IF bStoppingTimeoutFault THEN
+    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+END_IF
+
+IF fbMainDoorLock.IsFaulted() THEN
+    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+END_IF
+
+IF fbIndex.IsFaulted() THEN
+    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+END_IF
+
+IF fbProcessStation.IsFaulted() THEN
+    stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+END_IF
+
 stStatus.stAlarms.eHighestAlarm := E_AlarmId.None;
 stStatus.aNest := fbNestManager.GetAllNests();
 stStatus.udiAlarmCode := 0;
@@ -787,13 +838,73 @@ ELSIF eMachineState = E_MachineState.ReadyToStart THEN
     stStatus.sMachineMessage := 'Ready to start';
 ELSIF eMachineState = E_MachineState.Stopping THEN
     CASE eStoppingWaitReason OF
-        E_StoppingWaitReason.IndexStillMoving: stStatus.sMachineMessage := 'System stopping - waiting for index';
-        E_StoppingWaitReason.TransferNestSupportCylinderRetracting: stStatus.sMachineMessage := 'System stopping - retracting transfer nest support cylinder';
-        E_StoppingWaitReason.ProcessEquipmentStopping: stStatus.sMachineMessage := 'System stopping - stopping process equipment';
-        E_StoppingWaitReason.MainDoorTransition: stStatus.sMachineMessage := 'System stopping - waiting for main door lock';
-    ELSE stStatus.sMachineMessage := 'System stopping'; END_CASE
+        E_StoppingWaitReason.IndexStillMoving:
+            stStatus.sMachineMessage := 'System stopping - waiting for index';
+        E_StoppingWaitReason.TransferNestSupportCylinderRetracting:
+            stStatus.sMachineMessage := 'System stopping - retracting transfer nest support cylinder';
+        E_StoppingWaitReason.ProcessEquipmentStopping:
+            stStatus.sMachineMessage := 'System stopping - stopping process equipment';
+        E_StoppingWaitReason.MainDoorTransition:
+            stStatus.sMachineMessage := 'System stopping - waiting for main door transition';
+    ELSE
+        stStatus.sMachineMessage := 'System stopping';
+    END_CASE
 ELSIF eMachineState = E_MachineState.Fault THEN
-    stStatus.sMachineMessage := 'Machine fault - check active alarms below';
+    IF NOT stInputs.stSafety.bSafetyOk THEN
+        stStatus.sMachineMessage := 'Machine fault - safety system not ready';
+    ELSIF bInitialisationTimeoutFault THEN
+        CASE eInitialisingWaitReason OF
+            E_InitialisingWaitReason.IndexBusy:
+                stStatus.sMachineMessage := 'Initialisation timeout - index did not stop';
+            E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted:
+                stStatus.sMachineMessage := 'Initialisation timeout - transfer nest support cylinder not retracted';
+            E_InitialisingWaitReason.MainDoorFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - main door lock fault';
+            E_InitialisingWaitReason.MainDoorNotReady:
+                stStatus.sMachineMessage := 'Initialisation timeout - main door did not lock';
+            E_InitialisingWaitReason.ProcessStationFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - process station fault';
+            E_InitialisingWaitReason.PuckLockerFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - puck locker fault';
+            E_InitialisingWaitReason.ProcessEquipmentNotReady:
+                stStatus.sMachineMessage := 'Initialisation timeout - process equipment not ready';
+        ELSE
+            stStatus.sMachineMessage := 'Machine fault - initialisation timeout';
+        END_CASE
+    ELSIF bStoppingTimeoutFault THEN
+        CASE eStoppingWaitReason OF
+            E_StoppingWaitReason.IndexStillMoving:
+                stStatus.sMachineMessage := 'Stopping timeout - index still moving';
+            E_StoppingWaitReason.TransferNestSupportCylinderRetracting:
+                stStatus.sMachineMessage := 'Stopping timeout - transfer nest support cylinder not retracted';
+            E_StoppingWaitReason.ProcessEquipmentStopping:
+                stStatus.sMachineMessage := 'Stopping timeout - process equipment still running';
+            E_StoppingWaitReason.MainDoorTransition:
+                stStatus.sMachineMessage := 'Stopping timeout - main door transition incomplete';
+        ELSE
+            stStatus.sMachineMessage := 'Machine fault - stopping timeout';
+        END_CASE
+    ELSIF fbMainDoorLock.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - main door lock fault';
+    ELSIF fbIndex.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - index table fault';
+    ELSIF fbProcessStation.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - process station fault';
+    ELSIF ipEquipment.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - process equipment fault';
+    ELSIF stInputs.bEventFault THEN
+        stStatus.sMachineMessage := 'Machine fault - check active alarms';
+    ELSE
+        stStatus.sMachineMessage := 'Machine fault - reset required';
+    END_IF
+ELSIF eMachineState = E_MachineState.Stopped THEN
+    IF NOT stInputs.bMainDoorClosed THEN
+        stStatus.sMachineMessage := 'Machine stopped - close the main door and press Reset';
+    ELSIF NOT bAirSupplyEnable THEN
+        stStatus.sMachineMessage := 'Machine stopped - press Reset to initialise';
+    ELSE
+        stStatus.sMachineMessage := 'Machine stopped - press Reset to initialise';
+    END_IF
 ELSE
     stStatus.sMachineMessage := 'Machine stopped';
 END_IF

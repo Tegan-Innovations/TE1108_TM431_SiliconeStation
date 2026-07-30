@@ -22,91 +22,341 @@ VAR_INPUT
     bResetRequest          : BOOL;
     bDoorClosed            : BOOL;
     bDoorLocked            : BOOL;
-    bDoorSafe              : BOOL;
     bIndexBusy             : BOOL;
     bProcessSafePosition   : BOOL;
     tLockTimeout           : TIME;
     tUnlockTimeout         : TIME;
+	bDoorUnsafe 		   : BOOL;
 END_VAR
 VAR_OUTPUT
     bLockOutput            : BOOL;
+	
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[stStatusInternal.bUnlockPermissive := NOT bIndexBusy AND bProcessSafePosition;
+        <ST><![CDATA[// -----------------------------------------------------------------------------
+// Unlock permissive
+// -----------------------------------------------------------------------------
+stStatusInternal.bUnlockPermissive :=
+    NOT bIndexBusy
+    AND bProcessSafePosition;
+
+
+// -----------------------------------------------------------------------------
+// This FB only supervises the main door.
+//
+// The physical locking is performed externally by the pneumatic system and
+// TwinSAFE. This FB does not command the door lock.
+// -----------------------------------------------------------------------------
+bLockOutput := FALSE;
+
+
+// -----------------------------------------------------------------------------
+// Fault reset
+// -----------------------------------------------------------------------------
 IF bResetRequest THEN
-    IF NOT (bDoorLocked AND NOT bDoorClosed) THEN
+
+    // The fault cannot be reset while TwinSAFE still reports the door unsafe.
+    IF NOT bDoorUnsafe THEN
+
         eFault := E_MainDoorLockFault.None;
-        IF bDoorLocked THEN eState := E_MainDoorLockState.Locked;
-        ELSE eState := E_MainDoorLockState.Unlocked;
+
+        // Restore the internal state according to the current feedbacks.
+        IF bDoorClosed AND bDoorLocked THEN
+            eState := E_MainDoorLockState.Locked;
+        ELSE
+            eState := E_MainDoorLockState.Unlocked;
         END_IF
+
     END_IF
+
 END_IF
 
-IF NOT bDoorClosed AND bDoorLocked THEN
+
+// -----------------------------------------------------------------------------
+// Unsafe door condition reported by TwinSAFE
+//
+// Example:
+//     Door not confirmed closed AND lock feedback active.
+// -----------------------------------------------------------------------------
+IF bDoorUnsafe THEN
+
     eFault := E_MainDoorLockFault.FeedbackMismatch;
     eState := E_MainDoorLockState.Fault;
+
 END_IF
 
+
+// -----------------------------------------------------------------------------
+// Main door supervision state machine
+// -----------------------------------------------------------------------------
 CASE eState OF
+
+    // -------------------------------------------------------------------------
+    // Disabled
+    // -------------------------------------------------------------------------
     E_MainDoorLockState.Disabled:
-        bLockOutput := FALSE;
+
         IF bEnableAutomatic OR bManualEnable THEN
-            IF bDoorLocked THEN eState := E_MainDoorLockState.Locked; ELSE eState := E_MainDoorLockState.Unlocked; END_IF
-        END_IF
 
-    E_MainDoorLockState.Unlocked:
-        bLockOutput := FALSE;
-        IF bEnableAutomatic OR (bManualEnable AND bManualLockRequest) THEN
-            IF bDoorClosed THEN eState := E_MainDoorLockState.Locking;
-            ELSE eFault := E_MainDoorLockFault.DoorNotClosed; eState := E_MainDoorLockState.Fault;
+            IF bDoorClosed
+                AND bDoorLocked
+                AND NOT bDoorUnsafe
+            THEN
+                eState := E_MainDoorLockState.Locked;
+            ELSE
+                eState := E_MainDoorLockState.Unlocked;
             END_IF
+
         END_IF
 
+
+    // -------------------------------------------------------------------------
+    // Unlocked
+    //
+    // Wait for the operator to close the door.
+    // An open door is not considered a fault in this state.
+    // -------------------------------------------------------------------------
+    E_MainDoorLockState.Unlocked:
+
+        IF bEnableAutomatic
+            OR (bManualEnable AND bManualLockRequest)
+        THEN
+
+            IF bDoorClosed AND NOT bDoorUnsafe THEN
+                eState := E_MainDoorLockState.Locking;
+            END_IF
+
+        END_IF
+
+
+    // -------------------------------------------------------------------------
+    // Locking
+    //
+    // TwinSAFE and the pneumatic system perform the physical locking.
+    // This FB only waits for the safe locked feedback.
+    // -------------------------------------------------------------------------
     E_MainDoorLockState.Locking:
-        bLockOutput := TRUE;
-        IF bDoorLocked AND bDoorSafe THEN eState := E_MainDoorLockState.Locked;
-        ELSIF tonTransition.Q THEN eFault := E_MainDoorLockFault.LockTimeout; eState := E_MainDoorLockState.Fault;
+
+        IF bDoorUnsafe THEN
+
+            eFault := E_MainDoorLockFault.FeedbackMismatch;
+            eState := E_MainDoorLockState.Fault;
+
+        ELSIF NOT bDoorClosed THEN
+
+            // The door was opened before locking was confirmed.
+            // Return to Unlocked without generating a fault.
+            eState := E_MainDoorLockState.Unlocked;
+
+        ELSIF bDoorLocked THEN
+
+            eState := E_MainDoorLockState.Locked;
+
+        ELSIF tonTransition.Q THEN
+
+            eFault := E_MainDoorLockFault.LockTimeout;
+            eState := E_MainDoorLockState.Fault;
+
         END_IF
 
+
+    // -------------------------------------------------------------------------
+    // Locked
+    // -------------------------------------------------------------------------
     E_MainDoorLockState.Locked:
-        bLockOutput := TRUE;
-        IF NOT bEnableAutomatic AND bManualEnable AND bManualUnlockRequest AND stStatusInternal.bUnlockPermissive THEN
+
+        // TwinSAFE has detected an invalid door/lock combination.
+        IF bDoorUnsafe THEN
+
+            eFault := E_MainDoorLockFault.FeedbackMismatch;
+            eState := E_MainDoorLockState.Fault;
+
+
+        // Automatic mode requires the door to remain closed and locked.
+        ELSIF bEnableAutomatic
+            AND (
+                NOT bDoorClosed
+                OR NOT bDoorLocked
+            )
+        THEN
+
+            eFault := E_MainDoorLockFault.FeedbackMismatch;
+            eState := E_MainDoorLockState.Fault;
+
+
+        // Manual unlock request.
+        ELSIF NOT bEnableAutomatic
+            AND bManualEnable
+            AND bManualUnlockRequest
+            AND stStatusInternal.bUnlockPermissive
+        THEN
+
             eState := E_MainDoorLockState.Unlocking;
-        ELSIF NOT bEnableAutomatic AND NOT bManualEnable AND bStopRequest AND stStatusInternal.bUnlockPermissive THEN
+
+
+        // Automatic unlock supervision during Stopping/Stopped.
+        ELSIF NOT bEnableAutomatic
+            AND NOT bManualEnable
+            AND bStopRequest
+            AND stStatusInternal.bUnlockPermissive
+        THEN
+
             eState := E_MainDoorLockState.Unlocking;
+
         END_IF
 
+
+    // -------------------------------------------------------------------------
+    // Unlocking
+    //
+    // The external safety/pneumatic system removes the locking condition.
+    // This FB only waits for the lock feedback to disappear.
+    // -------------------------------------------------------------------------
     E_MainDoorLockState.Unlocking:
-        bLockOutput := FALSE;
-        IF NOT bDoorLocked THEN eState := E_MainDoorLockState.Unlocked;
-        ELSIF tonTransition.Q THEN eFault := E_MainDoorLockFault.UnlockTimeout; eState := E_MainDoorLockState.Fault;
+
+        IF bDoorUnsafe THEN
+
+            eFault := E_MainDoorLockFault.FeedbackMismatch;
+            eState := E_MainDoorLockState.Fault;
+
+        ELSIF NOT bDoorLocked THEN
+
+            eState := E_MainDoorLockState.Unlocked;
+
+        ELSIF tonTransition.Q THEN
+
+            eFault := E_MainDoorLockFault.UnlockTimeout;
+            eState := E_MainDoorLockState.Fault;
+
         END_IF
 
+
+    // -------------------------------------------------------------------------
+    // Fault
+    // -------------------------------------------------------------------------
     E_MainDoorLockState.Fault:
-        bLockOutput := bDoorLocked;
+
+        // No physical output is controlled by this FB.
+        //
+        // Recovery requires:
+        //   - bDoorUnsafe = FALSE
+        //   - bResetRequest = TRUE
+
+
+    // -------------------------------------------------------------------------
+    // Invalid internal state
+    // -------------------------------------------------------------------------
+    ELSE
+
+        eFault := E_MainDoorLockFault.FeedbackMismatch;
+        eState := E_MainDoorLockState.Fault;
+
 END_CASE
 
-tonTransition(
-    IN := (eState = E_MainDoorLockState.Locking) OR (eState = E_MainDoorLockState.Unlocking),
-    PT := SEL(eState = E_MainDoorLockState.Locking, tUnlockTimeout, tLockTimeout));
 
+// -----------------------------------------------------------------------------
+// Transition timer
+//
+// TwinCAT SEL:
+//   G = FALSE -> first value
+//   G = TRUE  -> second value
+//
+// Locking:
+//   eState = Locking -> TRUE -> tLockTimeout
+//
+// Unlocking:
+//   eState = Locking -> FALSE -> tUnlockTimeout
+// -----------------------------------------------------------------------------
+tonTransition(
+    IN := eState = E_MainDoorLockState.Unlocking,
+    PT := tUnlockTimeout
+);
+
+
+// -----------------------------------------------------------------------------
+// Status mapping
+// -----------------------------------------------------------------------------
 stStatusInternal.eState := eState;
 stStatusInternal.eFault := eFault;
+
 stStatusInternal.bDoorClosed := bDoorClosed;
 stStatusInternal.bDoorLocked := bDoorLocked;
-stStatusInternal.bDoorSafe := bDoorSafe;
-stStatusInternal.bLockRequest := bEnableAutomatic OR bManualLockRequest;
-stStatusInternal.bLockOutput := bLockOutput;
-stStatusInternal.bReadyForAutomatic := bDoorClosed AND bDoorLocked AND bDoorSafe AND eState = E_MainDoorLockState.Locked;
-stStatusInternal.bFaulted := eState = E_MainDoorLockState.Fault;
-CASE eState OF
- E_MainDoorLockState.Disabled: stStatusInternal.sMessage := 'Main door lock disabled';
- E_MainDoorLockState.Unlocked: stStatusInternal.sMessage := 'Main door unlocked';
- E_MainDoorLockState.Locking: stStatusInternal.sMessage := 'Locking main door';
- E_MainDoorLockState.Locked: stStatusInternal.sMessage := 'Main door locked';
- E_MainDoorLockState.Unlocking: stStatusInternal.sMessage := 'Unlocking main door';
- E_MainDoorLockState.Fault: stStatusInternal.sMessage := 'Main door lock fault';
-END_CASE
+stStatusInternal.bDoorUnsafe := bDoorUnsafe;
+
+
+// This indicates that the machine expects the door to be locked.
+// It does not command the physical locking mechanism.
+stStatusInternal.bLockRequest :=
+    bEnableAutomatic
+    OR (bManualEnable AND bManualLockRequest);
+
+
+// Retained only for interface compatibility.
+// This FB no longer controls a physical output.
+stStatusInternal.bLockOutput := FALSE;
+
+
+// Door ready for automatic operation
+stStatusInternal.bReadyForAutomatic :=
+    bEnableAutomatic
+    AND bDoorClosed
+    AND bDoorLocked
+    AND NOT bDoorUnsafe
+    AND (eState = E_MainDoorLockState.Locked);
+
+
+stStatusInternal.bFaulted :=
+    eState = E_MainDoorLockState.Fault;
+
+
+// -----------------------------------------------------------------------------
+// Diagnostic message
+// -----------------------------------------------------------------------------
+IF bDoorUnsafe THEN
+
+    stStatusInternal.sMessage :=
+        'Unsafe main door feedback';
+
+ELSE
+
+    CASE eState OF
+
+        E_MainDoorLockState.Disabled:
+            stStatusInternal.sMessage :=
+                'Main door supervision disabled';
+
+        E_MainDoorLockState.Unlocked:
+            stStatusInternal.sMessage :=
+                'Waiting for main door to close';
+
+        E_MainDoorLockState.Locking:
+            stStatusInternal.sMessage :=
+                'Waiting for main door lock feedback';
+
+        E_MainDoorLockState.Locked:
+            stStatusInternal.sMessage :=
+                'Main door closed and locked';
+
+        E_MainDoorLockState.Unlocking:
+            stStatusInternal.sMessage :=
+                'Waiting for main door to unlock';
+
+        E_MainDoorLockState.Fault:
+            stStatusInternal.sMessage :=
+                'Main door supervision fault';
+
+        ELSE
+            stStatusInternal.sMessage :=
+                'Invalid main door state';
+
+    END_CASE
+
+END_IF
+
+
+// -----------------------------------------------------------------------------
+// Method result
+// -----------------------------------------------------------------------------
 Cyclic := NOT stStatusInternal.bFaulted;]]></ST>
       </Implementation>
     </Method>

@@ -30,6 +30,7 @@ STRUCT
     // Door diagnostics returned by TwinSAFE
     bMainDoorClosed               : BOOL;
     bMainDoorLocked               : BOOL;
+	bMainDoorUnsafe               : BOOL;
     bMainDoorDiagnosticOk         : BOOL;
     bMs6FeedbackOk                : BOOL;
     bAirExhausted                 : BOOL;

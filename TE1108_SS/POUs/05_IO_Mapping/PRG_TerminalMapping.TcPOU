@@ -104,6 +104,7 @@ GVL_IO.stInputs.bSafetyOk 									:= GVL_Safety.bSafetyOk;
 GVL_IO.stInputs.bAirSupplyOk 								:= GVL_Safety.bAirSupplySafe;
 GVL_IO.stInputs.bMainDoorClosed 							:= GVL_Safety.bMainDoorClosed;
 GVL_IO.stInputs.bMainDoorLocked 							:= GVL_Safety.bMainDoorLocked;
+GVL_IO.stInputs.bMainDoorUnsafe 							:= GVL_Safety.bMainDoorUnsafe;
 GVL_IO.stInputs.bMainDoorDiagnosticOk 						:= GVL_Safety.bMainDoorDiagnosticOk;
 GVL_IO.stInputs.bMs6FeedbackOk 								:= GVL_Safety.bMs6FeedbackOk;
 GVL_IO.stInputs.bAirExhausted 								:= GVL_Safety.bAirExhausted;

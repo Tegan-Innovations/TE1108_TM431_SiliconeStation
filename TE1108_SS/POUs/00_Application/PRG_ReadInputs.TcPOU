@@ -62,6 +62,7 @@ GVL_MASTER.stInputs.bIndexSupportRetracted 				:= GVL_IO.stInputs.bIndexSupportR
 GVL_MASTER.stInputs.eIndexPosition          			:= GVL_IO.stInputs.eIndexPosition;
 GVL_MASTER.stInputs.bMainDoorClosed          			:= GVL_IO.stInputs.bMainDoorClosed;
 GVL_MASTER.stInputs.bMainDoorLocked          			:= GVL_IO.stInputs.bMainDoorLocked;
+GVL_MASTER.stInputs.bMainDoorUnsafe         			:= GVL_IO.stInputs.bMainDoorUnsafe;
 GVL_MASTER.stInputs.bTransferNestSupportCylinderExtended  := GVL_IO.stInputs.bTransferNestSupportCylinderExtended;
 GVL_MASTER.stInputs.bTransferNestSupportCylinderRetracted := GVL_IO.stInputs.bTransferNestSupportCylinderRetracted;
 

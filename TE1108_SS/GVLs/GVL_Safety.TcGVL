@@ -10,7 +10,7 @@ VAR_GLOBAL
     // ---------------------------------------------------------------------
     bSafetyOk                  AT %I* : BOOL;
     bEmergencyStopOk           AT %I* : BOOL;
-    bMainDoorSafe              AT %I* : BOOL;
+    bMainDoorUnSafe            AT %I* : BOOL;
     bLeftFlapSafe              AT %I* : BOOL;
     bRightFlapSafe             AT %I* : BOOL;
     bFlapsSafe                 AT %I* : BOOL;
