@@ -7,6 +7,7 @@ VAR
     eFault                         : E_IndexFault := E_IndexFault.None;
     ePositionAtMoveStart           : E_TablePosition := E_TablePosition.Unknown;
 	eStateBeforeWrongPosition       : E_IndexState := E_IndexState.Idle;
+	
     bRequestPending                : BOOL;
     bDonePulse                     : BOOL;
     bManualMoveActive              : BOOL;
@@ -14,11 +15,16 @@ VAR
     bWrongPositionSupervisionActive: BOOL;
     bReleaseProcessPosition        : BOOL;
     bOperatorExchangeDone          : BOOL;
+	bSamePositionDetected 		   : BOOL;
+	
+	
     tonTwoHandHold                 : TON;
     tonRotateDelay                 : TON;
     tonStopDelay                   : TON;
     tonStateTimeout                : TON;
     tonWrongPosition               : TON;
+	
+	
     stInternalStatus               : ST_IndexStatus;
 END_VAR]]></Declaration>
     <Implementation>
@@ -369,49 +375,55 @@ CASE eState OF
     // =====================================================
     // TWO-HAND RECOVERY
     // =====================================================
+	// =====================================================
+// TWO-HAND / WRONG-POSITION RECOVERY
+// =====================================================
 	E_IndexState.WrongPositionRecovery:
 	
-		// =====================================================
-		// WRONG POSITION / TWO-HAND RECOVERY
-		// =====================================================
-		//
-		// All movement outputs remain FALSE in this state because
-		// they are reset at the beginning of every PLC cycle.
-		//
-		// The operator has up to tTwoHandRecoveryTimeout
-		// (currently T#10S) to restore the two-hand command.
-		//
-		// NOTE:
-		// At the moment, recovery always returns to RotatingPortA.
-		// Later, we will store the interrupted state so that the
-		// sequence can resume from RotatingPortA or StoppingPortB.
+		// Port B is activated first so that the table can stop
+		// and lock safely after the two-hand signal is released.
 		bStopPortB := TRUE;
-		IF tonWrongPosition.Q THEN
 	
-			// Recovery time expired.
+	
+		// -------------------------------------------------
+		// TABLE STOPPED AND LOCKED
+		// -------------------------------------------------
+		// Once the table is locked, the two-hand command is no
+		// longer required. Continue with position verification.
+		IF bTableReady
+			AND bTableLocked
+		THEN
+	
+			bWrongPositionSupervisionActive := FALSE;
+			eState := E_IndexState.VerifyingPosition;
+	
+	
+		// -------------------------------------------------
+		// RECOVERY TIMEOUT
+		// -------------------------------------------------
+		ELSIF tonWrongPosition.Q THEN
+	
 			bWrongPositionSupervisionActive := FALSE;
 	
 			eFault := E_IndexFault.WrongPositionTimeout;
 			eState := E_IndexState.Fault;
 	
 	
+		// -------------------------------------------------
+		// OPERATOR RESTORED BOTH HANDS BEFORE TABLE LOCKED
+		// -------------------------------------------------
 		ELSIF bTwoHandsSafe
 			AND bSafetyMotionPermitted
 			AND bMovePermissive
 		THEN
-
-        // Operator restored both hands within the allowed time.
-        bWrongPositionSupervisionActive := FALSE;
-
-        // Temporary recovery behaviour:
-        // always continue from the rotation stage.
-        //
-        // Future implementation:
-        // return to the exact state that was interrupted.
-        eState := E_IndexState.RotatingPortA;
-
-    END_IF
-
+	
+			bWrongPositionSupervisionActive := FALSE;
+	
+			// Resume the exact state interrupted by the
+			// two-hand signal release.
+			eState := eStateBeforeWrongPosition;
+	
+		END_IF
     // =====================================================
     // STOP TABLE — PORT B
     // =====================================================
@@ -460,52 +472,54 @@ CASE eState OF
 
 
     // =====================================================
-    // VERIFY NEW POSITION
-    // =====================================================
-
-    E_IndexState.VerifyingPosition:
-
-        // Support output temporarily disabled.
-        //
-        // bSupportRetractRequest := TRUE;
-
-
-        // At this point the table is already confirmed ready and locked.
-        // Two hands are therefore no longer required.
-
-        IF eCurrentPosition = E_TablePosition.Unknown THEN
-
-            IF tonStateTimeout.Q THEN
-
-                eFault := E_IndexFault.PositionInvalid;
-                //eState := E_IndexState.Fault;
-
-            END_IF
-
-
-        ELSIF NOT bPositionRecoveryActive
-            AND eCurrentPosition = ePositionAtMoveStart
-        THEN
-
-            IF tonStateTimeout.Q THEN
-
-                eFault := E_IndexFault.PositionInvalid;
-                eState := E_IndexState.Fault;
-
-            END_IF
-
-
-        ELSE
-
-            bWrongPositionSupervisionActive := FALSE;
-
-            // Support extension sequence temporarily bypassed.
-            //
-            // eState := E_IndexState.ExtendingSupport;
-
-            eState := E_IndexState.Complete;
-
-        END_IF
+	// VERIFY NEW POSITION
+	// =====================================================
+	E_IndexState.VerifyingPosition:
+	
+		// Support output temporarily disabled.
+		//
+		// bSupportRetractRequest := TRUE;
+	
+	
+		// At this point the table is already confirmed ready and locked.
+		// Two hands are therefore no longer required.
+	
+		IF eCurrentPosition = E_TablePosition.Unknown THEN
+	
+			IF tonStateTimeout.Q THEN
+	
+				eFault := E_IndexFault.PositionInvalid;
+				//eState := E_IndexState.Fault;
+	
+			END_IF
+	
+	
+		ELSIF NOT bPositionRecoveryActive
+			AND eCurrentPosition = ePositionAtMoveStart
+		THEN
+	
+			// A valid and known position was detected, but it is the
+			// same position from which the movement started.
+			//
+			// This is process information only and is not an index fault.
+			bSamePositionDetected := TRUE;
+	
+			bWrongPositionSupervisionActive := FALSE;
+			eState := E_IndexState.Complete;
+	
+	
+		ELSE
+	
+			bSamePositionDetected := FALSE;
+			bWrongPositionSupervisionActive := FALSE;
+	
+			// Support extension sequence temporarily bypassed.
+			//
+			// eState := E_IndexState.ExtendingSupport;
+	
+			eState := E_IndexState.Complete;
+	
+		END_IF
 
 
     // =====================================================
@@ -673,6 +687,9 @@ stInternalStatus.bManualMoveActive :=
 
 stInternalStatus.bPositionRecoveryActive :=
     bPositionRecoveryActive;
+	
+stInternalStatus.bSamePositionDetected :=
+    bSamePositionDetected;
 
 stInternalStatus.bWrongPositionTimerActive :=
     bWrongPositionSupervisionActive;

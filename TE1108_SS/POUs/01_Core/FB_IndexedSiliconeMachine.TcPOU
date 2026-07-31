@@ -129,6 +129,17 @@ bIndexStable := stIndexStatus.bProcessPositionReady AND stInputs.bIndexReady AND
 bIndexDone := fbIndex.IsDone();
 
 // =========================================================
+// INDEX TABLE FAULT MONITORING
+// =========================================================
+
+// The index controller owns its internal diagnostics.
+// A fault requests a machine safety drop.
+IF fbIndex.IsFaulted() THEN
+    bSafetyDropRequest := TRUE;
+END_IF
+
+
+// =========================================================
 // FUTURE EVENT-BASED SAFETY DROP INTEGRATION
 // =========================================================
 
