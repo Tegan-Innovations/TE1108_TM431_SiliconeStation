@@ -22,12 +22,23 @@
     "actions": [
       {
         "objectType": "JavaScript",
-        "active": true,
+        "active": false,
         "sourceLines": [
           "confirmManualMode();"
         ],
         "asyncWait": true,
         "waitMode": "Synchronous"
+      },
+      {
+        "objectType": "WriteToSymbol",
+        "active": true,
+        "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest%/s%",
+        "value": {
+          "objectType": "StaticValue",
+          "valueType": "tchmi:general#/definitions/BOOL",
+          "value": true
+        },
+        "asyncWait": true
       },
       {
         "objectType": "WriteToSymbol",
@@ -38,6 +49,13 @@
           "valueType": "tchmi:framework#/definitions/ContentPath",
           "value": "Contents/Screens/Manual_Mode.content"
         },
+        "asyncWait": true
+      },
+      {
+        "objectType": "ControlApiFunction",
+        "active": true,
+        "control": "Main_Popup",
+        "fn": "close",
         "asyncWait": true
       }
     ]

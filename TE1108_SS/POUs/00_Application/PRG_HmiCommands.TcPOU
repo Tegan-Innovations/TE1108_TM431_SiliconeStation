@@ -1,35 +1,71 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <POU Name="PRG_HmiCommands" Id="{8117f6b5-ff2d-4018-a49c-355ec2d95973}" SpecialFunc="None">
-    <Declaration>PROGRAM PRG_HmiCommands
+    <Declaration><![CDATA[PROGRAM PRG_HmiCommands
 VAR
     rtStart : R_TRIG; rtReset : R_TRIG; rtAck : R_TRIG; rtPuckAck : R_TRIG;
+	rtManualRequest 			: R_TRIG;
+	bManualRequestLatched 		: BOOL;
 END_VAR
-</Declaration>
+]]></Declaration>
     <Implementation>
-      <ST>rtStart(CLK := GVL_MASTER.stInputs.bStartButton);
+      <ST><![CDATA[rtStart(CLK := GVL_MASTER.stInputs.bStartButton);
 rtReset(CLK := GVL_MASTER.stInputs.bResetButton);
 rtAck(CLK := GVL_HMI.stCommands.bAcknowledge);
 rtPuckAck(CLK := GVL_HMI.stCommands.bPuckLockerAcknowledgeFault);
-GVL_MASTER.stCommand.bStart := rtStart.Q;
-GVL_MASTER.stCommand.bStop := GVL_MASTER.stInputs.bStopButton;
-GVL_MASTER.stCommand.bReset := rtReset.Q;
-GVL_MASTER.stCommand.bAcknowledge := rtAck.Q;
-GVL_MASTER.stCommand.bAcknowledgePuckRemovalFault := rtPuckAck.Q;
-GVL_MASTER.stCommand.bEmptyPuckBypass := GVL_HMI.stCommands.bEmptyPuckBypass;
-GVL_MASTER.stCommand.bManualRequest := GVL_HMI.stCommands.bManualModeEnable OR GVL_HMI.stCommands.bManualModeRequest;
-GVL_MASTER.stCommand.bManualIndexForward := GVL_HMI.stCommands.bIndexForward;
-GVL_MASTER.stCommand.bManualIndexHome := GVL_HMI.stCommands.bIndexHome;
-GVL_MASTER.stCommand.bManualCylinderExtend := GVL_HMI.stCommands.bProcessCylinderExtend;
-GVL_MASTER.stCommand.bManualCylinderRetract := GVL_HMI.stCommands.bProcessCylinderRetract;
-GVL_MASTER.stCommand.bManualMainDoorUnlock := GVL_HMI.stCommands.bMainDoorUnlock;
-GVL_MASTER.stCommand.bManualEquipmentStart := GVL_HMI.stCommands.bIvekStartManual;
-GVL_MASTER.stCommand.bManualEquipmentStop := GVL_HMI.stCommands.bIvekStopManual;
-GVL_MASTER.stCommand.bManualEquipmentReset := GVL_HMI.stCommands.bIvekReset;
-GVL_MASTER.stCommand.bSimulateProcessPass := GVL_HMI.stCommands.bSimulateProcessPass;
-GVL_MASTER.stCommand.bSimulateProcessFail := GVL_HMI.stCommands.bSimulateProcessFail;
-GVL_MASTER.stCommand.bSimulateProcessFault := GVL_HMI.stCommands.bSimulateProcessFault;
-GVL_MASTER.stCommand.usiRecipeRequest := GVL_HMI.stCommands.usiRecipeRequest;</ST>
+
+
+GVL_MASTER.stCommand.bStart 						:= rtStart.Q;
+GVL_MASTER.stCommand.bStop 							:= GVL_MASTER.stInputs.bStopButton;
+GVL_MASTER.stCommand.bReset 						:= rtReset.Q;
+GVL_MASTER.stCommand.bAcknowledge 					:= rtAck.Q;
+GVL_MASTER.stCommand.bAcknowledgePuckRemovalFault 	:= rtPuckAck.Q;
+GVL_MASTER.stCommand.bEmptyPuckBypass 				:= GVL_HMI.stCommands.bEmptyPuckBypass;
+
+rtManualRequest(
+    CLK := GVL_HMI.stCommands.bManualModeRequest
+);
+
+// Memorise a new HMI request until the machine accepts Manual mode.
+IF rtManualRequest.Q THEN
+	GVL_HMI.stCommands.bManualModeRequest := FALSE;
+    bManualRequestLatched := TRUE;
+END_IF
+
+// Clear the request only after Manual mode has been accepted.
+IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual THEN
+    bManualRequestLatched := FALSE;
+END_IF
+
+GVL_MASTER.stCommand.bManualRequest := bManualRequestLatched;
+
+// Keep the HMI Manual Mode indication active until the machine reaches Stopped.
+IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual THEN
+
+    GVL_HMI.stCommands.bManualModeEnable := TRUE;
+
+ELSIF GVL_MASTER.stStatus.eMachineState = E_MachineState.Stopped THEN
+
+    GVL_HMI.stCommands.bManualModeEnable := FALSE;
+
+END_IF
+
+
+GVL_MASTER.stCommand.bIndexerManualEnable 			:= GVL_HMI.stCommands.bIndexerManualEnable;
+GVL_MASTER.stCommand.bManualIndexForward 			:= GVL_HMI.stCommands.bIndexForward;
+GVL_MASTER.stCommand.bManualIndexHome 				:= GVL_HMI.stCommands.bIndexHome;
+
+
+GVL_MASTER.stCommand.bManualCylinderExtend 			:= GVL_HMI.stCommands.bProcessCylinderExtend;
+GVL_MASTER.stCommand.bManualCylinderRetract 		:= GVL_HMI.stCommands.bProcessCylinderRetract;
+GVL_MASTER.stCommand.bManualMainDoorUnlock 			:= GVL_HMI.stCommands.bMainDoorUnlock;
+GVL_MASTER.stCommand.bManualEquipmentStart 			:= GVL_HMI.stCommands.bIvekStartManual;
+GVL_MASTER.stCommand.bManualEquipmentStop 			:= GVL_HMI.stCommands.bIvekStopManual;
+GVL_MASTER.stCommand.bManualEquipmentReset 			:= GVL_HMI.stCommands.bIvekReset;
+GVL_MASTER.stCommand.bSimulateProcessPass 			:= GVL_HMI.stCommands.bSimulateProcessPass;
+GVL_MASTER.stCommand.bSimulateProcessFail 			:= GVL_HMI.stCommands.bSimulateProcessFail;
+GVL_MASTER.stCommand.bSimulateProcessFault 			:= GVL_HMI.stCommands.bSimulateProcessFault;
+GVL_MASTER.stCommand.usiRecipeRequest 				:= GVL_HMI.stCommands.usiRecipeRequest;]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

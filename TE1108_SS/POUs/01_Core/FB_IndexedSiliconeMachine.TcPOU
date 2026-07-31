@@ -266,7 +266,7 @@ stManualModeInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
 
 fbManualMode.Cyclic(
     bEnable := eMachineState = E_MachineState.Manual,
-    bStopRequest := stCommand.bStop OR NOT stCommand.bManualRequest,
+    bStopRequest := stCommand.bStop,
     stCommand := stCommand,
     stInputs := stManualModeInputs,
     stRequests => stManualModeRequests,
@@ -395,8 +395,8 @@ CASE eMachineState OF
 // 		ELSIF NOT stInputs.stSafety.bFsoeOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.FsoeNotReady;
 // 		ELSIF NOT stInputs.stSafety.bSafetyLogicOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.SafetyLogicNotReady;
 // 		ELSIF 
- 		ELSIF NOT stInputs.bTransferNestSupportCylinderRetracted THEN 
-			eInitialisingWaitReason := E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted;
+ 		//ELSIF NOT stInputs.bTransferNestSupportCylinderRetracted THEN 
+			//eInitialisingWaitReason := E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted;
 			
 // 		ELSIF fbProcessStation.IsFaulted() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessStationFaulted;
  		ELSIF fbMainDoorLock.IsFaulted() THEN 
@@ -423,30 +423,33 @@ CASE eMachineState OF
 		END_IF
 // 	
 	E_MachineState.ReadyToStart:
- 		tonInitialising(IN := FALSE);
- 		tonStopping(IN := FALSE);
-// 	
-//		IF stInputs.bEventFault THEN
-//			eMachineState := E_MachineState.Fault;
+	
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+	
 		IF stCommand.bStop THEN
+	
 			eMachineState := E_MachineState.Stopping;
-		//ELSIF stCommand.bManualRequest
-// 			AND stInputs.stSafety.bSafetyOk
-// 			AND NOT stInputs.bEventFault
-// 			AND NOT stIndexStatus.bBusy
-// 			AND NOT fbProcessStation.IsFaulted()
-// 			AND NOT ipEquipment.IsFaulted()
-// 		THEN
-// 			fbManualMode.Initialise();
-// 			eMachineState := E_MachineState.Manual;
-		ELSIF stCommand.bStart
-		  // AND fbIndex.IsReady()
-		  // AND ipEquipment.IsReady()
-		 AND fbMainDoorLock.IsReadyForAutomatic()
+
+		ELSIF stCommand.bManualRequest
+			AND stInputs.stSafety.bSafetyOk
+			AND NOT stIndexStatus.bBusy
+			AND NOT fbIndex.IsFaulted()
+			//AND NOT fbProcessStation.IsFaulted()
+			//AND NOT ipEquipment.IsFaulted()
 		THEN
+	
+			fbManualMode.Initialise();
+			eMachineState := E_MachineState.Manual;
+	
+		ELSIF stCommand.bStart
+			AND fbMainDoorLock.IsReadyForAutomatic()
+		THEN
+	
 			eCycleState := E_CycleState.Idle;
 			eMachineState := E_MachineState.AutoCycle;
- 		END_IF
+	
+		END_IF
 // 	
 	E_MachineState.AutoCycle:
 // 		tonInitialising(IN := FALSE);
@@ -526,36 +529,64 @@ CASE eMachineState OF
  		END_IF
 // 	
 	E_MachineState.Manual:
-// 		tonInitialising(IN := FALSE);
-// 		tonStopping(IN := FALSE);
-// 	
-// 		IF stInputs.bEventFault THEN
-// 			eMachineState := E_MachineState.Fault;
-// 		ELSE
-// 			IF stManualModeRequests.bIndexMoveRequest THEN
-// 				bManualIndexRequestAccepted := fbIndex.RequestManualMove();
-// 			END_IF
-// 	
-// 			// A home request currently reinitialises the pneumatic index sequence.
-// 			// Replace with a dedicated home method if the final index hardware supports one.
-// 			IF stManualModeRequests.bIndexHomeRequest THEN
-// 				fbIndex.Reset();
-// 			END_IF
-// 	
-// 			IF stManualModeRequests.bEquipmentStart THEN
-// 				ipEquipment.RequestStart();
-// 			END_IF
-// 			IF stManualModeRequests.bEquipmentStop THEN
-// 				ipEquipment.RequestStop();
-// 			END_IF
-// 			IF stManualModeRequests.bEquipmentReset THEN
-// 				ipEquipment.RequestReset();
-// 			END_IF
-// 	
-// 			IF (stCommand.bStop OR NOT stCommand.bManualRequest) AND stManualModeStatus.bSafeToExit THEN
-// 				eMachineState := E_MachineState.Stopping;
-// 			END_IF
-// 		END_IF
+
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+		
+		// ---------------------------------------------------------
+		// INDEX MANUAL MOVEMENT
+		// ---------------------------------------------------------
+		IF stManualModeRequests.bIndexMoveRequest THEN
+	
+			bManualIndexRequestAccepted :=
+				fbIndex.RequestManualMove();
+	
+		END_IF
+	
+	
+		// ---------------------------------------------------------
+		// INDEX RESET / HOME
+		// ---------------------------------------------------------
+		// At this stage the home command resets the pneumatic index sequence.
+		// A dedicated homing method can be introduced later if required.
+		IF stManualModeRequests.bIndexHomeRequest THEN
+	
+			fbIndex.Reset();
+	
+		END_IF
+	
+	
+		// ---------------------------------------------------------
+		// PROCESS EQUIPMENT MANUAL COMMANDS
+		// ---------------------------------------------------------
+		IF stManualModeRequests.bEquipmentStart THEN
+	
+			ipEquipment.RequestStart();
+	
+		END_IF
+	
+		IF stManualModeRequests.bEquipmentStop THEN
+	
+			ipEquipment.RequestStop();
+	
+		END_IF
+	
+		IF stManualModeRequests.bEquipmentReset THEN
+	
+			ipEquipment.RequestReset();
+	
+		END_IF
+	
+	
+		// ---------------------------------------------------------
+		// LEAVE MANUAL MODE
+		// ---------------------------------------------------------
+		IF stCommand.bStop THEN
+
+			eMachineState := E_MachineState.Stopping;
+		
+		END_IF
+		
 END_CASE
 
 

@@ -9,7 +9,7 @@ END_VAR
       <ST><![CDATA[// Convert the reusable machine output model into nominal physical outputs.
 GVL_IO.stOutputs.bSafetyRunRequest      				:= GVL_MASTER.stOutputs.bSafetyRunRequest;
 GVL_IO.stOutputs.bSafetyResetRequest    				:= GVL_MASTER.stOutputs.bSafetyResetRequest;
-GVL_IO.stOutputs.bSafetyErrorAcknowledgementRequest     := GVL_MASTER.stOutputs.bSafetyErrorAcknowledgementRequest;
+GVL_IO.stOutputs.bSafetyErrorAcknowledgementRequest     := GVL_MASTER.stOutputs.bSafetyResetRequest;
 
 GVL_IO.stOutputs.bAirSupplyEnable       				:= GVL_MASTER.stOutputs.bAirSupplyEnable;
 GVL_IO.stOutputs.bIndexRotatePortA      				:= GVL_MASTER.stOutputs.bIndexRotatePortA;

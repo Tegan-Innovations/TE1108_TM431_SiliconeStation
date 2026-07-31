@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_HmiCommands" Id="{77685773-5031-434b-8aac-fa8b49ef7063}">
-    <Declaration>TYPE ST_HmiCommands :
+    <Declaration><![CDATA[TYPE ST_HmiCommands :
 STRUCT
     bStart                          : BOOL;
     bStop                           : BOOL;
@@ -22,9 +22,12 @@ STRUCT
     bIvekStartManual                : BOOL;
     bIvekStopManual                 : BOOL;
     bIvekReset                      : BOOL;
+	bIndexerManualEnable            : BOOL;
     usiRecipeRequest                : USINT;
+	
+	
 END_STRUCT
 END_TYPE
-</Declaration>
+]]></Declaration>
   </DUT>
 </TcPlcObject>

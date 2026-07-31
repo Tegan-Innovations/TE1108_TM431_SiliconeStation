@@ -2,283 +2,6 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.22">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}" AutoDeleteType="true">E_TablePosition</Name>
-			<BitSize>16</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
-			<EnumInfo>
-				<Text><![CDATA[Unknown]]></Text>
-				<Enum>0</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Position1]]></Text>
-				<Enum>1</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Position2]]></Text>
-				<Enum>2</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Position3]]></Text>
-				<Enum>3</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Position4]]></Text>
-				<Enum>4</Enum>
-			</EnumInfo>
-			<Properties>
-				<Property>
-					<Name>qualified_only</Name>
-				</Property>
-				<Property>
-					<Name>strict</Name>
-				</Property>
-				<Property>
-					<Name>to_string</Name>
-				</Property>
-				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
-			</Properties>
-		</DataType>
-		<DataType>
-			<Name GUID="{222F2225-5911-80A8-AF5D-C65467427741}" AutoDeleteType="true">ST_PhysicalInputs</Name>
-			<BitSize>336</BitSize>
-			<SubItem>
-				<Name>bStartButton</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Physical operator controls (standard PLC inputs)]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bStopButton</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>8</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bResetButton</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Reset and validated safety diagnostics received through TwinSAFE aliases]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>16</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bTwoHandsSafe</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>24</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bSafetyOk</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>32</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bAirSupplyOk</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[bEmergencyStopOk              : BOOL;
-bMainDoorSafe                 : BOOL;
-bLeftFlapSafe                 : BOOL;
-bRightFlapSafe                : BOOL;
-bFlapsSafe                    : BOOL;
-bFsoeOk                       : BOOL;
-bSafetyLogicOk                : BOOL;]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>40</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bUp24VPowerSupplyOk</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Power and auxiliary diagnostics]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>48</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bUs24VPowerSupplyOk</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>56</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIvekHeaterControllerAlarm</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>64</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bSiliconeMinimumLevelSensor1</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>72</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bSiliconeMinimumLevelSensor2</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>80</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bMainDoorClosed</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Door diagnostics returned by TwinSAFE]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>88</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bMainDoorLocked</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>96</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bMainDoorDiagnosticOk</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>104</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bMs6FeedbackOk</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>112</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bAirExhausted</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>120</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bGearboxAssemblyPartPresent</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Part detection]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>128</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bReservoirPartPresent</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>136</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bRejectChutePartPresent</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>144</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexPositionSensor1</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Index table]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>152</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexPositionSensor2</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>160</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexPositionSensor3</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>168</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexReady</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>176</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexLocked</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>184</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexCompletedSensor</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>192</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexSupportExtended</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>200</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bIndexSupportRetracted</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>208</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>eIndexPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>224</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bTransferNestSupportCylinderExtended</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Transfer nest support / process tooling cylinder]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>240</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bTransferNestSupportCylinderRetracted</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>248</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>uiMainAirPressureRaw</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
-				<Comment><![CDATA[ Analog raw values. Engineering-unit scaling is intentionally kept
- outside the terminal mapping until the sensor ranges are confirmed.]]></Comment>
-				<BitSize>16</BitSize>
-				<BitOffs>256</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>uiSiliconePressureRaw</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>272</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>uiNozzlePressureRaw</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>288</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>uiVacuumPressureRaw</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>304</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bPuckSensorUp</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Puck locker is not shown in EPLAN Rev 1.0. These remain available for
- future hardware revisions and must stay FALSE while the option is absent.]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>320</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bPuckSensorDown</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>328</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
 			<Name GUID="{6FD2BF8B-C55F-59B8-AA4B-CD262669FF8E}" AutoDeleteType="true">E_IvekStatusState</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
@@ -392,6 +115,289 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>160</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}" AutoDeleteType="true">E_TablePosition</Name>
+			<BitSize>16</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
+			<EnumInfo>
+				<Text><![CDATA[Unknown]]></Text>
+				<Enum>0</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Position1]]></Text>
+				<Enum>1</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Position2]]></Text>
+				<Enum>2</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Position3]]></Text>
+				<Enum>3</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Position4]]></Text>
+				<Enum>4</Enum>
+			</EnumInfo>
+			<Properties>
+				<Property>
+					<Name>qualified_only</Name>
+				</Property>
+				<Property>
+					<Name>strict</Name>
+				</Property>
+				<Property>
+					<Name>to_string</Name>
+				</Property>
+				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
+			</Properties>
+		</DataType>
+		<DataType>
+			<Name GUID="{397F6CE6-ECC6-A172-0EE0-DCF891F61608}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<BitSize>336</BitSize>
+			<SubItem>
+				<Name>bStartButton</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Physical operator controls (standard PLC inputs)]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bStopButton</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>8</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bResetButton</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Reset and validated safety diagnostics received through TwinSAFE aliases]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>16</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bTwoHandsSafe</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>24</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bSafetyOk</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bAirSupplyOk</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[bEmergencyStopOk              : BOOL;
+bMainDoorSafe                 : BOOL;
+bLeftFlapSafe                 : BOOL;
+bRightFlapSafe                : BOOL;
+bFlapsSafe                    : BOOL;
+bFsoeOk                       : BOOL;
+bSafetyLogicOk                : BOOL;]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>40</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bUp24VPowerSupplyOk</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Power and auxiliary diagnostics]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>48</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bUs24VPowerSupplyOk</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>56</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIvekHeaterControllerAlarm</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bSiliconeMinimumLevelSensor1</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>72</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bSiliconeMinimumLevelSensor2</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>80</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bMainDoorClosed</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Door diagnostics returned by TwinSAFE]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>88</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bMainDoorLocked</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>96</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bMainDoorUnsafe</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>104</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bMainDoorDiagnosticOk</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>112</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bMs6FeedbackOk</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>120</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bAirExhausted</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bGearboxAssemblyPartPresent</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Part detection]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>136</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bReservoirPartPresent</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>144</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bRejectChutePartPresent</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>152</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexPositionSensor1</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Index table]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>160</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexPositionSensor2</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>168</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexPositionSensor3</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>176</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexReady</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>184</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexLocked</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>192</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexCompletedSensor</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>200</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexSupportExtended</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>208</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bIndexSupportRetracted</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>216</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>eIndexPosition</Name>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>224</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bTransferNestSupportCylinderExtended</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Transfer nest support / process tooling cylinder]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>240</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bTransferNestSupportCylinderRetracted</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>248</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>uiMainAirPressureRaw</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<Comment><![CDATA[ Analog raw values. Engineering-unit scaling is intentionally kept
+ outside the terminal mapping until the sensor ranges are confirmed.]]></Comment>
+				<BitSize>16</BitSize>
+				<BitOffs>256</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>uiSiliconePressureRaw</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>272</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>uiNozzlePressureRaw</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>288</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>uiVacuumPressureRaw</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>304</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bPuckSensorUp</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Puck locker is not shown in EPLAN Rev 1.0. These remain available for
+ future hardware revisions and must stay FALSE while the option is absent.]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>320</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bPuckSensorDown</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>328</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -595,7 +601,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{654E715E-6FF2-CAAD-36D6-6F76B5594C74}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<Name GUID="{A30FE77D-046A-1F64-E2BB-1FE2AF0C13B8}" AutoDeleteType="true">ST_MachineConfig</Name>
 			<BitSize>576</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
@@ -675,7 +681,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<BitSize>32</BitSize>
 				<BitOffs>256</BitOffs>
 				<Default>
-					<DateTime>T#5S</DateTime>
+					<DateTime>T#10S</DateTime>
 				</Default>
 			</SubItem>
 			<SubItem>
@@ -684,7 +690,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<BitSize>32</BitSize>
 				<BitOffs>288</BitOffs>
 				<Default>
-					<DateTime>T#5S</DateTime>
+					<DateTime>T#10S</DateTime>
 				</Default>
 			</SubItem>
 			<SubItem>
@@ -993,21 +999,21 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-002000000003}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..2] OF BIT</Name>
-			<BitSize>3</BitSize>
+			<Name GUID="{18071995-0000-0000-0000-002000000001}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..0] OF BIT</Name>
+			<BitSize>1</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
 			<ArrayInfo>
 				<LBound>0</LBound>
-				<Elements>3</Elements>
+				<Elements>1</Elements>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-002000000005}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..4] OF BIT</Name>
-			<BitSize>5</BitSize>
+			<Name GUID="{18071995-0000-0000-0000-002000000004}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..3] OF BIT</Name>
+			<BitSize>4</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
 			<ArrayInfo>
 				<LBound>0</LBound>
-				<Elements>5</Elements>
+				<Elements>4</Elements>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
@@ -1029,30 +1035,12 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-002000000004}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..3] OF BIT</Name>
-			<BitSize>4</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
 			<Name GUID="{18071995-0000-0000-0000-00200000000C}" IecBaseType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..11] OF BIT</Name>
 			<BitSize>12</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
 			<ArrayInfo>
 				<LBound>0</LBound>
 				<Elements>12</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
-			<Name GUID="{18071995-0000-0000-0000-002000000001}" IecBaseType="true" BitType="true" AutoDeleteType="true" HideSubItems="true">ARRAY [0..0] OF BIT</Name>
-			<BitSize>1</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000010}">BIT</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>1</Elements>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
@@ -1095,20 +1083,20 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{A5E0681B-717B-C76B-1753-CC264EA98FB6}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{AE2F2486-4F13-A57E-9FCD-89DDF49C9CC8}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
-							<Type>USINT</Type>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{A30FE77D-046A-1F64-E2BB-1FE2AF0C13B8}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{654E715E-6FF2-CAAD-36D6-6F76B5594C74}">ST_MachineConfig</Type>
+							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
+							<Type>USINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1298,17 +1286,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL_IO.stInputs</Name>
-							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
- Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{222F2225-5911-80A8-AF5D-C65467427741}">ST_PhysicalInputs</Type>
-						</Var>
-						<Var>
 							<Name>GVL_Safety.bEmergencyStopOk</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bMainDoorSafe</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -1740,6 +1718,16 @@ bSafetyLogicOk                : BOOL;]]></Comment>
  The exact byte offsets and assembly sizes must be confirmed using the IVEK EDS/firmware manual.]]></Comment>
 							<Type GUID="{A3C41B80-9F0D-3FDE-E2D0-1D9C5C9BEC72}">ST_IvekCyclicInput</Type>
 						</Var>
+						<Var>
+							<Name>GVL_Safety.bMainDoorUnSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_IO.stInputs</Name>
+							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
+ Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
+							<Type GUID="{397F6CE6-ECC6-A172-0EE0-DCF891F61608}">ST_PhysicalInputs</Type>
+						</Var>
 					</Vars>
 					<UnrestoredVarLinks ImportTime="2026-07-29T09:34:25">
 						<OwnerA Name="InputDst" Prefix="TIPC^TE1108_SS^TE1108_SS Instance" Type="1">
@@ -1865,8 +1853,14 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 								<Entry Name="TwinSafeGroup1.Reset_46" Index="#x7000" Sub="#x05">
 									<Type>BIT</Type>
 								</Entry>
+								<Entry Name="TwinSafeGroup1.MainDoorUnsafe_48" Index="#x7000" Sub="#x06">
+									<Type>BIT</Type>
+								</Entry>
+								<Entry Name="TwinSafeGroup1.MainDoorClosed_49" Index="#x7000" Sub="#x07">
+									<Type>BIT</Type>
+								</Entry>
 								<Entry>
-									<Type GUID="{18071995-0000-0000-0000-002000000003}">ARRAY [0..2] OF BIT</Type>
+									<Type GUID="{18071995-0000-0000-0000-002000000001}">ARRAY [0..0] OF BIT</Type>
 								</Entry>
 							</Pdo>
 							<Pdo Name="StandardOutputs" Index="#x17f0" InOut="1" Flags="#x2011" SyncMan="2">
@@ -1879,8 +1873,11 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 								<Entry Name="TwinSafeGroup1.AirSupplyEnabled_25" Index="#x6000" Sub="#x03">
 									<Type>BIT</Type>
 								</Entry>
+								<Entry Name="TwinSafeGroup1.MainDoorLockRequest_50" Index="#x6000" Sub="#x04">
+									<Type>BIT</Type>
+								</Entry>
 								<Entry>
-									<Type GUID="{18071995-0000-0000-0000-002000000005}">ARRAY [0..4] OF BIT</Type>
+									<Type GUID="{18071995-0000-0000-0000-002000000004}">ARRAY [0..3] OF BIT</Type>
 								</Entry>
 							</Pdo>
 							<Pdo Name="Device Info Data" Index="#x1bfe" Flags="#x2011" SyncMan="3">
@@ -3377,14 +3374,17 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch4" VarB="AI Standard Channel 4^Value"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 3 (EL6910)">
-				<Link VarA="PlcTask Inputs^GVL_IO.stInputs^bTwoHandsSafe" VarB="StandardInputs^TwinSafeGroup1.TouchButton_OK_29"/>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bAirSupplySafe" VarB="StandardInputs^TwinSafeGroup1.AirSupply_OK_37"/>
+				<Link VarA="PlcTask Inputs^GVL_Safety.bMainDoorClosed" VarB="StandardInputs^TwinSafeGroup1.MainDoorClosed_49"/>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bMainDoorLocked" VarB="StandardInputs^TwinSafeGroup1.MainDoorLocked_33"/>
+				<Link VarA="PlcTask Inputs^GVL_Safety.bMainDoorUnSafe" VarB="StandardInputs^TwinSafeGroup1.MainDoorUnsafe_48"/>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bResetButtonPressed" VarB="StandardInputs^TwinSafeGroup1.Reset_46"/>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bSafetyOk" VarB="StandardInputs^TwinSafeGroup1.Safety_OK_8"/>
+				<Link VarA="PlcTask Inputs^GVL_Safety.bTwoHandSafe" VarB="StandardInputs^TwinSafeGroup1.TouchButton_OK_29"/>
 				<Link VarA="PlcTask Outputs^GVL_IO.stOutputs^bSafetyErrorAcknowledgementRequest" VarB="StandardOutputs^TwinSafeGroup1.ErrorAcknowledgement_1"/>
 				<Link VarA="PlcTask Outputs^GVL_IO.stOutputs^bSafetyRunRequest" VarB="StandardOutputs^TwinSafeGroup1.SafetyRun_2"/>
 				<Link VarA="PlcTask Outputs^GVL_Safety.bAirSupplyEnableRequest" VarB="StandardOutputs^TwinSafeGroup1.AirSupplyEnabled_25"/>
+				<Link VarA="PlcTask Outputs^GVL_Safety.bMainDoorLockRequest" VarB="StandardOutputs^TwinSafeGroup1.MainDoorLockRequest_50"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 7 (EL1809)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch1" VarB="Channel 1^Input"/>
