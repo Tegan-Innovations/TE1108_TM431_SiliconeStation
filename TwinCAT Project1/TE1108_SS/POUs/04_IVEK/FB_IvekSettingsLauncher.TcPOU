@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_IvekSettingsLauncher" Id="{f8ea1b6d-ba94-4e55-8bea-f582593c5885}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_IvekSettingsLauncher
+VAR_INPUT
+	bOpenRequest          : BOOL;
+    bMachineStopped       : BOOL;
+    udiLauncherHeartbeat  : UDINT;
+    bResetError           : BOOL;
+END_VAR
+VAR_IN_OUT
+	bLauncherActive       : BOOL;
+END_VAR
+VAR_OUTPUT
+	bOpenPermitted        : BOOL;
+    bSettingsInterlock    : BOOL;
+
+    bLaunchPending        : BOOL;
+    bLaunchBusy           : BOOL;
+    bLaunchError          : BOOL;
+
+    nLaunchErrorId        : UDINT;
+
+    bActivationTimeout    : BOOL;
+    bHeartbeatLost        : BOOL;
+END_VAR
+VAR CONSTANT
+    c_sLauncherPath        : T_MaxString :=
+        'C:\Tegan\IVEK\IvekWebLauncher\IvekWebLauncher.exe';
+
+    c_sWorkingDirectory    : T_MaxString :=
+        'C:\Tegan\IVEK\IvekWebLauncher';
+
+    c_tStartProcessTimeout : TIME := T#5S;
+    c_tActivationTimeout   : TIME := T#10S;
+    c_tHeartbeatTimeout    : TIME := T#5S;
+END_VAR
+VAR
+	fbStartProcess        : NT_StartProcess;
+    rtOpenRequest         : R_TRIG;
+
+    tonActivationTimeout  : TON;
+    tonHeartbeatTimeout   : TON;
+
+    udiLastHeartbeat      : UDINT;
+
+    bHeartbeatChanged     : BOOL;
+    bStartProcessPulse    : BOOL;
+
+    bNtStartError         : BOOL;
+    nNtStartErrorId       : UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Detect positive edge from HMI command *)
+rtOpenRequest(
+    CLK := bOpenRequest
+);
+
+
+(* Launcher can only be opened while machine is stopped *)
+bOpenPermitted :=
+    bMachineStopped
+    AND NOT bLaunchPending
+    AND NOT bLauncherActive
+    AND NOT bLaunchBusy;
+
+
+bStartProcessPulse :=
+    rtOpenRequest.Q
+    AND bOpenPermitted;
+
+
+(* Immediately latch the pending state.
+
+   This prevents the machine from leaving Stopped during the delay between
+   pressing the HMI button and the executable connecting back through ADS.
+*)
+IF bStartProcessPulse THEN
+
+    bLaunchPending := TRUE;
+
+    bLaunchError := FALSE;
+    nLaunchErrorId := 0;
+
+    bActivationTimeout := FALSE;
+
+END_IF
+
+
+(* Start the Windows application on the local IPC *)
+fbStartProcess(
+    NETID     := '',
+    PATHSTR   := c_sLauncherPath,
+    DIRNAME   := c_sWorkingDirectory,
+    COMNDLINE := '',
+    START     := bStartProcessPulse,
+    TMOUT     := c_tStartProcessTimeout,
+
+    BUSY      => bLaunchBusy,
+    ERR       => bNtStartError,
+    ERRID     => nNtStartErrorId
+);
+
+
+(* Capture NT_StartProcess errors *)
+IF bNtStartError THEN
+
+    bLaunchError := TRUE;
+    nLaunchErrorId := nNtStartErrorId;
+
+    bLaunchPending := FALSE;
+
+END_IF
+
+
+(* Wait for the wrapper to confirm that it is running *)
+tonActivationTimeout(
+    IN := bLaunchPending
+          AND NOT bLauncherActive,
+
+    PT := c_tActivationTimeout
+);
+
+
+(* ADS feedback received from the wrapper *)
+IF bLauncherActive THEN
+
+    bLaunchPending := FALSE;
+
+END_IF
+
+
+(* Executable was requested but did not activate through ADS *)
+IF tonActivationTimeout.Q THEN
+
+    bActivationTimeout := TRUE;
+    bLaunchError := TRUE;
+
+    bLaunchPending := FALSE;
+
+END_IF
+
+
+(* Heartbeat detection.
+
+   The wrapper increments udiLauncherHeartbeat every second.
+*)
+bHeartbeatChanged :=
+    bLauncherActive
+    AND
+    (udiLauncherHeartbeat <> udiLastHeartbeat);
+
+
+IF bHeartbeatChanged THEN
+
+    udiLastHeartbeat := udiLauncherHeartbeat;
+
+END_IF
+
+
+(* Detect a frozen or closed wrapper *)
+tonHeartbeatTimeout(
+    IN := bLauncherActive
+          AND NOT bHeartbeatChanged,
+
+    PT := c_tHeartbeatTimeout
+);
+
+
+bHeartbeatLost :=
+    tonHeartbeatTimeout.Q;
+
+
+(* Clear stale active status after wrapper crash.
+
+   bLauncherActive is VAR_IN_OUT because this FB is allowed to clear a stale
+   TRUE after the heartbeat timeout.
+*)
+IF bHeartbeatLost THEN
+
+    bLauncherActive := FALSE;
+
+END_IF
+
+
+(* Final machine interlock.
+
+   Pending protects the time between button press and ADS connection.
+   Active protects the complete period while the wrapper is running.
+*)
+bSettingsInterlock :=
+    bLaunchPending
+    OR
+    (
+        bLauncherActive
+        AND NOT bHeartbeatLost
+    );
+
+
+(* Clear latched errors *)
+IF bResetError THEN
+
+    bLaunchError := FALSE;
+    nLaunchErrorId := 0;
+
+    bActivationTimeout := FALSE;
+
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

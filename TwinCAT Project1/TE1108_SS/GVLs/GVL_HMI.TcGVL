@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <GVL Name="GVL_HMI" Id="{fe693b0e-dd13-4420-86c3-7f656326a462}">
-    <Declaration>{attribute 'qualified_only'}
+    <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL
     // TcHMI writes commands only here and reads status only here.
     stCommands       : ST_HmiCommands;
@@ -24,6 +24,31 @@ VAR_GLOBAL
     sSystemDate      : STRING(255);
     stStatistics     : ST_HmiStatistics;
     bBlink_1Hz       : BOOL;
+
+    //==============================================================
+    // IVEK native web interface
+    //==============================================================
+
+    (* Command written by TwinCAT HMI *)
+    bCmdOpenIvekSettings       : BOOL;
+
+    (* Written directly by IvekWebLauncher.exe through ADS *)
+    bIvekSettingsActive        : BOOL;
+    udiIvekSettingsHeartbeat   : UDINT;
+
+    (* PLC-calculated status *)
+    bIvekSettingsAccessAllowed : BOOL;
+    bIvekSettingsInterlock     : BOOL;
+
+    bIvekSettingsLaunchPending : BOOL;
+    bIvekSettingsLaunchBusy    : BOOL;
+    bIvekSettingsLaunchError   : BOOL;
+
+    nIvekSettingsLaunchErrorId : UDINT;
+
+    bIvekSettingsHeartbeatLost : BOOL;
+    bIvekSettingsActTimeout    : BOOL;
+
 END_VAR
 
 VAR_GLOBAL CONSTANT
@@ -56,6 +81,6 @@ VAR_GLOBAL CONSTANT
     sSoftwareVersion : STRING := '0.13.0';
     sSystemName      : STRING := 'Indexed Silicone Application Machine';
     sProjectID       : STRING := 'TBD';
-END_VAR</Declaration>
+END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
