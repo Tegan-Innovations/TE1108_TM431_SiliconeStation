@@ -1,18 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
-  <POU Name="FB_DoubleActingCylinder" Id="{9c620d6c-efa3-4dcf-8317-199a23b8c643}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_DoubleActingCylinder
+  <POU Name="FB_SiliconeSupport" Id="{9c620d6c-efa3-4dcf-8317-199a23b8c643}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SiliconeSupport
 VAR_INPUT
+    bEnable         : BOOL;
+    bExtendRequest  : BOOL;
+    bRetractRequest : BOOL;
+    bExtended       : BOOL;
+    bRetracted      : BOOL;
+    tTimeout        : TIME;
 END_VAR
+
 VAR_OUTPUT
+    bExtendOutput   : BOOL;
+    bRetractOutput  : BOOL;
 END_VAR
+
 VAR
-	bCmdExtend       : BOOL;
-    bCmdRetract      : BOOL;
-    bFault           : BOOL;
-    tonMove          : TON;
-END_VAR
-]]></Declaration>
+    bCmdExtend      : BOOL;
+    bCmdRetract     : BOOL;
+    bFault          : BOOL;
+    tonMove         : TON;
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
@@ -85,14 +94,19 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="Reset" Id="{230f154c-307b-4e3c-8c0c-7b6402184279}">
-      <Declaration><![CDATA[METHOD PUBLIC Reset : BOOL
+      <Declaration><![CDATA[METHOD PUBLIC Reset 
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT bCmdExtend AND NOT bCmdRetract THEN
+        <ST><![CDATA[IF NOT bCmdExtend
+    AND NOT bCmdRetract
+THEN
+
     bFault := FALSE;
-    tonMove(IN := FALSE);
+    bCmdExtend := FALSE;
+    bCmdRetract := FALSE;
+
 END_IF]]></ST>
       </Implementation>
     </Method>

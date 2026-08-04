@@ -10,12 +10,13 @@ STRUCT
     bManualIndexForward            : BOOL;
     bManualIndexHome               : BOOL;
 	bIndexerManualEnable 		   : BOOL;
-    bManualCylinderExtend          : BOOL;
-    bManualCylinderRetract         : BOOL;
+	bManualSiliconeSupportExtend   : BOOL;
+	bManualSiliconeSupportRetract  : BOOL;
     bManualMainDoorUnlock          : BOOL;
     bManualEquipmentStart          : BOOL;
     bManualEquipmentStop           : BOOL;
     bManualEquipmentReset          : BOOL;
+	
     bIndexRequest                  : BOOL;
     bProcessRequest                : BOOL;
     bAcknowledge                   : BOOL;

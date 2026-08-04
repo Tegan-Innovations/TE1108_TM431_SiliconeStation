@@ -11,12 +11,12 @@ STRUCT
 	bSafetyErrorAcknowledgementRequest : BOOL;
 
     // Standard outputs
-    bIndexRotatePortA             : BOOL;
-    bIndexStopPortB               : BOOL;
-    bIndexSupportExtend           : BOOL;
-    bIndexSupportRetract          : BOOL;
-    bTransferNestSupportCylinderExtend          : BOOL;
-    bTransferNestSupportCylinderRetract         : BOOL;
+    bIndexRotatePortA             	: BOOL;
+    bIndexStopPortB               	: BOOL;
+   	bAssemblySupportExtend			: BOOL;
+	bAssemblySupportRetract			: BOOL;
+	bSiliconeSupportExtend			: BOOL;
+	bSiliconeSupportRetract			: BOOL;
 
     bLedStart                     : BOOL;
     bLedReset                     : BOOL;

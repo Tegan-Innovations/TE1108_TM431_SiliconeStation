@@ -134,7 +134,7 @@ tonStateTimeout(
 //        OR eState = E_IndexState.VerifyingPosition
 //        OR eState = E_IndexState.ExtendingSupport
 //        OR eState = E_IndexState.WaitingSupportExtended,
-//
+// 
 //     PT := SEL(
 //         eState = E_IndexState.RotatingPortA
 //         OR eState = E_IndexState.StoppingPortB

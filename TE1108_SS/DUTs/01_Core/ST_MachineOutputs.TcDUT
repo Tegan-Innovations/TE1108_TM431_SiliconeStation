@@ -10,10 +10,12 @@ STRUCT
     bAirSupplyEnable           				: BOOL;
     bIndexRotatePortA          				: BOOL;
     bIndexStopPortB            				: BOOL;
-    bIndexSupportExtend        				: BOOL;
-    bIndexSupportRetract       				: BOOL;
-    bTransferNestSupportCylinderExtend      : BOOL;
-    bTransferNestSupportCylinderRetract     : BOOL;
+	
+    bAssemblySupportExtend     				: BOOL;
+	bAssemblySupportRetract    				: BOOL;
+	bSiliconeSupportExtend     				: BOOL;
+	bSiliconeSupportRetract    				: BOOL;
+	
     bMainDoorLockRequest       				: BOOL;
     bPuckLockerPinUp           				: BOOL;
 	

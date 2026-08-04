@@ -21,6 +21,7 @@ VAR
     stPuckStatus         					: ST_PuckLockerStatus;
     stOperatorStatus     					: ST_OperatorStationStatus;
     stIndexStatus        					: ST_IndexStatus;
+	fbSiliconeSupportCylinder 				: FB_SiliconeSupport;
     stProcessStationStatus 					: ST_ProcessStationStatus;
     stMainDoorLockStatus 					: ST_MainDoorLockStatus;
     ePreviousMachineState 					: E_MachineState := E_MachineState.PowerUp;
@@ -71,6 +72,34 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Method Name="CheckComponentFaults" Id="{1e0a6e8d-fb2f-4560-a186-ac64f265cfd0}">
+      <Declaration><![CDATA[METHOD CheckComponentFaults : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// =========================================================
+// COMPONENT FAULT AGGREGATION
+// =========================================================
+
+CheckComponentFaults := FALSE;
+
+IF fbMainDoorLock.IsFaulted()
+    OR fbIndex.IsFaulted()
+
+    // Enable after process-station commissioning.
+    // OR fbProcessStation.IsFaulted()
+
+    // Enable after equipment commissioning.
+    // OR ipEquipment.IsFaulted()
+THEN
+
+    bSafetyDropRequest := TRUE;
+    eMachineState := E_MachineState.Fault;
+
+    CheckComponentFaults := TRUE;
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="Cyclic" Id="{b3ad9d70-3bf2-42da-ab5a-7255e3c227a5}">
       <Declaration><![CDATA[METHOD PUBLIC Cyclic
 VAR_INPUT
@@ -128,15 +157,6 @@ stIndexStatus := fbIndex.GetStatus();
 bIndexStable := stIndexStatus.bProcessPositionReady AND stInputs.bIndexReady AND stInputs.bIndexLocked;
 bIndexDone := fbIndex.IsDone();
 
-// =========================================================
-// INDEX TABLE FAULT MONITORING
-// =========================================================
-
-// The index controller owns its internal diagnostics.
-// A fault requests a machine safety drop.
-IF fbIndex.IsFaulted() THEN
-    bSafetyDropRequest := TRUE;
-END_IF
 
 
 // =========================================================
@@ -601,18 +621,6 @@ CASE eMachineState OF
 END_CASE
 
 
-// =========================================================
-// PLC FAULT TO TWINSAFE RUN-DROP PULSE
-// =========================================================
-
-// Convert the one-scan internal request into a timed TwinSAFE run drop.
-// This block must execute after the machine-state logic because fault
-// transitions inside the CASE generate bSafetyDropRequest.
-tpSafetyRunDrop(
-    IN := bSafetyDropRequest,
-    PT := T#500MS
-);
-
 
 // =========================================================
 // PROCESS CYCLE DISABLE HANDLING
@@ -632,13 +640,27 @@ END_IF
 // CYCLIC COMPONENT EXECUTION
 // =========================================================
 
+
+// SILICONE SUPPORT CONTROL
+
+fbSiliconeSupportCylinder.Cyclic(
+    bEnable := eMachineState = E_MachineState.Manual,
+    bExtendRequest :=stManualModeRequests.bSiliconeSupportExtend,
+	bRetractRequest :=stManualModeRequests.bSiliconeSupportRetract,
+    bExtended := stInputs.bIndexSupportExtended,
+    bRetracted := stInputs.bIndexSupportRetracted,
+    tTimeout := stConfig.tIndexSupportTimeout,
+    bExtendOutput => stOutputsInternal.bSiliconeSupportExtend,
+	bRetractOutput => stOutputsInternal.bSiliconeSupportRetract
+);
+
 // Cyclic component execution
 fbProcessStation.Cyclic(
     bEnable := eMachineState = E_MachineState.AutoCycle,
     bAutomaticStartRequest := bProcessStartPulse,
     bManualEnable := eMachineState = E_MachineState.Manual,
-    bManualExtendRequest := stManualModeRequests.bCylinderExtend,
-    bManualRetractRequest := stManualModeRequests.bCylinderRetract,
+    bManualExtendRequest := stManualModeRequests.bSiliconeSupportExtend,
+    bManualRetractRequest := stManualModeRequests.bSiliconeSupportRetract,
     bStopRequest := (eMachineState = E_MachineState.Stopping) OR (eMachineState = E_MachineState.Fault),
     bResetRequest := stCommand.bReset,
     bPartPresent := stInputs.bReservoirPartPresent,
@@ -730,8 +752,30 @@ fbIndex.Cyclic(
     tTwoHandRecoveryTimeout := stConfig.tTwoHandRecoveryTimeout,
     bRotatePortA => stOutputsInternal.bIndexRotatePortA,
     bStopPortB => stOutputsInternal.bIndexStopPortB,
-    bSupportExtendRequest => stOutputsInternal.bIndexSupportExtend,
-    bSupportRetractRequest => stOutputsInternal.bIndexSupportRetract);
+    bSupportExtendRequest => stOutputsInternal.bAssemblySupportExtend,
+    bSupportRetractRequest => stOutputsInternal.bAssemblySupportRetract);
+	
+	
+	
+// =========================================================
+// COMPONENT FAULT AGGREGATION
+// =========================================================
+	CheckComponentFaults();
+
+
+
+// =========================================================
+// PLC FAULT TO TWINSAFE RUN-DROP PULSE
+// =========================================================
+
+// Convert the one-scan internal request into a timed TwinSAFE run drop.
+// This block must execute after the machine-state logic because fault
+// transitions inside the CASE generate bSafetyDropRequest.
+tpSafetyRunDrop(
+    IN := bSafetyDropRequest,
+    PT := T#500MS
+);
+
 
 // =========================================================
 // EVENT-DRIVEN MACHINE TRANSITIONS
@@ -751,8 +795,8 @@ fbIndex.Cyclic(
 
 // Outputs and public status
 stOutputsInternal.bAirSupplyEnable := bAirSupplyEnable;
-stOutputsInternal.bTransferNestSupportCylinderExtend := bProcExtend;
-stOutputsInternal.bTransferNestSupportCylinderRetract := bProcRetract;
+stOutputsInternal.bAssemblySupportExtend := bProcExtend;
+stOutputsInternal.bAssemblySupportRetract := bProcRetract;
 stOutputsInternal.bPuckLockerPinUp := bPuckPinUp;
 // An internal PLC machine fault temporarily removes the TwinSAFE run request.
 // The request returns automatically after the configured TP duration.
@@ -1002,10 +1046,10 @@ stOutputsInternal.bSafetyResetRequest := FALSE;
 stOutputsInternal.bAirSupplyEnable := FALSE;
 stOutputsInternal.bIndexRotatePortA := FALSE;
 stOutputsInternal.bIndexStopPortB := FALSE;
-stOutputsInternal.bIndexSupportExtend := FALSE;
-stOutputsInternal.bIndexSupportRetract := FALSE;
-stOutputsInternal.bTransferNestSupportCylinderExtend := FALSE;
-stOutputsInternal.bTransferNestSupportCylinderRetract := FALSE;
+stOutputsInternal.bAssemblySupportExtend := FALSE;
+stOutputsInternal.bAssemblySupportRetract := FALSE;
+stOutputsInternal.bSiliconeSupportExtend := FALSE;
+stOutputsInternal.bSiliconeSupportRetract := FALSE;
 stOutputsInternal.bMainDoorLockRequest := FALSE;
 stOutputsInternal.bLedStart := FALSE;
 stOutputsInternal.bLedReset := FALSE;

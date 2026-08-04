@@ -169,7 +169,7 @@ ELSE
         eMessage := E_ManualModeMessage.WaitingSafeExit;
 
         // Retract the support cylinder when permitted.
-        stRequestsInternal.bCylinderRetract :=
+        stRequestsInternal.bSiliconeSupportRetract :=
             stStatusInternal.bCylinderRetractPermissive;
 
         // Stop the process equipment if it is currently busy.
@@ -277,44 +277,36 @@ ELSE
         END_IF
 
 
-        // =================================================
-        // TRANSFER NEST SUPPORT CYLINDER
-        // =================================================
-
-        IF stCommand.bManualCylinderExtend THEN
-
-            IF stStatusInternal.bCylinderExtendPermissive THEN
-
-                stRequestsInternal.bCylinderExtend := TRUE;
-                eMessage :=
-                    E_ManualModeMessage.TransferNestSupportCylinderExtending;
-
-            ELSE
-
-                stStatusInternal.bCommandRejected := TRUE;
-                eMessage :=
-                    E_ManualModeMessage.CylinderCommandNotPermitted;
-
-            END_IF
-
-        ELSIF stCommand.bManualCylinderRetract THEN
-
-            IF stStatusInternal.bCylinderRetractPermissive THEN
-
-                stRequestsInternal.bCylinderRetract := TRUE;
-                eMessage :=
-                    E_ManualModeMessage.TransferNestSupportCylinderRetracting;
-
-            ELSE
-
-                stStatusInternal.bCommandRejected := TRUE;
-                eMessage :=
-                    E_ManualModeMessage.CylinderCommandNotPermitted;
-
-            END_IF
-
-        END_IF
-
+	    // =================================================
+		// SILICONE SUPPORT CYLINDER
+		// =================================================
+		
+		IF stCommand.bManualSiliconeSupportExtend THEN
+		
+			IF stStatusInternal.bCylinderExtendPermissive THEN
+		
+				stRequestsInternal.bSiliconeSupportExtend := TRUE;
+		
+			ELSE
+		
+				stStatusInternal.bCommandRejected := TRUE;
+		
+			END_IF
+		
+		
+		ELSIF stCommand.bManualSiliconeSupportRetract THEN
+		
+			IF stStatusInternal.bCylinderRetractPermissive THEN
+		
+				stRequestsInternal.bSiliconeSupportRetract := TRUE;
+		
+			ELSE
+		
+				stStatusInternal.bCommandRejected := TRUE;
+		
+			END_IF
+		
+		END_IF
 
         // =================================================
         // PROCESS EQUIPMENT
@@ -361,8 +353,8 @@ ELSE
 
         IF stRequestsInternal.bIndexMoveRequest
             OR stRequestsInternal.bIndexHomeRequest
-            OR stRequestsInternal.bCylinderExtend
-            OR stRequestsInternal.bCylinderRetract
+            OR stRequestsInternal.bSiliconeSupportExtend
+			OR stRequestsInternal.bSiliconeSupportRetract
             OR stRequestsInternal.bEquipmentStart
             OR stRequestsInternal.bEquipmentStop
             OR stRequestsInternal.bEquipmentReset
@@ -420,13 +412,13 @@ stStatusInternal.bCommandRejected := FALSE;]]></ST>
     <Method Name="ResetRequests" Id="{5e6759c7-4384-401c-9c08-6d2baf0aa708}">
       <Declaration><![CDATA[METHOD PRIVATE ResetRequests]]></Declaration>
       <Implementation>
-        <ST><![CDATA[stRequestsInternal.bIndexMoveRequest := FALSE;
-stRequestsInternal.bIndexHomeRequest := FALSE;
-stRequestsInternal.bCylinderExtend := FALSE;
-stRequestsInternal.bCylinderRetract := FALSE;
-stRequestsInternal.bEquipmentStart := FALSE;
-stRequestsInternal.bEquipmentStop := FALSE;
-stRequestsInternal.bEquipmentReset := FALSE;]]></ST>
+        <ST><![CDATA[stRequestsInternal.bIndexMoveRequest 			:= FALSE;
+stRequestsInternal.bIndexHomeRequest 			:= FALSE;
+stRequestsInternal.bSiliconeSupportExtend 		:= FALSE;
+stRequestsInternal.bSiliconeSupportRetract 		:= FALSE;
+stRequestsInternal.bEquipmentStart 				:= FALSE;
+stRequestsInternal.bEquipmentStop 				:= FALSE;
+stRequestsInternal.bEquipmentReset 				:= FALSE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="UpdateMessage" Id="{82995339-ff21-4701-8208-d0bdacd4bd00}">

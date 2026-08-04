@@ -56,8 +56,8 @@ GVL_MASTER.stCommand.bManualIndexForward 			:= GVL_HMI.stCommands.bIndexForward;
 GVL_MASTER.stCommand.bManualIndexHome 				:= GVL_HMI.stCommands.bIndexHome;
 
 
-GVL_MASTER.stCommand.bManualCylinderExtend 			:= GVL_HMI.stCommands.bProcessCylinderExtend;
-GVL_MASTER.stCommand.bManualCylinderRetract 		:= GVL_HMI.stCommands.bProcessCylinderRetract;
+GVL_MASTER.stCommand.bManualSiliconeSupportExtend 	:= GVL_HMI.stCommands.bProcessCylinderExtend;
+GVL_MASTER.stCommand.bManualSiliconeSupportRetract 	:= GVL_HMI.stCommands.bProcessCylinderRetract;
 GVL_MASTER.stCommand.bManualMainDoorUnlock 			:= GVL_HMI.stCommands.bMainDoorUnlock;
 GVL_MASTER.stCommand.bManualEquipmentStart 			:= GVL_HMI.stCommands.bIvekStartManual;
 GVL_MASTER.stCommand.bManualEquipmentStop 			:= GVL_HMI.stCommands.bIvekStopManual;

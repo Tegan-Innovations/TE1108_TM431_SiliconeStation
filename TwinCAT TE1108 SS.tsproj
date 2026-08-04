@@ -401,7 +401,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{526C521F-94B4-44F6-1784-8C4ADEA1FEAE}" AutoDeleteType="true">ST_PhysicalOutputs</Name>
+			<Name GUID="{B4F36A2B-2B83-FE10-B836-F85585CE0E92}" AutoDeleteType="true">ST_PhysicalOutputs</Name>
 			<BitSize>176</BitSize>
 			<SubItem>
 				<Name>bSafetyRunRequest</Name>
@@ -448,25 +448,25 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<BitOffs>48</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bIndexSupportExtend</Name>
+				<Name>bAssemblySupportExtend</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>56</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bIndexSupportRetract</Name>
+				<Name>bAssemblySupportRetract</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>64</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bTransferNestSupportCylinderExtend</Name>
+				<Name>bSiliconeSupportExtend</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>72</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bTransferNestSupportCylinderRetract</Name>
+				<Name>bSiliconeSupportRetract</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>80</BitOffs>
@@ -1083,7 +1083,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{AE2F2486-4F13-A57E-9FCD-89DDF49C9CC8}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{27184604-DA9C-70E0-3538-BA6102DEC611}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1119,7 +1119,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						<Name>PlcTask Outputs</Name>
 						<Var>
 							<Name>GVL_IO.stOutputs</Name>
-							<Type GUID="{526C521F-94B4-44F6-1784-8C4ADEA1FEAE}">ST_PhysicalOutputs</Type>
+							<Type GUID="{B4F36A2B-2B83-FE10-B836-F85585CE0E92}">ST_PhysicalOutputs</Type>
 						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1</Name>
@@ -3312,15 +3312,25 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 					<Box Id="14" BoxType="9110" BoxFlags="#x00000020">
 						<Name>Term 14 (EL6652)</Name>
 						<ImageId>1007</ImageId>
-						<EtherCAT SlaveType="5" AdsServerAddress="ac12ea1d020f0000" PdiType="#x0008" ExecIo="true" MboxDataLinkLayer="true" StateMBoxPolling="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x19fc3052" RevisionNo="#x00120000" InfoDataAddr="true" InfoDataNetId="true" RepeatSupport="true" TimeoutStateChange1="10000" TimeoutStateChange3="20000" TimeoutMailbox2="2000" GenerateOwnNetId="true" InitializeOwnNetId="true" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL6652 EtherNet/IP Scanner (Master)" Desc="EL6652" PortABoxInfo="#x0100000d">
+						<EtherCAT SlaveType="5" AdsServerAddress="ac12ea1d03010000" FixedAdsServerNetId="true" PdiType="#x0008" ExecIo="true" MboxDataLinkLayer="true" StateMBoxPolling="true" CycleMBoxPollingTime="0" CoeType="39" FoeType="1" VendorId="#x00000002" ProductCode="#x19fc3052" RevisionNo="#x00120000" InfoDataAddr="true" InfoDataNetId="true" OwnAddrExtern="true" RepeatSupport="true" TimeoutStateChange1="10000" TimeoutStateChange3="20000" TimeoutMailbox2="2000" GenerateOwnNetId="true" InitializeOwnNetId="true" CheckRevisionNoType="3" PortPhys="51" MaxSlotCount="256" MaxSlotGroupCount="1" SlotPdoIncrement="1" SlotIndexIncrement="16" Type="EL6652 EtherNet/IP Scanner (Master)" Desc="EL6652" PortABoxInfo="#x0100000d">
 							<SyncMan>001000042600010001000000400000040004001026010000</SyncMan>
 							<SyncMan>001400042200010002000000400000040004001422010000</SyncMan>
-							<SyncMan>001800006400000003000000000000000000001864010000</SyncMan>
-							<SyncMan>002400002000000004000000000000000000002420010000</SyncMan>
-							<Fmmu>0000000000000000000000020000000001000000000000000000000000000000</Fmmu>
-							<Fmmu>0000000000000000000000010000000002000000000000000000000000000000</Fmmu>
+							<SyncMan>001802006400010003000000000000000000001864010000</SyncMan>
+							<SyncMan>002402002000010004000000000000000000002420010000</SyncMan>
+							<Fmmu>0000000000000000001800020100000001000000000000000000000000000000</Fmmu>
+							<Fmmu>0000000000000000002400010100000002000000000000000000000000000000</Fmmu>
 							<Fmmu>00000000000000000d0800010100000003000000000000000000000000000000</Fmmu>
 							<BootStrapData>0010000400140004</BootStrapData>
+							<Pdo Name="ECatState" Index="#x1bff" Flags="#x0001" SyncMan="3">
+								<Entry Name="ECatState" Index="#xf101" Sub="#x01" Flags="#x00000100">
+									<Type>UINT</Type>
+								</Entry>
+							</Pdo>
+							<Pdo Name="ECatCtrl" Index="#x17ff" InOut="1" Flags="#x0001" SyncMan="2">
+								<Entry Name="ECatCtrl" Index="#xf201" Sub="#x01" Flags="#x00000100">
+									<Type>UINT</Type>
+								</Entry>
+							</Pdo>
 							<CoeProfile ProfileNo="5001"/>
 						</EtherCAT>
 					</Box>
@@ -3331,6 +3341,22 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 					</Box>
 				</Box>
 				<EtherCAT/>
+			</Device>
+			<Device Id="2" DevType="151" AmsPort="28674" AmsNetId="172.18.234.29.3.1" RemoteName="Device 2 (ECAT EIP Scanner (EL6652))">
+				<Name>Device 2 (ECAT EIP Scanner (EL6652))</Name>
+				<AddressInfo>
+					<Ecat>
+						<EtherCATDeviceId>14</EtherCATDeviceId>
+						<EtherCATDeviceName>TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 14 (EL6652)</EtherCATDeviceName>
+					</Ecat>
+				</AddressInfo>
+				<Image Id="3" AddrType="4" ImageType="3">
+					<Name>Image</Name>
+				</Image>
+				<Ethernet DeviceDesc="EL6652 EtherNet/IP Scanner (Master)"/>
+				<EtherNetIPMasterDev m_EthIpMasterDevPar="02000000446576696365203220284543415420454950205363616e6e65722028454c36360c0000006c000000fa19000001010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010582411e140aa8c000ffffff000000000000800001001e000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
+					<Ethernet/>
+				</EtherNetIPMasterDev>
 			</Device>
 		</Io>
 	</Project>

@@ -165,45 +165,45 @@ CASE eState OF
     // -------------------------------------------------------------------------
     E_MainDoorLockState.Locked:
 
-        // TwinSAFE has detected an invalid door/lock combination.
-        IF bDoorUnsafe THEN
-
-            eFault := E_MainDoorLockFault.FeedbackMismatch;
-            eState := E_MainDoorLockState.Fault;
-
-
-        // Automatic mode requires the door to remain closed and locked.
-        ELSIF bEnableAutomatic
-            AND (
-                NOT bDoorClosed
-                OR NOT bDoorLocked
-            )
-        THEN
-
-            eFault := E_MainDoorLockFault.FeedbackMismatch;
-            eState := E_MainDoorLockState.Fault;
-
-
-        // Manual unlock request.
-        ELSIF NOT bEnableAutomatic
-            AND bManualEnable
-            AND bManualUnlockRequest
-            AND stStatusInternal.bUnlockPermissive
-        THEN
-
-            eState := E_MainDoorLockState.Unlocking;
-
-
-        // Automatic unlock supervision during Stopping/Stopped.
-        ELSIF NOT bEnableAutomatic
-            AND NOT bManualEnable
-            AND bStopRequest
-            AND stStatusInternal.bUnlockPermissive
-        THEN
-
-            eState := E_MainDoorLockState.Unlocking;
-
-        END_IF
+		// Door feedback inconsistency reported by TwinSAFE.
+		IF bDoorUnsafe THEN
+	
+			eFault := E_MainDoorLockFault.FeedbackMismatch;
+			eState := E_MainDoorLockState.Fault;
+	
+	
+		// While automatic locking is required, the door must remain
+		// physically closed and locked.
+		ELSIF bEnableAutomatic
+			AND (
+				NOT bDoorClosed
+				OR NOT bDoorLocked
+			)
+		THEN
+	
+			eFault := E_MainDoorLockFault.FeedbackMismatch;
+			eState := E_MainDoorLockState.Fault;
+	
+	
+		// Existing controlled unlock paths remain below.
+		ELSIF NOT bEnableAutomatic
+			AND bManualEnable
+			AND bManualUnlockRequest
+			AND stStatusInternal.bUnlockPermissive
+		THEN
+	
+			eState := E_MainDoorLockState.Unlocking;
+	
+	
+		ELSIF NOT bEnableAutomatic
+			AND NOT bManualEnable
+			AND bStopRequest
+			AND stStatusInternal.bUnlockPermissive
+		THEN
+	
+			eState := E_MainDoorLockState.Unlocking;
+	
+		END_IF
 
 
     // -------------------------------------------------------------------------
@@ -268,10 +268,16 @@ END_CASE
 //   eState = Locking -> FALSE -> tUnlockTimeout
 // -----------------------------------------------------------------------------
 tonTransition(
-    IN := eState = E_MainDoorLockState.Unlocking,
-    PT := tUnlockTimeout
-);
+    IN :=
+        (eState = E_MainDoorLockState.Locking)
+        OR (eState = E_MainDoorLockState.Unlocking),
 
+    PT := SEL(
+        eState = E_MainDoorLockState.Locking,
+        tUnlockTimeout,
+        tLockTimeout
+    )
+);
 
 // -----------------------------------------------------------------------------
 // Status mapping
