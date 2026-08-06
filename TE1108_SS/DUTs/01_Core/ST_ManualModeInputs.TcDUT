@@ -16,6 +16,8 @@ STRUCT
 
     bSiliconeSupportExtended       : BOOL;
     bSiliconeSupportRetracted      : BOOL;
+	bAssemblySupportExtended  	   : BOOL;
+	bAssemblySupportRetracted 	   : BOOL;
 
     bProcessStationFaulted         : BOOL;
 

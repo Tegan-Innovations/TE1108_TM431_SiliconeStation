@@ -11,8 +11,15 @@ STRUCT
     bManualModeRequest              : BOOL; // Legacy compatibility
     bIndexForward                   : BOOL;
     bIndexHome                      : BOOL;
-    bProcessCylinderExtend          : BOOL;
-    bProcessCylinderRetract         : BOOL;
+	
+    // Silicone Support
+	bSiliconeSupportExtend  		: BOOL;
+	bSiliconeSupportRetract 		: BOOL;
+
+	// Assembly Support
+	bAssemblySupportExtend  		: BOOL;
+	bAssemblySupportRetract 		: BOOL;
+	
     bMainDoorUnlock                 : BOOL;
     bPuckLockerAcknowledgeFault     : BOOL;
     bEmptyPuckBypass                : BOOL;

@@ -66,11 +66,10 @@ GVL_MASTER.stInputs.bMainDoorUnsafe         			:= GVL_IO.stInputs.bMainDoorUnsaf
 // Electrical drawing name: Transfer Nest Support.
 // Software name: Silicone Support.
 
-GVL_MASTER.stInputs.bSiliconeSupportExtended :=
-    GVL_IO.stInputs.bSiliconeSupportExtended;
-
-GVL_MASTER.stInputs.bSiliconeSupportRetracted :=
-    GVL_IO.stInputs.bSiliconeSupportRetracted;
+GVL_MASTER.stInputs.bSiliconeSupportExtended 			:=GVL_IO.stInputs.bSiliconeSupportExtended;
+GVL_MASTER.stInputs.bSiliconeSupportRetracted 			:=GVL_IO.stInputs.bSiliconeSupportRetracted;
+GVL_MASTER.stInputs.bAssemblySupportExtended 			:=GVL_IO.stInputs.bAssemblySupportExtended;
+GVL_MASTER.stInputs.bAssemblySupportRetracted 			:=GVL_IO.stInputs.bAssemblySupportRetracted;
 
 GVL_MASTER.stIvekInput  								:= GVL_IVEK_EIP.stInput;
 GVL_MASTER.bIvekCommsOk 								:= GVL_IVEK_EIP.bCommunicationOk;

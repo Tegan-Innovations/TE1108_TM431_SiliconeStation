@@ -3,30 +3,36 @@
   <DUT Name="ST_MachineOutputs" Id="{56e2037d-140e-4d4a-a0fb-f9a26bcc4c64}">
     <Declaration><![CDATA[TYPE ST_MachineOutputs :
 STRUCT
-    bSafetyRunRequest          				: BOOL;
-    bSafetyResetRequest        				: BOOL;
-	bSafetyErrorAcknowledgementRequest 		: BOOL;
-	
-    bAirSupplyEnable           				: BOOL;
-    bIndexRotatePortA          				: BOOL;
-    bIndexStopPortB            				: BOOL;
-	
-    bAssemblySupportExtend     				: BOOL;
-	bAssemblySupportRetract    				: BOOL;
-	bSiliconeSupportExtend     				: BOOL;
-	bSiliconeSupportRetract    				: BOOL;
-	
-    bMainDoorLockRequest       				: BOOL;
-    bPuckLockerPinUp           				: BOOL;
-	
-    bLedStart                  				: BOOL;
-    bLedReset                  				: BOOL;
-    bLedPass                   				: BOOL;
-    bLedFail                   				: BOOL;
-    bInternalLight            			 	: BOOL;
-    bExternalLight             				: BOOL;
-	
-	
+    bSafetyRunRequest                      : BOOL;
+    bSafetyResetRequest                    : BOOL;
+    bSafetyErrorAcknowledgementRequest     : BOOL;
+
+    bAirSupplyEnable                       : BOOL;
+
+    // Index table
+    bIndexRotatePortA                      : BOOL;
+    bIndexStopPortB                        : BOOL;
+	bIndexSupportExtend  					: BOOL;
+	bIndexSupportRetract 					: BOOL;
+
+
+    // Assembly Support
+    bAssemblySupportExtend                 : BOOL;
+    bAssemblySupportRetract                : BOOL;
+
+    // Silicone Support
+    bSiliconeSupportExtend                 : BOOL;
+    bSiliconeSupportRetract                : BOOL;
+
+    bMainDoorLockRequest                   : BOOL;
+    bPuckLockerPinUp                       : BOOL;
+
+    bLedStart                              : BOOL;
+    bLedReset                              : BOOL;
+    bLedPass                               : BOOL;
+    bLedFail                               : BOOL;
+    bInternalLight                         : BOOL;
+    bExternalLight                         : BOOL;
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

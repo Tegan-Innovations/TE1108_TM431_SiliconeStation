@@ -3,16 +3,18 @@
   <DUT Name="ST_ManualModeRequests" Id="{3127b9fa-fa98-4965-afb2-06e6c5be4368}">
     <Declaration><![CDATA[TYPE ST_ManualModeRequests :
 STRUCT
-    bIndexMoveRequest          : BOOL;
-    bIndexHomeRequest          : BOOL;
+    bIndexMoveRequest           : BOOL;
+    bIndexHomeRequest           : BOOL;
 	
-    bMainDoorLockRequest       : BOOL;
-    bEquipmentStart            : BOOL;
-    bEquipmentStop             : BOOL;
-    bEquipmentReset            : BOOL;
+    bMainDoorLockRequest        : BOOL;
+    bEquipmentStart             : BOOL;
+    bEquipmentStop              : BOOL;
+    bEquipmentReset             : BOOL;
 	
 	bSiliconeSupportExtend 		: BOOL;
 	bSiliconeSupportRetract 	: BOOL;
+	bAssemblySupportExtend  	: BOOL;
+	bAssemblySupportRetract 	: BOOL;
 	
 END_STRUCT
 END_TYPE]]></Declaration>

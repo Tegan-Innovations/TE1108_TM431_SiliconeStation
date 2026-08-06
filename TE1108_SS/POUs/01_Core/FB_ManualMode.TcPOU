@@ -92,28 +92,39 @@ bWasEnabled := bEnable;
 // =========================================================
 // MANUAL INDEX PERMISSIVE
 // =========================================================
+//
+// The index table may only move when both external supports
+// are confirmed in their safe retracted position.
 
 stStatusInternal.bIndexPermissive :=
     bEnable
     AND stCommand.bIndexerManualEnable
-    AND stInputs.bTwoHandsSafe;
+    AND stInputs.bTwoHandsSafe
+    AND stInputs.bSiliconeSupportRetracted
+    AND stInputs.bAssemblySupportRetracted;
+
 
 
 // =========================================================
-// Support request
+// SILICONE SUPPORT PERMISSIVE
 // =========================================================
-IF stCommand.bProcessCylinderExtend THEN
 
-    stRequestsInternal.bSiliconeSupportExtend := TRUE;
+stStatusInternal.bSiliconeSupportPermissive :=
+    bEnable
+    AND stInputs.bSafetyOk
+    AND NOT stInputs.bIndexBusy
+    AND NOT stInputs.bEquipmentBusy;
 
-END_IF
 
+// =========================================================
+// ASSEMBLY SUPPORT PERMISSIVE
+// =========================================================
 
-IF stCommand.bProcessCylinderRetract THEN
-
-    stRequestsInternal.bSiliconeSupportRetract := TRUE;
-
-END_IF
+stStatusInternal.bAssemblySupportPermissive :=
+    bEnable
+    AND stInputs.bSafetyOk
+    AND NOT stInputs.bIndexBusy
+    AND NOT stInputs.bEquipmentBusy;
 // =========================================================
 // MAIN DOOR PERMISSIVE
 // =========================================================
@@ -266,7 +277,114 @@ ELSE
         END_IF
 
 
-    
+            // =================================================
+        // SILICONE SUPPORT
+        // =================================================
+
+        IF stCommand.bSiliconeSupportExtend
+            AND stCommand.bSiliconeSupportRetract
+        THEN
+
+            stStatusInternal.bCommandRejected := TRUE;
+
+            eMessage :=
+                E_ManualModeMessage.PneumaticActuatorCommandConflict;
+
+
+        ELSIF stCommand.bSiliconeSupportExtend THEN
+
+            IF stStatusInternal.bSiliconeSupportPermissive THEN
+
+                stRequestsInternal.bSiliconeSupportExtend := TRUE;
+
+                eMessage :=
+                   E_ManualModeMessage.PneumaticActuatorMoving;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+
+                eMessage :=
+                    E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
+
+            END_IF
+
+
+        ELSIF stCommand.bSiliconeSupportRetract THEN
+
+            IF stStatusInternal.bSiliconeSupportPermissive THEN
+
+                stRequestsInternal.bSiliconeSupportRetract := TRUE;
+
+                eMessage :=
+                    E_ManualModeMessage.PneumaticActuatorMoving;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+
+                eMessage :=
+                    E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
+
+            END_IF
+
+        END_IF
+
+
+        // =================================================
+        // ASSEMBLY SUPPORT
+        // =================================================
+
+        IF stCommand.bAssemblySupportExtend
+            AND stCommand.bAssemblySupportRetract
+        THEN
+
+            stStatusInternal.bCommandRejected := TRUE;
+
+            eMessage :=
+                E_ManualModeMessage.PneumaticActuatorCommandConflict;
+
+
+        ELSIF stCommand.bAssemblySupportExtend THEN
+
+            IF stStatusInternal.bAssemblySupportPermissive THEN
+
+                stRequestsInternal.bAssemblySupportExtend := TRUE;
+
+                eMessage :=
+                    E_ManualModeMessage.PneumaticActuatorMoving;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+
+                eMessage :=
+                    E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
+
+            END_IF
+
+
+        ELSIF stCommand.bAssemblySupportRetract THEN
+
+			IF stStatusInternal.bAssemblySupportPermissive THEN
+		
+				stRequestsInternal.bAssemblySupportRetract := TRUE;
+		
+				eMessage :=
+					E_ManualModeMessage.PneumaticActuatorMoving;
+		
+			ELSE
+		
+				stStatusInternal.bCommandRejected := TRUE;
+		
+				eMessage :=
+					E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
+		
+			END_IF
+		
+
+
+        END_IF
 
         // =================================================
         // PROCESS EQUIPMENT START
@@ -330,6 +448,10 @@ ELSE
             OR stRequestsInternal.bEquipmentStart
             OR stRequestsInternal.bEquipmentStop
             OR stRequestsInternal.bEquipmentReset
+            OR stRequestsInternal.bSiliconeSupportExtend
+            OR stRequestsInternal.bSiliconeSupportRetract
+            OR stRequestsInternal.bAssemblySupportExtend
+            OR stRequestsInternal.bAssemblySupportRetract
         THEN
 
             eState := E_ManualModeState.CommandActive;
@@ -396,8 +518,12 @@ stStatusInternal.bCommandRejected := FALSE;]]></ST>
       <Implementation>
         <ST><![CDATA[stRequestsInternal.bIndexMoveRequest 			:= FALSE;
 stRequestsInternal.bIndexHomeRequest 			:= FALSE;
+
 stRequestsInternal.bSiliconeSupportExtend 		:= FALSE;
 stRequestsInternal.bSiliconeSupportRetract 		:= FALSE;
+stRequestsInternal.bAssemblySupportExtend 		:= FALSE;
+stRequestsInternal.bAssemblySupportRetract 		:= FALSE;
+
 stRequestsInternal.bEquipmentStart 				:= FALSE;
 stRequestsInternal.bEquipmentStop 				:= FALSE;
 stRequestsInternal.bEquipmentReset 				:= FALSE;]]></ST>
@@ -407,23 +533,56 @@ stRequestsInternal.bEquipmentReset 				:= FALSE;]]></ST>
       <Declaration><![CDATA[METHOD PRIVATE UpdateMessage]]></Declaration>
       <Implementation>
         <ST><![CDATA[CASE eMessage OF
-    E_ManualModeMessage.ManualReady: stStatusInternal.sMessage := 'Manual mode ready';
-    E_ManualModeMessage.SafetyNotAvailable: stStatusInternal.sMessage := 'Restore safety conditions for manual operation';
-    E_ManualModeMessage.IndexCommandActive: stStatusInternal.sMessage := 'Manual index command active';
-    E_ManualModeMessage.IndexCommandNotPermitted: stStatusInternal.sMessage := 'Manual index not permitted: restore safety, retract tooling and verify index readiness';
-    E_ManualModeMessage.SiliconeSupportExtending: stStatusInternal.sMessage := 'Extending Silicone Support Cylinder manually';
-    E_ManualModeMessage.SiliconeSupportRetracting: stStatusInternal.sMessage := 'Retracting Silicone Support Cylinder manually';
-    E_ManualModeMessage.CylinderCommandNotPermitted: stStatusInternal.sMessage := 'Manual cylinder command not permitted';
-    E_ManualModeMessage.MainDoorUnlockRequested: stStatusInternal.sMessage := 'Main door unlock requested';
-    E_ManualModeMessage.DoorCommandNotPermitted: stStatusInternal.sMessage := 'Main door cannot be unlocked while equipment or index is active';
-    E_ManualModeMessage.EquipmentStarting: stStatusInternal.sMessage := 'Starting process equipment manually';
-    E_ManualModeMessage.EquipmentStopping: stStatusInternal.sMessage := 'Stopping process equipment manually';
-    E_ManualModeMessage.EquipmentResetting: stStatusInternal.sMessage := 'Resetting process equipment';
-    E_ManualModeMessage.EquipmentCommandNotPermitted: stStatusInternal.sMessage := 'Manual process start not permitted';
-    E_ManualModeMessage.WaitingSafeExit: stStatusInternal.sMessage := 'Stopping manual mode and returning components to a safe state';
-    E_ManualModeMessage.ComponentFaulted: stStatusInternal.sMessage := 'Manual component fault - check active alarms';
+
+    E_ManualModeMessage.None:
+        stStatusInternal.sMessage := '';
+
+    E_ManualModeMessage.ManualReady:
+        stStatusInternal.sMessage := 'Manual mode ready';
+
+    E_ManualModeMessage.SafetyNotAvailable:
+        stStatusInternal.sMessage := 'Restore safety conditions for manual operation';
+
+    E_ManualModeMessage.IndexCommandActive:
+        stStatusInternal.sMessage := 'Manual index command active';
+
+    E_ManualModeMessage.IndexCommandNotPermitted:
+        stStatusInternal.sMessage := 'Manual index not permitted: restore safety, retract tooling and verify index readiness';
+
+    E_ManualModeMessage.PneumaticActuatorMoving:
+        stStatusInternal.sMessage := 'Pneumatic actuator moving manually';
+
+    E_ManualModeMessage.PneumaticActuatorCommandConflict:
+        stStatusInternal.sMessage := 'Conflicting pneumatic actuator commands';
+
+    E_ManualModeMessage.PneumaticActuatorCommandNotPermitted:
+        stStatusInternal.sMessage := 'Manual pneumatic actuator command not permitted';
+
+    E_ManualModeMessage.MainDoorUnlockRequested:
+        stStatusInternal.sMessage := 'Main door unlock requested';
+
+    E_ManualModeMessage.DoorCommandNotPermitted:
+        stStatusInternal.sMessage := 'Main door cannot be unlocked while equipment or index is active';
+
+    E_ManualModeMessage.EquipmentStarting:
+        stStatusInternal.sMessage := 'Starting process equipment manually';
+
+    E_ManualModeMessage.EquipmentStopping:
+        stStatusInternal.sMessage := 'Stopping process equipment manually';
+
+    E_ManualModeMessage.EquipmentResetting:
+        stStatusInternal.sMessage := 'Resetting process equipment';
+
+    E_ManualModeMessage.EquipmentCommandNotPermitted:
+        stStatusInternal.sMessage := 'Manual process start not permitted';
+
+    E_ManualModeMessage.WaitingSafeExit:
+        stStatusInternal.sMessage := 'Stopping manual mode and returning components to a safe state';
+
 ELSE
+
     stStatusInternal.sMessage := '';
+
 END_CASE]]></ST>
       </Implementation>
     </Method>

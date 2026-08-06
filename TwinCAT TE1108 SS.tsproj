@@ -2,7 +2,7 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.22">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}" AutoDeleteType="true">E_TablePosition</Name>
+			<Name GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}" AutoDeleteType="true">E_TablePosition</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
 			<EnumInfo>
@@ -27,6 +27,9 @@
 			</EnumInfo>
 			<Properties>
 				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
+				<Property>
 					<Name>qualified_only</Name>
 				</Property>
 				<Property>
@@ -35,14 +38,11 @@
 				<Property>
 					<Name>to_string</Name>
 				</Property>
-				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{D1BBC766-2214-0E1D-7CB6-FC4656707FA2}" AutoDeleteType="true">ST_PhysicalInputs</Name>
-			<BitSize>336</BitSize>
+			<Name GUID="{54D5F683-5A37-012B-56B6-EED0F6DAD9C1}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<BitSize>352</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
@@ -226,7 +226,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 			<SubItem>
 				<Name>eIndexPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>224</BitOffs>
 			</SubItem>
@@ -244,30 +244,42 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<BitOffs>248</BitOffs>
 			</SubItem>
 			<SubItem>
+				<Name>bAssemblySupportExtended</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>256</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bAssemblySupportRetracted</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>264</BitOffs>
+			</SubItem>
+			<SubItem>
 				<Name>uiMainAirPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<Comment><![CDATA[ Analog raw values. Engineering-unit scaling is intentionally kept
  outside the terminal mapping until the sensor ranges are confirmed.]]></Comment>
 				<BitSize>16</BitSize>
-				<BitOffs>256</BitOffs>
+				<BitOffs>272</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiSiliconePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>272</BitOffs>
+				<BitOffs>288</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiNozzlePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>288</BitOffs>
+				<BitOffs>304</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiVacuumPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>304</BitOffs>
+				<BitOffs>320</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bPuckSensorUp</Name>
@@ -275,17 +287,17 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Comment><![CDATA[ Puck locker is not shown in EPLAN Rev 1.0. These remain available for
  future hardware revisions and must stay FALSE while the option is absent.]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>320</BitOffs>
+				<BitOffs>336</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bPuckSensorDown</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>328</BitOffs>
+				<BitOffs>344</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{6FD2BF8B-C55F-59B8-AA4B-CD262669FF8E}" AutoDeleteType="true">E_IvekStatusState</Name>
+			<Name GUID="{641E241B-5C74-AEB3-2F42-95C47E63FB79}" AutoDeleteType="true">E_IvekStatusState</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
 			<EnumInfo>
@@ -346,6 +358,9 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</EnumInfo>
 			<Properties>
 				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
+				<Property>
 					<Name>qualified_only</Name>
 				</Property>
 				<Property>
@@ -354,13 +369,10 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Property>
 					<Name>to_string</Name>
 				</Property>
-				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{A3C41B80-9F0D-3FDE-E2D0-1D9C5C9BEC72}" AutoDeleteType="true">ST_IvekCyclicInput</Name>
+			<Name GUID="{EFD97090-A1AF-8C31-1295-CF15384B0090}" AutoDeleteType="true">ST_IvekCyclicInput</Name>
 			<BitSize>192</BitSize>
 			<SubItem>
 				<Name>udiStatusFlags</Name>
@@ -377,7 +389,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 			<SubItem>
 				<Name>eStatusState</Name>
-				<Type GUID="{6FD2BF8B-C55F-59B8-AA4B-CD262669FF8E}">E_IvekStatusState</Type>
+				<Type GUID="{641E241B-5C74-AEB3-2F42-95C47E63FB79}">E_IvekStatusState</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>64</BitOffs>
 			</SubItem>
@@ -570,7 +582,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{1B090823-34FE-AA35-7EE2-1CF6FAEBC3BF}" AutoDeleteType="true">E_PuckLockerMode</Name>
+			<Name GUID="{DB3ABD38-31C2-7FC6-21D7-F172BA91984F}" AutoDeleteType="true">E_PuckLockerMode</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
 			<EnumInfo>
@@ -587,6 +599,9 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</EnumInfo>
 			<Properties>
 				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
+				<Property>
 					<Name>qualified_only</Name>
 				</Property>
 				<Property>
@@ -595,13 +610,10 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Property>
 					<Name>to_string</Name>
 				</Property>
-				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{A30FE77D-046A-1F64-E2BB-1FE2AF0C13B8}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<Name GUID="{38A32717-00A5-0BB8-9E1F-9DC731248CCC}" AutoDeleteType="true">ST_MachineConfig</Name>
 			<BitSize>576</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
@@ -731,7 +743,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 			<SubItem>
 				<Name>eOperatorPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>448</BitOffs>
 				<Default>
@@ -740,7 +752,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 			<SubItem>
 				<Name>eProcessPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>464</BitOffs>
 				<Default>
@@ -749,7 +761,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 			<SubItem>
 				<Name>eRejectPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>480</BitOffs>
 				<Default>
@@ -758,7 +770,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 			<SubItem>
 				<Name>ePuckLockerMode</Name>
-				<Type GUID="{1B090823-34FE-AA35-7EE2-1CF6FAEBC3BF}">E_PuckLockerMode</Type>
+				<Type GUID="{DB3ABD38-31C2-7FC6-21D7-F172BA91984F}">E_PuckLockerMode</Type>
 				<Comment><![CDATA[ No puck locker in EPLAN Rev 1.0.]]></Comment>
 				<BitSize>16</BitSize>
 				<BitOffs>496</BitOffs>
@@ -1083,7 +1095,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{6812222C-FF72-D77F-7B77-2F952AF24C45}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{4025379E-D871-4E25-7FFD-97F79E80738E}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1096,7 +1108,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						<Var>
 							<Name>GVL_Config.stMachine</Name>
 							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{A30FE77D-046A-1F64-E2BB-1FE2AF0C13B8}">ST_MachineConfig</Type>
+							<Type GUID="{38A32717-00A5-0BB8-9E1F-9DC731248CCC}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1280,7 +1292,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 							<Name>GVL_IO.stInputs</Name>
 							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
  Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{D1BBC766-2214-0E1D-7CB6-FC4656707FA2}">ST_PhysicalInputs</Type>
+							<Type GUID="{54D5F683-5A37-012B-56B6-EED0F6DAD9C1}">ST_PhysicalInputs</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
@@ -1726,7 +1738,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 							<Name>GVL_IVEK_EIP.stInput</Name>
 							<Comment><![CDATA[ Map/link these fields to the EDS-generated EtherNet/IP process image.
  The exact byte offsets and assembly sizes must be confirmed using the IVEK EDS/firmware manual.]]></Comment>
-							<Type GUID="{A3C41B80-9F0D-3FDE-E2D0-1D9C5C9BEC72}">ST_IvekCyclicInput</Type>
+							<Type GUID="{EFD97090-A1AF-8C31-1295-CF15384B0090}">ST_IvekCyclicInput</Type>
 						</Var>
 					</Vars>
 					<UnrestoredVarLinks ImportTime="2026-07-29T09:34:25">

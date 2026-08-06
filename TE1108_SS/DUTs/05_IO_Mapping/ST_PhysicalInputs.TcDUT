@@ -54,6 +54,8 @@ STRUCT
     // Transfer nest support / process tooling cylinder
     bSiliconeSupportExtended        : BOOL;
     bSiliconeSupportRetracted       : BOOL;
+	bAssemblySupportExtended  		: BOOL;
+	bAssemblySupportRetracted 		: BOOL;
 
     // Analog raw values. Engineering-unit scaling is intentionally kept
     // outside the terminal mapping until the sensor ranges are confirmed.

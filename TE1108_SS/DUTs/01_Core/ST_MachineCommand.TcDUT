@@ -24,8 +24,14 @@ STRUCT
     bSimulateProcessFail           : BOOL;
     bSimulateProcessFault          : BOOL;
     usiRecipeRequest               : USINT;
-	bProcessCylinderExtend  		: BOOL;
-	bProcessCylinderRetract 		: BOOL;
+	
+	// Silicone Support
+	bSiliconeSupportExtend  		: BOOL;
+	bSiliconeSupportRetract 		: BOOL;
+	
+	// Assembly Support
+	bAssemblySupportExtend  		: BOOL;
+	bAssemblySupportRetract 		: BOOL;
 	
 	
 END_STRUCT

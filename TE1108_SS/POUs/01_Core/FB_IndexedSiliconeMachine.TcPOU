@@ -65,11 +65,14 @@ VAR
 	bAirSupplyLatched 						: BOOL;
 	bAirSupplyEnable 						: BOOL;
 	// Final Silicone Support commands decided by this machine controller.
-	fbSiliconeSupportCylinder : FB_SiliconeSupport;
+	fbSiliconeSupportCylinder 				: FB_SiliconeSupport;
+	fbAssemblySupportCylinder 				: FB_SiliconeSupport;
 	
-	bSiliconeSupportRaiseRequest : BOOL;
-	bSiliconeSupportLowerRequest : BOOL;
-	fbResetTrigger : R_TRIG;
+	bSiliconeSupportRaiseRequest 			: BOOL;
+	bSiliconeSupportLowerRequest 			: BOOL;
+	bAssemblySupportRaiseRequest 			: BOOL;
+	bAssemblySupportLowerRequest 			: BOOL;
+	fbResetTrigger 							: R_TRIG;
 	
 	
 	
@@ -91,6 +94,7 @@ CheckComponentFaults := FALSE;
 IF fbMainDoorLock.IsFaulted()
     OR fbIndex.IsFaulted()
 	OR fbSiliconeSupportCylinder.IsFaulted()
+	OR fbAssemblySupportCylinder.IsFaulted()
 
     // Enable after process-station commissioning.
     // OR fbProcessStation.IsFaulted()
@@ -312,20 +316,22 @@ fbIvekSettingsLauncher(
 // =========================================================
 
 // Manual-mode coordinator consumes only normalized component status and produces requests.
-stManualModeInputs.bSafetyOk := stInputs.stSafety.bSafetyOk;
-stManualModeInputs.bMotionSafetyPermitted := stInputs.stSafety.bMotionSafetyPermitted;
-stManualModeInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
-stManualModeInputs.bProcessSafetyPermitted := stInputs.stSafety.bProcessSafetyPermitted;
-stManualModeInputs.bMainDoorSafe := stInputs.stSafety.bMainDoorSafe;
-stManualModeInputs.bIndexReady := stInputs.bIndexReady;
-stManualModeInputs.bIndexLocked := stInputs.bIndexLocked;
-stManualModeInputs.bIndexBusy := stIndexStatus.bBusy;
-stManualModeInputs.bIndexFaulted := fbIndex.IsFaulted();
-stManualModeInputs.bSiliconeSupportExtended :=
-    stInputs.bSiliconeSupportExtended;
+stManualModeInputs.bSafetyOk 						:= stInputs.stSafety.bSafetyOk;
+stManualModeInputs.bMotionSafetyPermitted 			:= stInputs.stSafety.bMotionSafetyPermitted;
+stManualModeInputs.bTwoHandsSafe 					:= stInputs.bTwoHandsSafe;
+stManualModeInputs.bProcessSafetyPermitted 			:= stInputs.stSafety.bProcessSafetyPermitted;
+stManualModeInputs.bMainDoorSafe 					:= stInputs.stSafety.bMainDoorSafe;
+stManualModeInputs.bIndexReady 						:= stInputs.bIndexReady;
+stManualModeInputs.bIndexLocked 					:= stInputs.bIndexLocked;
+stManualModeInputs.bIndexBusy 						:= stIndexStatus.bBusy;
+stManualModeInputs.bIndexFaulted 					:= fbIndex.IsFaulted();
+stManualModeInputs.bSiliconeSupportExtended 		:=stInputs.bSiliconeSupportExtended;
+stManualModeInputs.bSiliconeSupportRetracted 		:=stInputs.bSiliconeSupportRetracted;
+stManualModeInputs.bAssemblySupportExtended 		:=stInputs.bAssemblySupportExtended;
+stManualModeInputs.bAssemblySupportRetracted 		:=stInputs.bAssemblySupportRetracted;
 
-stManualModeInputs.bSiliconeSupportRetracted :=
-    stInputs.bSiliconeSupportRetracted;
+
+
 stManualModeInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
 stManualModeInputs.bEquipmentReady := ipEquipment.IsReady();
 stManualModeInputs.bEquipmentBusy := ipEquipment.IsBusy();
@@ -371,6 +377,7 @@ CASE eMachineState OF
 	
 			fbIndex.Reset();
 			fbSiliconeSupportCylinder.Reset();
+			fbAssemblySupportCylinder.Reset();
 			ipEquipment.RequestReset();
 	
 			bInitialisationTimeoutFault := FALSE;
@@ -382,6 +389,7 @@ CASE eMachineState OF
 			IF stInputs.stSafety.bSafetyOk
 				AND NOT fbIndex.IsFaulted()
 				AND NOT fbSiliconeSupportCylinder.IsFaulted()
+				AND NOT fbAssemblySupportCylinder.IsFaulted()
 			THEN
 	
 				eMachineState :=
@@ -702,15 +710,19 @@ CASE eMachineState OF
 	
 		END_IF
 	
-	
 		// ---------------------------------------------------------
 		// LEAVE MANUAL MODE
 		// ---------------------------------------------------------
 		IF stCommand.bStop THEN
-
-			GVL_HMI.stCommands.bProcessCylinderExtend := FALSE;
-			GVL_HMI.stCommands.bProcessCylinderRetract := FALSE;
-			
+		
+			// Clear Silicone Support manual commands.
+			GVL_HMI.stCommands.bSiliconeSupportExtend := FALSE;
+			GVL_HMI.stCommands.bSiliconeSupportRetract := FALSE;
+		
+			// Clear Assembly Support manual commands.
+			GVL_HMI.stCommands.bAssemblySupportExtend := FALSE;
+			GVL_HMI.stCommands.bAssemblySupportRetract := FALSE;
+		
 			eMachineState := E_MachineState.Stopping;
 		
 		END_IF
@@ -736,15 +748,30 @@ END_IF
 // =========================================================
 // CYCLIC COMPONENT EXECUTION
 // =========================================================
+
 // =========================================================
-// SILICONE SUPPORT COMMANDS
+// SUPPORT COMMAND DEFAULTS
 // =========================================================
 
-// Default
+// Requests are cleared every PLC scan.
+// They are only enabled while the machine is in Manual Mode.
+
 bSiliconeSupportRaiseRequest := FALSE;
 bSiliconeSupportLowerRequest := FALSE;
 
+bAssemblySupportRaiseRequest := FALSE;
+bAssemblySupportLowerRequest := FALSE;
+
+
+// =========================================================
+// MANUAL SUPPORT COMMAND MAPPING
+// =========================================================
+
 IF eMachineState = E_MachineState.Manual THEN
+
+    // -----------------------------------------------------
+    // Silicone Support
+    // -----------------------------------------------------
 
     bSiliconeSupportRaiseRequest :=
         stManualModeRequests.bSiliconeSupportExtend;
@@ -752,22 +779,27 @@ IF eMachineState = E_MachineState.Manual THEN
     bSiliconeSupportLowerRequest :=
         stManualModeRequests.bSiliconeSupportRetract;
 
+
+    // -----------------------------------------------------
+    // Assembly Support
+    // -----------------------------------------------------
+
+    bAssemblySupportRaiseRequest :=
+        stManualModeRequests.bAssemblySupportExtend;
+
+    bAssemblySupportLowerRequest :=
+        stManualModeRequests.bAssemblySupportRetract;
+
 END_IF
 
+
 // =========================================================
-// SILICONE SUPPORT
+// SILICONE SUPPORT CONTROL
 // =========================================================
-//
-// This machine controller decides WHEN the cylinder
-// should move.
-//
-// FB_SiliconeSupport is only responsible for converting
-// Raise/Lower requests into physical outputs.
+
 fbSiliconeSupportCylinder.Cyclic(
     bEnable :=
-        (eMachineState = E_MachineState.Manual)
-        OR (eMachineState = E_MachineState.AutoCycle)
-        OR (eMachineState = E_MachineState.Stopping),
+        eMachineState = E_MachineState.Manual,
 
     bRaiseRequest :=
         bSiliconeSupportRaiseRequest,
@@ -793,6 +825,41 @@ fbSiliconeSupportCylinder.Cyclic(
 
     bRetractOutput =>
         stOutputsInternal.bSiliconeSupportRetract
+);
+
+
+// =========================================================
+// ASSEMBLY SUPPORT CONTROL
+// =========================================================
+
+fbAssemblySupportCylinder.Cyclic(
+    bEnable :=
+        eMachineState = E_MachineState.Manual,
+
+    bRaiseRequest :=
+        bAssemblySupportRaiseRequest,
+
+    bLowerRequest :=
+        bAssemblySupportLowerRequest,
+
+    bStopRequest :=
+        (eMachineState = E_MachineState.Stopping)
+        OR (eMachineState = E_MachineState.Fault),
+
+    bExtended :=
+        stInputs.bAssemblySupportExtended,
+
+    bRetracted :=
+        stInputs.bAssemblySupportRetracted,
+
+    tMovementTimeout :=
+        stConfig.tCylinderTimeout,
+
+    bExtendOutput =>
+        stOutputsInternal.bAssemblySupportExtend,
+
+    bRetractOutput =>
+        stOutputsInternal.bAssemblySupportRetract
 );
 
 // Cyclic component execution
@@ -909,8 +976,8 @@ fbIndex.Cyclic(
     tTwoHandRecoveryTimeout := stConfig.tTwoHandRecoveryTimeout,
     bRotatePortA => stOutputsInternal.bIndexRotatePortA,
     bStopPortB => stOutputsInternal.bIndexStopPortB,
-    bSupportExtendRequest => stOutputsInternal.bAssemblySupportExtend,
-    bSupportRetractRequest => stOutputsInternal.bAssemblySupportRetract);
+    bSupportExtendRequest => stOutputsInternal.bIndexSupportExtend,
+    bSupportRetractRequest => stOutputsInternal.bIndexSupportRetract);
 	
 	
 

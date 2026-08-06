@@ -8,12 +8,15 @@ VAR
     bFlash            : BOOL;
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// Generate a 500 ms toggle used by animated banner states.
+      <ST><![CDATA[
+// Generate a 500 ms toggle used by animated banner states.
 fbBlinkTimer(IN := NOT fbBlinkTimer.Q, PT := T#500MS);
 
 IF fbBlinkTimer.Q AND NOT bBlinkTimerQOld THEN
     GVL_HMI.bBlink_1Hz := NOT GVL_HMI.bBlink_1Hz;
 END_IF
+
+GVL_HMI.astActiveEvents := GVL_MASTER.astActiveEvents;
 
 bBlinkTimerQOld := fbBlinkTimer.Q;
 bFlash := GVL_HMI.bBlink_1Hz;

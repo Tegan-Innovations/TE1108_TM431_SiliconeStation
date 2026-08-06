@@ -6,22 +6,25 @@
 {attribute 'to_string'}
 TYPE E_ManualModeMessage :
 (
-    None                         := 0,
-    ManualReady                  := 10,
-    SafetyNotAvailable           := 20,
-    IndexCommandActive           := 30,
-    IndexCommandNotPermitted     := 40,
-    SiliconeSupportExtending            := 50,
-    SiliconeSupportRetracting           := 60,
-    CylinderCommandNotPermitted  := 70,
-    MainDoorUnlockRequested      := 80,
-    DoorCommandNotPermitted      := 90,
-    EquipmentStarting            := 100,
-    EquipmentStopping            := 110,
-    EquipmentResetting           := 120,
-    EquipmentCommandNotPermitted := 130,
-    WaitingSafeExit              := 140,
-    ComponentFaulted             := 999
+    None 					:= 0,
+    ManualReady 			:= 10,
+    WaitingSafeExit 		:= 20,
+    SafetyNotAvailable 		:= 30,
+
+    MainDoorUnlockRequested := 40,
+    DoorCommandNotPermitted := 50,
+
+    IndexCommandActive 		:= 60,
+    IndexCommandNotPermitted := 70,
+
+    EquipmentStarting 		:= 80,
+    EquipmentStopping 		:= 90,
+    EquipmentResetting 		:= 100,
+    EquipmentCommandNotPermitted := 110,
+
+    PneumaticActuatorMoving := 120,
+    PneumaticActuatorCommandConflict := 130,
+    PneumaticActuatorCommandNotPermitted := 140
 );
 END_TYPE]]></Declaration>
   </DUT>

@@ -48,6 +48,9 @@ STRUCT
 
     bSiliconeSupportExtended         : BOOL;
     bSiliconeSupportRetracted        : BOOL;
+	bAssemblySupportExtended  		 : BOOL;
+	bAssemblySupportRetracted 		 : BOOL;
+	
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>
