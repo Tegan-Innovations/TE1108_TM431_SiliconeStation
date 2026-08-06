@@ -257,10 +257,13 @@
     <Content Include="Contents\Screens\popups\Content_Popup_Logout.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\popups\Content_Popup_ManualMode.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_Puck.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Screens\popups\Content_Popup_Reject_Part.content">
+    <Content Include="Contents\Screens\Settings\settings_IVEK.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\Settings\settings_kister.content">
@@ -272,7 +275,7 @@
     <Content Include="Contents\Screens\Settings\settings_Puck.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Screens\Settings_Kistler.content">
+    <Content Include="Contents\Screens\Settings.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\Alarms.content">
@@ -297,9 +300,6 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_InfoPage.content">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Contents\Screens\popups\Content_Popup_ManualMode.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_UserManager.content">
@@ -421,19 +421,58 @@
     <Content Include="Images\Buttons\AlarmButton.png">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Buttons\AlarmButton.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\AlarmButtonOn.svg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Buttons\HomeButton.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\HomeButton.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\HomeButtonOn.svg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Buttons\IOButton.png">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Buttons\IOButton.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\IOButtonOn.svg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Buttons\LoginButton.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\LoginButton.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\LoginButtonOn.svg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Buttons\MenuButton.png">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Buttons\MenuButton.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\MenuButtonOn.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\PowerButton.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\PowerButtonOn.svg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Buttons\Shutdown_Box_Red.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Buttons\_PowerButton.svg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Client\JabilMasterLogo.png">
@@ -461,6 +500,18 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Icons\user.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Icons\_box.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Icons\_calendardate.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Icons\_clock.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Icons\_user.svg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\IO\C6015-0010.png">
@@ -682,6 +733,12 @@
     <Content Include="Images\Project\kistler_pos_2.PNG">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Project\ManualModeBaseIndex.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\ManualModePump.png">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Project\nest_pos_2.PNG">
       <SubType>Content</SubType>
     </Content>
@@ -691,7 +748,10 @@
     <Content Include="Images\Project\nest_pos_4.PNG">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Images\Project\Puck.png">
+    <Content Include="Images\Project\SiliconeIndexTable.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\SiliconeIndexTableV2.png">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\TeganInfo.png">

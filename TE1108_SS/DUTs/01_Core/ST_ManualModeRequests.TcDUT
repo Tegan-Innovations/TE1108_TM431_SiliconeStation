@@ -11,8 +11,8 @@ STRUCT
     bEquipmentStop             : BOOL;
     bEquipmentReset            : BOOL;
 	
-	bSiliconeSupportExtend     : BOOL;
-	bSiliconeSupportRetract    : BOOL;
+	bSiliconeSupportExtend 		: BOOL;
+	bSiliconeSupportRetract 	: BOOL;
 	
 END_STRUCT
 END_TYPE]]></Declaration>

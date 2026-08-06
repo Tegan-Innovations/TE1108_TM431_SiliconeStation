@@ -16,25 +16,69 @@
                     return cssStyles;
                 }
 
+                var rawType = RowData.sType;
+
                 /*
-                 * GVL_Persistent.astEventsHistory:
+                 * Normalizes both possible formats:
                  *
-                 * abType = 1 -> Fault / Alarm
-                 * abType = 2 -> Alert
-                 * abType = 3 -> Message
+                 * Numeric:
+                 * 1, 2, 3, 4
+                 *
+                 * Text:
+                 * Fault
+                 * Cycle Stop Fault
+                 * Cycle Stop Request
+                 * Message
                  */
-                var typeNumber = Number(RowData.abType);
+                var typeNumber;
+
+                if (typeof rawType === "number") {
+                    typeNumber = rawType;
+                } else {
+                    var normalizedType = String(rawType || "")
+                        .trim()
+                        .toLowerCase();
+
+                    switch (normalizedType) {
+                        case "1":
+                        case "fault":
+                        case "alarm":
+                            typeNumber = 1;
+                            break;
+
+                        case "2":
+                        case "cycle stop fault":
+                            typeNumber = 2;
+                            break;
+
+                        case "3":
+                        case "cycle stop request":
+                        case "alert":
+                            typeNumber = 3;
+                            break;
+
+                        case "4":
+                        case "message":
+                            typeNumber = 4;
+                            break;
+
+                        default:
+                            typeNumber = 0;
+                            break;
+                    }
+                }
 
                 switch (typeNumber) {
                     case 1:
+                    case 2:
                         cssStyles.push("Alarm");
                         break;
 
-                    case 2:
+                    case 3:
                         cssStyles.push("Alert");
                         break;
 
-                    case 3:
+                    case 4:
                         cssStyles.push("Message");
                         break;
                 }

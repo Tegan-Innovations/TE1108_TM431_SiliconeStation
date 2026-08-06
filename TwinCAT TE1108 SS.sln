@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.37301.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{B1E792BE-AA5F-4E3C-8C82-674BF9C0715B}") = "TwinCAT TE1108 SS", "TwinCAT TE1108 SS.tsproj", "{42320C87-6F30-3A2E-500C-E28252ED5320}"
 EndProject
-Project("{FE7A1B72-C5B7-4D7C-BB7D-76384D4DE8E1}") = "silicone_HMI", "Silicone_HMI\silicone_HMI.hmiproj", "{82BAAE57-2B3B-4F0C-9291-749E8976FB09}"
+Project("{FE7A1B72-C5B7-4D7C-BB7D-76384D4DE8E1}") = "Silicone_HMI", "Silicone_HMI\Silicone_HMI.hmiproj", "{82BAAE57-2B3B-4F0C-9291-749E8976FB09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

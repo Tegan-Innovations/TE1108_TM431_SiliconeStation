@@ -169,7 +169,7 @@
                   "valueType": "tchmi:general#/definitions/BOOL",
                   "value": false
                 },
-                "compareOperator": "==",
+                "compareOperator": "!=",
                 "logic": null
               }
             ],

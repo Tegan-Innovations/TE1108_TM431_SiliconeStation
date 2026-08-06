@@ -63,8 +63,14 @@ GVL_MASTER.stInputs.eIndexPosition          			:= GVL_IO.stInputs.eIndexPosition
 GVL_MASTER.stInputs.bMainDoorClosed          			:= GVL_IO.stInputs.bMainDoorClosed;
 GVL_MASTER.stInputs.bMainDoorLocked          			:= GVL_IO.stInputs.bMainDoorLocked;
 GVL_MASTER.stInputs.bMainDoorUnsafe         			:= GVL_IO.stInputs.bMainDoorUnsafe;
-GVL_MASTER.stInputs.bTransferNestSupportCylinderExtended  := GVL_IO.stInputs.bTransferNestSupportCylinderExtended;
-GVL_MASTER.stInputs.bTransferNestSupportCylinderRetracted := GVL_IO.stInputs.bTransferNestSupportCylinderRetracted;
+// Electrical drawing name: Transfer Nest Support.
+// Software name: Silicone Support.
+
+GVL_MASTER.stInputs.bSiliconeSupportExtended :=
+    GVL_IO.stInputs.bSiliconeSupportExtended;
+
+GVL_MASTER.stInputs.bSiliconeSupportRetracted :=
+    GVL_IO.stInputs.bSiliconeSupportRetracted;
 
 GVL_MASTER.stIvekInput  								:= GVL_IVEK_EIP.stInput;
 GVL_MASTER.bIvekCommsOk 								:= GVL_IVEK_EIP.bCommunicationOk;

@@ -1,6 +1,6 @@
-<div id="Content1_44" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="800" data-tchmi-height="600">
+<div id="Content1_44" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="720" data-tchmi-height="500">
 
-<div id="TcHmiDatagrid_21" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="500" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="33" data-tchmi-top-unit="px" data-tchmi-width="750" data-tchmi-width-unit="px" data-tchmi-grid-font-size="20" data-tchmi-grid-font-style="Normal" data-tchmi-grid-font-weight="Bold" data-tchmi-zindex="2" data-tchmi-header-font-size="100" data-tchmi-show-row-numbers="True" data-tchmi-is-enabled="True" data-tchmi-is-read-only="False" data-tchmi-src-data="%s%ADS.PLC1.GVL_HMI.aDataHistoryHMI%/s%" data-tchmi-indirect-write="False" data-tchmi-header-height-unit="%" data-tchmi-header-height="7" data-tchmi-header-font-size-unit="%" data-tchmi-row-numbers-font-style="Auto" data-tchmi-header-font-style="Auto">
+<div id="TcHmiDatagrid_21" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="10" data-tchmi-left-unit="px" data-tchmi-top="10" data-tchmi-top-unit="px" data-tchmi-width="700" data-tchmi-width-unit="px" data-tchmi-grid-font-size="20" data-tchmi-grid-font-style="Normal" data-tchmi-grid-font-weight="Bold" data-tchmi-zindex="2" data-tchmi-header-font-size="100" data-tchmi-show-row-numbers="True" data-tchmi-is-enabled="True" data-tchmi-is-read-only="False" data-tchmi-src-data="%s%ADS.PLC1.GVL_HMI.aDataHistoryHMI%/s%" data-tchmi-indirect-write="False" data-tchmi-header-height-unit="%" data-tchmi-header-height="7" data-tchmi-header-font-size-unit="%" data-tchmi-row-numbers-font-style="Auto" data-tchmi-header-font-style="Auto">
 <script data-tchmi-target-attribute="data-tchmi-cell-content-padding" type="application/json">
 {
   "left": 3,
@@ -37,8 +37,8 @@
     "sortable": true
   },
   {
-    "name": "sResult",
-    "label": "Result",
+    "name": "sHeightTestResult",
+    "label": "eResult",
     "control": "TextBox",
     "width": 140,
     "widthUnit": "px",
@@ -80,7 +80,7 @@
         {
           "objectType": "StaticValue",
           "valueType": "tchmi:general#/definitions/Number",
-          "value": 2.0
+          "value": 3.0
         }
       ]
     },
@@ -103,90 +103,44 @@
     "ignoreEscapeSequences": false,
     "autoFocusOut": true,
     "autoSelectText": false,
-    "format": {
-      "objectType": "Function",
-      "active": true,
-      "fn": "TcHmi.Functions.Beckhoff.GaugeValueFormatter",
-      "fnParams": [
-        {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:general#/definitions/Number",
-          "value": 2.0
-        }
-      ]
-    },
     "sortable": true
   },
   {
-    "name": "dtTimeStamp",
+    "name": "sTime",
     "label": "TIME",
     "control": "TextBox",
-    "width": 120,
+    "width": 100,
     "widthUnit": "px",
     "resize": false,
     "minWidth": 100,
     "minWidthUnit": "px",
     "editable": false,
-    "horizontalAlignment": "Center",
+    "horizontalAlignment": "Left",
     "verticalAlignment": "Center",
     "headerHorizontalAlignment": "Center",
     "headerVerticalAlignment": "Center",
     "ignoreEscapeSequences": false,
     "autoFocusOut": true,
     "autoSelectText": false,
-    "format": {
-      "objectType": "Function",
-      "active": true,
-      "fn": "TcHmi.Functions.Beckhoff.ToTimeString",
-      "fnParams": [
-        {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:general#/definitions/Locale",
-          "value": "en-GB"
-        },
-        {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:general#/definitions/TimeZone",
-          "value": "Europe/Dublin"
-        }
-      ]
-    },
     "sortable": true
   },
   {
-    "name": "dtTimeStamp",
+    "name": "sDate",
     "label": "DATE",
     "control": "TextBox",
-    "width": 120,
+    "width": 100,
     "widthUnit": "px",
     "resize": false,
     "minWidth": 100,
     "minWidthUnit": "px",
     "editable": false,
-    "horizontalAlignment": "Center",
+    "horizontalAlignment": "Left",
     "verticalAlignment": "Center",
     "headerHorizontalAlignment": "Center",
     "headerVerticalAlignment": "Center",
     "ignoreEscapeSequences": false,
     "autoFocusOut": true,
     "autoSelectText": false,
-    "format": {
-      "objectType": "Function",
-      "active": true,
-      "fn": "TcHmi.Functions.Beckhoff.ToDateString",
-      "fnParams": [
-        {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:general#/definitions/Locale",
-          "value": "en-GB"
-        },
-        {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:general#/definitions/TimeZone",
-          "value": "Europe/Dublin"
-        }
-      ]
-    },
     "sortable": true
   }
 ]
@@ -238,17 +192,6 @@
 }
 </script>
 
-
-</div>
-<div id="TcHmiTextbox_44" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextbox" data-tchmi-height="35" data-tchmi-height-unit="px" data-tchmi-horizontal-scroll="Auto" data-tchmi-left="250" data-tchmi-left-unit="px" data-tchmi-reset-to-last-valid-value="True" data-tchmi-text="Kistler Data History" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-vertical-scroll="Auto" data-tchmi-width="200" data-tchmi-width-unit="px" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-font-size="200" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
-<script data-tchmi-target-attribute="data-tchmi-content-padding" type="application/json">
-{
-  "top": 3,
-  "right": 3,
-  "bottom": 3,
-  "left": 3
-}
-</script>
 
 </div>
 </div>

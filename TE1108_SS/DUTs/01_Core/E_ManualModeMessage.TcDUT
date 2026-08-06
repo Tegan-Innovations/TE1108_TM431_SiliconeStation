@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="E_ManualModeMessage" Id="{308fc17b-9a07-42e8-a90b-4d3c55f95de1}">
-    <Declaration>{attribute 'qualified_only'}
+    <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
 {attribute 'to_string'}
 TYPE E_ManualModeMessage :
@@ -11,8 +11,8 @@ TYPE E_ManualModeMessage :
     SafetyNotAvailable           := 20,
     IndexCommandActive           := 30,
     IndexCommandNotPermitted     := 40,
-    TransferNestSupportCylinderExtending            := 50,
-    TransferNestSupportCylinderRetracting           := 60,
+    SiliconeSupportExtending            := 50,
+    SiliconeSupportRetracting           := 60,
     CylinderCommandNotPermitted  := 70,
     MainDoorUnlockRequested      := 80,
     DoorCommandNotPermitted      := 90,
@@ -23,6 +23,6 @@ TYPE E_ManualModeMessage :
     WaitingSafeExit              := 140,
     ComponentFaulted             := 999
 );
-END_TYPE</Declaration>
+END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>

@@ -1,14 +1,14 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <POU Name="PRG_HmiStatus" Id="{c33053ba-a379-4397-8086-04253da64219}" SpecialFunc="None">
-    <Declaration>PROGRAM PRG_HmiStatus
+    <Declaration><![CDATA[PROGRAM PRG_HmiStatus
 VAR
     fbBlinkTimer      : TON;
     bBlinkTimerQOld   : BOOL;
     bFlash            : BOOL;
-END_VAR</Declaration>
+END_VAR]]></Declaration>
     <Implementation>
-      <ST>// Generate a 500 ms toggle used by animated banner states.
+      <ST><![CDATA[// Generate a 500 ms toggle used by animated banner states.
 fbBlinkTimer(IN := NOT fbBlinkTimer.Q, PT := T#500MS);
 
 IF fbBlinkTimer.Q AND NOT bBlinkTimerQOld THEN
@@ -28,7 +28,7 @@ GVL_HMI.stStatus.stMainDoorLock := GVL_MASTER.stStatus.stMainDoorLock;
 GVL_HMI.stStatus.eInitialisingWaitReason := GVL_MASTER.stStatus.eInitialisingWaitReason;
 GVL_HMI.stStatus.eStoppingWaitReason := GVL_MASTER.stStatus.eStoppingWaitReason;
 GVL_HMI.stStatus.eCurrentIndexPosition := GVL_MASTER.stInputs.eIndexPosition;
-GVL_HMI.stStatus.bIndexPositionValid := GVL_MASTER.stInputs.eIndexPosition &lt;&gt; E_TablePosition.Unknown;
+GVL_HMI.stStatus.bIndexPositionValid := GVL_MASTER.stInputs.eIndexPosition <> E_TablePosition.Unknown;
 GVL_HMI.stStatus.bTwoHandsSafe := GVL_MASTER.stInputs.bTwoHandsSafe;
 GVL_HMI.stStatus.bGearboxAssemblyPartPresent := GVL_MASTER.stInputs.bGearboxAssemblyPartPresent;
 GVL_HMI.stStatus.bReservoirPartPresent := GVL_MASTER.stInputs.bReservoirPartPresent;
@@ -56,8 +56,8 @@ GVL_HMI.stStatus.uiMainAirPressureRaw := GVL_MASTER.stInputs.uiMainAirPressureRa
 GVL_HMI.stStatus.uiSiliconePressureRaw := GVL_MASTER.stInputs.uiSiliconePressureRaw;
 GVL_HMI.stStatus.uiNozzlePressureRaw := GVL_MASTER.stInputs.uiNozzlePressureRaw;
 GVL_HMI.stStatus.uiVacuumPressureRaw := GVL_MASTER.stInputs.uiVacuumPressureRaw;
-GVL_HMI.stStatus.bTransferNestSupportCylinderExtended := GVL_MASTER.stInputs.bTransferNestSupportCylinderExtended;
-GVL_HMI.stStatus.bTransferNestSupportCylinderRetracted := GVL_MASTER.stInputs.bTransferNestSupportCylinderRetracted;
+GVL_HMI.stStatus.bSiliconeSupportExtended := GVL_MASTER.stInputs.bSiliconeSupportExtended;
+GVL_HMI.stStatus.bSiliconeSupportRetracted := GVL_MASTER.stInputs.bSiliconeSupportRetracted;
 GVL_HMI.stStatus.bLeftFlapSafe := GVL_MASTER.stInputs.stSafety.bLeftFlapSafe;
 GVL_HMI.stStatus.bRightFlapSafe := GVL_MASTER.stInputs.stSafety.bRightFlapSafe;
 GVL_HMI.stStatus.bIvekCommunicationOk := GVL_MASTER.bIvekCommsOk;
@@ -139,7 +139,7 @@ ELSE
     GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sDARKGREY;
     GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
 END_CASE
-</ST>
+]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

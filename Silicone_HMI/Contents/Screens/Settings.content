@@ -30,13 +30,13 @@
     "Name": "Settings",
     "children": [
       {
-        "Name": "Kistler"
+        "Name": "IVEK DigiSense"
       },
       {
         "Name": "Enable Nests"
       },
       {
-        "Name": "Enable Puck Locker"
+        "Name": "Enable Puck"
       }
     ]
   }
@@ -82,7 +82,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "Kistler"
+              "value": "IVEK DigiSense"
             },
             "actions": [
               {
@@ -92,7 +92,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Screens/Settings/settings_kister.content"
+                  "value": "Contents/Screens/Settings/settings_IVEK.content"
                 },
                 "asyncWait": true
               }
@@ -122,7 +122,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "Enable Puck Locker"
+              "value": "Enable Puck"
             },
             "actions": [
               {

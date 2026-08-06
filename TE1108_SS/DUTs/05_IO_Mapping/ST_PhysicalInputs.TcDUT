@@ -52,8 +52,8 @@ STRUCT
     eIndexPosition                : E_TablePosition;
 
     // Transfer nest support / process tooling cylinder
-    bTransferNestSupportCylinderExtended        : BOOL;
-    bTransferNestSupportCylinderRetracted       : BOOL;
+    bSiliconeSupportExtended        : BOOL;
+    bSiliconeSupportRetracted       : BOOL;
 
     // Analog raw values. Engineering-unit scaling is intentionally kept
     // outside the terminal mapping until the sensor ranges are confirmed.

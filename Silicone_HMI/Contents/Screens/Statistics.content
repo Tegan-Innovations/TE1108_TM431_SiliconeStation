@@ -278,7 +278,7 @@
 ]
 </script>
 </div>
-<div id="TcHmiPopup_3" data-tchmi-type="TcHmi.Controls.System.TcHmiPopup" data-tchmi-height="550" data-tchmi-height-unit="px" data-tchmi-left="339" data-tchmi-left-unit="px" data-tchmi-top="259" data-tchmi-top-unit="px" data-tchmi-width="750" data-tchmi-width-unit="px" data-tchmi-zindex="0" data-tchmi-creator-visibility="Visible">
+<div id="TcHmiPopup_3" data-tchmi-type="TcHmi.Controls.System.TcHmiPopup" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="10" data-tchmi-left-unit="px" data-tchmi-top="440" data-tchmi-top-unit="px" data-tchmi-width="1340" data-tchmi-width-unit="px" data-tchmi-zindex="0" data-tchmi-creator-visibility="Visible">
 </div>
 <div id="TcHmiButton_106" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="770" data-tchmi-left-unit="px" data-tchmi-text="RESET" data-tchmi-top="136" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-zindex="3" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.aStatisticsHMI.0.bReset%/s%" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%">
 

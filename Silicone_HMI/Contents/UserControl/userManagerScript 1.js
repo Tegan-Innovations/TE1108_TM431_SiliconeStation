@@ -1,205 +1,147 @@
-// Keep these lines for best-effort IntelliSense support in Visual Studio 2017 and later.
+// Keep these lines for a best effort IntelliSense of Visual Studio 2017 and higher.
 /// <reference path="./../../../Packages/Beckhoff.TwinCAT.HMI.Framework.14.3.431/runtimes/native1.12-tchmi/TcHmi.d.ts" />
+//sysManag.js
 
-// sysManag.js
 
-async function userManager(User, Password, Group, slctUser, Action) {
-    try {
+
+async function userManager(User, Password, Group, slctUser, Action){
+    try{
         const userData = User;
         const passwordData = Password;
-        const groupData = Number(Group);
+        const groupData = Group;
         const act = Action;
         const oldUser = slctUser;
+        var   groupName = '';
+        var   LogOutTime = "";  
 
-        let groupName = '';
-        let logoutTime = '';
-
-        if (groupData === 1) {
-        groupName = 'Administrator';
-        logoutTime = 'PT15M';
+        if(groupData == '1'){
+	        groupName = 'Administrator';
+            LogOutTime = "PT15M";
         }
-
-        if (groupData === 2) {
-            groupName = 'Engineer';
-            logoutTime = 'PT15M';
+        if(groupData == '2'){
+	        groupName = 'Engineer';
+            LogOutTime = "PT15M";
         }
-
-        if (groupData === 3) {
-            groupName = 'Operator';
-            logoutTime = 'P30D';
+        if(groupData == '3'){
+	        groupName = 'Operator';
+            LogOutTime = "P30D";
         }
-
-        console.log('Group received:', Group);
-        console.log('Group converted:', groupData);
-        console.log('Group name:', groupName);
 
         // ========================================================
-        // CURRENT STEP: DUPLICATE VALIDATION FOR ADD USER ONLY
+        // PASSO ATUAL: VALIDAÇÃO DE DUPLICIDADE APENAS PARA ADDUSER
         // ========================================================
-        if (act === 'addUser') {
-            // Prevent user creation when required fields are empty.
+        if (act == 'addUser') {
+            // 1. Bloqueio básico caso esqueçam de preencher os campos na tela
             if (!userData || !passwordData || !groupName) {
-                alert(
-                    'Validation Notice: Please enter a username and password, and select a group.'
-                );
-                return;
+                alert("Validation Notice: Please fill in the Username, Password, and select a Group.");
+                return; 
             }
         }
 
-        if (act === 'addUser') {
-            // Read the user list exposed by the server through the ListUsers symbol.
-            TcHmi.Symbol.readEx2(
-                '%s%TcHmiUserManagement.ListUsers%/s%',
-                function (data) {
-                    if (data.error === TcHmi.Errors.NONE) {
-                        /*
-                         * data.result contains an array with the existing
-                         * usernames, for example:
-                         *
-                         * ["__SystemAdministrator", "User01"]
-                         */
-                        const userListArray = data.result;
+        if(act == 'addUser'){
+            // 1. Lê a lista de usuários mapeada no servidor através do símbolo real 'ListUsers'
+            TcHmi.Symbol.readEx2('%s%TcHmiUserManagement.ListUsers%/s%', function(data) {
+                
+                if (data.error === TcHmi.Errors.NONE) {
+                    // O data.result trará o array de strings com os nomes dos usuários existentes (ex: ["__SystemAdministrator", "uu11"])
+                    const userListArray = data.result;
 
-                        if (Array.isArray(userListArray)) {
-                            // Check whether the entered username already exists.
-                            if (userListArray.includes(userData)) {
-                                alert(
-                                    "Validation Error: The username '" +
-                                        userData +
-                                        "' already exists in the system."
-                                );
-                                return;
-                            }
+                    if (Array.isArray(userListArray)) {
+                        // 2. Verifica se o nome digitado (User) já está incluso na lista do servidor
+                        if (userListArray.includes(User)) {
+                            alert("Validation Error: The username '" + User + "' already exists in the system.");
+                            return; // Aborta e impede o avanço para a criação do duplicado
                         }
-                    } else {
-                        alert(
-                            'Server Error: Failed to retrieve the user list. Code: ' +
-                                data.error
-                        );
-                        return;
                     }
-
-                    // Create the user after all validations have passed.
-                    TcHmi.Server.UserManagement.addUserEx(
-                        userData,
-                        passwordData,
-                        {
-                            groups: [groupName],
-                            enabled: true,
-                            locale: 'en',
-                            autoLogout: logoutTime
-                        },
-                        {
-                            timeout: 2000
-                        },
-                        function (dataAdd) {
-                            if (dataAdd.error === TcHmi.Errors.NONE) {
-                                alert('User created successfully.');
-                            } else {
-                                alert(
-                                    'Server Error: Failed to create the new user. Code: ' +
-                                        dataAdd.error
-                                );
-                            }
-                        }
-                    );
                 }
-            );
 
+                // 3. Se passou pela validação (não existe), executa o addUserEx nativo do framework
+                TcHmi.Server.UserManagement.addUserEx(
+                    User, 
+                    Password, 
+                    {groups: [groupName], enabled: true, locale: 'de', autoLogout: LogOutTime },
+                    {timeout: 2000},
+                    function(dataAdd) {
+                        if (dataAdd.error === TcHmi.Errors.NONE) {
+                            alert('User created successfully.');
+                        } else {
+                            alert("Server Error: Failed to add the new user. Code: " + dataAdd.error);
+                        }
+                    }
+                );
+            });
             console.log(act);
         }
-
-        if (act === 'removeUser') {
-            TcHmi.Server.UserManagement.removeUserEx(
-                userData,
+        if(act == 'removeUser'){
+            TcHmi.Server.UserManagement.removeUserEx (
+                User, 
                 null,
-                {
-                    timeout: 2000
-                },
-                function (data) {
+                {timeout: 2000},
+                function(data) {
                     if (data.error === TcHmi.Errors.NONE) {
-                        alert('User removed successfully.');
+                        alert.log('User removed successfully.');
                     } else {
-                        alert(
-                            'Server Error: Failed to remove the selected user. Code: ' +
-                                data.error
-                        );
+                        alert("Server Error: Failed to remove the selected user. Code: " + data.error);
                     }
                 }
             );
         }
-
-        if (act === 'changeName') {
+        if(act == 'changeName'){
             TcHmi.Server.UserManagement.updateUser(
-                oldUser,
+                oldUser, 
                 {
-                    newName: userData
+                newName: User
                 },
-                function (data) {
-                    if (data.error === TcHmi.Errors.NONE) {
-                        alert('User renamed successfully.');
+                function(data) {
+                    if (delData.error === TcHmi.Errors.NONE) {
+                        alert.log('User renamed successfully.');
                     } else {
-                        alert(
-                            'Server Error: Failed to rename the selected user. Code: ' +
-                                data.error
-                        );
+                        lert("Server Critical Error: New identity established, but the legacy account couldn't be purged. Code: " + delData.error);
                     }
                 }
             );
         }
-
-        if (act === 'addGroup') {
+        if(act == 'addGroup'){
             TcHmi.Server.UserManagement.updateUser(
-                oldUser,
+                oldUser, 
                 {
-                    addGroups: [groupName]
+                addGroups: [groupName]
                 },
-                function (data) {
+                function(data) {
                     if (data.error === TcHmi.Errors.NONE) {
-                        alert('Group assigned successfully.');
+                        alert.log('Group association added.'); 
                     } else {
-                        alert(
-                            'Server Error: Failed to assign the group to the user. Code: ' +
-                                data.error
-                        );
+                        alert("Server Error: Failed to attach group to user profile. Code: " + data.error);
                     }
                 }
             );
         }
-
-        if (act === 'removeGroup') {
+        if(act == 'removeGroup'){
             TcHmi.Server.UserManagement.updateUser(
-                oldUser,
+                oldUser, 
                 {
-                    removeGroups: [groupName]
+                removeGroups: [groupName]
                 },
-                function (data) {
+                function(data) {
                     if (data.error === TcHmi.Errors.NONE) {
-                        alert('Group removed successfully.');
+                        alert.log('Group association removed.'); 
                     } else {
-                        alert(
-                            'Server Error: Failed to remove the group from the user. Code: ' +
-                                data.error
-                        );
+                        alert("Server Error: Failed to detach group from user profile. Code: " + data.error);
                     }
                 }
             );
         }
-
-        if (act === 'changePassword') {
+        if(act == 'changePassword'){
             TcHmi.Server.UserManagement.updateUser(
-                oldUser,
+                oldUser, 
                 {
-                    password: passwordData
+                password: passwordData
                 },
-                function (data) {
+                function(data) {
                     if (data.error === TcHmi.Errors.NONE) {
-                        alert('Password updated successfully.');
+                        alert.log('Credentials updated.'); 
                     } else {
-                        alert(
-                            'Server Error: Failed to update the password. Code: ' +
-                                data.error
-                        );
+                        alert("Server Error: Password update rejected by server. Code: " + data.error);
                     }
                 }
             );
@@ -208,7 +150,8 @@ async function userManager(User, Password, Group, slctUser, Action) {
         console.log(userData);
         console.log(passwordData);
         console.log(groupData);
-    } catch (error) {
-        alert('Fatal Application Error: ' + error.message);
+
+    } catch (erro){
+        alert("Fatal Application Exception: " + erro.message);
     }
-}
+};

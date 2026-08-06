@@ -270,7 +270,7 @@
 
 
 </div>
-<div id="TcHmiDatagrid_14" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="448" data-tchmi-height-unit="px" data-tchmi-left="239" data-tchmi-left-unit="px" data-tchmi-top="17" data-tchmi-top-unit="px" data-tchmi-width="1081" data-tchmi-width-unit="px" data-tchmi-src-data="%s%ADS.PLC1.GVL_Persistent.astEventsHistory%/s%" data-tchmi-grid-font-size="20" data-tchmi-grid-font-style="Normal" data-tchmi-grid-font-weight="Normal" data-tchmi-zindex="1" data-tchmi-show-row-numbers="True" data-tchmi-data-symbol="%s%ADS.PLC1.GVL_Persistent.astEventsHistory%/s%" data-tchmi-combobox-drop-down-style="Mobile">
+<div id="TcHmiDatagrid_14" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="448" data-tchmi-height-unit="px" data-tchmi-left="239" data-tchmi-left-unit="px" data-tchmi-top="17" data-tchmi-top-unit="px" data-tchmi-width="1081" data-tchmi-width-unit="px" data-tchmi-src-data="%s%ADS.PLC1.GVL_HMI.arrAlarmHistory%/s%" data-tchmi-grid-font-size="20" data-tchmi-grid-font-style="Normal" data-tchmi-grid-font-weight="Normal" data-tchmi-zindex="1" data-tchmi-show-row-numbers="True" data-tchmi-data-symbol="%s%ADS.PLC1.GVL_HMI.arrAlarmHistory%/s%" data-tchmi-combobox-drop-down-style="Mobile">
 <script data-tchmi-target-attribute="data-tchmi-cell-content-padding" type="application/json">
 {
   "left": 3,
@@ -328,8 +328,50 @@
     "sortable": false
   },
   {
-    "name": "sEventTex",
-    "label": "MESSAGE",
+    "name": "abType",
+    "label": "T",
+    "control": "Image",
+    "width": 40,
+    "widthUnit": "px",
+    "resize": false,
+    "minWidth": 20,
+    "minWidthUnit": "px",
+    "editable": false,
+    "horizontalAlignment": "Left",
+    "verticalAlignment": "Center",
+    "textColor": {
+      "color": "rgba(0, 0, 0, 1)"
+    },
+    "headerHorizontalAlignment": "Center",
+    "headerVerticalAlignment": "Center",
+    "ignoreEscapeSequences": false,
+    "autoFocusOut": true,
+    "autoSelectText": false,
+    "dataDefinitions": [
+      {
+        "height": 20.0,
+        "source": "Images/Icons/events/alarm.png",
+        "value": 1.0,
+        "width": 30.0
+      },
+      {
+        "height": 20.0,
+        "source": "Images/Icons/events/alert.png",
+        "value": 2.0,
+        "width": 30.0
+      },
+      {
+        "height": 20.0,
+        "source": "Images/Icons/events/message.png",
+        "value": 3.0,
+        "width": 30.0
+      }
+    ],
+    "sortable": false
+  },
+  {
+    "name": "sMessage",
+    "label": "EVENT",
     "control": "TextBox",
     "width": 610,
     "widthUnit": "px",
@@ -353,25 +395,6 @@
     "name": "sTime",
     "label": "TIME",
     "control": "TextBox",
-    "width": 100,
-    "widthUnit": "px",
-    "resize": false,
-    "minWidth": 100,
-    "minWidthUnit": "px",
-    "editable": false,
-    "horizontalAlignment": "Left",
-    "verticalAlignment": "Center",
-    "headerHorizontalAlignment": "Center",
-    "headerVerticalAlignment": "Center",
-    "ignoreEscapeSequences": false,
-    "autoFocusOut": true,
-    "autoSelectText": false,
-    "sortable": true
-  },
-  {
-    "name": "sDate",
-    "label": "DATE",
-    "control": "TextBox",
     "width": 80,
     "widthUnit": "px",
     "resize": false,
@@ -379,6 +402,28 @@
     "minWidthUnit": "px",
     "editable": false,
     "horizontalAlignment": "Center",
+    "verticalAlignment": "Center",
+    "textColor": {
+      "color": "rgba(0, 0, 0, 1)"
+    },
+    "headerHorizontalAlignment": "Center",
+    "headerVerticalAlignment": "Center",
+    "ignoreEscapeSequences": false,
+    "autoFocusOut": true,
+    "autoSelectText": false,
+    "sortable": false
+  },
+  {
+    "name": "sDate",
+    "label": "DATE",
+    "control": "TextBox",
+    "width": 120,
+    "widthUnit": "px",
+    "resize": false,
+    "minWidth": 100,
+    "minWidthUnit": "px",
+    "editable": false,
+    "horizontalAlignment": "Left",
     "verticalAlignment": "Center",
     "textColor": {
       "color": "rgba(0, 0, 0, 1)"

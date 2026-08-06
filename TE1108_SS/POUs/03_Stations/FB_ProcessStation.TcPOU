@@ -221,12 +221,12 @@ stStatusInternal.bEquipmentFaulted := ipEquipment.IsFaulted();
 CASE eState OF
     E_ProcessStationState.Disabled: stStatusInternal.sMessage := 'Process station disabled';
     E_ProcessStationState.Idle: stStatusInternal.sMessage := 'Process station ready';
-    E_ProcessStationState.Advancing: stStatusInternal.sMessage := 'Advancing transfer nest support cylinder';
-    E_ProcessStationState.Advanced: stStatusInternal.sMessage := 'Transfer nest support cylinder extended';
+    E_ProcessStationState.Advancing: stStatusInternal.sMessage := 'Advancing Silicone Support Cylinder';
+    E_ProcessStationState.Advanced: stStatusInternal.sMessage := 'Silicone Support Cylinder extended';
     E_ProcessStationState.StartingEquipment: stStatusInternal.sMessage := 'Starting process equipment';
     E_ProcessStationState.Processing: stStatusInternal.sMessage := 'Process in progress';
     E_ProcessStationState.StoppingEquipment: stStatusInternal.sMessage := 'Stopping process equipment';
-    E_ProcessStationState.Retracting: stStatusInternal.sMessage := 'Retracting transfer nest support cylinder';
+    E_ProcessStationState.Retracting: stStatusInternal.sMessage := 'Retracting Silicone Support Cylinder';
     E_ProcessStationState.Complete: stStatusInternal.sMessage := 'Process complete';
     E_ProcessStationState.Fault: stStatusInternal.sMessage := 'Process station fault';
 END_CASE

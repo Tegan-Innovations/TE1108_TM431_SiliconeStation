@@ -73,8 +73,8 @@ GVL_IO.stInputs.eIndexPosition := UINT_TO_E_TablePosition(uiIndexPositionCode);
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.bIndexSupportRetracted 						:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1;
 GVL_IO.stInputs.bIndexSupportExtended 						:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch2;
-GVL_IO.stInputs.bTransferNestSupportCylinderRetracted 		:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3;
-GVL_IO.stInputs.bTransferNestSupportCylinderExtended 		:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4;
+GVL_IO.stInputs.bSiliconeSupportRetracted 		:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3;
+GVL_IO.stInputs.bSiliconeSupportExtended 		:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4;
 
 // ---------------------------------------------------------------------------
 // / Term 11 -Analog inputs - raw process values (EPLAN pages 21 and 22)

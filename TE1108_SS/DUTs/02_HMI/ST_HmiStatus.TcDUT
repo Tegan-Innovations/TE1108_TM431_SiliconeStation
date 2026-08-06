@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_HmiStatus" Id="{ef688c1f-87ce-4c21-8080-519a1f7ee46a}">
-    <Declaration>TYPE ST_HmiStatus :
+    <Declaration><![CDATA[TYPE ST_HmiStatus :
 STRUCT
     stMachine                       : ST_MachineStatus;
     stSafety                        : ST_SafetyStatus;
@@ -40,8 +40,8 @@ STRUCT
     uiSiliconePressureRaw           : UINT;
     uiNozzlePressureRaw             : UINT;
     uiVacuumPressureRaw             : UINT;
-    bTransferNestSupportCylinderExtended          : BOOL;
-    bTransferNestSupportCylinderRetracted         : BOOL;
+    bSiliconeSupportExtended          : BOOL;
+    bSiliconeSupportRetracted         : BOOL;
     bLeftFlapSafe                   : BOOL;
     bRightFlapSafe                  : BOOL;
     bIvekCommunicationOk            : BOOL;
@@ -60,6 +60,6 @@ STRUCT
     sMachineMessage                : STRING(160);
     sOperatorMessage               : STRING(255);
 END_STRUCT
-END_TYPE</Declaration>
+END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>

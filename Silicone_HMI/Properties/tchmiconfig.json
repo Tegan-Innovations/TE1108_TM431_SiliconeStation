@@ -375,13 +375,6 @@
       "preloadBindings": false
     },
     {
-      "url": "Contents/Screens/popups/Content_Popup_Reject_part.content",
-      "preload": false,
-      "keepAlive": false,
-      "loadSync": false,
-      "preloadBindings": false
-    },
-    {
       "url": "Contents/Screens/popups/Content_Popup_Shutdown.content",
       "preload": false,
       "keepAlive": false,
@@ -390,6 +383,20 @@
     },
     {
       "url": "Contents/Screens/popups/Content_Popup_UserManager.content",
+      "preload": false,
+      "keepAlive": false,
+      "loadSync": false,
+      "preloadBindings": false
+    },
+    {
+      "url": "Contents/Screens/Settings.content",
+      "preload": false,
+      "keepAlive": false,
+      "loadSync": false,
+      "preloadBindings": false
+    },
+    {
+      "url": "Contents/Screens/Settings/settings_IVEK.content",
       "preload": false,
       "keepAlive": false,
       "loadSync": false,
@@ -411,13 +418,6 @@
     },
     {
       "url": "Contents/Screens/Settings/settings_Puck.content",
-      "preload": false,
-      "keepAlive": false,
-      "loadSync": false,
-      "preloadBindings": false
-    },
-    {
-      "url": "Contents/Screens/Settings_Kistler.content",
       "preload": false,
       "keepAlive": false,
       "loadSync": false,

@@ -238,11 +238,11 @@ CASE stStatusInternal.eMessage OF
     E_ProcessCycleMessage.WaitingPartAtProcess: stStatusInternal.sMessage := 'Waiting for part at process station';
     E_ProcessCycleMessage.SkippingEmptyOrProcessedNest: stStatusInternal.sMessage := 'Process nest empty, disabled or already processed';
     E_ProcessCycleMessage.PreparingProcessStation: stStatusInternal.sMessage := 'Preparing silicone application station';
-    E_ProcessCycleMessage.ExtendingTransferNestSupportCylinder: stStatusInternal.sMessage := 'Advancing transfer nest support cylinder';
+    E_ProcessCycleMessage.ExtendingTransferNestSupportCylinder: stStatusInternal.sMessage := 'Advancing Silicone Support Cylinder';
     E_ProcessCycleMessage.StartingProcessEquipment: stStatusInternal.sMessage := 'Starting silicone application equipment';
     E_ProcessCycleMessage.SiliconeApplicationInProgress: stStatusInternal.sMessage := 'Silicone application in progress';
     E_ProcessCycleMessage.CapturingProcessResult: stStatusInternal.sMessage := 'Capturing process result';
-    E_ProcessCycleMessage.RetractingTransferNestSupportCylinder: stStatusInternal.sMessage := 'Retracting transfer nest support cylinder';
+    E_ProcessCycleMessage.RetractingTransferNestSupportCylinder: stStatusInternal.sMessage := 'Retracting Silicone Support Cylinder';
     E_ProcessCycleMessage.StoringProcessResult: stStatusInternal.sMessage := 'Storing result in process nest';
     E_ProcessCycleMessage.WaitingOperatorExchange: stStatusInternal.sMessage := 'Waiting for operator load and unload sequence';
     E_ProcessCycleMessage.WaitingTwoHandForIndex: stStatusInternal.sMessage := 'Press and hold both two-hand buttons to index table';

@@ -1,5 +1,5 @@
 <div id="Content1_11" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="100" data-tchmi-height="100" data-tchmi-creator-viewport-width="1360" data-tchmi-creator-viewport-height="480" data-tchmi-width-unit="%" data-tchmi-height-unit="%" data-tchmi-zindex="3">
-<div id="TcHmiCombobox_3" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiCombobox" data-tchmi-auto-focus-out="true" data-tchmi-combobox-text="Select" data-tchmi-height="30" data-tchmi-height-unit="px" data-tchmi-left="459" data-tchmi-left-unit="px" data-tchmi-top="76" data-tchmi-top-unit="px" data-tchmi-width="150" data-tchmi-width-unit="px" tchmi.server.usermanagement.igroupresultobject)="data-tchmi-auto-select-text=" true""="" data-tchmi-zindex="5" data-tchmi-creator-locked="True" data-tchmi-selected-id="%i%AddGroupID|BindingMode=TwoWay%/i%" data-tchmi-enum-data-symbol="%i%AddGroupID%/i%">
+<div id="TcHmiCombobox_3" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiCombobox" data-tchmi-auto-focus-out="true" data-tchmi-combobox-text="Select" data-tchmi-height="30" data-tchmi-height-unit="px" data-tchmi-left="459" data-tchmi-left-unit="px" data-tchmi-top="76" data-tchmi-top-unit="px" data-tchmi-width="150" data-tchmi-width-unit="px" tchmi.server.usermanagement.igroupresultobject)="data-tchmi-auto-select-text=" true""="" data-tchmi-zindex="5" data-tchmi-creator-locked="True" data-tchmi-selected-id="%i%AddGroupID|BindingMode=TwoWay%/i%">
 void) = null
 ): TcHmi.IErrorDetails;%/f%"
     callback: null | ((this: void, data: TcHmi.Server.UserManagement.IGroupResultObject) => void) = null
@@ -18,18 +18,15 @@ void) = null
 [
   {
     "id": 1.0,
-    "text": "Administrator",
-    "value": "1"
+    "text": "Administrator"
   },
   {
     "id": 2.0,
-    "text": "Engineer",
-    "value": "2"
+    "text": "Engineer"
   },
   {
     "id": 3.0,
-    "text": "Operator",
-    "value": "3"
+    "text": "Operator"
   }
 ]
 </script>
@@ -189,7 +186,7 @@ void) = null
 </div>
 
 
-<div id="TcHmiDatagrid_12" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="430" data-tchmi-height-unit="px" data-tchmi-left="680" data-tchmi-left-unit="px" data-tchmi-top="23" data-tchmi-top-unit="px" data-tchmi-width="680" data-tchmi-width-unit="px" data-tchmi-src-data="%f%%s%ListUsers%/s%%/f%" data-tchmi-zindex="4" data-tchmi-row-numbers-font-weight="Auto" data-tchmi-header-font-style="Auto" data-tchmi-header-font-weight="Auto" data-tchmi-header-font-size="16" data-tchmi-row-numbers-font-size="14" data-tchmi-grid-font-size="20">
+<div id="TcHmiDatagrid_12" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="430" data-tchmi-height-unit="px" data-tchmi-left="680" data-tchmi-left-unit="px" data-tchmi-top="23" data-tchmi-top-unit="px" data-tchmi-width="700" data-tchmi-width-unit="px" data-tchmi-src-data="%s%ListUsers%/s%" data-tchmi-zindex="4" data-tchmi-row-numbers-font-weight="Auto" data-tchmi-header-font-style="Auto" data-tchmi-header-font-weight="Auto" data-tchmi-header-font-size="16" data-tchmi-row-numbers-font-size="14" data-tchmi-grid-font-size="20">
 <script data-tchmi-target-attribute="data-tchmi-cell-content-padding" type="application/json">
 {
   "left": 3,

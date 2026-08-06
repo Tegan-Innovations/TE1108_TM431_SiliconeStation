@@ -60,7 +60,7 @@ GVL_MASTER.stStationEvents[0].aEvents[7].sSolution := 'Check safety, index home 
 GVL_MASTER.stStationEvents[0].aEvents[8].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[8].bEventFlag := GVL_MASTER.stStatus.bStoppingTimeoutFault;
 GVL_MASTER.stStationEvents[0].aEvents[8].bEventText := 'System stopping timeout';
-GVL_MASTER.stStationEvents[0].aEvents[8].sSolution := 'Check process equipment stop, transfer nest support cylinder retraction and index table status';
+GVL_MASTER.stStationEvents[0].aEvents[8].sSolution := 'Check process equipment stop, Silicone Support Cylinder retraction and index table status';
 
 // EPLAN power and pneumatic diagnostics (Term 7 / TwinSAFE aliases)
 tonUpSupplyLost(IN := NOT GVL_MASTER.stInputs.bUp24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
@@ -102,7 +102,7 @@ GVL_MASTER.stStationEvents[0].aEvents[15].sSolution := 'Check the MS6 dump valve
 GVL_MASTER.stStationEvents[1].aEvents[0].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[0].bEventFlag := GVL_MASTER.stStatus.eCycleState = E_CycleState.Fault;
 GVL_MASTER.stStationEvents[1].aEvents[0].bEventText := 'Process cycle fault';
-GVL_MASTER.stStationEvents[1].aEvents[0].sSolution := 'Check transfer nest support cylinder, equipment status and process permissives';
+GVL_MASTER.stStationEvents[1].aEvents[0].sSolution := 'Check Silicone Support Cylinder, equipment status and process permissives';
 
 GVL_MASTER.stStationEvents[1].aEvents[1].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[1].bEventFlag := GVL_MASTER.stStatus.eEquipmentState = E_ProcessEquipmentState.Fault;
@@ -129,15 +129,15 @@ GVL_MASTER.stStationEvents[1].aEvents[4].sSolution := 'Check silicone level, sen
 // Process station component faults
 GVL_MASTER.stStationEvents[1].aEvents[10].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[10].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderExtendTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[10].bEventText := 'Transfer nest support cylinder extend timeout';
+GVL_MASTER.stStationEvents[1].aEvents[10].bEventText := 'Silicone Support Cylinder extend timeout';
 GVL_MASTER.stStationEvents[1].aEvents[10].sSolution := 'Check air supply, extend valve and extended sensor';
 GVL_MASTER.stStationEvents[1].aEvents[11].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[11].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderRetractTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[11].bEventText := 'Transfer nest support cylinder retract timeout';
+GVL_MASTER.stStationEvents[1].aEvents[11].bEventText := 'Silicone Support Cylinder retract timeout';
 GVL_MASTER.stStationEvents[1].aEvents[11].sSolution := 'Check air supply, retract valve and retracted sensor';
 GVL_MASTER.stStationEvents[1].aEvents[12].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[12].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderSensorMismatch;
-GVL_MASTER.stStationEvents[1].aEvents[12].bEventText := 'Transfer nest support cylinder sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[12].bEventText := 'Silicone Support Cylinder sensor mismatch';
 GVL_MASTER.stStationEvents[1].aEvents[12].sSolution := 'Check extended and retracted sensors; both cannot be active together';
 GVL_MASTER.stStationEvents[1].aEvents[13].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[13].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.ProcessTimeout;
@@ -216,11 +216,11 @@ GVL_MASTER.stStationEvents[2].aEvents[7].bEventFlag := tonIndexSupportMismatch.Q
 GVL_MASTER.stStationEvents[2].aEvents[7].bEventText := 'Nest support cylinder sensor mismatch';
 GVL_MASTER.stStationEvents[2].aEvents[7].sSolution := 'Check the nest support cylinder extended and retracted sensors on Term 8 Channels 1 and 2';
 
-tonTransferSupportMismatch(IN := GVL_MASTER.stInputs.bTransferNestSupportCylinderExtended AND GVL_MASTER.stInputs.bTransferNestSupportCylinderRetracted, PT := T#250MS);
+tonTransferSupportMismatch(IN := GVL_MASTER.stInputs.bSiliconeSupportExtended AND GVL_MASTER.stInputs.bSiliconeSupportRetracted, PT := T#250MS);
 GVL_MASTER.stStationEvents[1].aEvents[14].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[14].bEventFlag := tonTransferSupportMismatch.Q;
-GVL_MASTER.stStationEvents[1].aEvents[14].bEventText := 'Transfer nest support cylinder sensor mismatch';
-GVL_MASTER.stStationEvents[1].aEvents[14].sSolution := 'Check the transfer nest support cylinder sensors on Term 8 Channels 3 and 4';
+GVL_MASTER.stStationEvents[1].aEvents[14].bEventText := 'Silicone Support Cylinder sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[14].sSolution := 'Check the Silicone Support Cylinder sensors on Term 8 Channels 3 and 4';
 
 // Raw analog values are published to the HMI only. High/low alarms remain disabled
 // until channel configuration and engineering-unit limits are confirmed onsite.

@@ -10,8 +10,6 @@ STRUCT
     bManualIndexForward            : BOOL;
     bManualIndexHome               : BOOL;
 	bIndexerManualEnable 		   : BOOL;
-	bManualSiliconeSupportExtend   : BOOL;
-	bManualSiliconeSupportRetract  : BOOL;
     bManualMainDoorUnlock          : BOOL;
     bManualEquipmentStart          : BOOL;
     bManualEquipmentStop           : BOOL;
@@ -26,6 +24,8 @@ STRUCT
     bSimulateProcessFail           : BOOL;
     bSimulateProcessFault          : BOOL;
     usiRecipeRequest               : USINT;
+	bProcessCylinderExtend  		: BOOL;
+	bProcessCylinderRetract 		: BOOL;
 	
 	
 END_STRUCT
