@@ -126,6 +126,12 @@ GVL_MASTER.stStationEvents[1].aEvents[4].bEventFlag := NOT GVL_MASTER.stInputs.b
 GVL_MASTER.stStationEvents[1].aEvents[4].bEventText := 'Silicone minimum level sensor 2 not satisfied';
 GVL_MASTER.stStationEvents[1].aEvents[4].sSolution := 'Check silicone level, sensor alignment and Term 7 Channel 16';
 
+GVL_MASTER.stStationEvents[1].aEvents[5].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[5].bEventFlag :=GVL_MASTER.stStatus.stProcessCycle.bTimeoutFault;
+GVL_MASTER.stStationEvents[1].aEvents[5].bEventText :='Automatic process cycle timeout';
+GVL_MASTER.stStationEvents[1].aEvents[5].sSolution :='Check index movement, support cylinders and Assembly/Silicone process execution';
+
+
 // Process station component faults
 GVL_MASTER.stStationEvents[1].aEvents[10].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[10].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderExtendTimeout;

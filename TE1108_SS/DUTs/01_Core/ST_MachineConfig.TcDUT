@@ -17,6 +17,10 @@ STRUCT
     tProcessTimeout             : TIME := T#60S;
     tOperatorIdleTimeout        : TIME := T#30S;
     tPuckRemovalConfirm         : TIME := T#300MS;
+
+	tAssemblyProcessSimulation : TIME := T#5S;
+	tSiliconeProcessSimulation : TIME := T#5S;
+	
     eOperatorPosition           : E_TablePosition := E_TablePosition.Position4;
     eProcessPosition            : E_TablePosition := E_TablePosition.Position2;
     eRejectPosition             : E_TablePosition := E_TablePosition.Position4;

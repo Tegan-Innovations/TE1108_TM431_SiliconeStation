@@ -249,6 +249,10 @@ CASE eState OF
             // eState := E_IndexState.RetractingSupport;
 
             eState := E_IndexState.RotatingPortA;
+		
+		ELSIF eCurrentPosition = E_TablePosition.Unknown THEN
+			
+			eState := E_IndexState.WrongPositionRecovery;
 
         END_IF
 
@@ -392,12 +396,21 @@ CASE eState OF
 		// longer required. Continue with position verification.
 		IF bTableReady
 			AND bTableLocked
+			AND eCurrentPosition <> E_TablePosition.Unknown
 		THEN
 	
 			bWrongPositionSupervisionActive := FALSE;
 			eState := E_IndexState.VerifyingPosition;
-	
-	
+		
+		ELSIF  bTwoHandsSafe AND eCurrentPosition = E_TablePosition.Unknown THEN
+			 bStopPortB := FALSE;
+			 bRotatePortA := TRUE;
+		
+			IF tonRotateDelay.Q
+				AND bCompletedSensor THEN
+				
+				eState := E_IndexState.StoppingPortB;
+			END_IF
 		// -------------------------------------------------
 		// RECOVERY TIMEOUT
 		// -------------------------------------------------
@@ -415,6 +428,7 @@ CASE eState OF
 		ELSIF bTwoHandsSafe
 			AND bSafetyMotionPermitted
 			AND bMovePermissive
+			AND bTableLocked
 		THEN
 	
 			bWrongPositionSupervisionActive := FALSE;

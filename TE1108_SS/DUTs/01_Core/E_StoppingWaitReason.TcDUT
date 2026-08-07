@@ -9,6 +9,7 @@ TYPE E_StoppingWaitReason :
     None := 0,
     IndexStillMoving := 10,
     SiliconeSupportRetracting := 20,
+	AssemblySupportRetracting := 25,
     ProcessEquipmentStopping := 30,
     MainDoorTransition := 40
 );

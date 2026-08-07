@@ -1,28 +1,50 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_ProcessCycleInputs" Id="{f500be9a-4170-40fd-a6b3-7106aa376705}">
-    <Declaration>TYPE ST_ProcessCycleInputs :
+    <Declaration><![CDATA[TYPE ST_ProcessCycleInputs :
 STRUCT
-    bSafetyOk                    : BOOL;
-    bTwoHandsSafe                : BOOL;
-    bIndexPositionValid          : BOOL;
-    bProcessNestEnabled          : BOOL;
+    // SAFETY AND CYCLE TRIGGER
+    bSafetyOk                      : BOOL;
+    bTwoHandsSafe                  : BOOL;
+
+    // INDEXER
+    bIndexPositionValid            : BOOL;
+    bIndexMoveAllowed              : BOOL;
+    bIndexReady                    : BOOL;
+    bIndexLocked                   : BOOL;
+    bIndexBusy                     : BOOL;
+    bIndexDone                     : BOOL;
+    bIndexFaulted                  : BOOL;
+    bIndexRequestAccepted          : BOOL;
+    bIndexRecoveryRequestAccepted  : BOOL;
+	bIndexSamePositionDetected     : BOOL;
+
+    // PROCESS NEST
+    bProcessNestEnabled            : BOOL;
     bReservoirPartPresent          : BOOL;
-    bProcessResultAlreadyValid   : BOOL;
-    bProcessStationReady         : BOOL;
-    bProcessStationBusy          : BOOL;
-    bProcessStationComplete      : BOOL;
-    bProcessStationFaulted       : BOOL;
-    bResultStored                : BOOL;
-    bOperatorExchangeComplete    : BOOL;
-    bIndexMoveAllowed            : BOOL;
-    bIndexReady                  : BOOL;
-    bIndexBusy                   : BOOL;
-    bIndexDone                   : BOOL;
-    bIndexFaulted                : BOOL;
-    bIndexRequestAccepted        : BOOL;
-    bIndexRecoveryRequestAccepted: BOOL;
+    bProcessResultAlreadyValid     : BOOL;
+
+    // PROCESS STATION
+    bProcessStationReady           : BOOL;
+    bProcessStationBusy            : BOOL;
+    bProcessStationComplete        : BOOL;
+    bProcessStationFaulted         : BOOL;
+    bResultStored                  : BOOL;
+
+    // SUPPORTS
+    bSiliconeSupportExtended       : BOOL;
+    bSiliconeSupportRetracted      : BOOL;
+    bSiliconeSupportFaulted        : BOOL;
+
+    bAssemblySupportExtended       : BOOL;
+    bAssemblySupportRetracted      : BOOL;
+    bAssemblySupportFaulted        : BOOL;
+
+    // OPERATOR EXCHANGE
+    bOperatorExchangeComplete      : BOOL;
+
+	
 END_STRUCT
-END_TYPE</Declaration>
+END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>

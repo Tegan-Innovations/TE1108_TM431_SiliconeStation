@@ -1,31 +1,65 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="E_ProcessCycleMessage" Id="{6a920b80-05ec-47d5-ade5-8e978e635974}">
-    <Declaration>{attribute 'qualified_only'}
+    <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
 {attribute 'to_string'}
 TYPE E_ProcessCycleMessage :
 (
-    None := 0,
-    WaitingCycleConditions,
-    IndexPositionUnknown,
-    WaitingTwoHandForIndexRecovery,
-    RecoveringIndexPosition,
-    WaitingPartAtProcess,
-    SkippingEmptyOrProcessedNest,
-    PreparingProcessStation,
-    ExtendingTransferNestSupportCylinder,
-    StartingProcessEquipment,
-    SiliconeApplicationInProgress,
-    CapturingProcessResult,
-    RetractingTransferNestSupportCylinder,
-    StoringProcessResult,
-    WaitingOperatorExchange,
-    WaitingTwoHandForIndex,
-    IndexingTable,
-    ControlledStopping,
-    ProcessCycleFault
+    // GENERAL
+    None                                    := 0,
+    WaitingCycleConditions                  := 10,
+    InitialisingProcessCycle                := 20,
+    WaitingForProcessCycleTrigger           := 30,
+
+    // INDEX POSITION RECOVERY
+    IndexPositionUnknown                    := 40,
+    WaitingTwoHandForIndexRecovery          := 50,
+    RecoveringIndexPosition                 := 60,
+
+    // INDEX MOVEMENT
+    ValidatingIndexPermissives              := 70,
+    WaitingTwoHandForIndex                  := 80,
+    RequestingIndexMove                     := 90,
+    WaitingForIndexStart                    := 100,
+    IndexingTable                           := 110,
+    WaitingForIndexComplete                 := 120,
+
+    // PROCESS NEST
+    WaitingPartAtProcess                    := 130,
+    SkippingEmptyOrProcessedNest            := 140,
+
+    // SUPPORTS
+    RequestingSupportsExtend                := 150,
+    WaitingForSupportsExtended              := 160,
+    RequestingSupportsRetract               := 170,
+    WaitingForSupportsRetracted              := 180,
+
+    // PROCESS EXECUTION
+    PreparingProcessStation                 := 190,
+    StartingProcessEquipment                := 200,
+    AssemblyProcessInProgress               := 210,
+    SiliconeApplicationInProgress           := 220,
+    WaitingForProcessesComplete             := 230,
+
+    // PROCESS RESULT
+    CapturingProcessResult                  := 240,
+    StoringProcessResult                    := 250,
+
+    // OPERATOR EXCHANGE
+    WaitingOperatorExchange                 := 260,
+
+    // CYCLE COMPLETION
+    ProcessCycleComplete                    := 270,
+
+    // LEGACY / FUTURE SUPPORT FLOW
+    ExtendingTransferNestSupportCylinder    := 280,
+    RetractingTransferNestSupportCylinder   := 290,
+
+    // TERMINAL CONDITIONS
+    ControlledStopping                      := 900,
+    ProcessCycleFault                       := 999
 );
-END_TYPE</Declaration>
+END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>

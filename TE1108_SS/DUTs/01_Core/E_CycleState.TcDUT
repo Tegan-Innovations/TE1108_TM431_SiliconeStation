@@ -6,32 +6,57 @@
 {attribute 'to_string'}
 TYPE E_CycleState :
 (
-    ResetCycle 						:= 0,
-    Idle 							:= 10,
-    EvaluateIndexPosition 			:= 15,
-    WaitIndexPositionRecovery 		:= 16,
-    RequestIndexPositionRecovery 	:= 17,
-    WaitIndexPositionRecovered 		:= 18,
-    EvaluateProcessNest 			:= 20,
-    SkipProcessNest 				:= 30,
-    PrepareProcessStation 			:= 40,
-    WaitProcessStationReady 		:= 50,
-    StartProcessStation 			:= 60,
-    WaitProcessStationRunning 		:= 70,
-    WaitProcessStationComplete 		:= 80,
-    CaptureProcessResult 			:= 90,
-    StoreProcessResult 				:= 100,
-    PrepareOperatorExchange 		:= 110,
-    WaitOperatorExchange 			:= 120,
-    ConfirmOperatorExchange 		:= 130,
-    ValidateIndexPermissives 		:= 140,
-    RequestIndex 					:= 150,
-    WaitIndexStart 					:= 160,
-    WaitIndexComplete 				:= 170,
-    UpdateNestPositions 			:= 180,
-    Complete 						:= 190,
-    ControlledStop 					:= 900,
-    Fault 							:= 999
+    // CYCLE INITIALISATION
+    Disabled                        := 0,
+    Initialising                    := 10,
+    WaitingForProcessCycleTrigger   := 20,
+	
+    // INDEX POSITION RECOVERY
+    EvaluatingIndexPosition         := 30,
+    RequestingIndexPositionRecovery := 40,
+    WaitingForIndexPositionRecovery := 50,
+
+    // INDEX MOVEMENT
+    ValidatingIndexPermissives      := 60,
+    RequestingIndexMove             := 70,
+    WaitingForIndexStart            := 80,
+    WaitingForIndexComplete         := 90,
+
+    // NEST AND PROCESS PREPARATION
+    UpdatingNestPositions           := 100,
+    EvaluatingProcessNest           := 110,
+    SkippingProcessNest             := 120,
+
+    // SUPPORT EXTENSION
+    RequestingSupportsExtend        := 130,
+    WaitingForSupportsExtended      := 140,
+
+    // PROCESS EXECUTION
+    PreparingProcessStations        := 150,
+    WaitingForProcessStationsReady  := 160,
+    StartingProcesses               := 170,
+    WaitingForProcessesRunning      := 180,
+    WaitingForProcessesComplete     := 190,
+
+    // PROCESS RESULT
+    CapturingProcessResult          := 200,
+    StoringProcessResult            := 210,
+
+    // SUPPORT RETRACTION
+    RequestingSupportsRetract       := 220,
+    WaitingForSupportsRetracted     := 230,
+
+    // OPERATOR EXCHANGE
+    PreparingOperatorExchange       := 240,
+    WaitingForOperatorExchange      := 250,
+    ConfirmingOperatorExchange      := 260,
+
+    // CYCLE COMPLETION
+    CycleComplete                   := 270,
+
+    // TERMINAL STATES
+    ControlledStop                  := 900,
+    Fault                           := 999
 );
 END_TYPE]]></Declaration>
   </DUT>

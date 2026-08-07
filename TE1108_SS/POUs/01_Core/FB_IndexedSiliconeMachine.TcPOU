@@ -11,12 +11,12 @@ VAR
     fbSimulatedEquipment 					: FB_SimulatedProcessEquipment;
     fbNestManager        					: FB_NestTableManager;
     fbOperatorStation    					: FB_OperatorStation;
-    fbPuckLocker         					: FB_PuckLocker;
+    //fbPuckLocker         					: FB_PuckLocker;
     fbProcessCycle       					: FB_ProcessCycle;
     fbManualMode         					: FB_ManualMode;
     ipEquipment          					: I_ProcessEquipment;
     eMachineState        					: E_MachineState := E_MachineState.PowerUp;
-    eCycleState          					: E_CycleState := E_CycleState.Idle;
+    eCycleState          					: E_CycleState := E_CycleState.Disabled;
     stLastResult         					: ST_ProcessResult;
     stOperatorNest       					: ST_Nest;
     stPuckStatus         					: ST_PuckLockerStatus;
@@ -57,6 +57,7 @@ VAR
 	
     tonInitialising         				: TON;
     tonStopping             				: TON;
+	tonAutoCycleIdleTimeout 				: TON;
 	
 	fbEventFaultTrigger 					: R_TRIG;
 	tpSafetyRunDrop     					: TP;
@@ -234,18 +235,18 @@ stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
 // PUCK LOCKER CONTROL
 // =========================================================
 
-// Puck locker remains independent from the automatic cycle.
-fbPuckLocker.Cyclic(
-    eMode := stConfig.ePuckLockerMode,
-    bSensorUp := stInputs.bPuckSensorUp,
-    bSensorDown := stInputs.bPuckSensorDown,
-    bPartRemovedFromNest := stOperatorNest.bPartRemovedPulse,
-    bReleasePassPuck := stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed AND NOT stOperatorNest.bDispositionSent,
-    bAcknowledgeFault := stCommand.bAcknowledgePuckRemovalFault,
-    bEmptyPuckBypass := stCommand.bEmptyPuckBypass,
-    tRemovalConfirm := stConfig.tPuckRemovalConfirm,
-    bPinCommandUp => bPuckPinUp);
-stPuckStatus := fbPuckLocker.GetStatus();
+// // Puck locker remains independent from the automatic cycle.
+// fbPuckLocker.Cyclic(
+//     eMode := stConfig.ePuckLockerMode,
+//     bSensorUp := stInputs.bPuckSensorUp,
+//     bSensorDown := stInputs.bPuckSensorDown,
+//     bPartRemovedFromNest := stOperatorNest.bPartRemovedPulse,
+//     bReleasePassPuck := stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed AND NOT stOperatorNest.bDispositionSent,
+//     bAcknowledgeFault := stCommand.bAcknowledgePuckRemovalFault,
+//     bEmptyPuckBypass := stCommand.bEmptyPuckBypass,
+//     tRemovalConfirm := stConfig.tPuckRemovalConfirm,
+//     bPinCommandUp => bPuckPinUp);
+// 	stPuckStatus := FALSE;
 
 // =========================================================
 // OPERATOR STATION CONTROL
@@ -259,7 +260,7 @@ fbOperatorStation.Cyclic(
     bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
     bRejectChutePartPresent := stInputs.bRejectChutePartPresent,
     bPuckLockerEnabled := stConfig.ePuckLockerMode <> E_PuckLockerMode.Disabled,
-    bPuckLocked := fbPuckLocker.IsLocked(),
+    bPuckLocked := FALSE,
     bPuckDetected := stPuckStatus.bPuckDetected,
     ePuckLockerState := stPuckStatus.eState,
     bRequireRejectConfirm := stConfig.bRequireRejectConfirm,
@@ -275,13 +276,18 @@ stPermissives.bSafetyIndexPermissive := stInputs.stSafety.bMotionSafetyPermitted
 stPermissives.bOperatorIndexPermissive := fbOperatorStation.IndexPermissive();
 stPermissives.bProcessIndexPermissive := fbProcessStation.IndexPermissive();
 stPermissives.bPuckLockerIndexPermissive := stPuckStatus.bIndexPermissive;
-stPermissives.bIndexMoveAllowed := stPermissives.bSafetyIndexPermissive
-    AND stPermissives.bOperatorIndexPermissive
-    AND stPermissives.bProcessIndexPermissive
-    AND stPermissives.bPuckLockerIndexPermissive;
-stPermissives.bProcessStartAllowed := stInputs.stSafety.bProcessSafetyPermitted
-    AND stInputs.bIndexReady AND stInputs.bIndexLocked
-    AND stInputs.bReservoirPartPresent;
+
+stPermissives.bIndexMoveAllowed := 
+	stPermissives.bSafetyIndexPermissive
+    //AND stPermissives.bOperatorIndexPermissive
+    AND stPermissives.bProcessIndexPermissive;
+	
+	
+stPermissives.bProcessStartAllowed := 
+		stInputs.stSafety.bProcessSafetyPermitted
+   		AND stInputs.bIndexReady 
+		AND stInputs.bIndexLocked
+    	AND stInputs.bReservoirPartPresent;
 
 // =========================================================
 // IVEK NATIVE SETTINGS LAUNCHER
@@ -360,7 +366,7 @@ CASE eMachineState OF
 		// Same machine lifecycle used by the Kistler: always enter a controlled stop first.
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
-		eCycleState := E_CycleState.Idle;
+		eCycleState := E_CycleState.Disabled;
 		eMachineState := E_MachineState.Stopping;
 
 	E_MachineState.Fault:
@@ -384,7 +390,7 @@ CASE eMachineState OF
 			bStoppingTimeoutFault := FALSE;
 	
 			eCycleState :=
-				E_CycleState.Idle;
+				E_CycleState.Disabled;
 	
 			IF stInputs.stSafety.bSafetyOk
 				AND NOT fbIndex.IsFaulted()
@@ -424,33 +430,19 @@ CASE eMachineState OF
 		// ---------------------------------------------------------
 	
 		IF stIndexStatus.bBusy THEN
+		eStoppingWaitReason := E_StoppingWaitReason.IndexStillMoving;
 	
-			eStoppingWaitReason :=
-				E_StoppingWaitReason.IndexStillMoving;
+	ELSIF NOT stInputs.bSiliconeSupportRetracted THEN
+		eStoppingWaitReason := E_StoppingWaitReason.SiliconeSupportRetracting;
 	
+	ELSIF NOT stInputs.bAssemblySupportRetracted THEN
+		eStoppingWaitReason := E_StoppingWaitReason.AssemblySupportRetracting;
 	
-		// ---------------------------------------------------------
-		// SILICONE SUPPORT MUST BE RETRACTED
-		// ---------------------------------------------------------
-	
-// 		ELSIF NOT stInputs.bSiliconeSupportRetracted THEN
-// 	
-// 			eStoppingWaitReason :=
-// 				E_StoppingWaitReason.SiliconeSupportRetracting;
-	
-// 	
-		// ---------------------------------------------------------
-		// MAIN DOOR TRANSITION MUST BE COMPLETE
-		// ---------------------------------------------------------
-	
-		ELSIF (stMainDoorLockStatus.eState = E_MainDoorLockState.Locking)
-			OR (stMainDoorLockStatus.eState = E_MainDoorLockState.Unlocking)
-		THEN
-	
-			eStoppingWaitReason :=
-				E_StoppingWaitReason.MainDoorTransition;
-// 	
- 		END_IF
+	ELSIF (stMainDoorLockStatus.eState = E_MainDoorLockState.Locking)
+		OR (stMainDoorLockStatus.eState = E_MainDoorLockState.Unlocking)
+	THEN
+		eStoppingWaitReason := E_StoppingWaitReason.MainDoorTransition;
+	END_IF
 	
 	
 		// ---------------------------------------------------------
@@ -465,7 +457,7 @@ CASE eMachineState OF
 			tonStopping(IN := FALSE);
 	
 			eCycleState :=
-				E_CycleState.Idle;
+				E_CycleState.Disabled;
 	
 			eMachineState :=
 				E_MachineState.Stopped;
@@ -548,7 +540,7 @@ CASE eMachineState OF
 		
 		IF bInitialisationComplete THEN
 			tonInitialising(IN := FALSE);
-			eCycleState := E_CycleState.Idle;
+			eCycleState := E_CycleState.Disabled;
 			eMachineState := E_MachineState.ReadyToStart;
 		ELSIF tonInitialising.Q THEN
 			bInitialisationTimeoutFault := TRUE;
@@ -579,87 +571,136 @@ CASE eMachineState OF
 			AND fbMainDoorLock.IsReadyForAutomatic()
 		THEN
 	
-			eCycleState := E_CycleState.Idle;
+			eCycleState := E_CycleState.Disabled;
 			eMachineState := E_MachineState.AutoCycle;
 	
 		END_IF
 // 	
 	E_MachineState.AutoCycle:
-// 		tonInitialising(IN := FALSE);
-// 		tonStopping(IN := FALSE);
-// 	
-// 		stProcessNest := fbNestManager.GetNestAtPosition(stConfig.eProcessPosition);
-// 		stProcessCycleInputs.bSafetyOk := stInputs.stSafety.bSafetyOk;
-// 		stProcessCycleInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
-// 		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
-// 		stProcessCycleInputs.bProcessNestEnabled := stProcessNest.bEnabled;
-// 		stProcessCycleInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
-// 		stProcessCycleInputs.bProcessResultAlreadyValid := stProcessNest.stResult.bValid;
-// 		stProcessCycleInputs.bProcessStationReady := fbProcessStation.IndexPermissive() AND NOT fbProcessStation.IsFaulted();
-// 		stProcessCycleInputs.bProcessStationBusy := ipEquipment.IsBusy();
-// 		stProcessCycleInputs.bProcessStationComplete := fbProcessStation.IsComplete();
-// 		stProcessCycleInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
-// 		stProcessCycleInputs.bResultStored := bResultStoredFeedback;
-// 		stProcessCycleInputs.bOperatorExchangeComplete := fbOperatorStation.IsComplete();
-// 		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed;
-// 		stProcessCycleInputs.bIndexReady := fbIndex.IsReady();
-// 		stProcessCycleInputs.bIndexBusy := stIndexStatus.bBusy;
-// 		stProcessCycleInputs.bIndexDone := fbIndex.IsDone();
-// 		stProcessCycleInputs.bIndexFaulted := fbIndex.IsFaulted();
-// 		stProcessCycleInputs.bIndexRequestAccepted := bIndexRequestAcceptedFeedback;
-// 		stProcessCycleInputs.bIndexRecoveryRequestAccepted := bIndexRecoveryRequestAcceptedFeedback;
-// 	
-// 		fbProcessCycle.Cyclic(
-// 			bEnable := TRUE,
-// 			bStopRequest := stCommand.bStop,
-// 			bResetRequest := stCommand.bReset,
-// 			stInputs := stProcessCycleInputs,
-// 			stRequests => stProcessCycleRequests,
-// 			stStatus => stProcessCycleStatus);
-// 	
-// 		// Feedback flags are retained for one scan and consumed by FB_ProcessCycle above.
-// 		bResultStoredFeedback := FALSE;
-// 		bIndexRequestAcceptedFeedback := FALSE;
-// 		bIndexRecoveryRequestAcceptedFeedback := FALSE;
-// 	
-// 		IF stProcessCycleRequests.bCaptureProcessResult THEN
-// 			stLastResult := fbProcessStation.GetResult();
-// 		END_IF
-// 	
-// 		IF stProcessCycleRequests.bStoreProcessResult THEN
-// 			stLastResult := fbProcessStation.GetResult();
-// 			bResultStoredFeedback := fbNestManager.StoreResultAtPosition(
-// 				ePosition := stConfig.eProcessPosition,
-// 				stResult := stLastResult);
-// 			IF bResultStoredFeedback THEN
-// 				fbIndex.ReleaseProcessPosition();
-// 			END_IF
-// 		END_IF
-// 	
-// 		IF stProcessCycleRequests.bConfirmOperatorExchange THEN
-// 			fbNestManager.MarkDispositionComplete(stConfig.eOperatorPosition);
-// 			fbIndex.ConfirmOperatorExchange();
-// 		END_IF
-// 	
-// 		IF stProcessCycleRequests.bRequestIndex THEN
-// 			bIndexRequestAcceptedFeedback := fbIndex.RequestMove();
-// 		END_IF
-// 	
-// 		IF stProcessCycleRequests.bRequestIndexRecovery THEN
-// 			bIndexRecoveryRequestAcceptedFeedback := fbIndex.RequestPositionRecovery();
-// 		END_IF
-// 	
-// 		IF stProcessCycleRequests.bUpdateNestPositions THEN
-// 			fbNestManager.ClearOperatorNest(stConfig.eOperatorPosition);
-// 		END_IF
-// 	
-// 		bProcessStartPulse := stProcessCycleRequests.bStartProcessStation;
-// 	
-// 		IF stProcessCycleStatus.bFaulted THEN
-// 			eMachineState := E_MachineState.Fault;
- 		IF stCommand.bStop AND (stProcessCycleStatus.eState = E_CycleState.ResetCycle) THEN
- 			eMachineState := E_MachineState.Stopping;
- 		END_IF
+	
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+
+	
+		// PROCESS CYCLE INPUT MAPPING
+		stProcessCycleInputs.bSafetyOk := stInputs.stSafety.bSafetyOk;
+		stProcessCycleInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
+		// Indexer
+		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
+		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed
+			AND stInputs.bSiliconeSupportRetracted
+			AND stInputs.bAssemblySupportRetracted;
+		stProcessCycleInputs.bIndexReady := fbIndex.IsReady();
+		stProcessCycleInputs.bIndexLocked := stInputs.bIndexLocked;
+		stProcessCycleInputs.bIndexBusy := stIndexStatus.bBusy;
+		stProcessCycleInputs.bIndexDone := fbIndex.IsDone();
+		stProcessCycleInputs.bIndexSamePositionDetected := stIndexStatus.bSamePositionDetected;
+		stProcessCycleInputs.bIndexFaulted := fbIndex.IsFaulted();
+		stProcessCycleInputs.bIndexRequestAccepted := bIndexRequestAcceptedFeedback;
+		stProcessCycleInputs.bIndexRecoveryRequestAccepted := bIndexRecoveryRequestAcceptedFeedback;
+		
+		// Silicone Support
+		stProcessCycleInputs.bSiliconeSupportExtended := stInputs.bSiliconeSupportExtended;
+		stProcessCycleInputs.bSiliconeSupportRetracted := stInputs.bSiliconeSupportRetracted;
+		stProcessCycleInputs.bSiliconeSupportFaulted := fbSiliconeSupportCylinder.IsFaulted();
+	
+		// Assembly Support
+		stProcessCycleInputs.bAssemblySupportExtended := stInputs.bAssemblySupportExtended;
+		stProcessCycleInputs.bAssemblySupportRetracted := stInputs.bAssemblySupportRetracted;
+		stProcessCycleInputs.bAssemblySupportFaulted := fbAssemblySupportCylinder.IsFaulted();
+	
+		// FUTURE PROCESS INPUTS
+		// stProcessNest := fbNestManager.GetNestAtPosition(stConfig.eProcessPosition);
+		// stProcessCycleInputs.bProcessNestEnabled := stProcessNest.bEnabled;
+		// stProcessCycleInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
+		// stProcessCycleInputs.bProcessResultAlreadyValid := stProcessNest.stResult.bValid;
+		// stProcessCycleInputs.bProcessStationReady := fbProcessStation.IndexPermissive() AND NOT fbProcessStation.IsFaulted();
+		// stProcessCycleInputs.bProcessStationBusy := ipEquipment.IsBusy();
+		// stProcessCycleInputs.bProcessStationComplete := fbProcessStation.IsComplete();
+		// stProcessCycleInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
+		// stProcessCycleInputs.bResultStored := bResultStoredFeedback;
+		// stProcessCycleInputs.bOperatorExchangeComplete := fbOperatorStation.IsComplete();
+	
+		// PROCESS CYCLE EXECUTION
+		fbProcessCycle.Cyclic(
+			bEnable := TRUE,
+			bStopRequest := stCommand.bStop,
+			bResetRequest := stCommand.bReset,
+			stInputs := stProcessCycleInputs,
+			tAssemblyProcessSimulation := stConfig.tAssemblyProcessSimulation,
+			tSiliconeProcessSimulation := stConfig.tSiliconeProcessSimulation,
+			stRequests => stProcessCycleRequests,
+			stStatus => stProcessCycleStatus
+		);
+			//Timeout process
+			tonAutoCycleIdleTimeout(
+			IN := stProcessCycleStatus.eState = E_CycleState.WaitingForProcessCycleTrigger,
+			PT := T#2M
+		);
+		
+		// FEEDBACK DEFAULTS
+		bIndexRequestAcceptedFeedback := FALSE;
+		bIndexRecoveryRequestAcceptedFeedback := FALSE;
+		// bResultStoredFeedback := FALSE;
+	
+		// INDEX REQUEST EXECUTION
+		IF stProcessCycleRequests.bRequestIndex THEN
+			bIndexRequestAcceptedFeedback := fbIndex.RequestMove();
+		END_IF
+	
+		IF stProcessCycleRequests.bRequestIndexRecovery THEN
+			bIndexRecoveryRequestAcceptedFeedback := fbIndex.RequestPositionRecovery();
+		END_IF
+	
+		// FUTURE PROCESS REQUEST EXECUTION
+		// IF stProcessCycleRequests.bStartProcessStation THEN
+		//     ipEquipment.RequestStart();
+		// END_IF
+	
+		// IF stProcessCycleRequests.bStopProcessStation THEN
+		//     ipEquipment.RequestStop();
+		// END_IF
+	
+		// IF stProcessCycleRequests.bCaptureProcessResult THEN
+		//     stLastResult := fbProcessStation.GetResult();
+		// END_IF
+	
+		// IF stProcessCycleRequests.bStoreProcessResult THEN
+		//     stLastResult := fbProcessStation.GetResult();
+		//     bResultStoredFeedback := fbNestManager.StoreResultAtPosition(
+		//         ePosition := stConfig.eProcessPosition,
+		//         stResult := stLastResult
+		//     );
+		//
+		//     IF bResultStoredFeedback THEN
+		//         fbIndex.ReleaseProcessPosition();
+		//     END_IF
+		// END_IF
+	
+		// IF stProcessCycleRequests.bConfirmOperatorExchange THEN
+		//     fbNestManager.MarkDispositionComplete(stConfig.eOperatorPosition);
+		//     fbIndex.ConfirmOperatorExchange();
+		// END_IF
+	
+		// IF stProcessCycleRequests.bUpdateNestPositions THEN
+		//     fbNestManager.ClearOperatorNest(stConfig.eOperatorPosition);
+		// END_IF
+	
+		// PROCESS CYCLE FAULT
+		IF stProcessCycleStatus.bFaulted THEN
+			eMachineState := E_MachineState.Fault;
+		END_IF
+	
+		// LEAVE AUTO CYCLE
+		IF stCommand.bStop
+			AND stProcessCycleStatus.eState = E_CycleState.Disabled
+		THEN
+			eMachineState := E_MachineState.Stopping;
+		END_IF
+		
+		IF tonAutoCycleIdleTimeout.Q THEN
+			eMachineState := E_MachineState.Stopping;
+		END_IF
 // 	
 	E_MachineState.Manual:
 
@@ -734,34 +775,49 @@ END_CASE
 // =========================================================
 // PROCESS CYCLE DISABLE HANDLING
 // =========================================================
-
 IF eMachineState <> E_MachineState.AutoCycle THEN
-    fbProcessCycle.Cyclic(
+	fbProcessCycle.Cyclic(
         bEnable := FALSE,
-        bStopRequest := TRUE,
         bResetRequest := stCommand.bReset,
+        bStopRequest := TRUE,
         stInputs := stProcessCycleInputs,
-        stRequests => stProcessCycleRequests,
-        stStatus => stProcessCycleStatus);
+        tAssemblyProcessSimulation := stConfig.tAssemblyProcessSimulation,
+        tSiliconeProcessSimulation :=stConfig.tSiliconeProcessSimulation,
+        stRequests =>stProcessCycleRequests,
+        stStatus =>stProcessCycleStatus);
 END_IF
+
+    
 
 // =========================================================
 // CYCLIC COMPONENT EXECUTION
 // =========================================================
-
 // =========================================================
-// SUPPORT COMMAND DEFAULTS
+// SUPPORT COMMAND SELECTION
 // =========================================================
-
-// Requests are cleared every PLC scan.
-// They are only enabled while the machine is in Manual Mode.
 
 bSiliconeSupportRaiseRequest := FALSE;
 bSiliconeSupportLowerRequest := FALSE;
-
 bAssemblySupportRaiseRequest := FALSE;
 bAssemblySupportLowerRequest := FALSE;
 
+IF eMachineState = E_MachineState.Manual THEN
+
+    bSiliconeSupportRaiseRequest := stManualModeRequests.bSiliconeSupportExtend;
+    bSiliconeSupportLowerRequest := stManualModeRequests.bSiliconeSupportRetract;
+
+    bAssemblySupportRaiseRequest := stManualModeRequests.bAssemblySupportExtend;
+    bAssemblySupportLowerRequest := stManualModeRequests.bAssemblySupportRetract;
+
+ELSIF eMachineState = E_MachineState.AutoCycle THEN
+
+    bSiliconeSupportRaiseRequest := stProcessCycleRequests.bSiliconeSupportExtend;
+    bSiliconeSupportLowerRequest := stProcessCycleRequests.bSiliconeSupportRetract;
+
+    bAssemblySupportRaiseRequest := stProcessCycleRequests.bAssemblySupportExtend;
+    bAssemblySupportLowerRequest := stProcessCycleRequests.bAssemblySupportRetract;
+
+END_IF
 
 // =========================================================
 // MANUAL SUPPORT COMMAND MAPPING
@@ -792,74 +848,40 @@ IF eMachineState = E_MachineState.Manual THEN
 
 END_IF
 
-
 // =========================================================
 // SILICONE SUPPORT CONTROL
 // =========================================================
 
 fbSiliconeSupportCylinder.Cyclic(
-    bEnable :=
-        eMachineState = E_MachineState.Manual,
-
-    bRaiseRequest :=
-        bSiliconeSupportRaiseRequest,
-
-    bLowerRequest :=
-        bSiliconeSupportLowerRequest,
-
-    bStopRequest :=
-        (eMachineState = E_MachineState.Stopping)
+    bEnable := (eMachineState = E_MachineState.Manual)
+        OR (eMachineState = E_MachineState.AutoCycle),
+    bRaiseRequest := bSiliconeSupportRaiseRequest,
+    bLowerRequest := bSiliconeSupportLowerRequest,
+    bStopRequest := (eMachineState = E_MachineState.Stopping)
         OR (eMachineState = E_MachineState.Fault),
-
-    bExtended :=
-        stInputs.bSiliconeSupportExtended,
-
-    bRetracted :=
-        stInputs.bSiliconeSupportRetracted,
-
-    tMovementTimeout :=
-        stConfig.tCylinderTimeout,
-
-    bExtendOutput =>
-        stOutputsInternal.bSiliconeSupportExtend,
-
-    bRetractOutput =>
-        stOutputsInternal.bSiliconeSupportRetract
+    bExtended := stInputs.bSiliconeSupportExtended,
+    bRetracted := stInputs.bSiliconeSupportRetracted,
+    tMovementTimeout := stConfig.tCylinderTimeout,
+    bExtendOutput => stOutputsInternal.bSiliconeSupportExtend,
+    bRetractOutput => stOutputsInternal.bSiliconeSupportRetract
 );
-
 
 // =========================================================
 // ASSEMBLY SUPPORT CONTROL
 // =========================================================
 
 fbAssemblySupportCylinder.Cyclic(
-    bEnable :=
-        eMachineState = E_MachineState.Manual,
-
-    bRaiseRequest :=
-        bAssemblySupportRaiseRequest,
-
-    bLowerRequest :=
-        bAssemblySupportLowerRequest,
-
-    bStopRequest :=
-        (eMachineState = E_MachineState.Stopping)
+    bEnable := (eMachineState = E_MachineState.Manual)
+        OR (eMachineState = E_MachineState.AutoCycle),
+    bRaiseRequest := bAssemblySupportRaiseRequest,
+    bLowerRequest := bAssemblySupportLowerRequest,
+    bStopRequest := (eMachineState = E_MachineState.Stopping)
         OR (eMachineState = E_MachineState.Fault),
-
-    bExtended :=
-        stInputs.bAssemblySupportExtended,
-
-    bRetracted :=
-        stInputs.bAssemblySupportRetracted,
-
-    tMovementTimeout :=
-        stConfig.tCylinderTimeout,
-
-    bExtendOutput =>
-        stOutputsInternal.bAssemblySupportExtend,
-
-    bRetractOutput =>
-        stOutputsInternal.bAssemblySupportRetract
+    bExtended := stInputs.bAssemblySupportExtended,
+    bRetracted := stInputs.bAssemblySupportRetracted,
+    tMovementTimeout := stConfig.tCylinderTimeout,
+    bExtendOutput => stOutputsInternal.bAssemblySupportExtend,
+    bRetractOutput => stOutputsInternal.bAssemblySupportRetract
 );
 
 // Cyclic component execution
@@ -940,24 +962,25 @@ fbIndex.Cyclic(
     bAutomaticMode := eMachineState = E_MachineState.AutoCycle,
     bManualMode := eMachineState = E_MachineState.Manual,
     bMovePermissive :=
+    (
+        (eMachineState = E_MachineState.AutoCycle)
+        AND stInputs.bSiliconeSupportRetracted
+        AND stInputs.bAssemblySupportRetracted
+        AND
         (
-            (eMachineState = E_MachineState.AutoCycle)
-            AND
+            stPermissives.bIndexMoveAllowed
+            OR
             (
-                stPermissives.bIndexMoveAllowed
-                OR
-                (
-                    (stInputs.eIndexPosition = E_TablePosition.Unknown)
-                    AND stInputs.stSafety.bMotionSafetyPermitted
-                    AND stInputs.bSiliconeSupportRetracted
-                )
+                (stInputs.eIndexPosition = E_TablePosition.Unknown)
+                AND stInputs.stSafety.bMotionSafetyPermitted
             )
         )
-        OR
-        (
-            stManualModeStatus.bIndexPermissive
-            AND (eMachineState = E_MachineState.Manual)
-        ),
+    )
+    OR
+    (
+        stManualModeStatus.bIndexPermissive
+        AND (eMachineState = E_MachineState.Manual)
+    ),
     bSafetyMotionPermitted := stInputs.stSafety.bMotionSafetyPermitted,
     bTwoHandsSafe := stInputs.bTwoHandsSafe,
     bStationsHome := stInputs.bSiliconeSupportRetracted,
@@ -1157,8 +1180,10 @@ IF eMachineState = E_MachineState.AutoCycle THEN
     ELSE
         stStatus.sMachineMessage := stProcessCycleStatus.sMessage;
     END_IF
+	
 ELSIF eMachineState = E_MachineState.Manual THEN
     stStatus.sMachineMessage := stManualModeStatus.sMessage;
+	
 ELSIF eMachineState = E_MachineState.Initialising THEN
     CASE eInitialisingWaitReason OF
 		E_InitialisingWaitReason.MainDoorNotReady:stStatus.sMachineMessage :='System initialising - waiting for main door to lock';
@@ -1171,15 +1196,21 @@ ELSIF eMachineState = E_MachineState.Initialising THEN
         E_InitialisingWaitReason.MainDoorFaulted: stStatus.sMachineMessage := 'System initialising - main door lock fault';
         E_InitialisingWaitReason.PuckLockerFaulted: stStatus.sMachineMessage := 'System initialising - puck locker fault';
         E_InitialisingWaitReason.ProcessEquipmentNotReady: stStatus.sMachineMessage := 'System initialising - waiting for process equipment';
-    ELSE stStatus.sMachineMessage := 'System initialising'; END_CASE
+    ELSE stStatus.sMachineMessage := 'System initialising'; 
+END_CASE
+	
 ELSIF eMachineState = E_MachineState.ReadyToStart THEN
     stStatus.sMachineMessage := 'Ready to start';
+	
+	
 ELSIF eMachineState = E_MachineState.Stopping THEN
     CASE eStoppingWaitReason OF
         E_StoppingWaitReason.IndexStillMoving:
             stStatus.sMachineMessage := 'System stopping - waiting for index';
         E_StoppingWaitReason.SiliconeSupportRetracting:
             stStatus.sMachineMessage := 'System stopping - retracting Silicone Support Cylinder';
+		E_StoppingWaitReason.AssemblySupportRetracting:
+            stStatus.sMachineMessage := 'System stopping - retracting Assembly Support Cylinder';
         E_StoppingWaitReason.ProcessEquipmentStopping:
             stStatus.sMachineMessage := 'System stopping - stopping process equipment';
         E_StoppingWaitReason.MainDoorTransition:
@@ -1187,6 +1218,8 @@ ELSIF eMachineState = E_MachineState.Stopping THEN
     ELSE
         stStatus.sMachineMessage := 'System stopping';
     END_CASE
+	
+	
 ELSIF eMachineState = E_MachineState.Fault THEN
     IF NOT stInputs.stSafety.bSafetyOk THEN
         stStatus.sMachineMessage := 'Machine fault - safety system not ready';
@@ -1215,6 +1248,8 @@ ELSIF eMachineState = E_MachineState.Fault THEN
                 stStatus.sMachineMessage := 'Stopping timeout - index still moving';
             E_StoppingWaitReason.SiliconeSupportRetracting:
                 stStatus.sMachineMessage := 'Stopping timeout - Silicone Support Cylinder not retracted';
+			E_StoppingWaitReason.AssemblySupportRetracting:
+                stStatus.sMachineMessage := 'Stopping timeout - Assembly Support Cylinder not retracted';
             E_StoppingWaitReason.ProcessEquipmentStopping:
                 stStatus.sMachineMessage := 'Stopping timeout - process equipment still running';
             E_StoppingWaitReason.MainDoorTransition:
@@ -1222,6 +1257,9 @@ ELSIF eMachineState = E_MachineState.Fault THEN
         ELSE
             stStatus.sMachineMessage := 'Machine fault - stopping timeout';
         END_CASE
+		
+	ELSIF stProcessCycleStatus.bFaulted THEN
+   	 	stStatus.sMachineMessage := stProcessCycleStatus.sMessage;
     ELSIF fbMainDoorLock.IsFaulted() THEN
         stStatus.sMachineMessage := 'Machine fault - main door lock fault';
     ELSIF fbIndex.IsFaulted() THEN

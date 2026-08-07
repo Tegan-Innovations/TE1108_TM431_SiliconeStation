@@ -66,7 +66,13 @@ END_IF
 IF GVL_IO.stInputs.bIndexPositionSensor3 THEN
     uiIndexPositionCode := uiIndexPositionCode + UINT#4;
 END_IF
-GVL_IO.stInputs.eIndexPosition := UINT_TO_E_TablePosition(uiIndexPositionCode);
+
+
+IF GVL_IO.stInputs.bIndexLocked THEN
+    GVL_IO.stInputs.eIndexPosition := UINT_TO_E_TablePosition(uiIndexPositionCode);
+ELSE
+    GVL_IO.stInputs.eIndexPosition := E_TablePosition.Unknown;
+END_IF
 
 // ---------------------------------------------------------------------------
 // Term 8 - EL1809 (EPLAN page 15)

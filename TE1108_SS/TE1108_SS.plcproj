@@ -309,9 +309,6 @@
     <Compile Include="POUs\02_Components\FB_NestTableManager.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\02_Components\FB_PuckLocker.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\03_Stations\FB_OperatorStation.TcPOU">
       <SubType>Code</SubType>
     </Compile>
