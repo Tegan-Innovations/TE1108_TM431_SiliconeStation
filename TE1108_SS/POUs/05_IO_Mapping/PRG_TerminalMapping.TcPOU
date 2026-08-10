@@ -51,9 +51,7 @@ GVL_IO.stInputs.bRejectChutePartPresent 		:= GVL_EtherCAT.stTerm7_EL1809.iEL1809
 GVL_IO.stInputs.bSiliconeMinimumLevelSensor1 	:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch15;
 GVL_IO.stInputs.bSiliconeMinimumLevelSensor2 	:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch16;
 
-// Application aliases. Confirm station naming during commissioning.
-GVL_IO.stInputs.bGearboxAssemblyPartPresent := GVL_IO.stInputs.bGearboxAssemblyPartPresent;
-GVL_IO.stInputs.bReservoirPartPresent := GVL_IO.stInputs.bReservoirPartPresent;
+
 
 // Position inputs are documented as binary weights 1, 2 and 4.
 uiIndexPositionCode := UINT#0;
@@ -78,10 +76,10 @@ END_IF
 // Term 8 - EL1809 (EPLAN page 15)
 // ---------------------------------------------------------------------------
 
-GVL_IO.stInputs.bSiliconeSupportRetracted 					:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1;
-GVL_IO.stInputs.bSiliconeSupportExtended 					:= GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch2;
-GVL_IO.stInputs.bAssemblySupportRetracted 					:=GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3;
-GVL_IO.stInputs.bAssemblySupportExtended 					:=GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4;
+GVL_IO.stInputs.bSiliconeSupportRetracted 					:= 	GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1;
+GVL_IO.stInputs.bSiliconeSupportExtended 					:= 	GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch2;
+GVL_IO.stInputs.bAssemblySupportRetracted 					:=	GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3;
+GVL_IO.stInputs.bAssemblySupportExtended 					:=	GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4;
 
 // ---------------------------------------------------------------------------
 // / Term 11 -Analog inputs - raw process values (EPLAN pages 21 and 22)

@@ -91,7 +91,7 @@ tonProcessCycleTimeout(
         AND eState <> E_CycleState.CycleComplete
         AND eState <> E_CycleState.ControlledStop
         AND eState <> E_CycleState.Fault,
-    PT := T#3S
+    PT := T#10S
 );
 
 IF tonProcessCycleTimeout.Q THEN
@@ -104,21 +104,16 @@ END_IF
 // =========================================================
 
 tonAssemblyProcess(
-    IN :=
-        eState = E_CycleState.WaitingForProcessesComplete,
-
-    PT :=
-        tAssemblyProcessSimulation
+    IN := eState = E_CycleState.WaitingForProcessesComplete
+        AND stInputs.bAssemblyProcessRequired,
+    PT := tAssemblyProcessSimulation
 );
 
 tonSiliconeProcess(
-    IN :=
-        eState = E_CycleState.WaitingForProcessesComplete,
-
-    PT :=
-        tSiliconeProcessSimulation
+    IN := eState = E_CycleState.WaitingForProcessesComplete
+        AND stInputs.bSiliconeProcessRequired,
+    PT := tSiliconeProcessSimulation
 );
-
 
 // =========================================================
 // GLOBAL STATE CONTROL
@@ -298,26 +293,26 @@ CASE eState OF
 
     E_CycleState.WaitingForIndexComplete:
 
-        stStatusInternal.eMessage :=
-            E_ProcessCycleMessage.WaitingForIndexComplete;
+        stStatusInternal.eMessage :=E_ProcessCycleMessage.WaitingForIndexComplete;
 
-        IF stInputs.bIndexFaulted THEN
-
+       IF stInputs.bIndexFaulted THEN
 			eState := E_CycleState.Fault;
 		
 		ELSIF stInputs.bIndexDone THEN
 		
 			IF stInputs.bIndexSamePositionDetected THEN
-		
 				eState := E_CycleState.CycleComplete;
 		
-			ELSE
-		
+			ELSIF stInputs.bSiliconeProcessRequired
+				OR stInputs.bAssemblyProcessRequired
+			THEN
 				eState := E_CycleState.RequestingSupportsExtend;
 		
+			ELSE
+				eState := E_CycleState.CycleComplete;
 			END_IF
-
-END_IF
+		
+		END_IF
 
 
     // -----------------------------------------------------
@@ -326,8 +321,8 @@ END_IF
 
     E_CycleState.RequestingSupportsExtend:
 
-        stRequestsInternal.bSiliconeSupportExtend := TRUE;
-        stRequestsInternal.bAssemblySupportExtend := TRUE;
+        stRequestsInternal.bSiliconeSupportExtend := stInputs.bSiliconeProcessRequired;
+		stRequestsInternal.bAssemblySupportExtend := stInputs.bAssemblyProcessRequired;
 
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.RequestingSupportsExtend;
@@ -342,27 +337,25 @@ END_IF
 
     E_CycleState.WaitingForSupportsExtended:
 
-        stRequestsInternal.bSiliconeSupportExtend := TRUE;
-        stRequestsInternal.bAssemblySupportExtend := TRUE;
+        stRequestsInternal.bSiliconeSupportExtend := stInputs.bSiliconeProcessRequired;
+		stRequestsInternal.bAssemblySupportExtend := stInputs.bAssemblyProcessRequired;
 
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.WaitingForSupportsExtended;
 
-        IF stInputs.bSiliconeSupportFaulted
-            OR stInputs.bAssemblySupportFaulted
-        THEN
-
-            eState :=
-                E_CycleState.Fault;
-
-        ELSIF stInputs.bSiliconeSupportExtended
-            AND stInputs.bAssemblySupportExtended
-        THEN
-
-            eState :=
-                E_CycleState.PreparingProcessStations;
-
-        END_IF
+        IF (stInputs.bSiliconeProcessRequired AND stInputs.bSiliconeSupportFaulted)
+			OR (stInputs.bAssemblyProcessRequired AND stInputs.bAssemblySupportFaulted)
+		THEN
+		
+			eState := E_CycleState.Fault;
+		
+		ELSIF (NOT stInputs.bSiliconeProcessRequired OR stInputs.bSiliconeSupportExtended)
+			AND (NOT stInputs.bAssemblyProcessRequired OR stInputs.bAssemblySupportExtended)
+		THEN
+		
+			eState := E_CycleState.PreparingProcessStations;
+		
+		END_IF
 
 
     // -----------------------------------------------------
@@ -413,14 +406,13 @@ END_IF
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.WaitingForProcessesComplete;
 
-        IF tonAssemblyProcess.Q
-            AND tonSiliconeProcess.Q
-        THEN
-
-            eState :=
-                E_CycleState.RequestingSupportsRetract;
-
-        END_IF
+        IF (NOT stInputs.bAssemblyProcessRequired OR tonAssemblyProcess.Q)
+			AND (NOT stInputs.bSiliconeProcessRequired OR tonSiliconeProcess.Q)
+		THEN
+		
+			eState := E_CycleState.RequestingSupportsRetract;
+		
+		END_IF
 
 
     // -----------------------------------------------------
@@ -429,8 +421,8 @@ END_IF
 
     E_CycleState.RequestingSupportsRetract:
 
-        stRequestsInternal.bSiliconeSupportRetract := TRUE;
-        stRequestsInternal.bAssemblySupportRetract := TRUE;
+        stRequestsInternal.bSiliconeSupportRetract := stInputs.bSiliconeProcessRequired;
+		stRequestsInternal.bAssemblySupportRetract := stInputs.bAssemblyProcessRequired;
 
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.RequestingSupportsRetract;
@@ -445,27 +437,25 @@ END_IF
 
     E_CycleState.WaitingForSupportsRetracted:
 
-        stRequestsInternal.bSiliconeSupportRetract := TRUE;
-        stRequestsInternal.bAssemblySupportRetract := TRUE;
+        stRequestsInternal.bSiliconeSupportRetract := stInputs.bSiliconeProcessRequired;
+		stRequestsInternal.bAssemblySupportRetract := stInputs.bAssemblyProcessRequired;
 
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.WaitingForSupportsRetracted;
 
-        IF stInputs.bSiliconeSupportFaulted
-            OR stInputs.bAssemblySupportFaulted
-        THEN
-
-            eState :=
-                E_CycleState.Fault;
-
-        ELSIF stInputs.bSiliconeSupportRetracted
-            AND stInputs.bAssemblySupportRetracted
-        THEN
-
-            eState :=
-                E_CycleState.CycleComplete;
-
-        END_IF
+        IF (stInputs.bSiliconeProcessRequired AND stInputs.bSiliconeSupportFaulted)
+			OR (stInputs.bAssemblyProcessRequired AND stInputs.bAssemblySupportFaulted)
+		THEN
+		
+			eState := E_CycleState.Fault;
+		
+		ELSIF (NOT stInputs.bSiliconeProcessRequired OR stInputs.bSiliconeSupportRetracted)
+			AND (NOT stInputs.bAssemblyProcessRequired OR stInputs.bAssemblySupportRetracted)
+		THEN
+		
+			eState := E_CycleState.CycleComplete;
+		
+		END_IF
 
 
     // -----------------------------------------------------
@@ -566,17 +556,21 @@ stStatusInternal.bAssemblySupportRetracted :=
 
 stStatusInternal.bAssemblyProcessRunning :=
     eState = E_CycleState.WaitingForProcessesComplete
+    AND stInputs.bAssemblyProcessRequired
     AND NOT tonAssemblyProcess.Q;
 
 stStatusInternal.bAssemblyProcessComplete :=
-    tonAssemblyProcess.Q;
+    NOT stInputs.bAssemblyProcessRequired
+    OR tonAssemblyProcess.Q;
 
 stStatusInternal.bSiliconeProcessRunning :=
     eState = E_CycleState.WaitingForProcessesComplete
+    AND stInputs.bSiliconeProcessRequired
     AND NOT tonSiliconeProcess.Q;
 
 stStatusInternal.bSiliconeProcessComplete :=
-    tonSiliconeProcess.Q;
+    NOT stInputs.bSiliconeProcessRequired
+    OR tonSiliconeProcess.Q;
 
 
 // =========================================================

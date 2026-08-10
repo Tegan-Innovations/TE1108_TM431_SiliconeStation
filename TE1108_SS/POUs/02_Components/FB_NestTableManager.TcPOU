@@ -6,8 +6,8 @@ VAR
     aNestInternal          : ARRAY[1..4] OF ST_Nest;
     aPositionToNest        : ARRAY[1..4] OF UINT := [1,2,3,4];
     bInitialised           : BOOL;
-    bPreviousIndexComplete : BOOL;
-    bIndexCompletePulse    : BOOL;
+    bPreviousIndexStable   : BOOL;
+	bIndexStablePulse      : BOOL;
     i                      : INT;
     uiNest                 : UINT;
 END_VAR
@@ -34,15 +34,13 @@ END_IF]]></ST>
     <Method Name="Cyclic" Id="{de27be2a-8360-45f0-a441-d7a982c88486}">
       <Declaration><![CDATA[METHOD PUBLIC Cyclic
 VAR_INPUT
-    bIndexStable         : BOOL;
-    bIndexComplete       : BOOL;
-    bGearboxAssemblyPartPresent : BOOL;
-    bReservoirPartPresent  : BOOL;
-    eOperatorPosition    : E_TablePosition;
-    eProcessPosition     : E_TablePosition;
-    aNestEnabled         : ARRAY[1..4] OF BOOL;
-END_VAR
-]]></Declaration>
+    bIndexStable                   : BOOL;
+    bIndexComplete                 : BOOL;
+    bGearboxAssemblyPartPresent    : BOOL;
+    bReservoirPartPresent          : BOOL;
+    eOperatorPosition              : E_TablePosition;
+    aNestEnabled                   : ARRAY[1..4] OF BOOL;
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT bInitialised THEN
     FOR i := 1 TO 4 DO
@@ -50,15 +48,22 @@ END_VAR
         aNestInternal[i].ePosition := UINT_TO_E_TablePosition(INT_TO_UINT(i));
         aNestInternal[i].bEnabled := aNestEnabled[i];
     END_FOR
+
+    aPositionToNest[1] := 1;
+    aPositionToNest[2] := 2;
+    aPositionToNest[3] := 3;
+    aPositionToNest[4] := 4;
+
+    bPreviousIndexStable := bIndexStable;
     bInitialised := TRUE;
 END_IF
 
 FOR i := 1 TO 4 DO aNestInternal[i].bEnabled := aNestEnabled[i]; END_FOR
 
-bIndexCompletePulse := bIndexComplete AND NOT bPreviousIndexComplete;
-bPreviousIndexComplete := bIndexComplete;
+bIndexStablePulse := bIndexStable AND NOT bPreviousIndexStable;
+bPreviousIndexStable := bIndexStable;
 
-IF bIndexCompletePulse THEN
+IF bIndexStablePulse THEN
     uiNest := aPositionToNest[4];
     aPositionToNest[4] := aPositionToNest[3];
     aPositionToNest[3] := aPositionToNest[2];
@@ -74,13 +79,20 @@ END_FOR
 
 IF bIndexStable THEN
     uiNest := aPositionToNest[TO_UINT(eOperatorPosition)];
-    aNestInternal[uiNest].bPartLoadedPulse := bGearboxAssemblyPartPresent AND NOT aNestInternal[uiNest].bPreviousPartPresent;
-    aNestInternal[uiNest].bPartRemovedPulse := NOT bGearboxAssemblyPartPresent AND aNestInternal[uiNest].bPreviousPartPresent;
-    aNestInternal[uiNest].bPartPresent := bGearboxAssemblyPartPresent;
-    aNestInternal[uiNest].bPreviousPartPresent := bGearboxAssemblyPartPresent;
+    // Keep the existing operator exchange tracking based on the Gearbox sensor.
+    aNestInternal[uiNest].bPartLoadedPulse :=
+        bGearboxAssemblyPartPresent
+        AND NOT aNestInternal[uiNest].bPreviousPartPresent;
 
-    uiNest := aPositionToNest[TO_UINT(eProcessPosition)];
-    aNestInternal[uiNest].bPartPresent := bReservoirPartPresent;
+    aNestInternal[uiNest].bPartRemovedPulse :=
+        NOT bGearboxAssemblyPartPresent
+        AND aNestInternal[uiNest].bPreviousPartPresent;
+
+    aNestInternal[uiNest].bPreviousPartPresent := bGearboxAssemblyPartPresent;
+    // Store the physical part presence in the nest currently at the operator station.
+    aNestInternal[uiNest].bGearboxAssemblyPartPresent := bGearboxAssemblyPartPresent;
+    aNestInternal[uiNest].bReservoirPartPresent := bReservoirPartPresent;
+	
 END_IF]]></ST>
       </Implementation>
     </Method>

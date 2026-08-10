@@ -15,9 +15,10 @@ VAR_GLOBAL PERSISTENT RETAIN
     	tDoorUnlockTimeout   := T#10S,
 		
 		
-        eOperatorPosition    := E_TablePosition.Position4,
-        eProcessPosition     := E_TablePosition.Position2,
-        eRejectPosition      := E_TablePosition.Position4,
+        eOperatorPosition := E_TablePosition.Position1,
+		eSiliconePosition := E_TablePosition.Position3,
+		eAssemblyPosition := E_TablePosition.Position4,
+		eRejectPosition   := E_TablePosition.Position1,
         bAllowEmptyNestIndex := TRUE,
         bRequireRejectConfirm:= TRUE
     );

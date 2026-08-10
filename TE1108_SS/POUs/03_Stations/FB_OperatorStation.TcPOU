@@ -14,6 +14,7 @@ VAR
     bRejectEdgeAccepted       : BOOL;
     bPreviousRejectSensor     : BOOL;
     bRejectPulse              : BOOL;
+	bAnyPartPresent 		  : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -22,21 +23,28 @@ END_VAR
     <Method Name="Cyclic" Id="{0c713c3d-a462-493a-8e33-fea5d7ea48d3}">
       <Declaration><![CDATA[METHOD PUBLIC Cyclic
 VAR_INPUT
-    bAutomaticActive       : BOOL;
-    bIndexStable           : BOOL;
-    stOperatorNest         : ST_Nest;
-    bGearboxAssemblyPartPresent   : BOOL;
-    bRejectChutePartPresent     : BOOL;
-    bPuckLockerEnabled     : BOOL;
-    bPuckDetected          : BOOL;
-    bPuckLocked            : BOOL;
-    ePuckLockerState       : E_PuckLockerState;
-    bRequireRejectConfirm  : BOOL;
-    bAllowEmptyNestIndex   : BOOL;
+    bAutomaticActive       			: BOOL;
+    bIndexStable           			: BOOL;
+    stOperatorNest         			: ST_Nest;
+    bGearboxAssemblyPartPresent   	: BOOL;
+    bRejectChutePartPresent     	: BOOL;
+    bPuckLockerEnabled     			: BOOL;
+    bPuckDetected          			: BOOL;
+    bPuckLocked            			: BOOL;
+    ePuckLockerState       			: E_PuckLockerState;
+    bRequireRejectConfirm  			: BOOL;
+    bAllowEmptyNestIndex   			: BOOL;
+	bReservoirPartPresent  			: BOOL;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[// Reject confirmation is intentionally edge-based.
+        <ST><![CDATA[
+
+bAnyPartPresent :=
+    bGearboxAssemblyPartPresent
+    OR bReservoirPartPresent;
+	
+// Reject confirmation is intentionally edge-based.
 // A reject edge is only armed after the operator nest has become empty.
 bRejectPulse := bRejectChutePartPresent AND NOT bPreviousRejectSensor;
 bPreviousRejectSensor := bRejectChutePartPresent;
@@ -67,7 +75,7 @@ ELSE
             bRejectArmed := FALSE;
 
             IF stOperatorNest.stResult.bValid THEN
-                IF bGearboxAssemblyPartPresent THEN
+                IF bAnyPartPresent THEN
                     eState := E_OperatorExchangeState.WaitingForPartRemoval;
                 ELSE
                     // The part is already absent. Removal is confirmed, but an
@@ -94,7 +102,7 @@ ELSE
                 sMessage := 'Remove failed part from operator nest';
             END_IF
 
-            IF NOT bGearboxAssemblyPartPresent THEN
+            IF NOT bAnyPartPresent THEN
                 bPartRemovedConfirmed := TRUE;
                 bRejectArmed := FALSE;
 
@@ -172,7 +180,7 @@ ELSE
             ELSE
                 eInstruction := E_OperatorInstruction.LoadPart;
                 sMessage := 'Load new part';
-                IF bGearboxAssemblyPartPresent THEN
+                IF bAnyPartPresent THEN
                     bExchangeComplete := TRUE;
                     eState := E_OperatorExchangeState.ExchangeComplete;
                 END_IF

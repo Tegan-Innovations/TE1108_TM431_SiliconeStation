@@ -17,11 +17,13 @@ STRUCT
     bIndexFaulted                  : BOOL;
     bIndexRequestAccepted          : BOOL;
     bIndexRecoveryRequestAccepted  : BOOL;
-	bIndexSamePositionDetected     : BOOL;
+    bIndexSamePositionDetected     : BOOL;
 
     // PROCESS NEST
     bProcessNestEnabled            : BOOL;
     bReservoirPartPresent          : BOOL;
+    bSiliconeProcessRequired       : BOOL;
+	bAssemblyProcessRequired       : BOOL;
     bProcessResultAlreadyValid     : BOOL;
 
     // PROCESS STATION
@@ -42,8 +44,6 @@ STRUCT
 
     // OPERATOR EXCHANGE
     bOperatorExchangeComplete      : BOOL;
-
-	
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

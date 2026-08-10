@@ -19,6 +19,8 @@ VAR
     eCycleState          					: E_CycleState := E_CycleState.Disabled;
     stLastResult         					: ST_ProcessResult;
     stOperatorNest       					: ST_Nest;
+	stSiliconeNest 							: ST_Nest;
+	stAssemblyNest 							: ST_Nest;
     stPuckStatus         					: ST_PuckLockerStatus;
     stOperatorStatus     					: ST_OperatorStationStatus;
     stIndexStatus        					: ST_IndexStatus;
@@ -173,7 +175,11 @@ bAirAndDoorEnable :=
     OR (eMachineState = E_MachineState.Manual);
 
 stIndexStatus := fbIndex.GetStatus();
-bIndexStable := stIndexStatus.bProcessPositionReady AND stInputs.bIndexReady AND stInputs.bIndexLocked;
+bIndexStable :=
+    NOT stIndexStatus.bBusy
+    AND stInputs.bIndexReady
+    AND stInputs.bIndexLocked
+    AND stInputs.eIndexPosition <> E_TablePosition.Unknown;
 bIndexDone := fbIndex.IsDone();
 
 
@@ -227,10 +233,12 @@ fbNestManager.Cyclic(
     bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
     bReservoirPartPresent := stInputs.bReservoirPartPresent,
     eOperatorPosition := stConfig.eOperatorPosition,
-    eProcessPosition := stConfig.eProcessPosition,
-    aNestEnabled := stConfig.aNestEnabled);
-stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
+    aNestEnabled := stConfig.aNestEnabled
+);
 
+stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
+stSiliconeNest := fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
+stAssemblyNest := fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
 // =========================================================
 // PUCK LOCKER CONTROL
 // =========================================================
@@ -258,6 +266,7 @@ fbOperatorStation.Cyclic(
     bIndexStable := bIndexStable,
     stOperatorNest := stOperatorNest,
     bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
+    bReservoirPartPresent := stInputs.bReservoirPartPresent,
     bRejectChutePartPresent := stInputs.bRejectChutePartPresent,
     bPuckLockerEnabled := stConfig.ePuckLockerMode <> E_PuckLockerMode.Disabled,
     bPuckLocked := FALSE,
@@ -265,7 +274,6 @@ fbOperatorStation.Cyclic(
     ePuckLockerState := stPuckStatus.eState,
     bRequireRejectConfirm := stConfig.bRequireRejectConfirm,
     bAllowEmptyNestIndex := stConfig.bAllowEmptyNestIndex);
-stOperatorStatus := fbOperatorStation.GetStatus();
 
 // =========================================================
 // MACHINE PERMISSIVE AGGREGATION
@@ -432,11 +440,6 @@ CASE eMachineState OF
 		IF stIndexStatus.bBusy THEN
 		eStoppingWaitReason := E_StoppingWaitReason.IndexStillMoving;
 	
-	ELSIF NOT stInputs.bSiliconeSupportRetracted THEN
-		eStoppingWaitReason := E_StoppingWaitReason.SiliconeSupportRetracting;
-	
-	ELSIF NOT stInputs.bAssemblySupportRetracted THEN
-		eStoppingWaitReason := E_StoppingWaitReason.AssemblySupportRetracting;
 	
 	ELSIF (stMainDoorLockStatus.eState = E_MainDoorLockState.Locking)
 		OR (stMainDoorLockStatus.eState = E_MainDoorLockState.Unlocking)
@@ -519,9 +522,7 @@ CASE eMachineState OF
 			 eInitialisingWaitReason := E_InitialisingWaitReason.IndexBusy;
 // 		ELSIF NOT stInputs.stSafety.bFsoeOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.FsoeNotReady;
 // 		ELSIF NOT stInputs.stSafety.bSafetyLogicOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.SafetyLogicNotReady;
-// 		ELSIF 
- 		//ELSIF NOT stInputs.bSiliconeSupportRetracted THEN 
-			//eInitialisingWaitReason := E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted;
+// 		ELSIF
 			
 // 		ELSIF fbProcessStation.IsFaulted() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessStationFaulted;
  		ELSIF fbMainDoorLock.IsFaulted() THEN 
@@ -585,6 +586,18 @@ CASE eMachineState OF
 		// PROCESS CYCLE INPUT MAPPING
 		stProcessCycleInputs.bSafetyOk := stInputs.stSafety.bSafetyOk;
 		stProcessCycleInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
+		
+		// PROCESS REQUIREMENTS
+		stProcessCycleInputs.bSiliconeProcessRequired :=
+			stSiliconeNest.bEnabled
+			AND stSiliconeNest.bGearboxAssemblyPartPresent
+			AND stSiliconeNest.bReservoirPartPresent;
+		
+		stProcessCycleInputs.bAssemblyProcessRequired :=
+			stAssemblyNest.bEnabled
+			AND stAssemblyNest.bGearboxAssemblyPartPresent
+			AND stAssemblyNest.bReservoirPartPresent;
+			
 		// Indexer
 		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
 		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed
@@ -1306,10 +1319,10 @@ stOutputsInternal.bSafetyResetRequest := FALSE;
 stOutputsInternal.bAirSupplyEnable := FALSE;
 stOutputsInternal.bIndexRotatePortA := FALSE;
 stOutputsInternal.bIndexStopPortB := FALSE;
-//stOutputsInternal.bAssemblySupportExtend := FALSE;
-//stOutputsInternal.bAssemblySupportRetract := FALSE;
-//stOutputsInternal.bSiliconeSupportExtend := FALSE;
-//stOutputsInternal.bSiliconeSupportRetract := FALSE;
+stOutputsInternal.bAssemblySupportExtend := FALSE;
+stOutputsInternal.bAssemblySupportRetract := TRUE;
+stOutputsInternal.bSiliconeSupportExtend := FALSE;
+stOutputsInternal.bSiliconeSupportRetract := TRUE;
 stOutputsInternal.bMainDoorLockRequest := FALSE;
 stOutputsInternal.bLedStart := FALSE;
 stOutputsInternal.bLedReset := FALSE;

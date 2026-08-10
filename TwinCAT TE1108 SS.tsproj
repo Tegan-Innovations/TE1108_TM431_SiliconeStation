@@ -613,8 +613,8 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{85F12387-41EF-EA59-7984-6F5A95326052}" AutoDeleteType="true">ST_MachineConfig</Name>
-			<BitSize>640</BitSize>
+			<Name GUID="{97838A9D-9706-EDD7-EEF6-9BC401FDF559}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<BitSize>672</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
@@ -765,20 +765,20 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<BitSize>16</BitSize>
 				<BitOffs>512</BitOffs>
 				<Default>
-					<EnumText>E_TablePosition.Position4</EnumText>
+					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
 			</SubItem>
 			<SubItem>
-				<Name>eProcessPosition</Name>
+				<Name>eSiliconePosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>528</BitOffs>
 				<Default>
-					<EnumText>E_TablePosition.Position2</EnumText>
+					<EnumText>E_TablePosition.Position3</EnumText>
 				</Default>
 			</SubItem>
 			<SubItem>
-				<Name>eRejectPosition</Name>
+				<Name>eAssemblyPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>544</BitOffs>
@@ -787,11 +787,20 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				</Default>
 			</SubItem>
 			<SubItem>
+				<Name>eRejectPosition</Name>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>560</BitOffs>
+				<Default>
+					<EnumText>E_TablePosition.Position1</EnumText>
+				</Default>
+			</SubItem>
+			<SubItem>
 				<Name>ePuckLockerMode</Name>
 				<Type GUID="{1B090823-34FE-AA35-7EE2-1CF6FAEBC3BF}">E_PuckLockerMode</Type>
 				<Comment><![CDATA[ No puck locker in EPLAN Rev 1.0.]]></Comment>
 				<BitSize>16</BitSize>
-				<BitOffs>560</BitOffs>
+				<BitOffs>576</BitOffs>
 				<Default>
 					<EnumText>E_PuckLockerMode.Disabled</EnumText>
 				</Default>
@@ -800,7 +809,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>bRequireTwoHandsForIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>576</BitOffs>
+				<BitOffs>592</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -809,7 +818,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>bAllowEmptyNestIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>584</BitOffs>
+				<BitOffs>600</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -818,7 +827,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>bRequireRejectConfirm</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>592</BitOffs>
+				<BitOffs>608</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -827,7 +836,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>bUseProcessSimulation</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>600</BitOffs>
+				<BitOffs>616</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -840,7 +849,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 					<Elements>4</Elements>
 				</ArrayInfo>
 				<BitSize>32</BitSize>
-				<BitOffs>608</BitOffs>
+				<BitOffs>624</BitOffs>
 				<Default>
 					<SubItem>
 						<Name>[1]</Name>
@@ -1113,7 +1122,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{245C0BAB-2094-A99E-BA0D-A982E017BC05}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{368617A0-269D-5814-2FC1-3BC0C72E177A}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1121,7 +1130,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						<Var>
 							<Name>GVL_Config.stMachine</Name>
 							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{85F12387-41EF-EA59-7984-6F5A95326052}">ST_MachineConfig</Type>
+							<Type GUID="{97838A9D-9706-EDD7-EEF6-9BC401FDF559}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
