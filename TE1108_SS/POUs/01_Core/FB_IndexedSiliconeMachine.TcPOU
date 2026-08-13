@@ -154,6 +154,7 @@ VAR
 
     fbEventFaultTrigger           : R_TRIG;
     fbResetTrigger                : R_TRIG;
+	bFaultResetRequested 		  : BOOL;
 
     tpSafetyRunDrop               : TP;
 
@@ -180,9 +181,7 @@ IF fbMainDoorLock.IsFaulted()
     OR fbIndex.IsFaulted()
 	OR fbSiliconeSupportCylinder.IsFaulted()
 	OR fbAssemblySupportCylinder.IsFaulted()
-
-    // Enable after process-station commissioning.
-    // OR fbProcessStation.IsFaulted()
+    OR fbProcessStation.IsFaulted()
 
     // Enable after equipment commissioning.
     // OR ipEquipment.IsFaulted()
@@ -507,12 +506,17 @@ CASE eMachineState OF
 	
 		ipEquipment.RequestStop();
 	
-		// Fault recovery only occurs on a new Reset rising edge.
+		// -----------------------------------------------------
+		// LATCH RESET REQUEST
+		// -----------------------------------------------------
 		IF fbResetTrigger.Q THEN
+	
+			bFaultResetRequested := TRUE;
 	
 			fbIndex.Reset();
 			fbSiliconeSupportCylinder.Reset();
 			fbAssemblySupportCylinder.Reset();
+	
 			ipEquipment.RequestReset();
 	
 			bInitialisationTimeoutFault := FALSE;
@@ -521,18 +525,26 @@ CASE eMachineState OF
 			eCycleState :=
 				E_CycleState.Disabled;
 	
-			IF stInputs.stSafety.bSafetyOk
-				AND NOT fbIndex.IsFaulted()
-				AND NOT fbSiliconeSupportCylinder.IsFaulted()
-				AND NOT fbAssemblySupportCylinder.IsFaulted()
-			THEN
-	
-				eMachineState :=
-					E_MachineState.Stopping;
-	
-			END_IF
+		END_IF
 
-    	END_IF
+
+    // -----------------------------------------------------
+    // LEAVE FAULT ONLY AFTER ALL COMPONENTS ARE HEALTHY
+    // -----------------------------------------------------
+    IF bFaultResetRequested
+        AND stInputs.stSafety.bSafetyOk
+        AND NOT fbIndex.IsFaulted()
+        AND NOT fbSiliconeSupportCylinder.IsFaulted()
+        AND NOT fbAssemblySupportCylinder.IsFaulted()
+        AND NOT fbProcessStation.IsFaulted()
+    THEN
+
+        bFaultResetRequested := FALSE;
+
+        eMachineState :=
+            E_MachineState.Stopping;
+
+    END_IF
 	
 	E_MachineState.Stopping:
 

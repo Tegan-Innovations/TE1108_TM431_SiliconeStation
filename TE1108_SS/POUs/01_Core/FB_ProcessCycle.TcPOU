@@ -202,7 +202,7 @@ CASE eState OF
             AND stInputs.bAssemblySupportRetracted
         THEN
 
-            eState := E_CycleState.PreparingOperatorExchange;
+            eState :=  E_CycleState.ValidatingIndexPermissives;
 
         END_IF
 		
@@ -247,7 +247,7 @@ CASE eState OF
 		stRequestsInternal.bConfirmOperatorExchange := TRUE;
 	
 		eState :=
-			E_CycleState.ValidatingIndexPermissives;
+    		E_CycleState.WaitingForProcessCycleTrigger;
 
     // -----------------------------------------------------
     // VALIDATING INDEX PERMISSIVES
@@ -550,7 +550,7 @@ CASE eState OF
             E_ProcessCycleMessage.ProcessCycleComplete;
 
         eState :=
-            E_CycleState.WaitingForProcessCycleTrigger;
+    		E_CycleState.PreparingOperatorExchange;
 
 
     // -----------------------------------------------------
