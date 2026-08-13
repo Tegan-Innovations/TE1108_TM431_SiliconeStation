@@ -1,4 +1,4 @@
-<div id="NestSuport_5" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="1080" data-tchmi-height="480" data-tchmi-zindex="1" data-tchmi-visibility="%s%ADS.PLC1.GVL_HMI.aNestEnabled.1%/s%">
+<div id="NestSuport_5" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="1080" data-tchmi-height="480" data-tchmi-zindex="1">
 
 
 
@@ -85,7 +85,7 @@
 </div>
 <div id="TcHmiTextblock_1341" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="520" data-tchmi-left-unit="px" data-tchmi-text="Select the check box raleted of the nest you want to Enable/Desable" data-tchmi-top="100" data-tchmi-top-unit="px" data-tchmi-width="460" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-zindex="28" data-tchmi-text-font-size="140" data-tchmi-text-font-size-unit="%" data-tchmi-text-horizontal-alignment="Left" data-tchmi-text-font-style="Italic" data-tchmi-background-image-horizontal-alignment="Center">
 </div>
-<div id="TcHmiToggleSwitch_9" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="665" data-tchmi-left-unit="px" data-tchmi-text="Nest 1" data-tchmi-top="140" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.aNestEnabled.0%/s%">
+<div id="TcHmiToggleSwitch_9" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="665" data-tchmi-left-unit="px" data-tchmi-text="Nest 1" data-tchmi-top="140" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%">
 </div>
 
 
@@ -108,11 +108,11 @@
 }
 </script>
 </div>
-<div id="TcHmiToggleSwitch_8" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="665" data-tchmi-left-unit="px" data-tchmi-text="Nest 3" data-tchmi-top="300" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.aNestEnabled.2%/s%">
+<div id="TcHmiToggleSwitch_8" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="665" data-tchmi-left-unit="px" data-tchmi-text="Nest 3" data-tchmi-top="300" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%">
 </div>
-<div id="TcHmiToggleSwitch_7" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="550" data-tchmi-left-unit="px" data-tchmi-text="Nest 4" data-tchmi-top="220" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.aNestEnabled.3%/s%">
+<div id="TcHmiToggleSwitch_7" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="550" data-tchmi-left-unit="px" data-tchmi-text="Nest 4" data-tchmi-top="220" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%">
 </div>
-<div id="TcHmiToggleSwitch_6" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="780" data-tchmi-left-unit="px" data-tchmi-text="Nest 2" data-tchmi-top="220" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%" data-tchmi-toggle-state="Normal" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.aNestEnabled.1%/s%">
+<div id="TcHmiToggleSwitch_6" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="55" data-tchmi-height-unit="px" data-tchmi-left="780" data-tchmi-left-unit="px" data-tchmi-text="Nest 2" data-tchmi-top="220" data-tchmi-top-unit="px" data-tchmi-width="170" data-tchmi-width-unit="px" data-tchmi-zindex="29" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%" data-tchmi-toggle-state="Normal">
 </div>
 <div id="TcHmiContainer_102" data-tchmi-type="TcHmi.Controls.System.TcHmiContainer" data-tchmi-height="90" data-tchmi-height-unit="px" data-tchmi-left="331" data-tchmi-left-unit="px" data-tchmi-top="176" data-tchmi-top-unit="px" data-tchmi-width="65" data-tchmi-width-unit="px" data-tchmi-visibility="Visible">
 
@@ -157,72 +157,7 @@
 }
 </script>
 
-<script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-[
-  {
-    "event": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.1%/s%",
-    "actions": [
-      {
-        "objectType": "Condition",
-        "active": true,
-        "parts": [
-          {
-            "if": [
-              {
-                "compare1": {
-                  "objectType": "Symbol",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.1%/s%"
-                },
-                "compare2": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": false
-                },
-                "compareOperator": "==",
-                "logic": null
-              }
-            ],
-            "then": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctrl%TcHmiContainer_102::BackgroundColor%/ctrl%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(143, 43, 43, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          },
-          {
-            "else": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctrl%TcHmiContainer_102::BackgroundColor%/ctrl%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(42, 143, 47, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          }
-        ],
-        "asyncWait": true
-      }
-    ]
-  }
-]
-</script>
+
 </div>
 <div id="TcHmiContainer_101" data-tchmi-type="TcHmi.Controls.System.TcHmiContainer" data-tchmi-height="90" data-tchmi-height-unit="px" data-tchmi-left="98" data-tchmi-left-unit="px" data-tchmi-top="176" data-tchmi-top-unit="px" data-tchmi-width="65" data-tchmi-width-unit="px" data-tchmi-visibility="Visible">
 <script data-tchmi-target-attribute="data-tchmi-border-style" type="application/json">
@@ -266,72 +201,7 @@
 }
 </script>
 
-<script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-[
-  {
-    "event": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.3%/s%",
-    "actions": [
-      {
-        "objectType": "Condition",
-        "active": true,
-        "parts": [
-          {
-            "if": [
-              {
-                "compare1": {
-                  "objectType": "Symbol",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.3%/s%"
-                },
-                "compare2": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": false
-                },
-                "compareOperator": "==",
-                "logic": null
-              }
-            ],
-            "then": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(143, 43, 43, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          },
-          {
-            "else": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(42, 143, 47, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          }
-        ],
-        "asyncWait": true
-      }
-    ]
-  }
-]
-</script>
+
 </div>
 <div id="TcHmiContainer_100" data-tchmi-type="TcHmi.Controls.System.TcHmiContainer" data-tchmi-height="65" data-tchmi-height-unit="px" data-tchmi-left="202" data-tchmi-left-unit="px" data-tchmi-top="75" data-tchmi-top-unit="px" data-tchmi-width="90" data-tchmi-width-unit="px" data-tchmi-visibility="Visible">
 <script data-tchmi-target-attribute="data-tchmi-border-style" type="application/json">
@@ -375,72 +245,7 @@
 }
 </script>
 
-<script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-[
-  {
-    "event": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.0%/s%",
-    "actions": [
-      {
-        "objectType": "Condition",
-        "active": true,
-        "parts": [
-          {
-            "if": [
-              {
-                "compare1": {
-                  "objectType": "Symbol",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.0%/s%"
-                },
-                "compare2": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": false
-                },
-                "compareOperator": "==",
-                "logic": null
-              }
-            ],
-            "then": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctrl%TcHmiContainer_100::BackgroundColor%/ctrl%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(143, 43, 43, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          },
-          {
-            "else": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctrl%TcHmiContainer_100::BackgroundColor%/ctrl%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(42, 143, 47, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          }
-        ],
-        "asyncWait": true
-      }
-    ]
-  }
-]
-</script>
+
 </div>
 <div id="TcHmiContainer_99" data-tchmi-type="TcHmi.Controls.System.TcHmiContainer" data-tchmi-height="65" data-tchmi-height-unit="px" data-tchmi-left="202" data-tchmi-left-unit="px" data-tchmi-top="303" data-tchmi-top-unit="px" data-tchmi-width="90" data-tchmi-width-unit="px" data-tchmi-visibility="Visible">
 <script data-tchmi-target-attribute="data-tchmi-border-style" type="application/json">
@@ -484,71 +289,6 @@
 }
 </script>
 
-<script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-[
-  {
-    "event": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.2%/s%",
-    "actions": [
-      {
-        "objectType": "Condition",
-        "active": true,
-        "parts": [
-          {
-            "if": [
-              {
-                "compare1": {
-                  "objectType": "Symbol",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.aNestEnabled.2%/s%"
-                },
-                "compare2": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": false
-                },
-                "compareOperator": "==",
-                "logic": null
-              }
-            ],
-            "then": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(143, 43, 43, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          },
-          {
-            "else": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(42, 143, 47, 0.9019607)"
-                  }
-                },
-                "asyncWait": true
-              }
-            ]
-          }
-        ],
-        "asyncWait": true
-      }
-    ]
-  }
-]
-</script>
+
 </div>
 </div>

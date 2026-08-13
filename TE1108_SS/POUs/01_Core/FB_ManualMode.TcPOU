@@ -1,0 +1,449 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_ManualMode" Id="{bbce91c5-c4fa-4cd3-8a3a-535113527c98}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ManualMode
+VAR
+    eState                  : E_ManualModeState := E_ManualModeState.Disabled;
+    eMessage                : E_ManualModeMessage := E_ManualModeMessage.None;
+    stRequestsInternal      : ST_ManualModeRequests;
+    stStatusInternal        : ST_ManualModeStatus;
+    bWasEnabled             : BOOL;
+    bMainDoorLockLatched    : BOOL := TRUE;
+    rtIndexMove             : R_TRIG;
+    rtIndexHome             : R_TRIG;
+    rtEquipmentStart        : R_TRIG;
+    rtEquipmentStop         : R_TRIG;
+    rtEquipmentReset        : R_TRIG;
+    rtDoorUnlock            : R_TRIG;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Cyclic" Id="{16de7553-8d6c-402e-a91f-4bc94148abd7}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
+VAR_INPUT
+    bEnable                 : BOOL;
+    bStopRequest            : BOOL;
+    stCommand               : ST_MachineCommand;
+    stInputs                : ST_ManualModeInputs;
+END_VAR
+VAR_OUTPUT
+    stRequests              : ST_ManualModeRequests;
+    stStatus                : ST_ManualModeStatus;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// Commands which represent requests are edge-triggered.
+// Jog cylinder commands remain hold-to-run.
+rtIndexMove(    CLK := stCommand.bIndexerManualEnable
+        AND stInputs.bTwoHandsSafe);
+rtIndexHome(CLK := stCommand.bManualIndexHome);
+rtEquipmentStart(CLK := stCommand.bManualEquipmentStart);
+rtEquipmentStop(CLK := stCommand.bManualEquipmentStop);
+rtEquipmentReset(CLK := stCommand.bManualEquipmentReset);
+rtDoorUnlock(CLK := stCommand.bManualMainDoorUnlock);
+
+
+// Reset all requests at the beginning of every PLC cycle.
+ResetRequests();
+
+stStatusInternal.bCommandRejected := FALSE;
+
+
+// Detect when Manual Mode becomes enabled.
+IF bEnable AND NOT bWasEnabled THEN
+    bMainDoorLockLatched := TRUE;
+    eState := E_ManualModeState.Ready;
+END_IF
+
+bWasEnabled := bEnable;
+
+
+// =========================================================
+// MANUAL INDEX PERMISSIVE
+// =========================================================
+
+// This permissive contains only the physical and safety
+// conditions required for a manual index command.
+//
+// bIndexerManualEnable is intentionally NOT included here.
+// It is checked only when handling the manual HMI command,
+// so automatic and initialisation movements are unaffected.
+
+
+// stStatusInternal.bIndexPermissive :=
+//     stInputs.bMotionSafetyPermitted
+//     AND stInputs.bIndexReady
+//     AND NOT stInputs.bIndexBusy
+//     AND NOT stInputs.bIndexFaulted
+//     AND stInputs.bTransferNestSupportCylinderRetracted
+//     AND stInputs.bTwoHandsSafe;
+
+stStatusInternal.bIndexPermissive :=
+    bEnable
+    AND stCommand.bIndexerManualEnable
+    AND stInputs.bTwoHandsSafe;
+
+// =========================================================
+// MANUAL CYLINDER PERMISSIVES
+// =========================================================
+
+stStatusInternal.bCylinderExtendPermissive :=
+    stInputs.bProcessSafetyPermitted
+    AND stInputs.bIndexReady
+    AND stInputs.bIndexLocked
+    AND NOT stInputs.bIndexBusy
+    AND NOT stInputs.bProcessStationFaulted
+    AND stInputs.bMainDoorSafe;
+
+stStatusInternal.bCylinderRetractPermissive :=
+    stInputs.bProcessSafetyPermitted
+    AND NOT stInputs.bIndexBusy;
+
+
+// =========================================================
+// MANUAL DOOR PERMISSIVE
+// =========================================================
+
+stStatusInternal.bDoorUnlockPermissive :=
+    NOT stInputs.bIndexBusy
+    AND NOT stInputs.bEquipmentBusy
+    AND stInputs.bTransferNestSupportCylinderRetracted;
+
+
+// =========================================================
+// MANUAL EQUIPMENT PERMISSIVE
+// =========================================================
+
+stStatusInternal.bEquipmentStartPermissive :=
+    stInputs.bProcessSafetyPermitted
+    AND stInputs.bMainDoorSafe
+    AND stInputs.bIndexReady
+    AND stInputs.bIndexLocked
+    AND NOT stInputs.bIndexBusy
+    AND stInputs.bTransferNestSupportCylinderExtended
+    AND stInputs.bReservoirPartPresent
+    AND stInputs.bEquipmentReady
+    AND NOT stInputs.bEquipmentFaulted;
+
+
+// =========================================================
+// MANUAL MODE DISABLED
+// =========================================================
+
+IF NOT bEnable THEN
+
+    eState := E_ManualModeState.Disabled;
+    eMessage := E_ManualModeMessage.None;
+
+    // The door returns to the locked-requested condition
+    // whenever Manual Mode is not active.
+    bMainDoorLockLatched := TRUE;
+
+
+// =========================================================
+// MANUAL MODE ENABLED
+// =========================================================
+
+ELSE
+
+    // -----------------------------------------------------
+    // Component fault handling
+    // -----------------------------------------------------
+// 
+//     IF stInputs.bIndexFaulted
+//         OR stInputs.bProcessStationFaulted
+//         OR stInputs.bEquipmentFaulted
+//     THEN
+// 
+//         eState := E_ManualModeState.Fault;
+//         eMessage := E_ManualModeMessage.ComponentFaulted;
+
+
+    // -----------------------------------------------------
+    // Manual Mode stop handling
+    // -----------------------------------------------------
+
+    IF bStopRequest THEN
+
+        eState := E_ManualModeState.Stopping;
+        eMessage := E_ManualModeMessage.WaitingSafeExit;
+
+        // Retract the support cylinder when permitted.
+        stRequestsInternal.bSiliconeSupportRetract :=
+            stStatusInternal.bCylinderRetractPermissive;
+
+        // Stop the process equipment if it is currently busy.
+        stRequestsInternal.bEquipmentStop :=
+            stInputs.bEquipmentBusy;
+
+
+    // -----------------------------------------------------
+    // Safety unavailable
+    // -----------------------------------------------------
+
+    ELSIF NOT stInputs.bSafetyOk THEN
+
+        eState := E_ManualModeState.Ready;
+        eMessage := E_ManualModeMessage.SafetyNotAvailable;
+
+
+    // -----------------------------------------------------
+    // Manual Mode ready
+    // -----------------------------------------------------
+
+    ELSE
+
+        eState := E_ManualModeState.Ready;
+        eMessage := E_ManualModeMessage.ManualReady;
+
+
+        // =================================================
+        // MAIN DOOR UNLOCK
+        // =================================================
+
+        IF rtDoorUnlock.Q THEN
+
+            IF stStatusInternal.bDoorUnlockPermissive THEN
+
+                bMainDoorLockLatched := FALSE;
+                eMessage :=
+                    E_ManualModeMessage.MainDoorUnlockRequested;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+                eMessage :=
+                    E_ManualModeMessage.DoorCommandNotPermitted;
+
+            END_IF
+
+        END_IF
+
+
+        // =================================================
+        // INDEX TABLE - FORWARD
+        // =================================================
+
+        IF rtIndexMove.Q THEN
+
+            // The HMI enable is required only for manual
+            // index commands.
+            //
+            // Automatic and initialisation index requests do
+            // not pass through this FB and remain unaffected.
+            IF stCommand.bIndexerManualEnable
+                AND stStatusInternal.bIndexPermissive
+            THEN
+
+                stRequestsInternal.bIndexMoveRequest := TRUE;
+                eMessage :=
+                    E_ManualModeMessage.IndexCommandActive;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+                eMessage :=
+                    E_ManualModeMessage.IndexCommandNotPermitted;
+
+            END_IF
+
+        END_IF
+
+
+        // =================================================
+        // INDEX TABLE - HOME
+        // =================================================
+
+        IF rtIndexHome.Q THEN
+
+            // The same manual enable and physical permissives
+            // are required for the manual home request.
+            IF stCommand.bIndexerManualEnable
+                AND stStatusInternal.bIndexPermissive
+            THEN
+
+                stRequestsInternal.bIndexHomeRequest := TRUE;
+                eMessage :=
+                    E_ManualModeMessage.IndexCommandActive;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+                eMessage :=
+                    E_ManualModeMessage.IndexCommandNotPermitted;
+
+            END_IF
+
+        END_IF
+
+
+	    // =================================================
+		// SILICONE SUPPORT CYLINDER
+		// =================================================
+		
+		IF stCommand.bManualSiliconeSupportExtend THEN
+		
+			IF stStatusInternal.bCylinderExtendPermissive THEN
+		
+				stRequestsInternal.bSiliconeSupportExtend := TRUE;
+		
+			ELSE
+		
+				stStatusInternal.bCommandRejected := TRUE;
+		
+			END_IF
+		
+		
+		ELSIF stCommand.bManualSiliconeSupportRetract THEN
+		
+			IF stStatusInternal.bCylinderRetractPermissive THEN
+		
+				stRequestsInternal.bSiliconeSupportRetract := TRUE;
+		
+			ELSE
+		
+				stStatusInternal.bCommandRejected := TRUE;
+		
+			END_IF
+		
+		END_IF
+
+        // =================================================
+        // PROCESS EQUIPMENT
+        // =================================================
+
+        IF rtEquipmentStart.Q THEN
+
+            IF stStatusInternal.bEquipmentStartPermissive THEN
+
+                stRequestsInternal.bEquipmentStart := TRUE;
+                eMessage :=
+                    E_ManualModeMessage.EquipmentStarting;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+                eMessage :=
+                    E_ManualModeMessage.EquipmentCommandNotPermitted;
+
+            END_IF
+
+        END_IF
+
+
+        IF rtEquipmentStop.Q THEN
+
+            stRequestsInternal.bEquipmentStop := TRUE;
+            eMessage := E_ManualModeMessage.EquipmentStopping;
+
+        END_IF
+
+
+        IF rtEquipmentReset.Q THEN
+
+            stRequestsInternal.bEquipmentReset := TRUE;
+            eMessage := E_ManualModeMessage.EquipmentResetting;
+
+        END_IF
+
+
+        // =================================================
+        // COMMAND ACTIVE STATE
+        // =================================================
+
+        IF stRequestsInternal.bIndexMoveRequest
+            OR stRequestsInternal.bIndexHomeRequest
+            OR stRequestsInternal.bSiliconeSupportExtend
+			OR stRequestsInternal.bSiliconeSupportRetract
+            OR stRequestsInternal.bEquipmentStart
+            OR stRequestsInternal.bEquipmentStop
+            OR stRequestsInternal.bEquipmentReset
+        THEN
+
+            eState := E_ManualModeState.CommandActive;
+
+        END_IF
+
+    END_IF
+
+END_IF
+
+
+// =========================================================
+// OUTPUT MAPPING
+// =========================================================
+
+stRequestsInternal.bMainDoorLockRequest :=
+    bMainDoorLockLatched;
+
+stStatusInternal.eState := eState;
+stStatusInternal.eMessage := eMessage;
+stStatusInternal.bActive := bEnable;
+
+
+// Manual Mode may only be exited when all relevant movements
+// have stopped and the support cylinder is retracted.
+stStatusInternal.bSafeToExit :=
+    NOT stInputs.bIndexBusy
+    AND NOT stInputs.bEquipmentBusy
+    AND stInputs.bTransferNestSupportCylinderRetracted;
+
+
+// Update the textual/status message associated with eMessage.
+UpdateMessage();
+
+
+// Publish the encapsulated outputs of this function block.
+stRequests := stRequestsInternal;
+stStatus := stStatusInternal;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialise" Id="{23517f52-db48-406b-b743-ecfd404fd09c}">
+      <Declaration><![CDATA[METHOD PUBLIC Initialise]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[eState := E_ManualModeState.Disabled;
+eMessage := E_ManualModeMessage.None;
+bWasEnabled := FALSE;
+bMainDoorLockLatched := TRUE;
+ResetRequests();
+stStatusInternal.bCommandRejected := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetRequests" Id="{5e6759c7-4384-401c-9c08-6d2baf0aa708}">
+      <Declaration><![CDATA[METHOD PRIVATE ResetRequests]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stRequestsInternal.bIndexMoveRequest 			:= FALSE;
+stRequestsInternal.bIndexHomeRequest 			:= FALSE;
+stRequestsInternal.bSiliconeSupportExtend 		:= FALSE;
+stRequestsInternal.bSiliconeSupportRetract 		:= FALSE;
+stRequestsInternal.bEquipmentStart 				:= FALSE;
+stRequestsInternal.bEquipmentStop 				:= FALSE;
+stRequestsInternal.bEquipmentReset 				:= FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="UpdateMessage" Id="{82995339-ff21-4701-8208-d0bdacd4bd00}">
+      <Declaration><![CDATA[METHOD PRIVATE UpdateMessage]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE eMessage OF
+    E_ManualModeMessage.ManualReady: stStatusInternal.sMessage := 'Manual mode ready';
+    E_ManualModeMessage.SafetyNotAvailable: stStatusInternal.sMessage := 'Restore safety conditions for manual operation';
+    E_ManualModeMessage.IndexCommandActive: stStatusInternal.sMessage := 'Manual index command active';
+    E_ManualModeMessage.IndexCommandNotPermitted: stStatusInternal.sMessage := 'Manual index not permitted: restore safety, retract tooling and verify index readiness';
+    E_ManualModeMessage.TransferNestSupportCylinderExtending: stStatusInternal.sMessage := 'Extending transfer nest support cylinder manually';
+    E_ManualModeMessage.TransferNestSupportCylinderRetracting: stStatusInternal.sMessage := 'Retracting transfer nest support cylinder manually';
+    E_ManualModeMessage.CylinderCommandNotPermitted: stStatusInternal.sMessage := 'Manual cylinder command not permitted';
+    E_ManualModeMessage.MainDoorUnlockRequested: stStatusInternal.sMessage := 'Main door unlock requested';
+    E_ManualModeMessage.DoorCommandNotPermitted: stStatusInternal.sMessage := 'Main door cannot be unlocked while equipment or index is active';
+    E_ManualModeMessage.EquipmentStarting: stStatusInternal.sMessage := 'Starting process equipment manually';
+    E_ManualModeMessage.EquipmentStopping: stStatusInternal.sMessage := 'Stopping process equipment manually';
+    E_ManualModeMessage.EquipmentResetting: stStatusInternal.sMessage := 'Resetting process equipment';
+    E_ManualModeMessage.EquipmentCommandNotPermitted: stStatusInternal.sMessage := 'Manual process start not permitted';
+    E_ManualModeMessage.WaitingSafeExit: stStatusInternal.sMessage := 'Stopping manual mode and returning components to a safe state';
+    E_ManualModeMessage.ComponentFaulted: stStatusInternal.sMessage := 'Manual component fault - check active alarms';
+ELSE
+    stStatusInternal.sMessage := '';
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

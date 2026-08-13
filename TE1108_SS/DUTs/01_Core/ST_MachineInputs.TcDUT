@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_MachineInputs" Id="{2ac5c147-5176-4b29-b405-f833d8595045}">
+    <Declaration><![CDATA[TYPE ST_MachineInputs :
+STRUCT
+    stSafety                  : ST_SafetyStatus;
+    bStartButton              : BOOL;
+    bStopButton               : BOOL;
+    bResetButton              : BOOL;
+    bEventFault              : BOOL;
+    bEventCycleStopRequest   : BOOL;
+    // EPLAN physical diagnostics
+    bUp24VPowerSupplyOk      : BOOL;
+    bUs24VPowerSupplyOk      : BOOL;
+    bIvekHeaterControllerAlarm : BOOL;
+    bSiliconeMinimumLevelSensor1 : BOOL;
+    bSiliconeMinimumLevelSensor2 : BOOL;
+    bMainDoorDiagnosticOk    : BOOL;
+    bMs6FeedbackOk           : BOOL;
+    bAirExhausted            : BOOL;
+    uiMainAirPressureRaw     : UINT;
+    uiSiliconePressureRaw    : UINT;
+    uiNozzlePressureRaw      : UINT;
+    uiVacuumPressureRaw      : UINT;
+    bTwoHandsSafe             : BOOL;
+    bGearboxAssemblyPartPresent      : BOOL;
+    bReservoirPartPresent       : BOOL;
+    bRejectChutePartPresent        : BOOL;
+    bPuckSensorUp             : BOOL;
+    bPuckSensorDown           : BOOL;
+    bIndexReady               : BOOL;
+    bIndexLocked              : BOOL;
+    bIndexCompletedSensor     : BOOL;
+    bIndexSupportExtended     : BOOL;
+    bIndexSupportRetracted    : BOOL;
+    eIndexPosition            : E_TablePosition;
+    bMainDoorClosed           : BOOL;
+    bMainDoorLocked           : BOOL;
+	bMainDoorUnsafe           : BOOL;
+    bTransferNestSupportCylinderExtended    : BOOL;
+    bTransferNestSupportCylinderRetracted   : BOOL;
+END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

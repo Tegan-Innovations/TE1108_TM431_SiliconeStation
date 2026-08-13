@@ -1,0 +1,1092 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_IndexedSiliconeMachine" Id="{ff07b0ce-3073-475d-ae18-b3b039ab22f1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_IndexedSiliconeMachine
+VAR
+    fbIndex              					: FB_IndexTable4;
+    fbProcessStation     					: FB_ProcessStation;
+    fbMainDoorLock       					: FB_MainDoorLock;
+    fbIvek               					: FB_IvekDigiSpense4000;
+	fbIvekSettingsLauncher 					: FB_IvekSettingsLauncher;
+    fbSimulatedEquipment 					: FB_SimulatedProcessEquipment;
+    fbNestManager        					: FB_NestTableManager;
+    fbOperatorStation    					: FB_OperatorStation;
+    fbPuckLocker         					: FB_PuckLocker;
+    fbProcessCycle       					: FB_ProcessCycle;
+    fbManualMode         					: FB_ManualMode;
+    ipEquipment          					: I_ProcessEquipment;
+    eMachineState        					: E_MachineState := E_MachineState.PowerUp;
+    eCycleState          					: E_CycleState := E_CycleState.Idle;
+    stLastResult         					: ST_ProcessResult;
+    stOperatorNest       					: ST_Nest;
+    stPuckStatus         					: ST_PuckLockerStatus;
+    stOperatorStatus     					: ST_OperatorStationStatus;
+    stIndexStatus        					: ST_IndexStatus;
+	fbSiliconeSupportCylinder 				: FB_SiliconeSupport;
+    stProcessStationStatus 					: ST_ProcessStationStatus;
+    stMainDoorLockStatus 					: ST_MainDoorLockStatus;
+    ePreviousMachineState 					: E_MachineState := E_MachineState.PowerUp;
+    bMachineStateEntry    					: BOOL;
+    eInitialisingWaitReason 				: E_InitialisingWaitReason := E_InitialisingWaitReason.None;
+    eStoppingWaitReason     				: E_StoppingWaitReason := E_StoppingWaitReason.None;
+    stPermissives        					: ST_MachinePermissives;
+    stOutputsInternal    					: ST_MachineOutputs;
+    stProcessCycleInputs 					: ST_ProcessCycleInputs;
+    stProcessCycleRequests 					: ST_ProcessCycleRequests;
+    stProcessCycleStatus 					: ST_ProcessCycleStatus;
+    stManualModeInputs   					: ST_ManualModeInputs;
+    stManualModeRequests 					: ST_ManualModeRequests;
+    stManualModeStatus   					: ST_ManualModeStatus;
+    bManualIndexRequestAccepted 			: BOOL;
+    stProcessNest        					: ST_Nest;
+    bConfigured          					: BOOL;
+    bProcessStartPulse   					: BOOL;
+    bProcExtend          					: BOOL;
+    bProcRetract         					: BOOL;
+    bPuckPinUp           					: BOOL;
+    bIndexStable         					: BOOL;
+    bIndexDone           					: BOOL;
+    bProcessReady        					: BOOL;
+    bInitialisationComplete 				: BOOL;
+    bStoppingComplete       				: BOOL;
+    bInitialisationTimeoutFault 			: BOOL;
+    bStoppingTimeoutFault       			: BOOL;
+    bResultStoredFeedback       			: BOOL;
+    bIndexRequestAcceptedFeedback 			: BOOL;
+    bIndexRecoveryRequestAcceptedFeedback 	: BOOL;
+	
+	
+    tonInitialising         				: TON;
+    tonStopping             				: TON;
+	
+	fbEventFaultTrigger 					: R_TRIG;
+	tpSafetyRunDrop     					: TP;
+	bSafetyDropRequest 						: BOOL;
+	bAirAndDoorEnable 						: BOOL;
+	bAirSupplyLatched 						: BOOL;
+	bAirSupplyEnable 						: BOOL;
+	
+	
+	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="CheckComponentFaults" Id="{1e0a6e8d-fb2f-4560-a186-ac64f265cfd0}">
+      <Declaration><![CDATA[METHOD CheckComponentFaults : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// =========================================================
+// COMPONENT FAULT AGGREGATION
+// =========================================================
+
+CheckComponentFaults := FALSE;
+
+IF fbMainDoorLock.IsFaulted()
+    OR fbIndex.IsFaulted()
+
+    // Enable after process-station commissioning.
+    // OR fbProcessStation.IsFaulted()
+
+    // Enable after equipment commissioning.
+    // OR ipEquipment.IsFaulted()
+THEN
+
+    bSafetyDropRequest := TRUE;
+    eMachineState := E_MachineState.Fault;
+
+    CheckComponentFaults := TRUE;
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Cyclic" Id="{b3ad9d70-3bf2-42da-ab5a-7255e3c227a5}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
+VAR_INPUT
+    stInputs       : ST_MachineInputs;
+    stCommand      : ST_MachineCommand;
+    stConfig       : ST_MachineConfig;
+    stIvekInput    : ST_IvekCyclicInput;
+    bIvekCommsOk   : BOOL;
+	
+END_VAR
+VAR_OUTPUT
+    stOutputs      : ST_MachineOutputs;
+    stStatus       : ST_MachineStatus;
+    stIvekOutput   : ST_IvekCyclicOutput;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// =========================================================
+// MACHINE FAULT CONDITION
+// =========================================================
+IF NOT stInputs.stSafety.bSafetyOk OR  bSafetyDropRequest THEN
+	eMachineState := E_MachineState.Fault;
+END_IF
+// 
+// // A PLC machine fault or a loss of SafetyOk forces the machine into Fault.
+// IF stInputs.bEventFault
+//     OR NOT stInputs.stSafety.bSafetyOk
+// THEN
+//     eMachineState := E_MachineState.Fault;
+// END_IF
+
+
+// =========================================================
+// DETERMINISTIC CYCLIC INITIALISATION
+// =========================================================
+
+// Deterministic defaults
+ResetCyclicOutputs();
+
+// This request is generated for one PLC scan by an internal machine fault.
+// The TP converts the one-scan request into the required TwinSAFE run-drop time.
+bSafetyDropRequest := FALSE;
+
+bMachineStateEntry := eMachineState <> ePreviousMachineState;
+bProcessStartPulse := FALSE;
+
+// Automatic door-lock request. Air supply is managed independently by the machine states below.
+bAirAndDoorEnable :=
+    (eMachineState = E_MachineState.Initialising)
+    OR (eMachineState = E_MachineState.ReadyToStart)
+    OR (eMachineState = E_MachineState.AutoCycle)
+    OR (eMachineState = E_MachineState.Manual);
+
+stIndexStatus := fbIndex.GetStatus();
+bIndexStable := stIndexStatus.bProcessPositionReady AND stInputs.bIndexReady AND stInputs.bIndexLocked;
+bIndexDone := fbIndex.IsDone();
+
+
+
+// =========================================================
+// FUTURE EVENT-BASED SAFETY DROP INTEGRATION
+// =========================================================
+
+// Enable this implementation only after the event classification is validated.
+// Detect a newly latched PLC machine fault.
+// fbEventFaultTrigger(
+//     CLK := stInputs.bEventFault
+// );
+
+// Temporarily remove the TwinSAFE run request for each new PLC fault.
+// tpSafetyRunDrop(
+//     IN := fbEventFaultTrigger.Q,
+//     PT := T#500MS
+// );
+
+
+// =========================================================
+// PROCESS EQUIPMENT CONFIGURATION
+// =========================================================
+
+// Configure process equipment once. Simulation is the default until the IVEK is available.
+IF NOT bConfigured THEN
+    IF stConfig.bUseProcessSimulation THEN ipEquipment := fbSimulatedEquipment; ELSE ipEquipment := fbIvek; END_IF
+    fbProcessStation.Configure(ipNewEquipment := ipEquipment);
+    bConfigured := TRUE;
+END_IF
+
+fbIvek.stCyclicIn := stIvekInput;
+fbIvek.bCommunicationOk := bIvekCommsOk;
+IF stCommand.usiRecipeRequest <> 0 THEN ipEquipment.SetRecipe(stCommand.usiRecipeRequest); END_IF
+IF stConfig.bUseProcessSimulation THEN
+    IF stCommand.bSimulateProcessFault THEN fbSimulatedEquipment.SetSimulationResult(bPass := FALSE, bFault := TRUE);
+    ELSIF stCommand.bSimulateProcessFail THEN fbSimulatedEquipment.SetSimulationResult(bPass := FALSE, bFault := FALSE);
+    ELSIF stCommand.bSimulateProcessPass THEN fbSimulatedEquipment.SetSimulationResult(bPass := TRUE, bFault := FALSE);
+    END_IF
+END_IF
+
+// =========================================================
+// NEST MANAGEMENT
+// =========================================================
+
+// Nest ownership and stable sensor edge tracking
+fbNestManager.Cyclic(
+    bIndexStable := bIndexStable,
+    bIndexComplete := bIndexDone,
+    bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
+    bReservoirPartPresent := stInputs.bReservoirPartPresent,
+    eOperatorPosition := stConfig.eOperatorPosition,
+    eProcessPosition := stConfig.eProcessPosition,
+    aNestEnabled := stConfig.aNestEnabled);
+stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
+
+// =========================================================
+// PUCK LOCKER CONTROL
+// =========================================================
+
+// Puck locker remains independent from the automatic cycle.
+fbPuckLocker.Cyclic(
+    eMode := stConfig.ePuckLockerMode,
+    bSensorUp := stInputs.bPuckSensorUp,
+    bSensorDown := stInputs.bPuckSensorDown,
+    bPartRemovedFromNest := stOperatorNest.bPartRemovedPulse,
+    bReleasePassPuck := stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed AND NOT stOperatorNest.bDispositionSent,
+    bAcknowledgeFault := stCommand.bAcknowledgePuckRemovalFault,
+    bEmptyPuckBypass := stCommand.bEmptyPuckBypass,
+    tRemovalConfirm := stConfig.tPuckRemovalConfirm,
+    bPinCommandUp => bPuckPinUp);
+stPuckStatus := fbPuckLocker.GetStatus();
+
+// =========================================================
+// OPERATOR STATION CONTROL
+// =========================================================
+
+// Operator exchange is evaluated independently of process-equipment implementation.
+fbOperatorStation.Cyclic(
+    bAutomaticActive := eMachineState = E_MachineState.AutoCycle,
+    bIndexStable := bIndexStable,
+    stOperatorNest := stOperatorNest,
+    bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
+    bRejectChutePartPresent := stInputs.bRejectChutePartPresent,
+    bPuckLockerEnabled := stConfig.ePuckLockerMode <> E_PuckLockerMode.Disabled,
+    bPuckLocked := fbPuckLocker.IsLocked(),
+    bPuckDetected := stPuckStatus.bPuckDetected,
+    ePuckLockerState := stPuckStatus.eState,
+    bRequireRejectConfirm := stConfig.bRequireRejectConfirm,
+    bAllowEmptyNestIndex := stConfig.bAllowEmptyNestIndex);
+stOperatorStatus := fbOperatorStation.GetStatus();
+
+// =========================================================
+// MACHINE PERMISSIVE AGGREGATION
+// =========================================================
+
+// Explicit permissive aggregation.
+stPermissives.bSafetyIndexPermissive := stInputs.stSafety.bMotionSafetyPermitted;
+stPermissives.bOperatorIndexPermissive := fbOperatorStation.IndexPermissive();
+stPermissives.bProcessIndexPermissive := fbProcessStation.IndexPermissive();
+stPermissives.bPuckLockerIndexPermissive := stPuckStatus.bIndexPermissive;
+stPermissives.bIndexMoveAllowed := stPermissives.bSafetyIndexPermissive
+    AND stPermissives.bOperatorIndexPermissive
+    AND stPermissives.bProcessIndexPermissive
+    AND stPermissives.bPuckLockerIndexPermissive;
+stPermissives.bProcessStartAllowed := stInputs.stSafety.bProcessSafetyPermitted
+    AND stInputs.bIndexReady AND stInputs.bIndexLocked
+    AND stInputs.bReservoirPartPresent;
+
+
+// =========================================================
+// IVEK NATIVE SETTINGS LAUNCHER
+// =========================================================
+
+fbIvekSettingsLauncher(
+    bOpenRequest 		:= GVL_HMI.bCmdOpenIvekSettings,
+    bMachineStopped 	:= eMachineState = E_MachineState.Stopped,
+    udiLauncherHeartbeat := GVL_HMI.udiIvekSettingsHeartbeat,
+    bResetError 		:= stCommand.bReset,
+    bLauncherActive 	:= GVL_HMI.bIvekSettingsActive,
+    bOpenPermitted 		=> GVL_HMI.bIvekSettingsAccessAllowed,
+    bSettingsInterlock 	=> GVL_HMI.bIvekSettingsInterlock,
+    bLaunchPending 		=> GVL_HMI.bIvekSettingsLaunchPending,
+    bLaunchBusy 		=> GVL_HMI.bIvekSettingsLaunchBusy,
+    bLaunchError 		=> GVL_HMI.bIvekSettingsLaunchError,
+    nLaunchErrorId 		=> GVL_HMI.nIvekSettingsLaunchErrorId,
+    bActivationTimeout 	=> GVL_HMI.bIvekSettingsActTimeout,
+    bHeartbeatLost 		=> GVL_HMI.bIvekSettingsHeartbeatLost
+);
+
+
+// =========================================================
+// EVENT ARCHITECTURE NOTES
+// =========================================================
+
+// Event architecture from the Leak Tester.
+// Point classification is fixed in PRG_Events; station latches are provided
+// through stInputs.bEventFault and stInputs.bEventCycleStopRequest.
+
+// =========================================================
+// MANUAL MODE COORDINATOR
+// =========================================================
+
+// Manual-mode coordinator consumes only normalized component status and produces requests.
+stManualModeInputs.bSafetyOk := stInputs.stSafety.bSafetyOk;
+stManualModeInputs.bMotionSafetyPermitted := stInputs.stSafety.bMotionSafetyPermitted;
+stManualModeInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
+stManualModeInputs.bProcessSafetyPermitted := stInputs.stSafety.bProcessSafetyPermitted;
+stManualModeInputs.bMainDoorSafe := stInputs.stSafety.bMainDoorSafe;
+stManualModeInputs.bIndexReady := stInputs.bIndexReady;
+stManualModeInputs.bIndexLocked := stInputs.bIndexLocked;
+stManualModeInputs.bIndexBusy := stIndexStatus.bBusy;
+stManualModeInputs.bIndexFaulted := fbIndex.IsFaulted();
+stManualModeInputs.bTransferNestSupportCylinderExtended := stInputs.bTransferNestSupportCylinderExtended;
+stManualModeInputs.bTransferNestSupportCylinderRetracted := stInputs.bTransferNestSupportCylinderRetracted;
+stManualModeInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
+stManualModeInputs.bEquipmentReady := ipEquipment.IsReady();
+stManualModeInputs.bEquipmentBusy := ipEquipment.IsBusy();
+stManualModeInputs.bEquipmentFaulted := ipEquipment.IsFaulted();
+stManualModeInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
+
+fbManualMode.Cyclic(
+    bEnable := eMachineState = E_MachineState.Manual,
+    bStopRequest := stCommand.bStop,
+    stCommand := stCommand,
+    stInputs := stManualModeInputs,
+    stRequests => stManualModeRequests,
+    stStatus => stManualModeStatus);
+
+// =========================================================
+// MACHINE STATE MANAGEMENT
+// =========================================================
+
+CASE eMachineState OF
+	
+
+	E_MachineState.PowerUp:
+		// Air is not enabled during PowerUp or the first transition to Stopped.
+		bAirSupplyEnable := FALSE;
+
+		// Same machine lifecycle used by the Kistler: always enter a controlled stop first.
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+		eCycleState := E_CycleState.Idle;
+		eMachineState := E_MachineState.Stopping;
+
+	E_MachineState.Fault:
+		// Any machine fault removes the standard PLC air request.
+		bAirSupplyEnable := FALSE;
+
+		// Fault blocks automatic operation. The safe chain is only dropped for alarms
+		// explicitly classified as SafetyStop by the alarm manager.
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+		ipEquipment.RequestStop();
+	
+		// Reset clears the internal component fault latches. Recovery is allowed
+		// only when the normalized reset command is active and TwinSAFE is healthy.
+		IF stCommand.bReset THEN
+			fbIndex.Reset();
+			ipEquipment.RequestReset();
+			bInitialisationTimeoutFault := FALSE;
+			bStoppingTimeoutFault := FALSE;
+			eCycleState := E_CycleState.Idle;
+
+			IF stInputs.stSafety.bSafetyOk THEN
+				eMachineState := E_MachineState.Stopping;
+			END_IF
+		END_IF
+	
+	E_MachineState.Stopping:
+		// Active stop: cancel requests, stop equipment and retract process tooling.
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := TRUE, PT := stConfig.tStoppingTimeout);
+		ipEquipment.RequestStop();
+		stIndexStatus := fbIndex.GetStatus();
+		stProcessStationStatus := fbProcessStation.GetStatus();
+		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
+		eStoppingWaitReason := E_StoppingWaitReason.None;
+		
+	
+ //    IF stIndexStatus.bBusy THEN 
+// 		eStoppingWaitReason := E_StoppingWaitReason.IndexStillMoving;
+// 		
+//     ELSIF NOT stInputs.bTransferNestSupportCylinderRetracted THEN 
+// 		eStoppingWaitReason := E_StoppingWaitReason.TransferNestSupportCylinderRetracting;
+// 		
+//     ELSIF ipEquipment.IsBusy() THEN 
+// 		eStoppingWaitReason := E_StoppingWaitReason.ProcessEquipmentStopping;
+// 		
+      IF (stMainDoorLockStatus.eState = E_MainDoorLockState.Locking) 
+ 		OR (stMainDoorLockStatus.eState = E_MainDoorLockState.Unlocking) THEN 
+			eStoppingWaitReason := E_StoppingWaitReason.MainDoorTransition;
+      END_IF
+// 	
+    bStoppingComplete := eStoppingWaitReason = E_StoppingWaitReason.None;
+	
+    IF bStoppingComplete THEN
+        tonStopping(IN := FALSE);
+        eCycleState := E_CycleState.Idle;
+        eMachineState := E_MachineState.Stopped;
+    ELSIF tonStopping.Q THEN
+        bStoppingTimeoutFault := TRUE;
+        bSafetyDropRequest := TRUE;
+        eMachineState := E_MachineState.Fault;
+    END_IF
+	
+	E_MachineState.Stopped:
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+		//ipEquipment.RequestStop();
+
+		// Air may remain enabled after returning from an active machine state,
+		// provided that the main door remains closed. Opening the door removes
+		// the request. Closing it again does not restore the air in Stopped.
+		IF NOT stInputs.bMainDoorClosed THEN
+			bAirSupplyEnable := FALSE;
+		END_IF
+	
+		IF NOT GVL_HMI.bIvekSettingsInterlock THEN
+	
+			IF stCommand.bReset AND stInputs.stSafety.bSafetyOk THEN
+				eMachineState := E_MachineState.Initialising;
+			END_IF
+			
+		END_IF
+// 	
+	E_MachineState.Initialising:
+		// Initialising is the only state that initially enables the air supply.
+		bAirSupplyEnable := TRUE;
+
+// 		// Initialising normalises software objects once and never moves the index.
+		tonStopping(IN := FALSE);
+		tonInitialising(IN := TRUE, PT := stConfig.tInitialiseTimeout);
+ 		IF bMachineStateEntry THEN
+// 			fbProcessCycle.Initialise();
+// 			fbManualMode.Initialise();
+// 			fbProcessStation.Initialise();
+ 			fbMainDoorLock.Initialise();
+// 			bResultStoredFeedback := FALSE;
+			bIndexRequestAcceptedFeedback := FALSE;
+ 			bIndexRecoveryRequestAcceptedFeedback := FALSE;
+// 			bProcessStartPulse := FALSE;
+		END_IF
+// 		ipEquipment.RequestReset();
+ 		stIndexStatus := fbIndex.GetStatus();
+// 		stProcessStationStatus := fbProcessStation.GetStatus();
+ 		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
+ 		eInitialisingWaitReason := E_InitialisingWaitReason.None;
+		
+		
+		IF stIndexStatus.bBusy THEN
+			 eInitialisingWaitReason := E_InitialisingWaitReason.IndexBusy;
+// 		ELSIF NOT stInputs.stSafety.bFsoeOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.FsoeNotReady;
+// 		ELSIF NOT stInputs.stSafety.bSafetyLogicOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.SafetyLogicNotReady;
+// 		ELSIF 
+ 		//ELSIF NOT stInputs.bTransferNestSupportCylinderRetracted THEN 
+			//eInitialisingWaitReason := E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted;
+			
+// 		ELSIF fbProcessStation.IsFaulted() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessStationFaulted;
+ 		ELSIF fbMainDoorLock.IsFaulted() THEN 
+			eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorFaulted;
+		
+		ELSIF NOT fbMainDoorLock.IsReadyForAutomatic() THEN
+    		eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorNotReady;
+			
+// 		ELSIF stPuckStatus.bUnexpectedRemovalFault OR stPuckStatus.bPuckSensorMismatch THEN eInitialisingWaitReason := E_InitialisingWaitReason.PuckLockerFaulted;
+// 		ELSIF NOT ipEquipment.IsReady() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessEquipmentNotReady;
+ 		
+		END_IF
+
+
+ 		bInitialisationComplete := eInitialisingWaitReason = E_InitialisingWaitReason.None;
+		
+		IF bInitialisationComplete THEN
+			tonInitialising(IN := FALSE);
+			eCycleState := E_CycleState.Idle;
+			eMachineState := E_MachineState.ReadyToStart;
+		ELSIF tonInitialising.Q THEN
+			bInitialisationTimeoutFault := TRUE;
+			eMachineState := E_MachineState.Fault;
+		END_IF
+// 	
+	E_MachineState.ReadyToStart:
+	
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+	
+		IF stCommand.bStop THEN
+	
+			eMachineState := E_MachineState.Stopping;
+
+		ELSIF stCommand.bManualRequest
+			AND stInputs.stSafety.bSafetyOk
+			AND NOT stIndexStatus.bBusy
+			AND NOT fbIndex.IsFaulted()
+			//AND NOT fbProcessStation.IsFaulted()
+			//AND NOT ipEquipment.IsFaulted()
+		THEN
+	
+			fbManualMode.Initialise();
+			eMachineState := E_MachineState.Manual;
+	
+		ELSIF stCommand.bStart
+			AND fbMainDoorLock.IsReadyForAutomatic()
+		THEN
+	
+			eCycleState := E_CycleState.Idle;
+			eMachineState := E_MachineState.AutoCycle;
+	
+		END_IF
+// 	
+	E_MachineState.AutoCycle:
+// 		tonInitialising(IN := FALSE);
+// 		tonStopping(IN := FALSE);
+// 	
+// 		stProcessNest := fbNestManager.GetNestAtPosition(stConfig.eProcessPosition);
+// 		stProcessCycleInputs.bSafetyOk := stInputs.stSafety.bSafetyOk;
+// 		stProcessCycleInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
+// 		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
+// 		stProcessCycleInputs.bProcessNestEnabled := stProcessNest.bEnabled;
+// 		stProcessCycleInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
+// 		stProcessCycleInputs.bProcessResultAlreadyValid := stProcessNest.stResult.bValid;
+// 		stProcessCycleInputs.bProcessStationReady := fbProcessStation.IndexPermissive() AND NOT fbProcessStation.IsFaulted();
+// 		stProcessCycleInputs.bProcessStationBusy := ipEquipment.IsBusy();
+// 		stProcessCycleInputs.bProcessStationComplete := fbProcessStation.IsComplete();
+// 		stProcessCycleInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
+// 		stProcessCycleInputs.bResultStored := bResultStoredFeedback;
+// 		stProcessCycleInputs.bOperatorExchangeComplete := fbOperatorStation.IsComplete();
+// 		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed;
+// 		stProcessCycleInputs.bIndexReady := fbIndex.IsReady();
+// 		stProcessCycleInputs.bIndexBusy := stIndexStatus.bBusy;
+// 		stProcessCycleInputs.bIndexDone := fbIndex.IsDone();
+// 		stProcessCycleInputs.bIndexFaulted := fbIndex.IsFaulted();
+// 		stProcessCycleInputs.bIndexRequestAccepted := bIndexRequestAcceptedFeedback;
+// 		stProcessCycleInputs.bIndexRecoveryRequestAccepted := bIndexRecoveryRequestAcceptedFeedback;
+// 	
+// 		fbProcessCycle.Cyclic(
+// 			bEnable := TRUE,
+// 			bStopRequest := stCommand.bStop,
+// 			bResetRequest := stCommand.bReset,
+// 			stInputs := stProcessCycleInputs,
+// 			stRequests => stProcessCycleRequests,
+// 			stStatus => stProcessCycleStatus);
+// 	
+// 		// Feedback flags are retained for one scan and consumed by FB_ProcessCycle above.
+// 		bResultStoredFeedback := FALSE;
+// 		bIndexRequestAcceptedFeedback := FALSE;
+// 		bIndexRecoveryRequestAcceptedFeedback := FALSE;
+// 	
+// 		IF stProcessCycleRequests.bCaptureProcessResult THEN
+// 			stLastResult := fbProcessStation.GetResult();
+// 		END_IF
+// 	
+// 		IF stProcessCycleRequests.bStoreProcessResult THEN
+// 			stLastResult := fbProcessStation.GetResult();
+// 			bResultStoredFeedback := fbNestManager.StoreResultAtPosition(
+// 				ePosition := stConfig.eProcessPosition,
+// 				stResult := stLastResult);
+// 			IF bResultStoredFeedback THEN
+// 				fbIndex.ReleaseProcessPosition();
+// 			END_IF
+// 		END_IF
+// 	
+// 		IF stProcessCycleRequests.bConfirmOperatorExchange THEN
+// 			fbNestManager.MarkDispositionComplete(stConfig.eOperatorPosition);
+// 			fbIndex.ConfirmOperatorExchange();
+// 		END_IF
+// 	
+// 		IF stProcessCycleRequests.bRequestIndex THEN
+// 			bIndexRequestAcceptedFeedback := fbIndex.RequestMove();
+// 		END_IF
+// 	
+// 		IF stProcessCycleRequests.bRequestIndexRecovery THEN
+// 			bIndexRecoveryRequestAcceptedFeedback := fbIndex.RequestPositionRecovery();
+// 		END_IF
+// 	
+// 		IF stProcessCycleRequests.bUpdateNestPositions THEN
+// 			fbNestManager.ClearOperatorNest(stConfig.eOperatorPosition);
+// 		END_IF
+// 	
+// 		bProcessStartPulse := stProcessCycleRequests.bStartProcessStation;
+// 	
+// 		IF stProcessCycleStatus.bFaulted THEN
+// 			eMachineState := E_MachineState.Fault;
+ 		IF stCommand.bStop AND (stProcessCycleStatus.eState = E_CycleState.ResetCycle) THEN
+ 			eMachineState := E_MachineState.Stopping;
+ 		END_IF
+// 	
+	E_MachineState.Manual:
+
+		tonInitialising(IN := FALSE);
+		tonStopping(IN := FALSE);
+		
+		// ---------------------------------------------------------
+		// INDEX MANUAL MOVEMENT
+		// ---------------------------------------------------------
+		IF stManualModeRequests.bIndexMoveRequest THEN
+	
+			bManualIndexRequestAccepted :=
+				fbIndex.RequestManualMove();
+	
+		END_IF
+	
+	
+		// ---------------------------------------------------------
+		// INDEX RESET / HOME
+		// ---------------------------------------------------------
+		// At this stage the home command resets the pneumatic index sequence.
+		// A dedicated homing method can be introduced later if required.
+		IF stManualModeRequests.bIndexHomeRequest THEN
+	
+			fbIndex.Reset();
+	
+		END_IF
+	
+	
+		// ---------------------------------------------------------
+		// PROCESS EQUIPMENT MANUAL COMMANDS
+		// ---------------------------------------------------------
+		IF stManualModeRequests.bEquipmentStart THEN
+	
+			ipEquipment.RequestStart();
+	
+		END_IF
+	
+		IF stManualModeRequests.bEquipmentStop THEN
+	
+			ipEquipment.RequestStop();
+	
+		END_IF
+	
+		IF stManualModeRequests.bEquipmentReset THEN
+	
+			ipEquipment.RequestReset();
+	
+		END_IF
+	
+	
+		// ---------------------------------------------------------
+		// LEAVE MANUAL MODE
+		// ---------------------------------------------------------
+		IF stCommand.bStop THEN
+
+			eMachineState := E_MachineState.Stopping;
+		
+		END_IF
+		
+END_CASE
+
+
+
+// =========================================================
+// PROCESS CYCLE DISABLE HANDLING
+// =========================================================
+
+IF eMachineState <> E_MachineState.AutoCycle THEN
+    fbProcessCycle.Cyclic(
+        bEnable := FALSE,
+        bStopRequest := TRUE,
+        bResetRequest := stCommand.bReset,
+        stInputs := stProcessCycleInputs,
+        stRequests => stProcessCycleRequests,
+        stStatus => stProcessCycleStatus);
+END_IF
+
+// =========================================================
+// CYCLIC COMPONENT EXECUTION
+// =========================================================
+
+
+// SILICONE SUPPORT CONTROL
+
+fbSiliconeSupportCylinder.Cyclic(
+    bEnable := eMachineState = E_MachineState.Manual,
+    bExtendRequest :=stManualModeRequests.bSiliconeSupportExtend,
+	bRetractRequest :=stManualModeRequests.bSiliconeSupportRetract,
+    bExtended := stInputs.bIndexSupportExtended,
+    bRetracted := stInputs.bIndexSupportRetracted,
+    tTimeout := stConfig.tIndexSupportTimeout,
+    bExtendOutput => stOutputsInternal.bSiliconeSupportExtend,
+	bRetractOutput => stOutputsInternal.bSiliconeSupportRetract
+);
+
+// Cyclic component execution
+fbProcessStation.Cyclic(
+    bEnable := eMachineState = E_MachineState.AutoCycle,
+    bAutomaticStartRequest := bProcessStartPulse,
+    bManualEnable := eMachineState = E_MachineState.Manual,
+    bManualExtendRequest := stManualModeRequests.bSiliconeSupportExtend,
+    bManualRetractRequest := stManualModeRequests.bSiliconeSupportRetract,
+    bStopRequest := (eMachineState = E_MachineState.Stopping) OR (eMachineState = E_MachineState.Fault),
+    bResetRequest := stCommand.bReset,
+    bPartPresent := stInputs.bReservoirPartPresent,
+    bProcessPermissive := stPermissives.bProcessStartAllowed,
+    bIndexReady := stInputs.bIndexReady,
+    bIndexLocked := stInputs.bIndexLocked,
+    bIndexBusy := stIndexStatus.bBusy,
+    bProcessSafetyPermitted := stInputs.stSafety.bProcessSafetyPermitted,
+    bMainDoorSafe := stInputs.stSafety.bMainDoorSafe,
+    bCylinderExtended := stInputs.bTransferNestSupportCylinderExtended,
+    bCylinderRetracted := stInputs.bTransferNestSupportCylinderRetracted,
+    tCylinderTimeout := stConfig.tCylinderTimeout,
+    tProcessTimeout := stConfig.tProcessTimeout,
+    bCylinderExtendOutput => bProcExtend,
+    bCylinderRetractOutput => bProcRetract);
+stProcessStationStatus := fbProcessStation.GetStatus();
+
+// =========================================================
+// MAIN DOOR LOCK CONTROL
+// =========================================================
+
+fbMainDoorLock.Cyclic(
+    bEnableAutomatic := bAirAndDoorEnable,
+
+    bManualEnable := FALSE,
+    bManualLockRequest := FALSE,
+    bManualUnlockRequest := FALSE,
+
+    bStopRequest :=
+        (eMachineState = E_MachineState.Fault)
+        OR (eMachineState = E_MachineState.Stopping)
+        OR (eMachineState = E_MachineState.Stopped),
+
+    bResetRequest := stCommand.bReset,
+
+    bDoorClosed := stInputs.bMainDoorClosed,
+	bDoorLocked := stInputs.bMainDoorLocked,
+	bDoorUnsafe := stInputs.bMainDoorUnsafe,
+
+    bIndexBusy := stIndexStatus.bBusy,
+    bProcessSafePosition := fbProcessStation.IsSafePosition(),
+
+    tLockTimeout := GVL_config.stMachine.tDoorLockTimeout,
+    tUnlockTimeout := GVL_config.stMachine.tDoorUnlockTimeout
+);
+
+stMainDoorLockStatus := fbMainDoorLock.GetStatus();
+
+// The standard PLC only requests that the door be locked.
+// TwinSAFE validates the safe conditions and controls the physical locker.
+stOutputsInternal.bMainDoorLockRequest := bAirAndDoorEnable;
+
+// =========================================================
+// INDEX TABLE CONTROL
+// =========================================================
+
+fbIndex.Cyclic(
+    bEnable := (eMachineState = E_MachineState.Initialising)
+        OR (eMachineState = E_MachineState.ReadyToStart)
+        OR (eMachineState = E_MachineState.AutoCycle)
+        OR (eMachineState = E_MachineState.Manual)
+        OR (eMachineState = E_MachineState.Stopping),
+    bReset := stCommand.bReset,
+    bAutomaticMode := eMachineState = E_MachineState.AutoCycle,
+    bManualMode := eMachineState = E_MachineState.Manual,
+    bMovePermissive :=
+        ((eMachineState = E_MachineState.AutoCycle)
+            AND
+            (stPermissives.bIndexMoveAllowed
+             OR (stInputs.eIndexPosition = E_TablePosition.Unknown
+                 AND stInputs.stSafety.bMotionSafetyPermitted
+                 AND stInputs.bTransferNestSupportCylinderRetracted)))
+        OR (stManualModeStatus.bIndexPermissive AND (eMachineState = E_MachineState.Manual)),
+    bSafetyMotionPermitted := stInputs.stSafety.bMotionSafetyPermitted,
+    bTwoHandsSafe := stInputs.bTwoHandsSafe,
+    bStationsHome := stInputs.bTransferNestSupportCylinderRetracted,
+    bProcessToolingRetracted := stInputs.bTransferNestSupportCylinderRetracted,
+    bTableReady := stInputs.bIndexReady,
+    bTableLocked := stInputs.bIndexLocked,
+    bCompletedSensor := stInputs.bIndexCompletedSensor,
+    bSupportExtended := stInputs.bIndexSupportExtended,
+    bSupportRetracted := stInputs.bIndexSupportRetracted,
+    eCurrentPosition := stInputs.eIndexPosition,
+    tRotateDelay := stConfig.tIndexRotateDelay,
+    tStopDelay := stConfig.tIndexStopDelay,
+    tSupportTimeout := stConfig.tIndexSupportTimeout,
+    tMovementTimeout := stConfig.tIndexTimeout,
+    tTwoHandHold := stConfig.tTwoHandHold,
+    tTwoHandRecoveryTimeout := stConfig.tTwoHandRecoveryTimeout,
+    bRotatePortA => stOutputsInternal.bIndexRotatePortA,
+    bStopPortB => stOutputsInternal.bIndexStopPortB,
+    bSupportExtendRequest => stOutputsInternal.bAssemblySupportExtend,
+    bSupportRetractRequest => stOutputsInternal.bAssemblySupportRetract);
+	
+	
+	
+// =========================================================
+// COMPONENT FAULT AGGREGATION
+// =========================================================
+	CheckComponentFaults();
+
+
+
+// =========================================================
+// PLC FAULT TO TWINSAFE RUN-DROP PULSE
+// =========================================================
+
+// Convert the one-scan internal request into a timed TwinSAFE run drop.
+// This block must execute after the machine-state logic because fault
+// transitions inside the CASE generate bSafetyDropRequest.
+tpSafetyRunDrop(
+    IN := bSafetyDropRequest,
+    PT := T#500MS
+);
+
+
+// =========================================================
+// EVENT-DRIVEN MACHINE TRANSITIONS
+// =========================================================
+
+// IF stInputs.bEventFault THEN
+//     eMachineState := E_MachineState.Fault;
+// ELSIF stInputs.bEventCycleStopRequest
+//       AND (eMachineState = E_MachineState.AutoCycle OR eMachineState = E_MachineState.Manual)
+// THEN
+//     eMachineState := E_MachineState.Stopping;
+// END_IF
+
+// =========================================================
+// MACHINE OUTPUT MAPPING
+// =========================================================
+
+// Outputs and public status
+stOutputsInternal.bAirSupplyEnable := bAirSupplyEnable;
+stOutputsInternal.bAssemblySupportExtend := bProcExtend;
+stOutputsInternal.bAssemblySupportRetract := bProcRetract;
+stOutputsInternal.bPuckLockerPinUp := bPuckPinUp;
+// An internal PLC machine fault temporarily removes the TwinSAFE run request.
+// The request returns automatically after the configured TP duration.
+stOutputsInternal.bSafetyRunRequest := NOT tpSafetyRunDrop.Q;
+//stOutputsInternal.bSafetyRunRequest := TRUE;
+stOutputsInternal.bSafetyResetRequest := stCommand.bReset AND NOT stInputs.stSafety.bSafetyOk;
+
+stOutputsInternal.bSafetyErrorAcknowledgementRequest :=stOutputsInternal.bSafetyResetRequest;
+
+
+	
+	
+stOutputsInternal.bLedStart := eMachineState = E_MachineState.ReadyToStart;
+stOutputsInternal.bLedReset := eMachineState = E_MachineState.Fault OR eMachineState = E_MachineState.Stopped;
+stOutputsInternal.bLedPass := stLastResult.bValid AND stLastResult.bPassed;
+stOutputsInternal.bLedFail := stLastResult.bValid AND NOT stLastResult.bPassed;
+stOutputsInternal.bInternalLight := TRUE;
+stOutputsInternal.bExternalLight := eMachineState = E_MachineState.AutoCycle;
+
+// =========================================================
+// EQUIPMENT OUTPUT DATA
+// =========================================================
+
+stIvekOutput := fbIvek.stCyclicOut;
+// =========================================================
+// PUBLIC MACHINE STATUS
+// =========================================================
+
+stStatus.eMachineState := eMachineState;
+stStatus.eCycleState := stProcessCycleStatus.eState;
+stStatus.stProcessCycle := stProcessCycleStatus;
+stStatus.stProcessStation := stProcessStationStatus;
+stStatus.stMainDoorLock := stMainDoorLockStatus;
+stStatus.eInitialisingWaitReason := eInitialisingWaitReason;
+stStatus.eStoppingWaitReason := eStoppingWaitReason;
+stIndexStatus := fbIndex.GetStatus();
+stStatus.eIndexState := stIndexStatus.eState;
+stStatus.stIndexStatus := stIndexStatus;
+stStatus.eEquipmentState := ipEquipment.GetState();
+stStatus.eOperatorExchangeState := fbOperatorStation.GetState();
+stStatus.eOperatorInstruction := fbOperatorStation.GetInstruction();
+stStatus.stOperatorStation := stOperatorStatus;
+stStatus.eManualModeState := stManualModeStatus.eState;
+stStatus.stManualMode := stManualModeStatus;
+stStatus.bReady := eMachineState = E_MachineState.ReadyToStart;
+stStatus.bBusy := eMachineState = E_MachineState.AutoCycle;
+stStatus.bFaulted := eMachineState = E_MachineState.Fault;
+stStatus.bInitialisationTimeoutFault := bInitialisationTimeoutFault;
+stStatus.bStoppingTimeoutFault := bStoppingTimeoutFault;
+stStatus.bSafetyStopRequested := tpSafetyRunDrop.Q;
+stStatus.bSafetyRunRequested := stOutputsInternal.bSafetyRunRequest;
+stStatus.bEventFault := stInputs.bEventFault;
+stStatus.bCycleStopRequested := stInputs.bEventCycleStopRequest;
+stStatus.bIndexPermissive := stPermissives.bIndexMoveAllowed;
+stStatus.bProcessPermissive := stPermissives.bProcessStartAllowed;
+stStatus.stPermissives := stPermissives;
+stStatus.stLastResult := stLastResult;
+stStatus.stPuckLocker := stPuckStatus;
+// =========================================================
+// ACTIVE FAULT SUMMARY FOR MAIN HMI GRID
+// =========================================================
+
+// This summary represents only the faults currently responsible for the
+// machine Fault state. The Events system keeps the complete alarm history
+// independently for the dedicated Alarm page.
+IF eMachineState = E_MachineState.Fault THEN
+
+    stStatus.stAlarms.bHasFault := TRUE;
+    stStatus.stAlarms.bHasSafetyStopFault :=
+        NOT stInputs.stSafety.bSafetyOk;
+
+    stStatus.stAlarms.uiActiveCount := 0;
+
+    IF NOT stInputs.stSafety.bSafetyOk THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF bInitialisationTimeoutFault THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF bStoppingTimeoutFault THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF fbMainDoorLock.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF fbIndex.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF fbProcessStation.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF ipEquipment.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+    IF stInputs.bEventFault THEN
+        stStatus.stAlarms.uiActiveCount :=
+            stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
+
+ELSE
+
+    // Clear only the active-fault summary used by the main screen.
+    // Do not acknowledge, clear or delete the Events history here.
+    stStatus.stAlarms.bHasFault := FALSE;
+    stStatus.stAlarms.bHasSafetyStopFault := FALSE;
+    stStatus.stAlarms.uiActiveCount := 0;
+
+END_IF
+
+stStatus.stAlarms.eHighestAlarm := E_AlarmId.None;
+stStatus.aNest := fbNestManager.GetAllNests();
+stStatus.udiAlarmCode := 0;
+stStatus.sOperatorMessage := fbOperatorStation.GetMessage();
+
+// =========================================================
+// MACHINE MESSAGE SELECTION
+// =========================================================
+
+// Row 0 of the event DataGrid is exclusively the current automatic-cycle instruction.
+IF eMachineState = E_MachineState.AutoCycle THEN
+    IF fbOperatorStation.GetInstruction() <> E_OperatorInstruction.None THEN
+        stStatus.sMachineMessage := fbOperatorStation.GetMessage();
+    ELSE
+        stStatus.sMachineMessage := stProcessCycleStatus.sMessage;
+    END_IF
+ELSIF eMachineState = E_MachineState.Manual THEN
+    stStatus.sMachineMessage := stManualModeStatus.sMessage;
+ELSIF eMachineState = E_MachineState.Initialising THEN
+    CASE eInitialisingWaitReason OF
+		E_InitialisingWaitReason.MainDoorNotReady:stStatus.sMachineMessage :='System initialising - waiting for main door to lock';
+        E_InitialisingWaitReason.SafetyNotReady: stStatus.sMachineMessage := 'System initialising - waiting for Safety OK';
+        E_InitialisingWaitReason.FsoeNotReady: stStatus.sMachineMessage := 'System initialising - waiting for FSoE';
+        E_InitialisingWaitReason.SafetyLogicNotReady: stStatus.sMachineMessage := 'System initialising - waiting for TwinSAFE logic';
+        E_InitialisingWaitReason.IndexBusy: stStatus.sMachineMessage := 'System initialising - waiting for index to stop';
+        E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted: stStatus.sMachineMessage := 'System initialising - waiting for transfer nest support cylinder retract';
+        E_InitialisingWaitReason.ProcessStationFaulted: stStatus.sMachineMessage := 'System initialising - process station fault';
+        E_InitialisingWaitReason.MainDoorFaulted: stStatus.sMachineMessage := 'System initialising - main door lock fault';
+        E_InitialisingWaitReason.PuckLockerFaulted: stStatus.sMachineMessage := 'System initialising - puck locker fault';
+        E_InitialisingWaitReason.ProcessEquipmentNotReady: stStatus.sMachineMessage := 'System initialising - waiting for process equipment';
+    ELSE stStatus.sMachineMessage := 'System initialising'; END_CASE
+ELSIF eMachineState = E_MachineState.ReadyToStart THEN
+    stStatus.sMachineMessage := 'Ready to start';
+ELSIF eMachineState = E_MachineState.Stopping THEN
+    CASE eStoppingWaitReason OF
+        E_StoppingWaitReason.IndexStillMoving:
+            stStatus.sMachineMessage := 'System stopping - waiting for index';
+        E_StoppingWaitReason.TransferNestSupportCylinderRetracting:
+            stStatus.sMachineMessage := 'System stopping - retracting transfer nest support cylinder';
+        E_StoppingWaitReason.ProcessEquipmentStopping:
+            stStatus.sMachineMessage := 'System stopping - stopping process equipment';
+        E_StoppingWaitReason.MainDoorTransition:
+            stStatus.sMachineMessage := 'System stopping - waiting for main door transition';
+    ELSE
+        stStatus.sMachineMessage := 'System stopping';
+    END_CASE
+ELSIF eMachineState = E_MachineState.Fault THEN
+    IF NOT stInputs.stSafety.bSafetyOk THEN
+        stStatus.sMachineMessage := 'Machine fault - safety system not ready';
+    ELSIF bInitialisationTimeoutFault THEN
+        CASE eInitialisingWaitReason OF
+            E_InitialisingWaitReason.IndexBusy:
+                stStatus.sMachineMessage := 'Initialisation timeout - index did not stop';
+            E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted:
+                stStatus.sMachineMessage := 'Initialisation timeout - transfer nest support cylinder not retracted';
+            E_InitialisingWaitReason.MainDoorFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - main door lock fault';
+            E_InitialisingWaitReason.MainDoorNotReady:
+                stStatus.sMachineMessage := 'Initialisation timeout - main door did not lock';
+            E_InitialisingWaitReason.ProcessStationFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - process station fault';
+            E_InitialisingWaitReason.PuckLockerFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - puck locker fault';
+            E_InitialisingWaitReason.ProcessEquipmentNotReady:
+                stStatus.sMachineMessage := 'Initialisation timeout - process equipment not ready';
+        ELSE
+            stStatus.sMachineMessage := 'Machine fault - initialisation timeout';
+        END_CASE
+    ELSIF bStoppingTimeoutFault THEN
+        CASE eStoppingWaitReason OF
+            E_StoppingWaitReason.IndexStillMoving:
+                stStatus.sMachineMessage := 'Stopping timeout - index still moving';
+            E_StoppingWaitReason.TransferNestSupportCylinderRetracting:
+                stStatus.sMachineMessage := 'Stopping timeout - transfer nest support cylinder not retracted';
+            E_StoppingWaitReason.ProcessEquipmentStopping:
+                stStatus.sMachineMessage := 'Stopping timeout - process equipment still running';
+            E_StoppingWaitReason.MainDoorTransition:
+                stStatus.sMachineMessage := 'Stopping timeout - main door transition incomplete';
+        ELSE
+            stStatus.sMachineMessage := 'Machine fault - stopping timeout';
+        END_CASE
+    ELSIF fbMainDoorLock.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - main door lock fault';
+    ELSIF fbIndex.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - index table fault';
+    ELSIF fbProcessStation.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - process station fault';
+    ELSIF ipEquipment.IsFaulted() THEN
+        stStatus.sMachineMessage := 'Machine fault - process equipment fault';
+    ELSIF stInputs.bEventFault THEN
+        stStatus.sMachineMessage := 'Machine fault - check active alarms';
+    ELSE
+        stStatus.sMachineMessage := 'Machine fault - reset required';
+    END_IF
+ELSIF eMachineState = E_MachineState.Stopped THEN
+    IF GVL_HMI.bIvekSettingsInterlock THEN
+        stStatus.sMachineMessage := 'Machine stopped - IVEK configuration interface active';
+    ELSIF NOT stInputs.bMainDoorClosed THEN
+        stStatus.sMachineMessage := 'Machine stopped - close the main door and press Reset';
+    ELSE
+        stStatus.sMachineMessage := 'Machine stopped - press Reset to initialise';
+    END_IF
+ELSE
+    stStatus.sMachineMessage := 'Machine stopped';
+END_IF
+
+// =========================================================
+// END-OF-CYCLE STATE AND OUTPUT PUBLICATION
+// =========================================================
+
+ePreviousMachineState := eMachineState;
+stOutputs := stOutputsInternal;
+
+
+
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetCyclicOutputs" Id="{9b31b272-cf95-4c0b-9674-4eee2c2eaa71}">
+      <Declaration><![CDATA[METHOD PRIVATE ResetCyclicOutputs]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[stOutputsInternal.bSafetyRunRequest := FALSE;
+stOutputsInternal.bSafetyResetRequest := FALSE;
+stOutputsInternal.bAirSupplyEnable := FALSE;
+stOutputsInternal.bIndexRotatePortA := FALSE;
+stOutputsInternal.bIndexStopPortB := FALSE;
+stOutputsInternal.bAssemblySupportExtend := FALSE;
+stOutputsInternal.bAssemblySupportRetract := FALSE;
+stOutputsInternal.bSiliconeSupportExtend := FALSE;
+stOutputsInternal.bSiliconeSupportRetract := FALSE;
+stOutputsInternal.bMainDoorLockRequest := FALSE;
+stOutputsInternal.bLedStart := FALSE;
+stOutputsInternal.bLedReset := FALSE;
+stOutputsInternal.bLedPass := FALSE;
+stOutputsInternal.bLedFail := FALSE;
+stOutputsInternal.bInternalLight := FALSE;
+stOutputsInternal.bExternalLight := FALSE;
+stOutputsInternal.bPuckLockerPinUp := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

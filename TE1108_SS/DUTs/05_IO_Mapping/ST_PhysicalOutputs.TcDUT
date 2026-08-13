@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_PhysicalOutputs" Id="{5be9d8d5-b1c5-4f48-835f-66078c4a0779}">
+    <Declaration><![CDATA[TYPE ST_PhysicalOutputs :
+STRUCT
+    // PLC -> TwinSAFE requests
+    bSafetyRunRequest             : BOOL;
+    bSafetyResetRequest           : BOOL;
+    bAirSupplyEnable              : BOOL;
+    bMainDoorLockRequest          : BOOL;
+	bSafetyErrorAcknowledgementRequest : BOOL;
+
+    // Standard outputs
+    bIndexRotatePortA             	: BOOL;
+    bIndexStopPortB               	: BOOL;
+   	bAssemblySupportExtend			: BOOL;
+	bAssemblySupportRetract			: BOOL;
+	bSiliconeSupportExtend			: BOOL;
+	bSiliconeSupportRetract			: BOOL;
+
+    bLedStart                     : BOOL;
+    bLedReset                     : BOOL;
+    bLedPass                      : BOOL;
+    bLedFail                      : BOOL;
+    bInternalLight                : BOOL;
+    bNestLight                    : BOOL;
+    bExternalLight                : BOOL; // Compatibility alias; mapped to nest light.
+
+    bVacuumPumpEnable             : BOOL;
+    bVacuumAirSolenoid1           : BOOL;
+    bVacuumAirSolenoid2           : BOOL;
+
+    // Not present in EPLAN Rev 1.0. Kept for optional future variant.
+    bPuckLockerPinUp              : BOOL;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

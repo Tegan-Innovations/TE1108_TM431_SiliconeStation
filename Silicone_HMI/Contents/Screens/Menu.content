@@ -147,7 +147,7 @@
   {
     "accessright": "operate",
     "group": "Administrator",
-    "permission": "Deny"
+    "permission": "Allow"
   },
   {
     "accessright": "operate",

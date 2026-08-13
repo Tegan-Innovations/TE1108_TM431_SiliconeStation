@@ -93,5 +93,9 @@ LineIDs.dbg.bak
 
 Thumbs.db
 Desktop.ini
+
 # Restored NuGet packages
 Packages/
+
+# TwinCAT generated files
+*.tmc

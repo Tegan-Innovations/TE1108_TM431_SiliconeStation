@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="PRG_HmiStatus" Id="{c33053ba-a379-4397-8086-04253da64219}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_HmiStatus
+VAR
+    fbBlinkTimer      : TON;
+    bBlinkTimerQOld   : BOOL;
+    bFlash            : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Generate a 500 ms toggle used by animated banner states.
+fbBlinkTimer(IN := NOT fbBlinkTimer.Q, PT := T#500MS);
+
+IF fbBlinkTimer.Q AND NOT bBlinkTimerQOld THEN
+    GVL_HMI.bBlink_1Hz := NOT GVL_HMI.bBlink_1Hz;
+END_IF
+
+bBlinkTimerQOld := fbBlinkTimer.Q;
+bFlash := GVL_HMI.bBlink_1Hz;
+
+// Alarms and Events Messages
+GVL_HMI.astActiveEvents := GVL_MASTER.astActiveEvents;
+
+// Publish general machine data to the TcHMI boundary.
+GVL_HMI.stStatus.stMachine := GVL_MASTER.stStatus;
+GVL_HMI.stStatus.stSafety := GVL_MASTER.stInputs.stSafety;
+GVL_HMI.stStatus.stIndex := GVL_MASTER.stStatus.stIndexStatus;
+GVL_HMI.stStatus.stProcessCycle := GVL_MASTER.stStatus.stProcessCycle;
+GVL_HMI.stStatus.stProcessStation := GVL_MASTER.stStatus.stProcessStation;
+GVL_HMI.stStatus.stMainDoorLock := GVL_MASTER.stStatus.stMainDoorLock;
+GVL_HMI.stStatus.eInitialisingWaitReason := GVL_MASTER.stStatus.eInitialisingWaitReason;
+GVL_HMI.stStatus.eStoppingWaitReason := GVL_MASTER.stStatus.eStoppingWaitReason;
+GVL_HMI.stStatus.eCurrentIndexPosition := GVL_MASTER.stInputs.eIndexPosition;
+GVL_HMI.stStatus.bIndexPositionValid := GVL_MASTER.stInputs.eIndexPosition <> E_TablePosition.Unknown;
+GVL_HMI.stStatus.bTwoHandsSafe := GVL_MASTER.stInputs.bTwoHandsSafe;
+GVL_HMI.stStatus.bGearboxAssemblyPartPresent := GVL_MASTER.stInputs.bGearboxAssemblyPartPresent;
+GVL_HMI.stStatus.bReservoirPartPresent := GVL_MASTER.stInputs.bReservoirPartPresent;
+GVL_HMI.stStatus.bRejectChutePartPresent := GVL_MASTER.stInputs.bRejectChutePartPresent;
+GVL_HMI.stStatus.bIndexReady := GVL_MASTER.stInputs.bIndexReady;
+GVL_HMI.stStatus.bIndexLocked := GVL_MASTER.stInputs.bIndexLocked;
+GVL_HMI.stStatus.bIndexCompletedSensor := GVL_MASTER.stInputs.bIndexCompletedSensor;
+GVL_HMI.stStatus.bIndexSupportExtended := GVL_MASTER.stInputs.bIndexSupportExtended;
+GVL_HMI.stStatus.bIndexSupportRetracted := GVL_MASTER.stInputs.bIndexSupportRetracted;
+GVL_HMI.stStatus.bMainDoorClosed := GVL_MASTER.stInputs.bMainDoorClosed;
+GVL_HMI.stStatus.bMainDoorLocked := GVL_MASTER.stInputs.bMainDoorLocked;
+GVL_HMI.stStatus.bStartButtonActive := GVL_MASTER.stInputs.bStartButton;
+GVL_HMI.stStatus.bStopButtonActive := GVL_MASTER.stInputs.bStopButton;
+GVL_HMI.stStatus.bResetButtonActive := GVL_MASTER.stInputs.bResetButton;
+GVL_HMI.stStatus.bStartButtonLamp := GVL_MASTER.stOutputs.bLedStart;
+GVL_HMI.stStatus.bUp24VPowerSupplyOk := GVL_MASTER.stInputs.bUp24VPowerSupplyOk;
+GVL_HMI.stStatus.bUs24VPowerSupplyOk := GVL_MASTER.stInputs.bUs24VPowerSupplyOk;
+GVL_HMI.stStatus.bIvekHeaterControllerAlarm := GVL_MASTER.stInputs.bIvekHeaterControllerAlarm;
+GVL_HMI.stStatus.bSiliconeMinimumLevelSensor1 := GVL_MASTER.stInputs.bSiliconeMinimumLevelSensor1;
+GVL_HMI.stStatus.bSiliconeMinimumLevelSensor2 := GVL_MASTER.stInputs.bSiliconeMinimumLevelSensor2;
+GVL_HMI.stStatus.bMainDoorDiagnosticOk := GVL_MASTER.stInputs.bMainDoorDiagnosticOk;
+GVL_HMI.stStatus.bMs6FeedbackOk := GVL_MASTER.stInputs.bMs6FeedbackOk;
+GVL_HMI.stStatus.bAirExhausted := GVL_MASTER.stInputs.bAirExhausted;
+GVL_HMI.stStatus.uiMainAirPressureRaw := GVL_MASTER.stInputs.uiMainAirPressureRaw;
+GVL_HMI.stStatus.uiSiliconePressureRaw := GVL_MASTER.stInputs.uiSiliconePressureRaw;
+GVL_HMI.stStatus.uiNozzlePressureRaw := GVL_MASTER.stInputs.uiNozzlePressureRaw;
+GVL_HMI.stStatus.uiVacuumPressureRaw := GVL_MASTER.stInputs.uiVacuumPressureRaw;
+GVL_HMI.stStatus.bTransferNestSupportCylinderExtended := GVL_MASTER.stInputs.bTransferNestSupportCylinderExtended;
+GVL_HMI.stStatus.bTransferNestSupportCylinderRetracted := GVL_MASTER.stInputs.bTransferNestSupportCylinderRetracted;
+GVL_HMI.stStatus.bLeftFlapSafe := GVL_MASTER.stInputs.stSafety.bLeftFlapSafe;
+GVL_HMI.stStatus.bRightFlapSafe := GVL_MASTER.stInputs.stSafety.bRightFlapSafe;
+GVL_HMI.stStatus.bIvekCommunicationOk := GVL_MASTER.bIvekCommsOk;
+GVL_HMI.stStatus.eIvekStatusState := GVL_MASTER.stIvekInput.eStatusState;
+GVL_HMI.stStatus.udiIvekStatusFlags := GVL_MASTER.stIvekInput.udiStatusFlags;
+GVL_HMI.stStatus.udiIvekStatusFlagsExt := GVL_MASTER.stIvekInput.udiStatusFlagsExt;
+GVL_HMI.stStatus.udiIvekFaultCode := GVL_MASTER.stIvekInput.udiFaultCode;
+GVL_HMI.stStatus.udiIvekAlertCode := GVL_MASTER.stIvekInput.udiAlertCode;
+GVL_HMI.stStatus.usiIvekCurrentRecipe := GVL_MASTER.stIvekInput.usiCurrentRecipe;
+GVL_HMI.stStatus.stPuckLocker := GVL_MASTER.stStatus.stPuckLocker;
+GVL_HMI.stStatus.eOperatorInstruction := GVL_MASTER.stStatus.eOperatorInstruction;
+GVL_HMI.stStatus.stOperatorStation := GVL_MASTER.stStatus.stOperatorStation;
+GVL_HMI.stStatus.stManualMode := GVL_MASTER.stStatus.stManualMode;
+GVL_HMI.stStatus.aNest := GVL_MASTER.stStatus.aNest;
+GVL_HMI.stStatus.stAlarms := GVL_MASTER.stStatus.stAlarms;
+GVL_HMI.stStatus.sMachineMessage := GVL_MASTER.stStatus.sMachineMessage;
+GVL_HMI.stStatus.sOperatorMessage := GVL_MASTER.stStatus.sOperatorMessage;
+
+// Machine-state banner. Colour and flashing behaviour match the Kistler standard.
+CASE GVL_MASTER.stStatus.eMachineState OF
+
+    E_MachineState.PowerUp:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'SYSTEM POWER UP';
+        GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sYELLOW;
+        GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sBLACK;
+
+    E_MachineState.Initialising:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'SYSTEM INITIALIZING';
+        GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sYELLOW;
+        GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sBLACK;
+
+    E_MachineState.ReadyToStart:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'SYSTEM READY TO START';
+        IF bFlash THEN
+            GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sGREEN;
+            GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
+        ELSE
+            GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sWHITE;
+            GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sGREEN;
+        END_IF
+
+    E_MachineState.AutoCycle:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'SYSTEM AUTO CYCLE';
+        GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sGREEN;
+        GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
+
+    E_MachineState.Stopping:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'STOPPING';
+        IF bFlash THEN
+            GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sGREY;
+            GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
+        ELSE
+            GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sTRANSP;
+            GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sBLACK;
+        END_IF
+
+    E_MachineState.Stopped:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'CYCLE STOPPED';
+        GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sGREY;
+        GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
+
+    E_MachineState.Fault:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'IMMEDIATE FAULT';
+        IF bFlash THEN
+            GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sREDFail;
+            GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
+        ELSE
+            GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sWHITE;
+            GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sREDFail;
+        END_IF
+
+    E_MachineState.Manual:
+        GVL_HMI.StatusHMI.sMachineStatusText := 'MANUAL MODE';
+        GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sBLUEInProgress;
+        GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
+
+ELSE
+    GVL_HMI.StatusHMI.sMachineStatusText := 'UNKNOWN MACHINE STATE';
+    GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sDARKGREY;
+    GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
+END_CASE
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

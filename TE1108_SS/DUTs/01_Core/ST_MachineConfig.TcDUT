@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_MachineConfig" Id="{846fa9b5-dfee-4d5c-87c6-eecc7b019629}">
+    <Declaration><![CDATA[TYPE ST_MachineConfig :
+STRUCT
+    tInitialiseTimeout          : TIME := T#15S;
+    tStoppingTimeout            : TIME := T#15S;
+    tIndexTimeout               : TIME := T#10S;
+    tIndexRotateDelay           : TIME := T#500MS;
+    tIndexStopDelay             : TIME := T#1S;
+    tIndexSupportTimeout        : TIME := T#5S;
+    tTwoHandHold                : TIME := T#500MS;
+    tTwoHandRecoveryTimeout     : TIME := T#10S;
+    tDoorLockTimeout            : TIME := T#10S;
+    tDoorUnlockTimeout          : TIME := T#10S;
+    tCylinderTimeout            : TIME := T#5S;
+    tProcessTimeout             : TIME := T#60S;
+    tOperatorIdleTimeout        : TIME := T#30S;
+    tPuckRemovalConfirm         : TIME := T#300MS;
+    eOperatorPosition           : E_TablePosition := E_TablePosition.Position4;
+    eProcessPosition            : E_TablePosition := E_TablePosition.Position2;
+    eRejectPosition             : E_TablePosition := E_TablePosition.Position4;
+    ePuckLockerMode             : E_PuckLockerMode := E_PuckLockerMode.Disabled; // No puck locker in EPLAN Rev 1.0.
+    bRequireTwoHandsForIndex     : BOOL := TRUE;
+    bAllowEmptyNestIndex        : BOOL := TRUE;
+    bRequireRejectConfirm       : BOOL := TRUE;
+    bUseProcessSimulation       : BOOL := TRUE;
+    aNestEnabled                : ARRAY[1..4] OF BOOL := [TRUE, TRUE, TRUE, TRUE];
+	
+	
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

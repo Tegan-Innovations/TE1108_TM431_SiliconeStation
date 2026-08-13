@@ -149,6 +149,8 @@
     <Folder Include="Images\Manifest" />
     <Folder Include="Images\Client" />
     <Folder Include="Images\Project" />
+    <Folder Include="Images\Project\Cylinders" />
+    <Folder Include="Images\Project\Nest" />
     <Folder Include="Imports" />
     <Folder Include="Imports\Images" />
     <Folder Include="Imports\Videos" />
@@ -260,6 +262,9 @@
     <Content Include="Contents\Screens\popups\Content_Popup_ManualMode.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\popups\Content_Popup_Pneumatics.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_Puck.content">
       <SubType>Content</SubType>
     </Content>
@@ -308,7 +313,7 @@
     <Content Include="Contents\Screens\popups\Content_Popup_Shutdown.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Screens\Main_Kistler.content">
+    <Content Include="Contents\Screens\Main.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\HeadMenu.content">
@@ -472,6 +477,9 @@
     <Content Include="Images\Buttons\Shutdown_Box_Red.png">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Buttons\_LoginButton.svg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Buttons\_PowerButton.svg">
       <SubType>Content</SubType>
     </Content>
@@ -494,6 +502,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Icons\events\message.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Icons\infoIcon.svg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Icons\TeganInfo.png">
@@ -709,7 +720,28 @@
     <Content Include="Images\IO\Wieland_Switch.PNG">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Project\Cylinders\AssemblyCylinderExtended.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Cylinders\AssemblyCylinderRetracted.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Cylinders\SiliconeCylinderExtended.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Cylinders\SiliconeCylinderExtended_V2.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Cylinders\SiliconeCylinderRetracted2.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Cylinders\SiliconeCylinderRetracted_V2.png">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Project\IndexKistler_1.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\IVEK_DigiSpence4000BT.png">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Project\KistlerMAchine.png">
@@ -739,6 +771,24 @@
     <Content Include="Images\Project\ManualModePump.png">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Project\Nest\nest1.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Nest\nest2.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Nest\nest3.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Nest\nest4.svg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Nest\NestPartsPresent00.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\Nest\NestPartsPresent11.png">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Project\nest_pos_2.PNG">
       <SubType>Content</SubType>
     </Content>
@@ -752,6 +802,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Project\SiliconeIndexTableV2.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\SiliconeIndexTableV3.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\SS_PneumaticsPopUp.png">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\TeganInfo.png">
@@ -806,6 +862,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Imports\Images\next.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Imports\Images\Puck.png">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Imports\Images\right_hand - green.png">
@@ -971,10 +1030,6 @@
       <Visible>true</Visible>
     </Content>
     <Content Include="Images\Favicon.ico">
-      <SubType>Content</SubType>
-      <Visible>true</Visible>
-    </Content>
-    <Content Include="Images\Beckhoff_Logo.svg">
       <SubType>Content</SubType>
       <Visible>true</Visible>
     </Content>

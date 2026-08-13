@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="PRG_WriteOutputs" Id="{e140ea05-fb86-4755-85a5-95bda9589e4d}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_WriteOutputs
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Convert the reusable machine output model into nominal physical outputs.
+GVL_IO.stOutputs.bSafetyRunRequest      				:= GVL_MASTER.stOutputs.bSafetyRunRequest;
+GVL_IO.stOutputs.bSafetyResetRequest    				:= GVL_MASTER.stOutputs.bSafetyResetRequest;
+GVL_IO.stOutputs.bSafetyErrorAcknowledgementRequest     := GVL_MASTER.stOutputs.bSafetyResetRequest;
+
+GVL_IO.stOutputs.bAirSupplyEnable       				:= GVL_MASTER.stOutputs.bAirSupplyEnable;
+GVL_IO.stOutputs.bIndexRotatePortA      				:= GVL_MASTER.stOutputs.bIndexRotatePortA;
+GVL_IO.stOutputs.bIndexStopPortB    					:= GVL_MASTER.stOutputs.bIndexStopPortB;
+GVL_IO.stOutputs.bAssemblySupportExtend					:= GVL_MASTER.stOutputs.bAssemblySupportExtend;
+GVL_IO.stOutputs.bAssemblySupportRetract 				:= GVL_MASTER.stOutputs.bAssemblySupportRetract;
+GVL_IO.stOutputs.bSiliconeSupportExtend   				:= GVL_MASTER.stOutputs.bSiliconeSupportExtend;
+GVL_IO.stOutputs.bSiliconeSupportRetract 				:= GVL_MASTER.stOutputs.bSiliconeSupportRetract;
+GVL_IO.stOutputs.bMainDoorLockRequest   				:= GVL_MASTER.stOutputs.bMainDoorLockRequest;
+GVL_IO.stOutputs.bLedStart              				:= GVL_MASTER.stOutputs.bLedStart;
+GVL_IO.stOutputs.bLedReset             	 				:= GVL_MASTER.stOutputs.bLedReset;
+GVL_IO.stOutputs.bLedPass               				:= GVL_MASTER.stOutputs.bLedPass;
+GVL_IO.stOutputs.bLedFail               				:= GVL_MASTER.stOutputs.bLedFail;
+GVL_IO.stOutputs.bInternalLight         				:= GVL_MASTER.stOutputs.bInternalLight;
+GVL_IO.stOutputs.bExternalLight         				:= GVL_MASTER.stOutputs.bExternalLight;
+GVL_IO.stOutputs.bNestLight             				:= GVL_MASTER.stOutputs.bExternalLight;
+// Vacuum outputs are reserved for the future process implementation.
+GVL_IO.stOutputs.bVacuumPumpEnable      				:= FALSE;
+GVL_IO.stOutputs.bVacuumAirSolenoid1    				:= FALSE;
+GVL_IO.stOutputs.bVacuumAirSolenoid2    				:= FALSE;
+
+GVL_IVEK_EIP.stOutput 									:= GVL_MASTER.stIvekOutput;
+GVL_IO.stOutputs.bPuckLockerPinUp 						:= GVL_MASTER.stOutputs.bPuckLockerPinUp;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
