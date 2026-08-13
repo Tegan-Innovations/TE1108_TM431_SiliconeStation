@@ -25,6 +25,18 @@ STRUCT
     bSiliconeProcessRequired       : BOOL;
 	bAssemblyProcessRequired       : BOOL;
     bProcessResultAlreadyValid     : BOOL;
+	
+	// SILICONE PROCESS
+	bSiliconeProcessReady          : BOOL;
+	bSiliconeProcessBusy           : BOOL;
+	bSiliconeProcessComplete       : BOOL;
+	bSiliconeProcessFaulted        : BOOL;
+	
+	// ASSEMBLY PROCESS
+	bAssemblyProcessReady          : BOOL;
+	bAssemblyProcessBusy           : BOOL;
+	bAssemblyProcessComplete       : BOOL;
+	bAssemblyProcessFaulted        : BOOL;
 
     // PROCESS STATION
     bProcessStationReady           : BOOL;

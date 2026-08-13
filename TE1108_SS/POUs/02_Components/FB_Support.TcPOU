@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
-  <POU Name="FB_SiliconeSupport" Id="{9c620d6c-efa3-4dcf-8317-199a23b8c643}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_SiliconeSupport
+  <POU Name="FB_Support" Id="{9c620d6c-efa3-4dcf-8317-199a23b8c643}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Support
 VAR
     tonMovementTimeout : TON;
 

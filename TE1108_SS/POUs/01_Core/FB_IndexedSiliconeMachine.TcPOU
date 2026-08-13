@@ -3,84 +3,166 @@
   <POU Name="FB_IndexedSiliconeMachine" Id="{ff07b0ce-3073-475d-ae18-b3b039ab22f1}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_IndexedSiliconeMachine
 VAR
-    fbIndex              					: FB_IndexTable4;
-    fbProcessStation     					: FB_ProcessStation;
-    fbMainDoorLock       					: FB_MainDoorLock;
-    fbIvek               					: FB_IvekDigiSpense4000;
-	fbIvekSettingsLauncher					: FB_IvekSettingsLauncher;
-    fbSimulatedEquipment 					: FB_SimulatedProcessEquipment;
-    fbNestManager        					: FB_NestTableManager;
-    fbOperatorStation    					: FB_OperatorStation;
-    //fbPuckLocker         					: FB_PuckLocker;
-    fbProcessCycle       					: FB_ProcessCycle;
-    fbManualMode         					: FB_ManualMode;
-    ipEquipment          					: I_ProcessEquipment;
-    eMachineState        					: E_MachineState := E_MachineState.PowerUp;
-    eCycleState          					: E_CycleState := E_CycleState.Disabled;
-    stLastResult         					: ST_ProcessResult;
-    stOperatorNest       					: ST_Nest;
-	stSiliconeNest 							: ST_Nest;
-	stAssemblyNest 							: ST_Nest;
-    stPuckStatus         					: ST_PuckLockerStatus;
-    stOperatorStatus     					: ST_OperatorStationStatus;
-    stIndexStatus        					: ST_IndexStatus;
-    stProcessStationStatus 					: ST_ProcessStationStatus;
-    stMainDoorLockStatus 					: ST_MainDoorLockStatus;
-    ePreviousMachineState 					: E_MachineState := E_MachineState.PowerUp;
-    bMachineStateEntry    					: BOOL;
-    eInitialisingWaitReason 				: E_InitialisingWaitReason := E_InitialisingWaitReason.None;
-    eStoppingWaitReason     				: E_StoppingWaitReason := E_StoppingWaitReason.None;
-    stPermissives        					: ST_MachinePermissives;
-    stOutputsInternal    					: ST_MachineOutputs;
-    stProcessCycleInputs 					: ST_ProcessCycleInputs;
-    stProcessCycleRequests 					: ST_ProcessCycleRequests;
-    stProcessCycleStatus 					: ST_ProcessCycleStatus;
-    stManualModeInputs   					: ST_ManualModeInputs;
-    stManualModeRequests 					: ST_ManualModeRequests;
-    stManualModeStatus   					: ST_ManualModeStatus;
-    bManualIndexRequestAccepted 			: BOOL;
-    stProcessNest        					: ST_Nest;
-    bConfigured          					: BOOL;
-    bProcessStartPulse   					: BOOL;
-    bProcExtend          					: BOOL;
-    bProcRetract         					: BOOL;
-    bPuckPinUp           					: BOOL;
-    bIndexStable         					: BOOL;
-    bIndexDone           					: BOOL;
-    bProcessReady        					: BOOL;
-    bInitialisationComplete 				: BOOL;
-    bStoppingComplete       				: BOOL;
-    bInitialisationTimeoutFault 			: BOOL;
-    bStoppingTimeoutFault       			: BOOL;
-    bResultStoredFeedback       			: BOOL;
-    bIndexRequestAcceptedFeedback 			: BOOL;
-    bIndexRecoveryRequestAcceptedFeedback 	: BOOL;
-	
-	
-    tonInitialising         				: TON;
-    tonStopping             				: TON;
-	tonAutoCycleIdleTimeout 				: TON;
-	
-	fbEventFaultTrigger 					: R_TRIG;
-	tpSafetyRunDrop     					: TP;
-	bSafetyDropRequest 						: BOOL;
-	bAirAndDoorEnable 						: BOOL;
-	bAirSupplyLatched 						: BOOL;
-	bAirSupplyEnable 						: BOOL;
-	// Final Silicone Support commands decided by this machine controller.
-	fbSiliconeSupportCylinder 				: FB_SiliconeSupport;
-	fbAssemblySupportCylinder 				: FB_SiliconeSupport;
-	
-	bSiliconeSupportRaiseRequest 			: BOOL;
-	bSiliconeSupportLowerRequest 			: BOOL;
-	bAssemblySupportRaiseRequest 			: BOOL;
-	bAssemblySupportLowerRequest 			: BOOL;
-	fbResetTrigger 							: R_TRIG;
-	
-	
-	
-END_VAR
-]]></Declaration>
+
+    // =====================================================
+    // CORE COMPONENTS
+    // =====================================================
+    fbIndex                     : FB_IndexTable4;
+    fbMainDoorLock              : FB_MainDoorLock;
+    fbNestManager               : FB_NestTableManager;
+    fbOperatorStation           : FB_OperatorStation;
+    // fbPuckLocker             : FB_PuckLocker;
+
+    // =====================================================
+    // PROCESS COMPONENTS
+    // =====================================================
+    fbProcessStation            : FB_ProcessStation;
+    fbProcessCycle              : FB_ProcessCycle;
+
+    fbSiliconeProcess           : FB_SiliconeProcess;
+    fbAssemblyProcess           : FB_AssemblyProcess;
+
+    fbIvek                      : FB_IvekDigiSpense4000;
+    fbIvekSettingsLauncher      : FB_IvekSettingsLauncher;
+
+    fbSimulatedEquipment        : FB_SimulatedProcessEquipment;
+    ipEquipment                 : I_ProcessEquipment;
+
+    // =====================================================
+    // SUPPORT COMPONENTS
+    // =====================================================
+    fbSiliconeSupportCylinder   : FB_Support;
+    fbAssemblySupportCylinder   : FB_Support;
+
+    // =====================================================
+    // MACHINE MODES
+    // =====================================================
+    fbManualMode                : FB_ManualMode;
+
+    // =====================================================
+    // MACHINE / CYCLE STATES
+    // =====================================================
+    eMachineState               : E_MachineState := E_MachineState.PowerUp;
+    ePreviousMachineState       : E_MachineState := E_MachineState.PowerUp;
+    eCycleState                 : E_CycleState := E_CycleState.Disabled;
+
+    bMachineStateEntry          : BOOL;
+
+    eInitialisingWaitReason     : E_InitialisingWaitReason :=
+                                    E_InitialisingWaitReason.None;
+
+    eStoppingWaitReason         : E_StoppingWaitReason :=
+                                    E_StoppingWaitReason.None;
+
+    // =====================================================
+    // NEST DATA
+    // =====================================================
+    stOperatorNest              : ST_Nest;
+    stSiliconeNest              : ST_Nest;
+    stAssemblyNest              : ST_Nest;
+    stProcessNest               : ST_Nest;
+
+    stLastResult                : ST_ProcessResult;
+
+    // =====================================================
+    // COMPONENT STATUS
+    // =====================================================
+    stOperatorStatus            : ST_OperatorStationStatus;
+    stIndexStatus               : ST_IndexStatus;
+    stProcessStationStatus      : ST_ProcessStationStatus;
+    stMainDoorLockStatus        : ST_MainDoorLockStatus;
+    stPuckStatus                : ST_PuckLockerStatus;
+
+    // =====================================================
+    // MACHINE PERMISSIVES / OUTPUTS
+    // =====================================================
+    stPermissives               : ST_MachinePermissives;
+    stOutputsInternal           : ST_MachineOutputs;
+
+    // =====================================================
+    // PROCESS CYCLE INTERFACE
+    // =====================================================
+    stProcessCycleInputs        : ST_ProcessCycleInputs;
+    stProcessCycleRequests      : ST_ProcessCycleRequests;
+    stProcessCycleStatus        : ST_ProcessCycleStatus;
+
+    // =====================================================
+    // MANUAL MODE INTERFACE
+    // =====================================================
+    stManualModeInputs          : ST_ManualModeInputs;
+    stManualModeRequests        : ST_ManualModeRequests;
+    stManualModeStatus          : ST_ManualModeStatus;
+
+    // =====================================================
+    // SUPPORT COMMANDS
+    // =====================================================
+    bSiliconeSupportRaiseRequest  : BOOL;
+    bSiliconeSupportLowerRequest  : BOOL;
+
+    bAssemblySupportRaiseRequest  : BOOL;
+    bAssemblySupportLowerRequest  : BOOL;
+
+    // =====================================================
+    // INDEX COMMAND / FEEDBACK
+    // =====================================================
+    bManualIndexRequestAccepted             : BOOL;
+    bIndexRequestAcceptedFeedback           : BOOL;
+    bIndexRecoveryRequestAcceptedFeedback   : BOOL;
+
+    bIndexStable                            : BOOL;
+    bIndexDone                              : BOOL;
+
+    // =====================================================
+    // PROCESS COMMAND / FEEDBACK
+    // =====================================================
+    bProcessStartPulse            : BOOL;
+    bProcessReady                 : BOOL;
+    bResultStoredFeedback         : BOOL;
+
+    bProcExtend                   : BOOL;
+    bProcRetract                  : BOOL;
+
+    // =====================================================
+    // PUCK CONTROL
+    // =====================================================
+    bPuckPinUp                    : BOOL;
+
+    // =====================================================
+    // INITIALISATION / STOPPING
+    // =====================================================
+    bInitialisationComplete       : BOOL;
+    bStoppingComplete             : BOOL;
+
+    bInitialisationTimeoutFault   : BOOL;
+    bStoppingTimeoutFault         : BOOL;
+
+    tonInitialising               : TON;
+    tonStopping                   : TON;
+    tonAutoCycleIdleTimeout       : TON;
+
+    // =====================================================
+    // AIR / DOOR CONTROL
+    // =====================================================
+    bAirAndDoorEnable             : BOOL;
+    bAirSupplyLatched             : BOOL;
+    bAirSupplyEnable              : BOOL;
+
+    // =====================================================
+    // SAFETY / FAULT HANDLING
+    // =====================================================
+    bSafetyDropRequest            : BOOL;
+
+    fbEventFaultTrigger           : R_TRIG;
+    fbResetTrigger                : R_TRIG;
+
+    tpSafetyRunDrop               : TP;
+
+    // =====================================================
+    // CONFIGURATION
+    // =====================================================
+    bConfigured                   : BOOL;
+
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
@@ -159,11 +241,18 @@ bSafetyDropRequest := FALSE;
 
 bMachineStateEntry := eMachineState <> ePreviousMachineState;
 
-// Detect a new Reset command.
-// Q remains TRUE for only one PLC cycle.
 fbResetTrigger(
     CLK := stCommand.bReset
 );
+
+IF fbResetTrigger.Q THEN
+    fbSiliconeProcess.RequestReset();
+    fbAssemblyProcess.RequestReset();
+END_IF
+
+// Execute process FBs once per PLC scan
+fbSiliconeProcess.Cyclic();
+fbAssemblyProcess.Cyclic();
 
 bProcessStartPulse := FALSE;
 
@@ -634,19 +723,145 @@ CASE eMachineState OF
 		// stProcessCycleInputs.bResultStored := bResultStoredFeedback;
 		// stProcessCycleInputs.bOperatorExchangeComplete := fbOperatorStation.IsComplete();
 	
+			// =========================================================
+		// SILICONE PROCESS STATUS
+		// =========================================================
+		
+		stProcessCycleInputs.bSiliconeProcessReady 		:=fbSiliconeProcess.IsReady();
+		stProcessCycleInputs.bSiliconeProcessBusy 		:=fbSiliconeProcess.IsBusy();
+		stProcessCycleInputs.bSiliconeProcessComplete 	:=fbSiliconeProcess.IsDone();
+		stProcessCycleInputs.bSiliconeProcessFaulted 	:=fbSiliconeProcess.IsFaulted();
+
+		// =========================================================
+		// ASSEMBLY PROCESS STATUS
+		// =========================================================
+		
+		stProcessCycleInputs.bAssemblyProcessReady 		:=fbAssemblyProcess.IsReady();
+		stProcessCycleInputs.bAssemblyProcessBusy 		:=fbAssemblyProcess.IsBusy();
+		stProcessCycleInputs.bAssemblyProcessComplete 	:=fbAssemblyProcess.IsDone();
+		stProcessCycleInputs.bAssemblyProcessFaulted 	:=fbAssemblyProcess.IsFaulted();
+	
+	
 		// PROCESS CYCLE EXECUTION
 		fbProcessCycle.Cyclic(
 			bEnable := TRUE,
 			bStopRequest := stCommand.bStop,
 			bResetRequest := stCommand.bReset,
 			stInputs := stProcessCycleInputs,
-			tAssemblyProcessSimulation := stConfig.tAssemblyProcessSimulation,
-			tSiliconeProcessSimulation := stConfig.tSiliconeProcessSimulation,
 			stRequests => stProcessCycleRequests,
 			stStatus => stProcessCycleStatus
 		);
+		
+		// =========================================================
+		// SILICONE PROCESS RESULT HANDLING
+		// =========================================================
+		
+		IF fbSiliconeProcess.IsDone() THEN
+		
+			stLastResult := fbSiliconeProcess.GetResult();
+		
+			bResultStoredFeedback :=
+				fbNestManager.StoreSiliconeResultAtPosition(
+					ePosition := stConfig.eSiliconePosition,
+					stResult := stLastResult
+				);
+		
+			IF bResultStoredFeedback THEN
+				fbSiliconeProcess.RequestReset();
+			END_IF
+		
+		END_IF
+		// =========================================================
+		// ASSEMBLY PROCESS RESULT HANDLING
+		// =========================================================
+		
+		IF fbAssemblyProcess.IsDone() THEN
+		
+			// -----------------------------------------------------
+			// STORE ASSEMBLY RESULT
+			// -----------------------------------------------------
+		
+			stLastResult :=
+				fbAssemblyProcess.GetResult();
+		
+			bResultStoredFeedback :=
+				fbNestManager.StoreAssemblyResultAtPosition(
+					ePosition := stConfig.eAssemblyPosition,
+					stResult := stLastResult
+				);
+		
+			IF bResultStoredFeedback THEN
+		
+				// -------------------------------------------------
+				// READ UPDATED NEST AT ASSEMBLY POSITION
+				// -------------------------------------------------
+		
+				stAssemblyNest :=
+					fbNestManager.GetNestAtPosition(
+						stConfig.eAssemblyPosition
+					);
+		
+				// -------------------------------------------------
+				// CALCULATE FINAL RESULT
+				// -------------------------------------------------
+		
+				stLastResult.bValid :=
+					stAssemblyNest.stSiliconeResult.bValid
+					AND stAssemblyNest.stAssemblyResult.bValid;
+		
+				stLastResult.bPassed :=
+					stLastResult.bValid
+					AND stAssemblyNest.stSiliconeResult.bPassed
+					AND stAssemblyNest.stAssemblyResult.bPassed;
+		
+				// -------------------------------------------------
+				// STORE FINAL RESULT IN NEST
+				// -------------------------------------------------
+		
+				bResultStoredFeedback :=
+					fbNestManager.StoreResultAtPosition(
+						ePosition := stConfig.eAssemblyPosition,
+						stResult := stLastResult
+					);
+		
+				// -------------------------------------------------
+				// RESET ASSEMBLY PROCESS
+				// -------------------------------------------------
+		
+				IF bResultStoredFeedback THEN
+					fbAssemblyProcess.RequestReset();
+				END_IF
+		
+			END_IF
+		
+		END_IF
+		
+		// =========================================================
+		// STATION PROCESS REQUEST EXECUTION
+		// =========================================================
+		
+		// Silicone Process
+		IF stProcessCycleRequests.bStartSiliconeProcess THEN
+			fbSiliconeProcess.RequestStart();
+		END_IF
+		
+		IF stProcessCycleRequests.bStopSiliconeProcess THEN
+			fbSiliconeProcess.RequestStop();
+		END_IF
+		
+		
+		// Assembly Process
+		IF stProcessCycleRequests.bStartAssemblyProcess THEN
+			fbAssemblyProcess.RequestStart();
+		END_IF
+		
+		IF stProcessCycleRequests.bStopAssemblyProcess THEN
+			fbAssemblyProcess.RequestStop();
+		END_IF
+		
+		
 			//Timeout process
-			tonAutoCycleIdleTimeout(
+		tonAutoCycleIdleTimeout(
 			IN := stProcessCycleStatus.eState = E_CycleState.WaitingForProcessCycleTrigger,
 			PT := T#2M
 		);
@@ -794,8 +1009,6 @@ IF eMachineState <> E_MachineState.AutoCycle THEN
         bResetRequest := stCommand.bReset,
         bStopRequest := TRUE,
         stInputs := stProcessCycleInputs,
-        tAssemblyProcessSimulation := stConfig.tAssemblyProcessSimulation,
-        tSiliconeProcessSimulation :=stConfig.tSiliconeProcessSimulation,
         stRequests =>stProcessCycleRequests,
         stStatus =>stProcessCycleStatus);
 END_IF
@@ -964,7 +1177,6 @@ stOutputsInternal.bMainDoorLockRequest := bAirAndDoorEnable;
 // =========================================================
 // INDEX TABLE CONTROL
 // =========================================================
-
 fbIndex.Cyclic(
     bEnable := (eMachineState = E_MachineState.Initialising)
         OR (eMachineState = E_MachineState.ReadyToStart)
@@ -1015,14 +1227,11 @@ fbIndex.Cyclic(
     bSupportExtendRequest => stOutputsInternal.bIndexSupportExtend,
     bSupportRetractRequest => stOutputsInternal.bIndexSupportRetract);
 	
-	
 
 // =========================================================
 // COMPONENT FAULT AGGREGATION
 // =========================================================
 	CheckComponentFaults();
-
-
 
 // =========================================================
 // PLC FAULT TO TWINSAFE RUN-DROP PULSE
@@ -1064,15 +1273,14 @@ stOutputsInternal.bSafetyResetRequest := stCommand.bReset AND NOT stInputs.stSaf
 
 stOutputsInternal.bSafetyErrorAcknowledgementRequest :=stOutputsInternal.bSafetyResetRequest;
 
-
-	
-	
-stOutputsInternal.bLedStart := eMachineState = E_MachineState.ReadyToStart;
-stOutputsInternal.bLedReset := eMachineState = E_MachineState.Fault OR eMachineState = E_MachineState.Stopped;
-stOutputsInternal.bLedPass := stLastResult.bValid AND stLastResult.bPassed;
-stOutputsInternal.bLedFail := stLastResult.bValid AND NOT stLastResult.bPassed;
-stOutputsInternal.bInternalLight := TRUE;
-stOutputsInternal.bExternalLight := eMachineState = E_MachineState.AutoCycle;
+stOutputsInternal.bLedStart 		:= eMachineState = E_MachineState.ReadyToStart;
+stOutputsInternal.bLedReset 		:= eMachineState = E_MachineState.Fault OR eMachineState = E_MachineState.Stopped;
+// Result LEDs represent only the part currently
+// located at the operator position.
+stOutputsInternal.bLedPass 			:= stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed;
+stOutputsInternal.bLedFail 			:= stOperatorNest.stResult.bValid AND NOT stOperatorNest.stResult.bPassed;
+stOutputsInternal.bInternalLight 	:= TRUE;
+stOutputsInternal.bExternalLight 	:= eMachineState = E_MachineState.AutoCycle;
 
 // =========================================================
 // EQUIPMENT OUTPUT DATA
@@ -1083,28 +1291,28 @@ stIvekOutput := fbIvek.stCyclicOut;
 // PUBLIC MACHINE STATUS
 // =========================================================
 
-stStatus.eMachineState := eMachineState;
-stStatus.eCycleState := stProcessCycleStatus.eState;
-stStatus.stProcessCycle := stProcessCycleStatus;
-stStatus.stProcessStation := stProcessStationStatus;
-stStatus.stMainDoorLock := stMainDoorLockStatus;
+stStatus.eMachineState 			:= eMachineState;
+stStatus.eCycleState 			:= stProcessCycleStatus.eState;
+stStatus.stProcessCycle 		:= stProcessCycleStatus;
+stStatus.stProcessStation 		:= stProcessStationStatus;
+stStatus.stMainDoorLock 		:= stMainDoorLockStatus;
 stStatus.eInitialisingWaitReason := eInitialisingWaitReason;
-stStatus.eStoppingWaitReason := eStoppingWaitReason;
-stIndexStatus := fbIndex.GetStatus();
-stStatus.eIndexState := stIndexStatus.eState;
-stStatus.stIndexStatus := stIndexStatus;
-stStatus.eEquipmentState := ipEquipment.GetState();
+stStatus.eStoppingWaitReason 	:= eStoppingWaitReason;
+stIndexStatus 					:= fbIndex.GetStatus();
+stStatus.eIndexState 			:= stIndexStatus.eState;
+stStatus.stIndexStatus 			:= stIndexStatus;
+stStatus.eEquipmentState 		:= ipEquipment.GetState();
 stStatus.eOperatorExchangeState := fbOperatorStation.GetState();
-stStatus.eOperatorInstruction := fbOperatorStation.GetInstruction();
-stStatus.stOperatorStation := stOperatorStatus;
-stStatus.eManualModeState := stManualModeStatus.eState;
-stStatus.stManualMode := stManualModeStatus;
-stStatus.bReady := eMachineState = E_MachineState.ReadyToStart;
-stStatus.bBusy := eMachineState = E_MachineState.AutoCycle;
-stStatus.bFaulted := eMachineState = E_MachineState.Fault;
+stStatus.eOperatorInstruction 	:= fbOperatorStation.GetInstruction();
+stStatus.stOperatorStation 		:= stOperatorStatus;
+stStatus.eManualModeState 		:= stManualModeStatus.eState;
+stStatus.stManualMode 			:= stManualModeStatus;
+stStatus.bReady 				:= eMachineState = E_MachineState.ReadyToStart;
+stStatus.bBusy 					:= eMachineState = E_MachineState.AutoCycle;
+stStatus.bFaulted 				:= eMachineState = E_MachineState.Fault;
 stStatus.bInitialisationTimeoutFault := bInitialisationTimeoutFault;
-stStatus.bStoppingTimeoutFault := bStoppingTimeoutFault;
-stStatus.bSafetyStopRequested := tpSafetyRunDrop.Q;
+stStatus.bStoppingTimeoutFault 	:= bStoppingTimeoutFault;
+stStatus.bSafetyStopRequested 	:= tpSafetyRunDrop.Q;
 stStatus.bSafetyRunRequested := stOutputsInternal.bSafetyRunRequest;
 stStatus.bEventFault := stInputs.bEventFault;
 stStatus.bCycleStopRequested := stInputs.bEventCycleStopRequest;

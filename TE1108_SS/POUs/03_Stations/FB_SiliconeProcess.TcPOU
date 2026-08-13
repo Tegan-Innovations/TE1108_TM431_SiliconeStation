@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_SiliconeProcess" Id="{8d52d051-1501-48a4-b370-9e9cf5a388a6}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SiliconeProcess
+VAR
+    // COMMAND REQUESTS
+    bStartRequest       : BOOL;
+    bStopRequest        : BOOL;
+    bResetRequest       : BOOL;
+
+    // PROCESS STATUS
+    bReady              : BOOL := TRUE;
+    bBusy               : BOOL;
+    bDone               : BOOL;
+    bFaulted            : BOOL;
+
+    // PROCESS RESULT
+    stResult            : ST_ProcessResult;
+
+    // SIMULATION
+    bSimulatePass       : BOOL := TRUE;
+    bSimulateFail       : BOOL;
+
+    // SIMULATED PROCESS TIME
+    tonProcess          : TON;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// ---------------------------------------------------------
+// RESET
+// ---------------------------------------------------------
+IF bResetRequest THEN
+    bStartRequest := FALSE;
+    bResetRequest := FALSE;
+
+    bBusy := FALSE;
+    bDone := FALSE;
+    bFaulted := FALSE;
+
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <Method Name="Cyclic" Id="{c0071b53-5b34-452b-94b8-fe3d661bdca6}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic 
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// ---------------------------------------------------------
+// PROCESS TIMER
+// ---------------------------------------------------------
+
+tonProcess(
+    IN := bBusy,
+    PT := T#2S
+);
+
+
+// ---------------------------------------------------------
+// RESET REQUEST
+// ---------------------------------------------------------
+
+IF bResetRequest THEN
+
+    bStartRequest := FALSE;
+    bStopRequest := FALSE;
+    bResetRequest := FALSE;
+
+    bBusy := FALSE;
+    bDone := FALSE;
+    bFaulted := FALSE;
+    bReady := TRUE;
+
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+
+    RETURN;
+
+END_IF
+
+
+// ---------------------------------------------------------
+// STOP REQUEST
+// ---------------------------------------------------------
+
+IF bStopRequest THEN
+
+    bStopRequest := FALSE;
+    bStartRequest := FALSE;
+
+    bBusy := FALSE;
+    bDone := FALSE;
+    bReady := TRUE;
+
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+
+    RETURN;
+
+END_IF
+
+
+// ---------------------------------------------------------
+// FAULT - INVALID SIMULATION SELECTION
+// ---------------------------------------------------------
+
+IF bSimulatePass AND bSimulateFail THEN
+
+    bBusy := FALSE;
+    bDone := FALSE;
+    bReady := FALSE;
+    bFaulted := TRUE;
+
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+
+    RETURN;
+
+END_IF
+
+
+// ---------------------------------------------------------
+// START PROCESS
+// ---------------------------------------------------------
+
+IF bStartRequest AND bReady AND NOT bFaulted THEN
+
+    bStartRequest := FALSE;
+
+    bReady := FALSE;
+    bBusy := TRUE;
+    bDone := FALSE;
+
+    // Clear previous result
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+
+END_IF
+
+
+// ---------------------------------------------------------
+// PROCESS COMPLETE
+// ---------------------------------------------------------
+
+IF bBusy AND tonProcess.Q THEN
+
+    bBusy := FALSE;
+    bDone := TRUE;
+    bReady := FALSE;
+
+    stResult.bValid := TRUE;
+
+    IF bSimulatePass AND NOT bSimulateFail THEN
+        stResult.bPassed := TRUE;
+
+    ELSIF bSimulateFail AND NOT bSimulatePass THEN
+        stResult.bPassed := FALSE;
+
+    ELSE
+        stResult.bValid := FALSE;
+        stResult.bPassed := FALSE;
+    END_IF
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetResult" Id="{f9b684d3-b599-4f20-991c-3700a7e95332}">
+      <Declaration><![CDATA[METHOD PUBLIC GetResult : ST_ProcessResult
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetResult := stResult;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsBusy" Id="{274c82ea-06d5-4736-8a89-ba63f91a019f}">
+      <Declaration><![CDATA[METHOD PUBLIC IsBusy : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsBusy := bBusy;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsDone" Id="{b02ac5a2-233d-4bf2-a13f-12fbfecc6eb8}">
+      <Declaration><![CDATA[METHOD PUBLIC IsDone : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsDone := bDone;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsFaulted" Id="{db8183da-9e88-49aa-8e41-23450332a92b}">
+      <Declaration><![CDATA[METHOD PUBLIC IsFaulted : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsFaulted := bFaulted;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsReady" Id="{06a5dceb-e769-4b5d-92ac-03b93de03eff}">
+      <Declaration><![CDATA[METHOD PUBLIC IsReady : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsReady := bReady;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestReset" Id="{b4b41a0d-2f09-4085-bf7e-c31c07f83c5d}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestReset 
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bResetRequest := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestStart" Id="{aa7d3781-f15e-4e2d-8289-bc237c37ef5a}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestStart 
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bReady AND NOT bBusy AND NOT bFaulted THEN
+
+    bDone := FALSE;
+
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+
+    bStartRequest := TRUE;
+
+END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestStop" Id="{4d79928f-90de-4fda-8e6a-824819bb14cb}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestStop 
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bBusy THEN
+    bStopRequest := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetSimulationResult" Id="{a88a696c-32bf-47b3-b256-1a785e4e13a8}">
+      <Declaration><![CDATA[METHOD PUBLIC SetSimulationResult
+VAR_INPUT
+    bPass : BOOL;
+    bFail : BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bSimulatePass := bPass;
+bSimulateFail := bFail;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

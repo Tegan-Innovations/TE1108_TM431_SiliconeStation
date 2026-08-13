@@ -22,12 +22,39 @@ VAR uiId : UINT; END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[uiId := GetNestIdAtPosition(ePosition);
+
 IF uiId >= 1 AND uiId <= 4 THEN
+
+    // Clear Silicone result
+    aNestInternal[uiId].stSiliconeResult.bValid := FALSE;
+    aNestInternal[uiId].stSiliconeResult.bPassed := FALSE;
+
+    // Clear Assembly result
+    aNestInternal[uiId].stAssemblyResult.bValid := FALSE;
+    aNestInternal[uiId].stAssemblyResult.bPassed := FALSE;
+
+    // Clear final result
     aNestInternal[uiId].stResult.bValid := FALSE;
+    aNestInternal[uiId].stResult.bPassed := FALSE;
+
+    // Reset process tracking
     aNestInternal[uiId].bProcessComplete := FALSE;
+    aNestInternal[uiId].bProcessRequired := FALSE;
+
+    // Reset disposition tracking
     aNestInternal[uiId].bDispositionSent := FALSE;
     aNestInternal[uiId].bOperatorExchangeComplete := FALSE;
     aNestInternal[uiId].eDisposition := E_PartDisposition.None;
+	
+	aNestInternal[uiId].stSiliconeResult.bValid := FALSE;
+	aNestInternal[uiId].stSiliconeResult.bPassed := FALSE;
+	
+	aNestInternal[uiId].stAssemblyResult.bValid := FALSE;
+	aNestInternal[uiId].stAssemblyResult.bPassed := FALSE;
+	
+	aNestInternal[uiId].stResult.bValid := FALSE;
+	aNestInternal[uiId].stResult.bPassed := FALSE;
+
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -138,21 +165,86 @@ IF uiId >= 1 AND uiId <= 4 THEN
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="StoreAssemblyResultAtPosition" Id="{8c97de87-1f32-4073-baf8-37cf70fd5d6e}">
+      <Declaration><![CDATA[METHOD PUBLIC StoreAssemblyResultAtPosition : BOOL
+VAR_INPUT
+    ePosition : E_TablePosition;
+    stResult  : ST_ProcessResult;
+END_VAR
+
+VAR
+    uiId : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[StoreAssemblyResultAtPosition := FALSE;
+
+uiId := GetNestIdAtPosition(ePosition);
+
+IF uiId >= 1 AND uiId <= 4 THEN
+
+    aNestInternal[uiId].stAssemblyResult := stResult;
+
+    StoreAssemblyResultAtPosition := TRUE;
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="StoreResultAtPosition" Id="{ddb2e5e3-90e7-449e-bf71-eb713c031025}">
       <Declaration><![CDATA[METHOD PUBLIC StoreResultAtPosition : BOOL
 VAR_INPUT ePosition : E_TablePosition; stResult : ST_ProcessResult; END_VAR
 VAR uiId : UINT; END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[uiId := GetNestIdAtPosition(ePosition);
+        <ST><![CDATA[StoreResultAtPosition := FALSE;
+
+uiId := GetNestIdAtPosition(ePosition);
+
 IF uiId >= 1 AND uiId <= 4 THEN
+
     aNestInternal[uiId].stResult := stResult;
     aNestInternal[uiId].bProcessComplete := stResult.bValid;
     aNestInternal[uiId].bProcessRequired := FALSE;
-    IF stResult.bValid AND stResult.bPassed THEN aNestInternal[uiId].eDisposition := E_PartDisposition.Pass;
-    ELSIF stResult.bValid THEN aNestInternal[uiId].eDisposition := E_PartDisposition.Reject;
+
+    IF stResult.bValid AND stResult.bPassed THEN
+
+        aNestInternal[uiId].eDisposition :=
+            E_PartDisposition.Pass;
+
+    ELSIF stResult.bValid THEN
+
+        aNestInternal[uiId].eDisposition :=
+            E_PartDisposition.Reject;
+
     END_IF
+
     StoreResultAtPosition := TRUE;
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StoreSiliconeResultAtPosition" Id="{ef4df2df-edca-421a-ba37-9dde27b38377}">
+      <Declaration><![CDATA[METHOD PUBLIC StoreSiliconeResultAtPosition : BOOL
+VAR_INPUT
+    ePosition : E_TablePosition;
+    stResult  : ST_ProcessResult;
+END_VAR
+
+VAR
+    uiId : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[StoreSiliconeResultAtPosition := FALSE;
+
+uiId := GetNestIdAtPosition(ePosition);
+
+IF uiId >= 1 AND uiId <= 4 THEN
+
+    aNestInternal[uiId].stSiliconeResult := stResult;
+
+    StoreSiliconeResultAtPosition := TRUE;
+
 END_IF]]></ST>
       </Implementation>
     </Method>
