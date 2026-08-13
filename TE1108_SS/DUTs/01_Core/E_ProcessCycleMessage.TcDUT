@@ -46,8 +46,10 @@ TYPE E_ProcessCycleMessage :
     CapturingProcessResult                  := 240,
     StoringProcessResult                    := 250,
 
-    // OPERATOR EXCHANGE
-    WaitingOperatorExchange                 := 260,
+	 // OPERATOR EXCHANGE
+	PreparingOperatorExchange   			:= 255,
+	WaitingOperatorExchange     			:= 260,
+	ConfirmingOperatorExchange  			:= 265,
 
     // CYCLE COMPLETION
     ProcessCycleComplete                    := 270,

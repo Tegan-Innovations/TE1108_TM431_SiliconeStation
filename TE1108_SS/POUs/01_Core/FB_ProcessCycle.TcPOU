@@ -95,6 +95,7 @@ tonProcessCycleTimeout(
         AND eState <> E_CycleState.WaitingForProcessCycleTrigger
         AND eState <> E_CycleState.CycleComplete
         AND eState <> E_CycleState.ControlledStop
+		AND eState <> E_CycleState.WaitingForOperatorExchange
         AND eState <> E_CycleState.Fault,
     PT := T#10S
 );
@@ -201,11 +202,52 @@ CASE eState OF
             AND stInputs.bAssemblySupportRetracted
         THEN
 
-            eState :=
-                E_CycleState.ValidatingIndexPermissives;
+            eState := E_CycleState.PreparingOperatorExchange;
 
         END_IF
+		
+		// -----------------------------------------------------
+		// PREPARING OPERATOR EXCHANGE
+		// -----------------------------------------------------
+		
+	E_CycleState.PreparingOperatorExchange:
+		
+			stStatusInternal.eMessage :=
+				E_ProcessCycleMessage.PreparingOperatorExchange;
+		
+			stRequestsInternal.bPrepareOperatorExchange := TRUE;
+		
+			eState :=
+				E_CycleState.WaitingForOperatorExchange;
+		// -----------------------------------------------------
+		// WAITING FOR OPERATOR EXCHANGE
+		// -----------------------------------------------------
+		
+	E_CycleState.WaitingForOperatorExchange:
+		
+			stStatusInternal.eMessage :=
+				E_ProcessCycleMessage.WaitingOperatorExchange;
+		
+			IF stInputs.bOperatorExchangeComplete THEN
+		
+				eState :=
+					E_CycleState.ConfirmingOperatorExchange;
+		
+			END_IF
 
+	// -----------------------------------------------------
+	// CONFIRMING OPERATOR EXCHANGE
+	// -----------------------------------------------------
+	
+	E_CycleState.ConfirmingOperatorExchange:
+	
+		stStatusInternal.eMessage :=
+			E_ProcessCycleMessage.ConfirmingOperatorExchange;
+	
+		stRequestsInternal.bConfirmOperatorExchange := TRUE;
+	
+		eState :=
+			E_CycleState.ValidatingIndexPermissives;
 
     // -----------------------------------------------------
     // VALIDATING INDEX PERMISSIVES

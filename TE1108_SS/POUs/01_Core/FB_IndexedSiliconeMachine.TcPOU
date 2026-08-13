@@ -363,6 +363,38 @@ fbOperatorStation.Cyclic(
     ePuckLockerState := stPuckStatus.eState,
     bRequireRejectConfirm := stConfig.bRequireRejectConfirm,
     bAllowEmptyNestIndex := stConfig.bAllowEmptyNestIndex);
+	
+stOperatorStatus := fbOperatorStation.GetStatus();
+
+// =========================================================
+// OPERATOR NEST RESULT RELEASE
+// =========================================================
+
+
+// PASS: clear after part removal.
+IF stOperatorNest.stResult.bValid
+    AND stOperatorNest.stResult.bPassed
+    AND stOperatorStatus.bPartRemovedConfirmed
+THEN
+
+    fbNestManager.ClearOperatorNest(
+        stConfig.eOperatorPosition
+    );
+
+END_IF
+
+
+// FAIL: clear only after reject confirmation.
+IF stOperatorNest.stResult.bValid
+    AND NOT stOperatorNest.stResult.bPassed
+    AND stOperatorStatus.bRejectConfirmed
+THEN
+
+    fbNestManager.ClearOperatorNest(
+        stConfig.eOperatorPosition
+    );
+
+END_IF
 
 // =========================================================
 // MACHINE PERMISSIVE AGGREGATION
@@ -721,7 +753,7 @@ CASE eMachineState OF
 		// stProcessCycleInputs.bProcessStationComplete := fbProcessStation.IsComplete();
 		// stProcessCycleInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
 		// stProcessCycleInputs.bResultStored := bResultStoredFeedback;
-		// stProcessCycleInputs.bOperatorExchangeComplete := fbOperatorStation.IsComplete();
+		stProcessCycleInputs.bOperatorExchangeComplete := fbOperatorStation.IsComplete();
 	
 			// =========================================================
 		// SILICONE PROCESS STATUS
