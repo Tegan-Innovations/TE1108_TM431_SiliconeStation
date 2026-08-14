@@ -1,6 +1,6 @@
 <div id="Content1_31" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="1340" data-tchmi-height="480">
 
-<div id="TcHmiTreeView_1" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTreeView" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="259" data-tchmi-width-unit="px" data-tchmi-hierarchical-data-property="children">
+<div id="TcHmiTreeView_1" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTreeView" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="260" data-tchmi-width-unit="px" data-tchmi-hierarchical-data-property="children">
 <script data-tchmi-target-attribute="data-tchmi-columns" type="application/json">
 [
   {
@@ -146,117 +146,10 @@
 ]
 </script>
 </div>
-<div id="IO_Region_18" data-tchmi-type="TcHmi.Controls.System.TcHmiRegion" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="259" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="1080" data-tchmi-width-unit="px" data-tchmi-target-content="%i%Settings_Screen%/i%">
+<div id="IO_Region_18" data-tchmi-type="TcHmi.Controls.System.TcHmiRegion" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="260" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="1100" data-tchmi-width-unit="px" data-tchmi-target-content="%i%Settings_Screen%/i%">
 
 
 
-<script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-[
-  {
-    "event": "%ctx%owner::Id|EventRegistrationMode=Resolve%/ctx%.onTargetContentReplaced",
-    "actions": [
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%ExpectedByDrawing1%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/REAL",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anDistanceCalibrationBlock.0%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%ExpectedByDrawing2%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/REAL",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anDistanceCalibrationBlock.1%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%ExpectedByDrawing3%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/REAL",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anDistanceCalibrationBlock.2%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%FixedByCalibration1%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/REAL",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anExpectedDistances.0%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%FixedByCalibration2%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/REAL",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anExpectedDistances.1%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%FixedByCalibration3%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/REAL",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anExpectedDistances.2%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%HeightTolerance1%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/DINT",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anTolerances.0%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%HeightTolerance2%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/DINT",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anTolerances.1%/s%"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%i%HeightTolerance3%/i%",
-        "value": {
-          "objectType": "Symbol",
-          "valueType": "tchmi:general#/definitions/DINT",
-          "symbolExpression": "%s%ADS.PLC1.GVL_Persistent.stProbesSettings.anTolerances.2%/s%"
-        },
-        "asyncWait": true
-      }
-    ]
-  }
-]
-</script>
+
 </div>
 </div>

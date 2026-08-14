@@ -405,6 +405,47 @@
                     "sMessage"
                 ],
                 "type": "object"
+            },
+            "ADS-PLC1.ST_StatusBanner": {
+                "additionalProperties": false,
+                "properties": {
+                    "sBannerBckColor": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-40"
+                            },
+                            {
+                                "propertyOrder": 2
+                            }
+                        ]
+                    },
+                    "sBannerTextColor": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-40"
+                            },
+                            {
+                                "propertyOrder": 3
+                            }
+                        ]
+                    },
+                    "sMachineStatusText": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                            },
+                            {
+                                "propertyOrder": 1
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "sMachineStatusText",
+                    "sBannerBckColor",
+                    "sBannerTextColor"
+                ],
+                "type": "object"
             }
         }
     },
@@ -1219,54 +1260,148 @@
             },
             "USEMAPPING": true
         },
-        "ADS.PLC1.GVL_HMI.StatusHMI.sBannerBckColor": {
+        "ADS.PLC1.GVL_HMI.StatusHMI": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
             "DYNAMIC": true,
-            "MAPPING": "PLC1::GVL_HMI::StatusHMI::sBannerBckColor",
+            "MAPPING": "PLC1::GVL_HMI::StatusHMI",
             "SCHEMA": {
                 "allOf": [
                     {
-                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-40"
+                        "comment": "Dynamic machine-state banner. Names retained from the Kistler HMI."
                     },
                     {
-                        "propertyOrder": 2
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_StatusBanner"
                     }
                 ]
             },
             "USEMAPPING": true
         },
-        "ADS.PLC1.GVL_HMI.StatusHMI.sBannerTextColor": {
+        "ADS.PLC1.GVL_HMI.astActiveEvents": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
             "DYNAMIC": true,
-            "MAPPING": "PLC1::GVL_HMI::StatusHMI::sBannerTextColor",
+            "MAPPING": "PLC1::GVL_HMI::astActiveEvents",
             "SCHEMA": {
                 "allOf": [
                     {
-                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-40"
+                        "comment": "Structures retained from the Kistler HMI concept for alarm/message grids.\r\n Replace the placeholder types with the existing TE1108 DUTs when imported.\r\n StatusHMI       : ST_StatusBanner;\r\n arrAlarmHistory : ARRAY[1..100] OF ST_AlarmHistory;\r\n astActiveEvents : ARRAY[0..50] OF ST_ActiveEvents;"
                     },
                     {
-                        "propertyOrder": 3
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.ARRAY_0..50_OF-ST_ActiveEvents"
                     }
                 ]
             },
             "USEMAPPING": true
         },
-        "ADS.PLC1.GVL_HMI.StatusHMI.sMachineStatusText": {
+        "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
             "DYNAMIC": true,
-            "MAPPING": "PLC1::GVL_HMI::StatusHMI::sMachineStatusText",
+            "MAPPING": "PLC1::GVL_HMI::bCmdOpenIvekSettings",
             "SCHEMA": {
                 "allOf": [
                     {
-                        "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                        "$ref": "tchmi:general#/definitions/BOOL"
                     },
                     {
-                        "propertyOrder": 1
+                        "comment": "==============================================================\r\n IVEK native web interface\r\n==============================================================\r\n Command written by TwinCAT HMI"
                     }
                 ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsAccessAllowed",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "PLC-calculated status"
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsActTimeout": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsActTimeout",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsActive": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsActive",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Written directly by IvekWebLauncher.exe through ADS"
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsHeartbeatLost": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsHeartbeatLost",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsInterlock": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsInterlock",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchBusy": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsLaunchBusy",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchError": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsLaunchError",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchPending": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIvekSettingsLaunchPending",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
             },
             "USEMAPPING": true
         },
@@ -4539,13 +4674,21 @@
                 "ADS.AdsSyncReadStateReq": 3,
                 "ADS.CheckLicense": 3,
                 "ADS.Diagnostics": 3,
-                "ADS.PLC1.GVL_HMI.StatusHMI.sBannerBckColor": 3,
-                "ADS.PLC1.GVL_HMI.StatusHMI.sBannerTextColor": 3,
-                "ADS.PLC1.GVL_HMI.StatusHMI.sMachineStatusText": 3,
+                "ADS.PLC1.GVL_HMI.StatusHMI": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.0.rForce": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.1.eResult": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.2": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.2.rDistance": 3,
+                "ADS.PLC1.GVL_HMI.astActiveEvents": 3,
+                "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsActTimeout": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsActive": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsHeartbeatLost": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsInterlock": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchBusy": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchError": 3,
+                "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchPending": 3,
                 "ADS.PLC1.GVL_HMI.i_bHMIIndexerManualEnable": 3,
                 "ADS.PLC1.GVL_HMI.sHMIVersion": 3,
                 "ADS.PLC1.GVL_HMI.sSystemName": 3,
