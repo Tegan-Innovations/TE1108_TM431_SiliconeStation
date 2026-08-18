@@ -21,8 +21,6 @@ STRUCT
 	bAssemblySupportRetract 		: BOOL;
 	
     bMainDoorUnlock                 : BOOL;
-    bPuckLockerAcknowledgeFault     : BOOL;
-    bEmptyPuckBypass                : BOOL;
     bSimulateProcessPass            : BOOL;
     bSimulateProcessFail            : BOOL;
     bSimulateProcessFault           : BOOL;

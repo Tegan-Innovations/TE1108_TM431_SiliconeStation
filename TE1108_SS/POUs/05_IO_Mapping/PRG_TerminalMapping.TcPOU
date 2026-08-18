@@ -114,9 +114,6 @@ GVL_IO.stInputs.bMainDoorDiagnosticOk 						:= GVL_Safety.bMainDoorDiagnosticOk;
 GVL_IO.stInputs.bMs6FeedbackOk 								:= GVL_Safety.bMs6FeedbackOk;
 GVL_IO.stInputs.bAirExhausted 								:= GVL_Safety.bAirExhausted;
 
-// Puck locker hardware is not present in EPLAN Rev 1.0.
-GVL_IO.stInputs.bPuckSensorUp 								:= FALSE;
-GVL_IO.stInputs.bPuckSensorDown 							:= FALSE;
 ]]></ST>
       </Implementation>
     </Method>

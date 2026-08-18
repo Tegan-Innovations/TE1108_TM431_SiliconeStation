@@ -34,7 +34,7 @@ GVL_IO.stOutputs.bVacuumAirSolenoid1    				:= FALSE;
 GVL_IO.stOutputs.bVacuumAirSolenoid2    				:= FALSE;
 
 GVL_IVEK_EIP.stOutput 									:= GVL_MASTER.stIvekOutput;
-GVL_IO.stOutputs.bPuckLockerPinUp 						:= GVL_MASTER.stOutputs.bPuckLockerPinUp;
+
 ]]></ST>
     </Implementation>
   </POU>

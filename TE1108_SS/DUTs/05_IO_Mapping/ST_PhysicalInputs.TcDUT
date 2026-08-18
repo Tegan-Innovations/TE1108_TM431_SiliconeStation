@@ -64,10 +64,7 @@ STRUCT
     uiNozzlePressureRaw           : UINT;
     uiVacuumPressureRaw           : UINT;
 
-    // Puck locker is not shown in EPLAN Rev 1.0. These remain available for
-    // future hardware revisions and must stay FALSE while the option is absent.
-    bPuckSensorUp                 : BOOL;
-    bPuckSensorDown               : BOOL;
+
 END_STRUCT
 END_TYPE
 ]]></Declaration>

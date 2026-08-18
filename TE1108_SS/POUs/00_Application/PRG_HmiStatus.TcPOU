@@ -70,7 +70,6 @@ GVL_HMI.stStatus.udiIvekStatusFlagsExt := GVL_MASTER.stIvekInput.udiStatusFlagsE
 GVL_HMI.stStatus.udiIvekFaultCode := GVL_MASTER.stIvekInput.udiFaultCode;
 GVL_HMI.stStatus.udiIvekAlertCode := GVL_MASTER.stIvekInput.udiAlertCode;
 GVL_HMI.stStatus.usiIvekCurrentRecipe := GVL_MASTER.stIvekInput.usiCurrentRecipe;
-GVL_HMI.stStatus.stPuckLocker := GVL_MASTER.stStatus.stPuckLocker;
 GVL_HMI.stStatus.eOperatorInstruction := GVL_MASTER.stStatus.eOperatorInstruction;
 GVL_HMI.stStatus.stOperatorStation := GVL_MASTER.stStatus.stOperatorStation;
 GVL_HMI.stStatus.stManualMode := GVL_MASTER.stStatus.stManualMode;

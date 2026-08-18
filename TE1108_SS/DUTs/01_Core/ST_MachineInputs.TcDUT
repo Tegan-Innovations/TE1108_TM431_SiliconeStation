@@ -32,8 +32,6 @@ STRUCT
     bReservoirPartPresent            : BOOL;
     bRejectChutePartPresent          : BOOL;
 
-    bPuckSensorUp                    : BOOL;
-    bPuckSensorDown                  : BOOL;
 
     bIndexReady                      : BOOL;
     bIndexLocked                     : BOOL;

@@ -2,6 +2,122 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.22">
 	<DataTypes>
 		<DataType>
+			<Name GUID="{6FD2BF8B-C55F-59B8-AA4B-CD262669FF8E}" AutoDeleteType="true">E_IvekStatusState</Name>
+			<BitSize>16</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
+			<EnumInfo>
+				<Text><![CDATA[Idle]]></Text>
+				<Enum>0</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Priming]]></Text>
+				<Enum>1</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Dispensing]]></Text>
+				<Enum>2</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Metering]]></Text>
+				<Enum>3</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[DrawbackDwell]]></Text>
+				<Enum>4</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Drawback]]></Text>
+				<Enum>5</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Faulted]]></Text>
+				<Enum>6</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Referencing]]></Text>
+				<Enum>7</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[Initialising]]></Text>
+				<Enum>8</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[PreOpDwell]]></Text>
+				<Enum>9</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[PostOpDwell]]></Text>
+				<Enum>10</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[MotionLocked]]></Text>
+				<Enum>22</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[NotConfigured]]></Text>
+				<Enum>23</Enum>
+			</EnumInfo>
+			<EnumInfo>
+				<Text><![CDATA[ClearingFault]]></Text>
+				<Enum>26</Enum>
+			</EnumInfo>
+			<Properties>
+				<Property>
+					<Name>qualified_only</Name>
+				</Property>
+				<Property>
+					<Name>strict</Name>
+				</Property>
+				<Property>
+					<Name>to_string</Name>
+				</Property>
+				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
+			</Properties>
+		</DataType>
+		<DataType>
+			<Name GUID="{A3C41B80-9F0D-3FDE-E2D0-1D9C5C9BEC72}" AutoDeleteType="true">ST_IvekCyclicInput</Name>
+			<BitSize>192</BitSize>
+			<SubItem>
+				<Name>udiStatusFlags</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ Controller -> PLC. Link these members to EDS-generated input tags.]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiStatusFlagsExt</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>eStatusState</Name>
+				<Type GUID="{6FD2BF8B-C55F-59B8-AA4B-CD262669FF8E}">E_IvekStatusState</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiFaultCode</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiAlertCode</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>usiCurrentRecipe</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>160</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
 			<Name GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}" AutoDeleteType="true">E_TablePosition</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
@@ -41,8 +157,8 @@
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{A22BE7AB-34A2-3F84-A0F3-F44BC116E6D7}" AutoDeleteType="true">ST_PhysicalInputs</Name>
-			<BitSize>352</BitSize>
+			<Name GUID="{9A71F321-FB53-7941-9BE9-BCA0640031AE}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<BitSize>336</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
@@ -281,136 +397,6 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<BitSize>16</BitSize>
 				<BitOffs>320</BitOffs>
 			</SubItem>
-			<SubItem>
-				<Name>bPuckSensorUp</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Puck locker is not shown in EPLAN Rev 1.0. These remain available for
- future hardware revisions and must stay FALSE while the option is absent.]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>336</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>bPuckSensorDown</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>344</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{6FD2BF8B-C55F-59B8-AA4B-CD262669FF8E}" AutoDeleteType="true">E_IvekStatusState</Name>
-			<BitSize>16</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
-			<EnumInfo>
-				<Text><![CDATA[Idle]]></Text>
-				<Enum>0</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Priming]]></Text>
-				<Enum>1</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Dispensing]]></Text>
-				<Enum>2</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Metering]]></Text>
-				<Enum>3</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[DrawbackDwell]]></Text>
-				<Enum>4</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Drawback]]></Text>
-				<Enum>5</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Faulted]]></Text>
-				<Enum>6</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Referencing]]></Text>
-				<Enum>7</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Initialising]]></Text>
-				<Enum>8</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[PreOpDwell]]></Text>
-				<Enum>9</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[PostOpDwell]]></Text>
-				<Enum>10</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[MotionLocked]]></Text>
-				<Enum>22</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[NotConfigured]]></Text>
-				<Enum>23</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[ClearingFault]]></Text>
-				<Enum>26</Enum>
-			</EnumInfo>
-			<Properties>
-				<Property>
-					<Name>qualified_only</Name>
-				</Property>
-				<Property>
-					<Name>strict</Name>
-				</Property>
-				<Property>
-					<Name>to_string</Name>
-				</Property>
-				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
-			</Properties>
-		</DataType>
-		<DataType>
-			<Name GUID="{A3C41B80-9F0D-3FDE-E2D0-1D9C5C9BEC72}" AutoDeleteType="true">ST_IvekCyclicInput</Name>
-			<BitSize>192</BitSize>
-			<SubItem>
-				<Name>udiStatusFlags</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ Controller -> PLC. Link these members to EDS-generated input tags.]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiStatusFlagsExt</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>32</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>eStatusState</Name>
-				<Type GUID="{6FD2BF8B-C55F-59B8-AA4B-CD262669FF8E}">E_IvekStatusState</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>64</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiFaultCode</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>96</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiAlertCode</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>128</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>usiCurrentRecipe</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>160</BitOffs>
-			</SubItem>
 		</DataType>
 		<DataType>
 			<Name GUID="{B4F36A2B-2B83-FE10-B836-F85585CE0E92}" AutoDeleteType="true">ST_PhysicalOutputs</Name>
@@ -582,39 +568,119 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{1B090823-34FE-AA35-7EE2-1CF6FAEBC3BF}" AutoDeleteType="true">E_PuckLockerMode</Name>
-			<BitSize>16</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
-			<EnumInfo>
-				<Text><![CDATA[Disabled]]></Text>
-				<Enum>0</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[Enabled]]></Text>
-				<Enum>1</Enum>
-			</EnumInfo>
-			<EnumInfo>
-				<Text><![CDATA[EnabledWithEmptyPuckBypass]]></Text>
-				<Enum>2</Enum>
-			</EnumInfo>
-			<Properties>
-				<Property>
-					<Name>qualified_only</Name>
-				</Property>
-				<Property>
-					<Name>strict</Name>
-				</Property>
-				<Property>
-					<Name>to_string</Name>
-				</Property>
-				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
-			</Properties>
+			<Name GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF BOOL</Name>
+			<BitSize>32</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{97838A9D-9706-EDD7-EEF6-9BC401FDF559}" AutoDeleteType="true">ST_MachineConfig</Name>
-			<BitSize>672</BitSize>
+			<Name GUID="{DBBC0829-9631-F186-8EA3-CBF6836DC288}" AutoDeleteType="true">ST_HmiStatistics</Name>
+			<BitSize>256</BitSize>
+			<SubItem>
+				<Name>udiTotalCycles</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiTotalPass</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiTotalFail</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiEquipmentFaults</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiIndexFaults</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiSafetyStops</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>160</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiAbortedCycles</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>192</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>dtLastCycleCompleted</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000004D}">DATE_AND_TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>224</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{FAFB0BC4-EEAC-70C9-2FC4-E0B82AF34D09}" AutoDeleteType="true">ST_EventsHistory</Name>
+			<BitSize>8256</BitSize>
+			<SubItem>
+				<Name>sEventTex</Name>
+				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
+				<BitSize>2048</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>sType</Name>
+				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
+				<BitSize>2048</BitSize>
+				<BitOffs>2048</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>sDate</Name>
+				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
+				<BitSize>2048</BitSize>
+				<BitOffs>4096</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>sTime</Name>
+				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
+				<BitSize>2048</BitSize>
+				<BitOffs>6144</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>nEventsAmount</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>8192</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>abType</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<Comment><![CDATA[1:Alarm]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>8224</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{385AF722-F2E3-E02B-BA4E-6FD795CA6941}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..200] OF ST_EventsHistory</Name>
+			<BitSize>1659456</BitSize>
+			<BaseType GUID="{FAFB0BC4-EEAC-70C9-2FC4-E0B82AF34D09}">ST_EventsHistory</BaseType>
+			<ArrayInfo>
+				<LBound>0</LBound>
+				<Elements>201</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
+			<Name GUID="{154B4CD1-B8B4-F0A7-AA31-7815DD1371AF}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<BitSize>608</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
@@ -733,37 +799,28 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				</Default>
 			</SubItem>
 			<SubItem>
-				<Name>tPuckRemovalConfirm</Name>
+				<Name>tAssemblyProcessSimulation</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
 				<BitOffs>416</BitOffs>
 				<Default>
-					<DateTime>T#300MS</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tAssemblyProcessSimulation</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>448</BitOffs>
-				<Default>
-					<DateTime>T#5S</DateTime>
+					<DateTime>T#2S</DateTime>
 				</Default>
 			</SubItem>
 			<SubItem>
 				<Name>tSiliconeProcessSimulation</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>480</BitOffs>
+				<BitOffs>448</BitOffs>
 				<Default>
-					<DateTime>T#5S</DateTime>
+					<DateTime>T#2S</DateTime>
 				</Default>
 			</SubItem>
 			<SubItem>
 				<Name>eOperatorPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>512</BitOffs>
+				<BitOffs>480</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
@@ -772,7 +829,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>eSiliconePosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>528</BitOffs>
+				<BitOffs>496</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position3</EnumText>
 				</Default>
@@ -781,7 +838,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>eAssemblyPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>544</BitOffs>
+				<BitOffs>512</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position4</EnumText>
 				</Default>
@@ -790,26 +847,16 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>eRejectPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>560</BitOffs>
+				<BitOffs>528</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>ePuckLockerMode</Name>
-				<Type GUID="{1B090823-34FE-AA35-7EE2-1CF6FAEBC3BF}">E_PuckLockerMode</Type>
-				<Comment><![CDATA[ No puck locker in EPLAN Rev 1.0.]]></Comment>
-				<BitSize>16</BitSize>
-				<BitOffs>576</BitOffs>
-				<Default>
-					<EnumText>E_PuckLockerMode.Disabled</EnumText>
 				</Default>
 			</SubItem>
 			<SubItem>
 				<Name>bRequireTwoHandsForIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>592</BitOffs>
+				<BitOffs>544</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -818,7 +865,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>bAllowEmptyNestIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>600</BitOffs>
+				<BitOffs>552</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -827,7 +874,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>bRequireRejectConfirm</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>608</BitOffs>
+				<BitOffs>560</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -836,7 +883,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Name>bUseProcessSimulation</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>616</BitOffs>
+				<BitOffs>568</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -849,7 +896,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 					<Elements>4</Elements>
 				</ArrayInfo>
 				<BitSize>32</BitSize>
-				<BitOffs>624</BitOffs>
+				<BitOffs>576</BitOffs>
 				<Default>
 					<SubItem>
 						<Name>[1]</Name>
@@ -869,117 +916,6 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 					</SubItem>
 				</Default>
 			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF BOOL</Name>
-			<BitSize>32</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
-			<Name GUID="{DBBC0829-9631-F186-8EA3-CBF6836DC288}" AutoDeleteType="true">ST_HmiStatistics</Name>
-			<BitSize>256</BitSize>
-			<SubItem>
-				<Name>udiTotalCycles</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiTotalPass</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>32</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiTotalFail</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>64</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiEquipmentFaults</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>96</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiIndexFaults</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>128</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiSafetyStops</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>160</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiAbortedCycles</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>192</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>dtLastCycleCompleted</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000004D}">DATE_AND_TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>224</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{FAFB0BC4-EEAC-70C9-2FC4-E0B82AF34D09}" AutoDeleteType="true">ST_EventsHistory</Name>
-			<BitSize>8256</BitSize>
-			<SubItem>
-				<Name>sEventTex</Name>
-				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
-				<BitSize>2048</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>sType</Name>
-				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
-				<BitSize>2048</BitSize>
-				<BitOffs>2048</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>sDate</Name>
-				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
-				<BitSize>2048</BitSize>
-				<BitOffs>4096</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>sTime</Name>
-				<Type GUID="{18071995-0000-0000-0000-0001000000FF}">STRING(255)</Type>
-				<BitSize>2048</BitSize>
-				<BitOffs>6144</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>nEventsAmount</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>8192</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>abType</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
-				<Comment><![CDATA[1:Alarm]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>8224</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{385AF722-F2E3-E02B-BA4E-6FD795CA6941}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..200] OF ST_EventsHistory</Name>
-			<BitSize>1659456</BitSize>
-			<BaseType GUID="{FAFB0BC4-EEAC-70C9-2FC4-E0B82AF34D09}">ST_EventsHistory</BaseType>
-			<ArrayInfo>
-				<LBound>0</LBound>
-				<Elements>201</Elements>
-			</ArrayInfo>
 		</DataType>
 		<DataType>
 			<Name GUID="{2438F91B-E188-4ED7-8594-54354F9ED6A4}" Namespace="Safety" TcBaseType="true">FSOE_6</Name>
@@ -1122,7 +1058,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{A0E202AC-90EA-0059-1D25-B6FDC09D7A82}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{8879E2DD-64D2-31AB-9411-9CB3847843AB}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1130,12 +1066,6 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						<Var>
 							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
 							<Type>USINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{97838A9D-9706-EDD7-EEF6-9BC401FDF559}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1151,6 +1081,12 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						<Var>
 							<Name>GVL_Persistent.astEventsHistory</Name>
 							<Type GUID="{385AF722-F2E3-E02B-BA4E-6FD795CA6941}">ARRAY [0..200] OF ST_EventsHistory</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{154B4CD1-B8B4-F0A7-AA31-7815DD1371AF}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 					</Vars>
@@ -1315,12 +1251,6 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 					</Vars>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
-						<Var>
-							<Name>GVL_IO.stInputs</Name>
-							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
- Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{A22BE7AB-34A2-3F84-A0F3-F44BC116E6D7}">ST_PhysicalInputs</Type>
-						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
 							<Comment><![CDATA[ ---------------------------------------------------------------------
@@ -1766,6 +1696,12 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 							<Comment><![CDATA[ Map/link these fields to the EDS-generated EtherNet/IP process image.
  The exact byte offsets and assembly sizes must be confirmed using the IVEK EDS/firmware manual.]]></Comment>
 							<Type GUID="{A3C41B80-9F0D-3FDE-E2D0-1D9C5C9BEC72}">ST_IvekCyclicInput</Type>
+						</Var>
+						<Var>
+							<Name>GVL_IO.stInputs</Name>
+							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
+ Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
+							<Type GUID="{9A71F321-FB53-7941-9BE9-BCA0640031AE}">ST_PhysicalInputs</Type>
 						</Var>
 					</Vars>
 					<UnrestoredVarLinks ImportTime="2026-07-29T09:34:25">

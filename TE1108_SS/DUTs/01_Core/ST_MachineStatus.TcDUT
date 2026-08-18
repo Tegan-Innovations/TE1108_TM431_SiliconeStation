@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_MachineStatus" Id="{f4291e0c-7f34-4828-9807-36e2caee1fcf}">
-    <Declaration>TYPE ST_MachineStatus :
+    <Declaration><![CDATA[TYPE ST_MachineStatus :
 STRUCT
     eMachineState          : E_MachineState;
     eCycleState            : E_CycleState;
@@ -31,7 +31,6 @@ STRUCT
     bProcessPermissive     : BOOL;
     stPermissives          : ST_MachinePermissives;
     stLastResult           : ST_ProcessResult;
-    stPuckLocker           : ST_PuckLockerStatus;
     stAlarms               : ST_AlarmManagerStatus;
     aNest                  : ARRAY[1..4] OF ST_Nest;
     udiAlarmCode           : UDINT;
@@ -39,6 +38,6 @@ STRUCT
     sOperatorMessage       : STRING(255);
 END_STRUCT
 END_TYPE
-</Declaration>
+]]></Declaration>
   </DUT>
 </TcPlcObject>

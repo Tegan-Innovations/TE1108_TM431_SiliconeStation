@@ -73,8 +73,7 @@ GVL_MASTER.stInputs.bAssemblySupportRetracted 			:=GVL_IO.stInputs.bAssemblySupp
 
 GVL_MASTER.stIvekInput  								:= GVL_IVEK_EIP.stInput;
 GVL_MASTER.bIvekCommsOk 								:= GVL_IVEK_EIP.bCommunicationOk;
-GVL_MASTER.stInputs.bPuckSensorUp 						:= GVL_IO.stInputs.bPuckSensorUp;
-GVL_MASTER.stInputs.bPuckSensorDown 					:= GVL_IO.stInputs.bPuckSensorDown;
+
 ]]></ST>
     </Implementation>
   </POU>

@@ -28,209 +28,479 @@ VAR_INPUT
     stOperatorNest         			: ST_Nest;
     bGearboxAssemblyPartPresent   	: BOOL;
     bRejectChutePartPresent     	: BOOL;
-    bPuckLockerEnabled     			: BOOL;
-    bPuckDetected          			: BOOL;
-    bPuckLocked            			: BOOL;
-    ePuckLockerState       			: E_PuckLockerState;
     bRequireRejectConfirm  			: BOOL;
     bAllowEmptyNestIndex   			: BOOL;
 	bReservoirPartPresent  			: BOOL;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[
+        <ST><![CDATA[// =========================================================
+// OPERATOR EXCHANGE CONTROL
+// =========================================================
 
+// Detect whether any physical part is currently present
+// at the operator station.
 bAnyPartPresent :=
     bGearboxAssemblyPartPresent
     OR bReservoirPartPresent;
-	
+
+
+// =========================================================
+// REJECT EDGE DETECTION
+// =========================================================
+
 // Reject confirmation is intentionally edge-based.
-// A reject edge is only armed after the operator nest has become empty.
-bRejectPulse := bRejectChutePartPresent AND NOT bPreviousRejectSensor;
-bPreviousRejectSensor := bRejectChutePartPresent;
+//
+// The reject input must return LOW after the operator nest
+// becomes empty before a new reject confirmation is accepted.
+//
+// This prevents an already-active reject sensor from being
+// incorrectly accepted for the current failed part.
+bRejectPulse :=
+    bRejectChutePartPresent
+    AND NOT bPreviousRejectSensor;
+
+bPreviousRejectSensor :=
+    bRejectChutePartPresent;
+
 bRejectEdgeAccepted := FALSE;
 
+
+// =========================================================
+// OPERATOR EXCHANGE STATE MACHINE
+// =========================================================
+
 IF NOT bAutomaticActive THEN
-    eState := E_OperatorExchangeState.Idle;
+
+    eState :=
+        E_OperatorExchangeState.Idle;
+
     bExchangeComplete := FALSE;
     bPartRemovedConfirmed := FALSE;
     bRejectConfirmed := FALSE;
     bRejectArmed := FALSE;
-    eInstruction := E_OperatorInstruction.None;
+
+    eInstruction :=
+        E_OperatorInstruction.None;
+
     sMessage := '';
+
 ELSE
+
     CASE eState OF
+
+
+        // =====================================================
+        // IDLE
+        // =====================================================
+
         E_OperatorExchangeState.Idle:
+
             bExchangeComplete := FALSE;
-            eInstruction := E_OperatorInstruction.None;
+
+            eInstruction :=
+                E_OperatorInstruction.None;
+
             sMessage := '';
+
             IF bIndexStable THEN
-                eState := E_OperatorExchangeState.EvaluateNest;
+
+                eState :=
+                    E_OperatorExchangeState.EvaluateNest;
+
             END_IF
 
+
+        // =====================================================
+        // EVALUATE OPERATOR NEST
+        // =====================================================
+
         E_OperatorExchangeState.EvaluateNest:
+
             bExchangeComplete := FALSE;
+
             bPartRemovedConfirmed := FALSE;
             bRejectConfirmed := FALSE;
             bRejectArmed := FALSE;
 
+
+            // -------------------------------------------------
+            // Previous processed result exists.
+            // -------------------------------------------------
+
             IF stOperatorNest.stResult.bValid THEN
+
+
+                // ---------------------------------------------
+                // Processed part is still physically present.
+                // ---------------------------------------------
+
                 IF bAnyPartPresent THEN
-                    eState := E_OperatorExchangeState.WaitingForPartRemoval;
+
+                    eState :=
+                        E_OperatorExchangeState.WaitingForPartRemoval;
+
+
+                // ---------------------------------------------
+                // Processed part is already absent.
+                // ---------------------------------------------
+
                 ELSE
-                    // The part is already absent. Removal is confirmed, but an
-                    // already-active reject chute sensor is never accepted.
+
                     bPartRemovedConfirmed := TRUE;
-                    IF NOT stOperatorNest.stResult.bPassed AND bRequireRejectConfirm THEN
-                        eState := E_OperatorExchangeState.WaitingForRejectConfirmation;
-                    ELSIF stOperatorNest.stResult.bPassed AND bPuckLockerEnabled THEN
-                        eState := E_OperatorExchangeState.WaitingForPuckRemoval;
+
+
+                    // Failed part still requires reject
+                    // confirmation when enabled.
+                    IF NOT stOperatorNest.stResult.bPassed
+                       AND bRequireRejectConfirm THEN
+
+                        eState :=
+                            E_OperatorExchangeState.WaitingForRejectConfirmation;
+
+
+                    // Passed part or reject confirmation disabled.
                     ELSE
-                        eState := E_OperatorExchangeState.WaitingForPartLoading;
+
+                        eState :=
+                            E_OperatorExchangeState.WaitingForPartLoading;
+
                     END_IF
+
                 END_IF
+
+
+            // -------------------------------------------------
+            // No previous processed result.
+            // -------------------------------------------------
+
             ELSE
-                eState := E_OperatorExchangeState.WaitingForPartLoading;
+
+                eState :=
+                    E_OperatorExchangeState.WaitingForPartLoading;
+
             END_IF
+
+
+        // =====================================================
+        // WAITING FOR PART REMOVAL
+        // =====================================================
 
         E_OperatorExchangeState.WaitingForPartRemoval:
+
+
+            // -------------------------------------------------
+            // Operator instruction.
+            // -------------------------------------------------
+
             IF stOperatorNest.stResult.bPassed THEN
-                eInstruction := E_OperatorInstruction.RemovePassedPart;
-                sMessage := 'Remove passed part from operator nest';
+
+                eInstruction :=
+                    E_OperatorInstruction.RemovePassedPart;
+
+                sMessage :=
+                    'Remove passed part from operator nest';
+
             ELSE
-                eInstruction := E_OperatorInstruction.RemoveFailedPart;
-                sMessage := 'Remove failed part from operator nest';
+
+                eInstruction :=
+                    E_OperatorInstruction.RemoveFailedPart;
+
+                sMessage :=
+                    'Remove failed part from operator nest';
+
             END_IF
+
+
+            // -------------------------------------------------
+            // Wait until the processed part is physically gone.
+            // -------------------------------------------------
 
             IF NOT bAnyPartPresent THEN
+
                 bPartRemovedConfirmed := TRUE;
+
+                // Reject confirmation must always start
+                // disarmed after part removal.
                 bRejectArmed := FALSE;
 
-                IF NOT stOperatorNest.stResult.bPassed AND bRequireRejectConfirm THEN
-                    eState := E_OperatorExchangeState.WaitingForRejectConfirmation;
-                ELSIF stOperatorNest.stResult.bPassed AND bPuckLockerEnabled THEN
-                    eState := E_OperatorExchangeState.WaitingForPuckRemoval;
+
+                // ---------------------------------------------
+                // Failed part requires reject confirmation.
+                // ---------------------------------------------
+
+                IF NOT stOperatorNest.stResult.bPassed
+                   AND bRequireRejectConfirm THEN
+
+                    eState :=
+                        E_OperatorExchangeState.WaitingForRejectConfirmation;
+
+
+                // ---------------------------------------------
+                // Passed part can continue directly to loading.
+                // ---------------------------------------------
+
                 ELSE
-                    eState := E_OperatorExchangeState.WaitingForPartLoading;
+
+                    eState :=
+                        E_OperatorExchangeState.WaitingForPartLoading;
+
                 END_IF
+
             END_IF
+
+
+        // =====================================================
+        // WAITING FOR REJECT CONFIRMATION
+        // =====================================================
 
         E_OperatorExchangeState.WaitingForRejectConfirmation:
-            eInstruction := E_OperatorInstruction.PlacePartInRejectBin;
 
-            // The reject input must first be LOW after nest removal. This prevents
-            // a part placed in the bin before the nest sensor reaches zero from
-            // being accepted.
+            eInstruction :=
+                E_OperatorInstruction.PlacePartInRejectBin;
+
+
+            // -------------------------------------------------
+            // Reject sensor must first become LOW.
+            //
+            // This prevents an object that was already present
+            // in the reject chute from confirming the new reject.
+            // -------------------------------------------------
+
             IF NOT bRejectChutePartPresent THEN
+
                 bRejectArmed := TRUE;
+
             END_IF
+
+
+            // -------------------------------------------------
+            // Operator message.
+            // -------------------------------------------------
 
             IF NOT bRejectArmed THEN
-                sMessage := 'Remove failed part from reject bin, then place it back after the nest is empty';
+
+                sMessage :=
+                    'Remove failed part from reject bin, then place it back after the nest is empty';
+
             ELSE
-                sMessage := 'Place failed part in reject bin';
+
+                sMessage :=
+                    'Place failed part into reject station';
+
             END_IF
 
-            IF bPartRemovedConfirmed AND bRejectArmed AND bRejectPulse THEN
+
+            // -------------------------------------------------
+            // Accept a new LOW -> HIGH reject sensor transition.
+            // -------------------------------------------------
+
+            IF bPartRemovedConfirmed
+               AND bRejectArmed
+               AND bRejectPulse THEN
+
                 bRejectConfirmed := TRUE;
                 bRejectEdgeAccepted := TRUE;
+
             END_IF
 
-            IF bPartRemovedConfirmed AND bRejectConfirmed THEN
-                // FAIL never releases the puck. When the locker is enabled, the
-                // existing puck must still be present and locked before indexing.
-                IF NOT bPuckLockerEnabled
-                   OR (bPuckDetected
-                       AND bPuckLocked
-                       AND ePuckLockerState = E_PuckLockerState.Locked)
-                THEN
-                    eState := E_OperatorExchangeState.ExchangeComplete;
-                ELSE
-                    sMessage := 'Restore the puck and wait until it is locked';
-                END_IF
+
+            // -------------------------------------------------
+            // Rejected part disposition completed.
+            // Continue with loading the next part.
+            // -------------------------------------------------
+
+            IF bPartRemovedConfirmed
+               AND bRejectConfirmed THEN
+
+                eState :=
+                    E_OperatorExchangeState.WaitingForPartLoading;
+
             END_IF
 
-        E_OperatorExchangeState.WaitingForPuckRemoval:
-            eInstruction := E_OperatorInstruction.RemoveReleasedPuck;
-            sMessage := 'Remove released puck';
-            IF (ePuckLockerState = E_PuckLockerState.WaitingForPuck) AND NOT bPuckDetected THEN
-                eState := E_OperatorExchangeState.WaitingForNewPuck;
-            END_IF
 
-        E_OperatorExchangeState.WaitingForNewPuck:
-            eInstruction := E_OperatorInstruction.LoadNewPuck;
-            sMessage := 'Load new puck';
-            IF bPuckDetected THEN
-                eState := E_OperatorExchangeState.WaitingForPuckLocked;
-            END_IF
-
-        E_OperatorExchangeState.WaitingForPuckLocked:
-            eInstruction := E_OperatorInstruction.WaitPuckLocking;
-            sMessage := 'Waiting for puck locker to lock the new puck';
-            IF bPuckLocked AND ePuckLockerState = E_PuckLockerState.Locked THEN
-                eState := E_OperatorExchangeState.WaitingForPartLoading;
-            END_IF
+        // =====================================================
+        // WAITING FOR PART LOADING
+        // =====================================================
 
         E_OperatorExchangeState.WaitingForPartLoading:
+
+
+            // -------------------------------------------------
+            // Empty nest indexing is allowed.
+            // -------------------------------------------------
+
             IF bAllowEmptyNestIndex THEN
-                eInstruction := E_OperatorInstruction.ReadyToIndexEmpty;
-                sMessage := 'Load a new part or continue with an empty nest';
+
+                eInstruction :=
+                    E_OperatorInstruction.ReadyToIndexEmpty;
+
+                sMessage :=
+                    'Load new part or continue with empty nest';
+
                 bExchangeComplete := TRUE;
-                eState := E_OperatorExchangeState.ExchangeComplete;
+
+                eState :=
+                    E_OperatorExchangeState.ExchangeComplete;
+
+
+            // -------------------------------------------------
+            // New part is required.
+            // -------------------------------------------------
+
             ELSE
-                eInstruction := E_OperatorInstruction.LoadPart;
-                sMessage := 'Load new part';
+
+                eInstruction :=
+                    E_OperatorInstruction.LoadPart;
+
+                sMessage :=
+                    'Load new part into operator nest';
+
+
                 IF bAnyPartPresent THEN
+
                     bExchangeComplete := TRUE;
-                    eState := E_OperatorExchangeState.ExchangeComplete;
+
+                    eState :=
+                        E_OperatorExchangeState.ExchangeComplete;
+
                 END_IF
+
             END_IF
+
+
+        // =====================================================
+        // EXCHANGE COMPLETE
+        // =====================================================
 
         E_OperatorExchangeState.ExchangeComplete:
-            eInstruction := E_OperatorInstruction.ReadyToIndex;
-            sMessage := 'Operator exchange complete';
+
+            eInstruction :=
+                E_OperatorInstruction.ReadyToIndex;
+
+            sMessage :=
+                'Operator exchange complete - press two-hand buttons to index';
+
+            // Keep the index permission active until the
+            // table physically starts moving.
             bExchangeComplete := TRUE;
+
+
             IF NOT bIndexStable THEN
-                eState := E_OperatorExchangeState.WaitingForTableIndexComplete;
+
+                eState :=
+                    E_OperatorExchangeState.WaitingForTableIndexComplete;
+
             END_IF
 
+
+        // =====================================================
+        // WAITING FOR TABLE INDEX COMPLETE
+        // =====================================================
+
         E_OperatorExchangeState.WaitingForTableIndexComplete:
-            eInstruction := E_OperatorInstruction.TableIndexing;
-            sMessage := 'Table indexing';
+
+            eInstruction :=
+                E_OperatorInstruction.TableIndexing;
+
+            sMessage :=
+                'Table index in progress';
+
+
+            // Table has finished indexing and is stable again.
             IF bIndexStable THEN
+
                 bExchangeComplete := FALSE;
+
                 bPartRemovedConfirmed := FALSE;
                 bRejectConfirmed := FALSE;
                 bRejectArmed := FALSE;
-                eState := E_OperatorExchangeState.EvaluateNest;
+
+                eState :=
+                    E_OperatorExchangeState.EvaluateNest;
+
             END_IF
 
+
+        // =====================================================
+        // FAULT
+        // =====================================================
+
         E_OperatorExchangeState.Fault:
+
             bExchangeComplete := FALSE;
-            eInstruction := E_OperatorInstruction.None;
-            sMessage := 'Operator exchange fault';
+
+            eInstruction :=
+                E_OperatorInstruction.None;
+
+            sMessage :=
+                'Operator exchange fault';
+
+
     END_CASE
+
 END_IF
 
-stStatusInternal.eState := eState;
-stStatusInternal.eInstruction := eInstruction;
-stStatusInternal.bExchangeComplete := bExchangeComplete;
-stStatusInternal.bIndexPermissive := bExchangeComplete AND eState = E_OperatorExchangeState.ExchangeComplete;
-stStatusInternal.bPartRemovedConfirmed := bPartRemovedConfirmed;
-stStatusInternal.bRejectConfirmed := bRejectConfirmed;
-stStatusInternal.bRejectArmed := bRejectArmed;
-stStatusInternal.bRejectEdgeAccepted := bRejectEdgeAccepted;
-stStatusInternal.bRejectWaitingForClear := (eState = E_OperatorExchangeState.WaitingForRejectConfirmation) AND NOT bRejectArmed;
-stStatusInternal.bPuckLockerEnabled := bPuckLockerEnabled;
-stStatusInternal.bPuckDetected := bPuckDetected;
-stStatusInternal.bPuckLocked := bPuckLocked;
-stStatusInternal.bPuckReleaseComplete := (ePuckLockerState = E_PuckLockerState.WaitingForPuck) AND NOT bPuckDetected;
-stStatusInternal.bGearboxAssemblyPartPresent := bGearboxAssemblyPartPresent;
-stStatusInternal.bRejectChutePartPresent := bRejectChutePartPresent;
-stStatusInternal.bResultValid := stOperatorNest.stResult.bValid;
-stStatusInternal.bResultPassed := stOperatorNest.stResult.bPassed;
-stStatusInternal.sMessage := sMessage;
-]]></ST>
+
+// =========================================================
+// STATUS MAPPING
+// =========================================================
+
+stStatusInternal.eState :=
+    eState;
+
+stStatusInternal.eInstruction :=
+    eInstruction;
+
+stStatusInternal.bExchangeComplete :=
+    bExchangeComplete;
+
+
+// Index is permitted only while the operator exchange
+// has explicitly reached ExchangeComplete.
+stStatusInternal.bIndexPermissive :=
+    bExchangeComplete
+    AND
+    eState = E_OperatorExchangeState.ExchangeComplete;
+
+
+stStatusInternal.bPartRemovedConfirmed :=
+    bPartRemovedConfirmed;
+
+stStatusInternal.bRejectConfirmed :=
+    bRejectConfirmed;
+
+stStatusInternal.bRejectArmed :=
+    bRejectArmed;
+
+stStatusInternal.bRejectEdgeAccepted :=
+    bRejectEdgeAccepted;
+
+
+// TRUE while waiting for the reject sensor to return LOW
+// before accepting the next reject edge.
+stStatusInternal.bRejectWaitingForClear :=
+    (
+        eState =
+            E_OperatorExchangeState.WaitingForRejectConfirmation
+    )
+    AND NOT bRejectArmed;
+
+
+stStatusInternal.bGearboxAssemblyPartPresent :=
+    bGearboxAssemblyPartPresent;
+
+stStatusInternal.bRejectChutePartPresent :=
+    bRejectChutePartPresent;
+
+stStatusInternal.bResultValid :=
+    stOperatorNest.stResult.bValid;
+
+stStatusInternal.bResultPassed :=
+    stOperatorNest.stResult.bPassed;
+
+stStatusInternal.sMessage :=
+    sMessage;]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetInstruction" Id="{2034d533-b044-4c41-a727-b56a5384cce6}">

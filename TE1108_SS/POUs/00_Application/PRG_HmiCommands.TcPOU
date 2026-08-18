@@ -12,15 +12,13 @@ END_VAR
       <ST><![CDATA[rtStart(CLK := GVL_MASTER.stInputs.bStartButton);
 rtReset(CLK := GVL_MASTER.stInputs.bResetButton);
 rtAck(CLK := GVL_HMI.stCommands.bAcknowledge);
-rtPuckAck(CLK := GVL_HMI.stCommands.bPuckLockerAcknowledgeFault);
+
 
 
 GVL_MASTER.stCommand.bStart 						:= rtStart.Q;
 GVL_MASTER.stCommand.bStop 							:= GVL_MASTER.stInputs.bStopButton;
 GVL_MASTER.stCommand.bReset 						:= rtReset.Q;
 GVL_MASTER.stCommand.bAcknowledge 					:= rtAck.Q;
-GVL_MASTER.stCommand.bAcknowledgePuckRemovalFault 	:= rtPuckAck.Q;
-GVL_MASTER.stCommand.bEmptyPuckBypass 				:= GVL_HMI.stCommands.bEmptyPuckBypass;
 
 rtManualRequest(
     CLK := GVL_HMI.stCommands.bManualModeRequest

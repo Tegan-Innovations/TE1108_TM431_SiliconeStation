@@ -11,7 +11,7 @@ VAR
     fbMainDoorLock              : FB_MainDoorLock;
     fbNestManager               : FB_NestTableManager;
     fbOperatorStation           : FB_OperatorStation;
-    // fbPuckLocker             : FB_PuckLocker;
+    
 
     // =====================================================
     // PROCESS COMPONENTS
@@ -71,7 +71,6 @@ VAR
     stIndexStatus               : ST_IndexStatus;
     stProcessStationStatus      : ST_ProcessStationStatus;
     stMainDoorLockStatus        : ST_MainDoorLockStatus;
-    stPuckStatus                : ST_PuckLockerStatus;
 
     // =====================================================
     // MACHINE PERMISSIVES / OUTPUTS
@@ -122,10 +121,6 @@ VAR
     bProcExtend                   : BOOL;
     bProcRetract                  : BOOL;
 
-    // =====================================================
-    // PUCK CONTROL
-    // =====================================================
-    bPuckPinUp                    : BOOL;
 
     // =====================================================
     // INITIALISATION / STOPPING
@@ -328,22 +323,7 @@ fbNestManager.Cyclic(
 stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
 stSiliconeNest := fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
 stAssemblyNest := fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
-// =========================================================
-// PUCK LOCKER CONTROL
-// =========================================================
 
-// // Puck locker remains independent from the automatic cycle.
-// fbPuckLocker.Cyclic(
-//     eMode := stConfig.ePuckLockerMode,
-//     bSensorUp := stInputs.bPuckSensorUp,
-//     bSensorDown := stInputs.bPuckSensorDown,
-//     bPartRemovedFromNest := stOperatorNest.bPartRemovedPulse,
-//     bReleasePassPuck := stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed AND NOT stOperatorNest.bDispositionSent,
-//     bAcknowledgeFault := stCommand.bAcknowledgePuckRemovalFault,
-//     bEmptyPuckBypass := stCommand.bEmptyPuckBypass,
-//     tRemovalConfirm := stConfig.tPuckRemovalConfirm,
-//     bPinCommandUp => bPuckPinUp);
-// 	stPuckStatus := FALSE;
 
 // =========================================================
 // OPERATOR STATION CONTROL
@@ -357,10 +337,6 @@ fbOperatorStation.Cyclic(
     bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
     bReservoirPartPresent := stInputs.bReservoirPartPresent,
     bRejectChutePartPresent := stInputs.bRejectChutePartPresent,
-    bPuckLockerEnabled := stConfig.ePuckLockerMode <> E_PuckLockerMode.Disabled,
-    bPuckLocked := FALSE,
-    bPuckDetected := stPuckStatus.bPuckDetected,
-    ePuckLockerState := stPuckStatus.eState,
     bRequireRejectConfirm := stConfig.bRequireRejectConfirm,
     bAllowEmptyNestIndex := stConfig.bAllowEmptyNestIndex);
 	
@@ -404,7 +380,6 @@ END_IF
 stPermissives.bSafetyIndexPermissive := stInputs.stSafety.bMotionSafetyPermitted;
 stPermissives.bOperatorIndexPermissive := fbOperatorStation.IndexPermissive();
 stPermissives.bProcessIndexPermissive := fbProcessStation.IndexPermissive();
-stPermissives.bPuckLockerIndexPermissive := stPuckStatus.bIndexPermissive;
 
 stPermissives.bIndexMoveAllowed := 
 	stPermissives.bSafetyIndexPermissive
@@ -665,9 +640,7 @@ CASE eMachineState OF
 		ELSIF NOT fbMainDoorLock.IsReadyForAutomatic() THEN
     		eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorNotReady;
 			
-// 		ELSIF stPuckStatus.bUnexpectedRemovalFault OR stPuckStatus.bPuckSensorMismatch THEN eInitialisingWaitReason := E_InitialisingWaitReason.PuckLockerFaulted;
-// 		ELSIF NOT ipEquipment.IsReady() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessEquipmentNotReady;
- 		
+	
 		END_IF
 
 
@@ -1309,7 +1282,6 @@ tpSafetyRunDrop(
 
 // Outputs and public status
 stOutputsInternal.bAirSupplyEnable := bAirSupplyEnable;
-stOutputsInternal.bPuckLockerPinUp := bPuckPinUp;
 // An internal PLC machine fault temporarily removes the TwinSAFE run request.
 // The request returns automatically after the configured TP duration.
 stOutputsInternal.bSafetyRunRequest := NOT tpSafetyRunDrop.Q;
@@ -1365,7 +1337,6 @@ stStatus.bIndexPermissive 		:= stPermissives.bIndexMoveAllowed;
 stStatus.bProcessPermissive 	:= stPermissives.bProcessStartAllowed;
 stStatus.stPermissives 			:= stPermissives;
 stStatus.stLastResult 			:= stLastResult;
-stStatus.stPuckLocker 			:= stPuckStatus;
 // =========================================================
 // ACTIVE FAULT SUMMARY FOR MAIN HMI GRID
 // =========================================================
@@ -1460,7 +1431,6 @@ ELSIF eMachineState = E_MachineState.Initialising THEN
         E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted: stStatus.sMachineMessage := 'System initialising - waiting for Silicone Support Cylinder retract';
         E_InitialisingWaitReason.ProcessStationFaulted: stStatus.sMachineMessage := 'System initialising - process station fault';
         E_InitialisingWaitReason.MainDoorFaulted: stStatus.sMachineMessage := 'System initialising - main door lock fault';
-        E_InitialisingWaitReason.PuckLockerFaulted: stStatus.sMachineMessage := 'System initialising - puck locker fault';
         E_InitialisingWaitReason.ProcessEquipmentNotReady: stStatus.sMachineMessage := 'System initialising - waiting for process equipment';
     ELSE stStatus.sMachineMessage := 'System initialising'; 
 END_CASE
@@ -1501,8 +1471,7 @@ ELSIF eMachineState = E_MachineState.Fault THEN
                 stStatus.sMachineMessage := 'Initialisation timeout - main door did not lock';
             E_InitialisingWaitReason.ProcessStationFaulted:
                 stStatus.sMachineMessage := 'Initialisation timeout - process station fault';
-            E_InitialisingWaitReason.PuckLockerFaulted:
-                stStatus.sMachineMessage := 'Initialisation timeout - puck locker fault';
+            
             E_InitialisingWaitReason.ProcessEquipmentNotReady:
                 stStatus.sMachineMessage := 'Initialisation timeout - process equipment not ready';
         ELSE

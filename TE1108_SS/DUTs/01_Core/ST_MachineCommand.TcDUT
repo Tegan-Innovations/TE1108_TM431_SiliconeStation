@@ -19,7 +19,6 @@ STRUCT
     bProcessRequest                : BOOL;
     bAcknowledge                   : BOOL;
     bAcknowledgePuckRemovalFault   : BOOL;
-    bEmptyPuckBypass               : BOOL;
     bSimulateProcessPass           : BOOL;
     bSimulateProcessFail           : BOOL;
     bSimulateProcessFault          : BOOL;

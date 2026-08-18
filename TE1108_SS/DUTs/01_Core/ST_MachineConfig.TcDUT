@@ -16,7 +16,7 @@ STRUCT
     tCylinderTimeout            : TIME := T#5S;
     tProcessTimeout             : TIME := T#60S;
     tOperatorIdleTimeout        : TIME := T#30S;
-    tPuckRemovalConfirm         : TIME := T#300MS;
+    
 
 	tAssemblyProcessSimulation  : TIME := T#2S;
 	tSiliconeProcessSimulation  : TIME := T#2S;
@@ -25,7 +25,7 @@ STRUCT
 	eSiliconePosition : E_TablePosition := E_TablePosition.Position3;
 	eAssemblyPosition : E_TablePosition := E_TablePosition.Position4;
 	eRejectPosition   : E_TablePosition := E_TablePosition.Position1;
-    ePuckLockerMode             : E_PuckLockerMode := E_PuckLockerMode.Disabled; // No puck locker in EPLAN Rev 1.0.
+	
     bRequireTwoHandsForIndex    : BOOL := TRUE;
     bAllowEmptyNestIndex        : BOOL := TRUE;
     bRequireRejectConfirm       : BOOL := TRUE;

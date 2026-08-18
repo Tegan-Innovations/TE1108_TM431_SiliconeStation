@@ -51,7 +51,6 @@ STRUCT
     udiIvekFaultCode                : UDINT;
     udiIvekAlertCode                : UDINT;
     usiIvekCurrentRecipe            : USINT;
-    stPuckLocker                    : ST_PuckLockerStatus;
     eOperatorInstruction            : E_OperatorInstruction;
     stOperatorStation                : ST_OperatorStationStatus;
     stManualMode                    : ST_ManualModeStatus;

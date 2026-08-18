@@ -198,7 +198,7 @@ GVL_MASTER.stStationEvents[2].aEvents[5].sSolution := 'Press both safety control
 GVL_MASTER.stStationEvents[2].aEvents[10].bMessage := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[10].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.bWaitingOperatorExchange;
 GVL_MASTER.stStationEvents[2].aEvents[10].bEventText := 'Index waiting for operator exchange';
-GVL_MASTER.stStationEvents[2].aEvents[10].sSolution := 'Complete part removal, reject confirmation and puck exchange';
+GVL_MASTER.stStationEvents[2].aEvents[10].sSolution := 'Complete part removal, reject confirmation.';
 
 
 // Operator station diagnostics. These are visual messages only; the active
@@ -228,19 +228,7 @@ GVL_MASTER.stStationEvents[1].aEvents[14].bEventFlag := tonTransferSupportMismat
 GVL_MASTER.stStationEvents[1].aEvents[14].bEventText := 'Silicone Support Cylinder sensor mismatch';
 GVL_MASTER.stStationEvents[1].aEvents[14].sSolution := 'Check the Silicone Support Cylinder sensors on Term 8 Channels 3 and 4';
 
-// Raw analog values are published to the HMI only. High/low alarms remain disabled
-// until channel configuration and engineering-unit limits are confirmed onsite.
 
-// Station 3 - Puck locker
-GVL_MASTER.stStationEvents[3].aEvents[0].bFault := TRUE;
-GVL_MASTER.stStationEvents[3].aEvents[0].bEventFlag := GVL_MASTER.stStatus.stPuckLocker.bUnexpectedRemovalFault;
-GVL_MASTER.stStationEvents[3].aEvents[0].bEventText := 'Puck removed while locker was engaged';
-GVL_MASTER.stStationEvents[3].aEvents[0].sSolution := 'Restore the puck and request administrator acknowledgement';
-
-GVL_MASTER.stStationEvents[3].aEvents[1].bFault := TRUE;
-GVL_MASTER.stStationEvents[3].aEvents[1].bEventFlag := GVL_MASTER.stStatus.stPuckLocker.bPuckSensorMismatch;
-GVL_MASTER.stStationEvents[3].aEvents[1].bEventText := 'Puck locker sensor mismatch';
-GVL_MASTER.stStationEvents[3].aEvents[1].sSolution := 'Check both puck sensors, cylinder position and wiring';
 
 // Operator instructions are reserved for astActiveEvents[0] and are not event triggers.
 
