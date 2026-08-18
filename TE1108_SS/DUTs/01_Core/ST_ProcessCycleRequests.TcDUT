@@ -4,16 +4,28 @@
     <Declaration><![CDATA[TYPE ST_ProcessCycleRequests :
 STRUCT
     // PROCESS STATION
-    bStartProcessStation       : BOOL;
-    bStopProcessStation        : BOOL;
-    bCaptureProcessResult      : BOOL;
-    bStoreProcessResult        : BOOL;
+   // bStartProcessStation       : BOOL;
+    //bStopProcessStation        : BOOL;
+   // bCaptureProcessResult      : BOOL;
+    //bStoreProcessResult        : BOOL;
 
     // SUPPORTS
     bSiliconeSupportExtend     : BOOL;
     bSiliconeSupportRetract    : BOOL;
     bAssemblySupportExtend     : BOOL;
     bAssemblySupportRetract    : BOOL;
+	
+	// SILICONE PROCESS
+	bStartSiliconeProcess       : BOOL;
+	bStopSiliconeProcess        : BOOL;
+	bCaptureSiliconeResult      : BOOL;
+	bStoreSiliconeResult        : BOOL;
+	
+	// ASSEMBLY PROCESS
+	bStartAssemblyProcess       : BOOL;
+	bStopAssemblyProcess        : BOOL;
+	bCaptureAssemblyResult      : BOOL;
+	bStoreAssemblyResult        : BOOL;
 
     // OPERATOR EXCHANGE
     bPrepareOperatorExchange   : BOOL;

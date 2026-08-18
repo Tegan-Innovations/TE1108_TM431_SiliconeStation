@@ -1122,20 +1122,20 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{368617A0-269D-5814-2FC1-3BC0C72E177A}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{A0E202AC-90EA-0059-1D25-B6FDC09D7A82}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{97838A9D-9706-EDD7-EEF6-9BC401FDF559}">ST_MachineConfig</Type>
+							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
+							<Type>USINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
-							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
-							<Type>USINT</Type>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{97838A9D-9706-EDD7-EEF6-9BC401FDF559}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1340,14 +1340,6 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bLeftFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bRightFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bFlapsSafe</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -1719,6 +1711,14 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 							<Name>GVL_EtherCAT.stTerm14_EL6652.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
 							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bRightFlapSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bFlapsSafe</Name>
+							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bTwoHandSafe</Name>

@@ -21,10 +21,16 @@ STRUCT
     bProcessComplete               : BOOL;
 
     // RESULT / DISPOSITION
-    stResult                       : ST_ProcessResult;
+    
     eDisposition                   : E_PartDisposition;
     bDispositionSent               : BOOL;
     bOperatorExchangeComplete      : BOOL;
+	
+	// PROCESS RESULTS
+	stSiliconeResult               : ST_ProcessResult;
+	stAssemblyResult               : ST_ProcessResult;
+	stResult                       : ST_ProcessResult;
+		
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>
