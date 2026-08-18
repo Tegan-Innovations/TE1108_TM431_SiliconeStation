@@ -67,6 +67,7 @@ VAR_INPUT
     bReservoirPartPresent          : BOOL;
     eOperatorPosition              : E_TablePosition;
     aNestEnabled                   : ARRAY[1..4] OF BOOL;
+	bIndexSamePositionDetected 	   : BOOL;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT bInitialised THEN
@@ -90,7 +91,8 @@ FOR i := 1 TO 4 DO aNestInternal[i].bEnabled := aNestEnabled[i]; END_FOR
 bIndexStablePulse := bIndexStable AND NOT bPreviousIndexStable;
 bPreviousIndexStable := bIndexStable;
 
-IF bIndexStablePulse THEN
+IF bIndexStablePulse
+    AND NOT bIndexSamePositionDetected THEN
     uiNest := aPositionToNest[4];
     aPositionToNest[4] := aPositionToNest[3];
     aPositionToNest[3] := aPositionToNest[2];

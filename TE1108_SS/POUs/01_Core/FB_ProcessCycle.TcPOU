@@ -333,6 +333,7 @@ CASE eState OF
 		ELSIF stInputs.bIndexDone THEN
 		
 			IF stInputs.bIndexSamePositionDetected THEN
+				stStatusInternal.eMessage := E_ProcessCycleMessage.IndexSamePositionDetected;
 				eState := E_CycleState.CycleComplete;
 		
 			ELSIF stInputs.bSiliconeProcessRequired
@@ -678,6 +679,10 @@ CASE stStatusInternal.eMessage OF
 
     E_ProcessCycleMessage.None:
         stStatusInternal.sMessage := '';
+	
+	E_ProcessCycleMessage.IndexSamePositionDetected:
+    stStatusInternal.sMessage :=
+        'Index returned to the same position - press and hold the two-hand controls to retry';
 
     E_ProcessCycleMessage.InitialisingProcessCycle:
         stStatusInternal.sMessage := 'Initialising automatic process cycle';
@@ -732,6 +737,7 @@ ELSE
     stStatusInternal.sMessage := '';
 
 END_CASE
+
 
 
 // =========================================================

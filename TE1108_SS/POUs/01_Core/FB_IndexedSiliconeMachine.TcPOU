@@ -321,6 +321,7 @@ fbNestManager.Cyclic(
     bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
     bReservoirPartPresent := stInputs.bReservoirPartPresent,
     eOperatorPosition := stConfig.eOperatorPosition,
+	bIndexSamePositionDetected :=stIndexStatus.bSamePositionDetected,
     aNestEnabled := stConfig.aNestEnabled
 );
 
@@ -1357,14 +1358,14 @@ stStatus.bFaulted 				:= eMachineState = E_MachineState.Fault;
 stStatus.bInitialisationTimeoutFault := bInitialisationTimeoutFault;
 stStatus.bStoppingTimeoutFault 	:= bStoppingTimeoutFault;
 stStatus.bSafetyStopRequested 	:= tpSafetyRunDrop.Q;
-stStatus.bSafetyRunRequested := stOutputsInternal.bSafetyRunRequest;
-stStatus.bEventFault := stInputs.bEventFault;
-stStatus.bCycleStopRequested := stInputs.bEventCycleStopRequest;
-stStatus.bIndexPermissive := stPermissives.bIndexMoveAllowed;
-stStatus.bProcessPermissive := stPermissives.bProcessStartAllowed;
-stStatus.stPermissives := stPermissives;
-stStatus.stLastResult := stLastResult;
-stStatus.stPuckLocker := stPuckStatus;
+stStatus.bSafetyRunRequested 	:= stOutputsInternal.bSafetyRunRequest;
+stStatus.bEventFault 			:= stInputs.bEventFault;
+stStatus.bCycleStopRequested 	:= stInputs.bEventCycleStopRequest;
+stStatus.bIndexPermissive 		:= stPermissives.bIndexMoveAllowed;
+stStatus.bProcessPermissive 	:= stPermissives.bProcessStartAllowed;
+stStatus.stPermissives 			:= stPermissives;
+stStatus.stLastResult 			:= stLastResult;
+stStatus.stPuckLocker 			:= stPuckStatus;
 // =========================================================
 // ACTIVE FAULT SUMMARY FOR MAIN HMI GRID
 // =========================================================

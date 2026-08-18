@@ -24,6 +24,7 @@ TYPE E_ProcessCycleMessage :
     WaitingForIndexStart                    := 100,
     IndexingTable                           := 110,
     WaitingForIndexComplete                 := 120,
+	IndexSamePositionDetected               := 125,
 
     // PROCESS NEST
     WaitingPartAtProcess                    := 130,
