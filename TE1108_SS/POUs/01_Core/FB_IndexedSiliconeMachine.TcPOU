@@ -307,18 +307,20 @@ END_IF
 
 // =========================================================
 // NEST MANAGEMENT
-// =========================================================
 
-// Nest ownership and stable sensor edge tracking
 fbNestManager.Cyclic(
     bIndexStable := bIndexStable,
     bIndexComplete := bIndexDone,
+
+    eIndexPosition := stInputs.eIndexPosition,
+
     bGearboxAssemblyPartPresent := stInputs.bGearboxAssemblyPartPresent,
     bReservoirPartPresent := stInputs.bReservoirPartPresent,
     eOperatorPosition := stConfig.eOperatorPosition,
-	bIndexSamePositionDetected :=stIndexStatus.bSamePositionDetected,
+    bIndexSamePositionDetected := stIndexStatus.bSamePositionDetected,
     aNestEnabled := stConfig.aNestEnabled
 );
+
 
 stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
 stSiliconeNest := fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);

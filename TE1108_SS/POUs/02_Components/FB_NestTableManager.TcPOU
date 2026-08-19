@@ -4,12 +4,15 @@
     <Declaration><![CDATA[FUNCTION_BLOCK FB_NestTableManager
 VAR
     aNestInternal          : ARRAY[1..4] OF ST_Nest;
-    aPositionToNest        : ARRAY[1..4] OF UINT := [1,2,3,4];
     bInitialised           : BOOL;
-    bPreviousIndexStable   : BOOL;
-	bIndexStablePulse      : BOOL;
+    bPreviousIndexComplete : BOOL;
+    bIndexCompletePulse    : BOOL;
     i                      : INT;
     uiNest                 : UINT;
+END_VAR
+
+VAR RETAIN
+    aPositionToNest        : ARRAY[1..4] OF UINT := [1,2,3,4];
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -63,65 +66,185 @@ END_IF]]></ST>
 VAR_INPUT
     bIndexStable                   : BOOL;
     bIndexComplete                 : BOOL;
+    bIndexSamePositionDetected     : BOOL;
+
+    eIndexPosition                 : E_TablePosition;
+
     bGearboxAssemblyPartPresent    : BOOL;
     bReservoirPartPresent          : BOOL;
     eOperatorPosition              : E_TablePosition;
     aNestEnabled                   : ARRAY[1..4] OF BOOL;
-	bIndexSamePositionDetected 	   : BOOL;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT bInitialised THEN
+        <ST><![CDATA[// =========================================================
+// INITIALISATION
+// =========================================================
+
+IF NOT bInitialised THEN
+
+    // ---------------------------------------------------------
+    // INITIALISE NEST IDENTITIES
+    // ---------------------------------------------------------
     FOR i := 1 TO 4 DO
-        aNestInternal[i].nId := INT_TO_UINT(i);
-        aNestInternal[i].ePosition := UINT_TO_E_TablePosition(INT_TO_UINT(i));
-        aNestInternal[i].bEnabled := aNestEnabled[i];
+
+        aNestInternal[i].nId :=
+            INT_TO_UINT(i);
+
+        aNestInternal[i].bEnabled :=
+            aNestEnabled[i];
+
     END_FOR
 
-    aPositionToNest[1] := 1;
-    aPositionToNest[2] := 2;
-    aPositionToNest[3] := 3;
-    aPositionToNest[4] := 4;
-
-    bPreviousIndexStable := bIndexStable;
     bInitialised := TRUE;
+
 END_IF
 
-FOR i := 1 TO 4 DO aNestInternal[i].bEnabled := aNestEnabled[i]; END_FOR
 
-bIndexStablePulse := bIndexStable AND NOT bPreviousIndexStable;
-bPreviousIndexStable := bIndexStable;
 
-IF bIndexStablePulse
-    AND NOT bIndexSamePositionDetected THEN
-    uiNest := aPositionToNest[4];
-    aPositionToNest[4] := aPositionToNest[3];
-    aPositionToNest[3] := aPositionToNest[2];
-    aPositionToNest[2] := aPositionToNest[1];
-    aPositionToNest[1] := uiNest;
-END_IF
+// =========================================================
+// NEST ENABLE SETTINGS
+// =========================================================
 
 FOR i := 1 TO 4 DO
-    aNestInternal[aPositionToNest[i]].ePosition := UINT_TO_E_TablePosition(INT_TO_UINT(i));
-    aNestInternal[i].bPartLoadedPulse := FALSE;
-    aNestInternal[i].bPartRemovedPulse := FALSE;
+
+    aNestInternal[i].bEnabled :=
+        aNestEnabled[i];
+
 END_FOR
 
+
+
+// =========================================================
+// ABSOLUTE NEST POSITION SYNCHRONISATION
+// =========================================================
+//
+// eIndexPosition identifies which physical nest is currently
+// located at the reference/operator position.
+//
+// Position 1 = Operator
+// Position 3 = Silicone
+// Position 4 = Assembly
+//
+// The complete table layout is reconstructed from this
+// absolute reference.
+// =========================================================
+
+IF bIndexStable
+    AND eIndexPosition <> E_TablePosition.Unknown
+THEN
+
+    CASE eIndexPosition OF
+
+        // Nest 1 is currently at Operator / Position 1
+        E_TablePosition.Position1:
+
+            aPositionToNest[1] := 1;
+            aPositionToNest[2] := 4;
+            aPositionToNest[3] := 3;
+            aPositionToNest[4] := 2;
+
+
+        // Nest 2 is currently at Operator / Position 1
+        E_TablePosition.Position2:
+
+            aPositionToNest[1] := 2;
+            aPositionToNest[2] := 1;
+            aPositionToNest[3] := 4;
+            aPositionToNest[4] := 3;
+
+
+        // Nest 3 is currently at Operator / Position 1
+        E_TablePosition.Position3:
+
+            aPositionToNest[1] := 3;
+            aPositionToNest[2] := 2;
+            aPositionToNest[3] := 1;
+            aPositionToNest[4] := 4;
+
+
+        // Nest 4 is currently at Operator / Position 1
+        E_TablePosition.Position4:
+
+            aPositionToNest[1] := 4;
+            aPositionToNest[2] := 3;
+            aPositionToNest[3] := 2;
+            aPositionToNest[4] := 1;
+
+    END_CASE
+
+END_IF
+
+
+
+// =========================================================
+// UPDATE CURRENT POSITION OF EACH NEST
+// =========================================================
+
+IF bIndexStable
+    AND eIndexPosition <> E_TablePosition.Unknown
+THEN
+
+    FOR i := 1 TO 4 DO
+
+        aNestInternal[
+            aPositionToNest[i]
+        ].ePosition :=
+            UINT_TO_E_TablePosition(
+                INT_TO_UINT(i)
+            );
+
+    END_FOR
+
+END_IF
+
+
+
+// =========================================================
+// RESET NEST EDGE PULSES
+// =========================================================
+
+FOR i := 1 TO 4 DO
+
+    aNestInternal[i].bPartLoadedPulse :=
+        FALSE;
+
+    aNestInternal[i].bPartRemovedPulse :=
+        FALSE;
+
+END_FOR
+
+
+
+// =========================================================
+// OPERATOR STATION PART TRACKING
+// =========================================================
+
 IF bIndexStable THEN
-    uiNest := aPositionToNest[TO_UINT(eOperatorPosition)];
-    // Keep the existing operator exchange tracking based on the Gearbox sensor.
+
+    uiNest :=
+        aPositionToNest[
+            TO_UINT(eOperatorPosition)
+        ];
+
     aNestInternal[uiNest].bPartLoadedPulse :=
         bGearboxAssemblyPartPresent
-        AND NOT aNestInternal[uiNest].bPreviousPartPresent;
+        AND NOT
+            aNestInternal[uiNest].bPreviousPartPresent;
 
     aNestInternal[uiNest].bPartRemovedPulse :=
         NOT bGearboxAssemblyPartPresent
-        AND aNestInternal[uiNest].bPreviousPartPresent;
+        AND
+            aNestInternal[uiNest].bPreviousPartPresent;
 
-    aNestInternal[uiNest].bPreviousPartPresent := bGearboxAssemblyPartPresent;
-    // Store the physical part presence in the nest currently at the operator station.
-    aNestInternal[uiNest].bGearboxAssemblyPartPresent := bGearboxAssemblyPartPresent;
-    aNestInternal[uiNest].bReservoirPartPresent := bReservoirPartPresent;
-	
+    aNestInternal[uiNest].bPreviousPartPresent :=
+        bGearboxAssemblyPartPresent;
+
+    aNestInternal[uiNest].bGearboxAssemblyPartPresent :=
+        bGearboxAssemblyPartPresent;
+
+    aNestInternal[uiNest].bReservoirPartPresent :=
+        bReservoirPartPresent;
+
 END_IF]]></ST>
       </Implementation>
     </Method>

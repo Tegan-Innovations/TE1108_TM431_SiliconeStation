@@ -1255,6 +1255,86 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_Config.aNestEnabled.0": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::aNestEnabled[0]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.aNestEnabled.1": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::aNestEnabled[1]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.aNestEnabled.2": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::aNestEnabled[2]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.aNestEnabled.3": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::aNestEnabled[3]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.0": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::aNestEnabled[0]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.1": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::aNestEnabled[1]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.2": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::aNestEnabled[2]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.3": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::aNestEnabled[3]",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.StatusHMI": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4929,6 +5009,14 @@
                 "ADS.AdsSyncReadStateReq": 3,
                 "ADS.CheckLicense": 3,
                 "ADS.Diagnostics": 3,
+                "ADS.PLC1.GVL_Config.aNestEnabled.0": 3,
+                "ADS.PLC1.GVL_Config.aNestEnabled.1": 3,
+                "ADS.PLC1.GVL_Config.aNestEnabled.2": 3,
+                "ADS.PLC1.GVL_Config.aNestEnabled.3": 3,
+                "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.0": 3,
+                "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.1": 3,
+                "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.2": 3,
+                "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.3": 3,
                 "ADS.PLC1.GVL_HMI.StatusHMI": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.0.rForce": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.1.eResult": 3,
