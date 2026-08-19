@@ -13,7 +13,7 @@ STRUCT
     tTwoHandRecoveryTimeout     : TIME := T#10S;
     tDoorLockTimeout            : TIME := T#10S;
     tDoorUnlockTimeout          : TIME := T#10S;
-    tCylinderTimeout            : TIME := T#5S;
+    tCylinderTimeout            : TIME := T#30S;
     tProcessTimeout             : TIME := T#60S;
     tOperatorIdleTimeout        : TIME := T#30S;
     

@@ -124,45 +124,40 @@
                     4,
                     5,
                     6,
-                    7,
-                    99
+                    7
                 ],
                 "options": [
                     {
-                        "label": "SYSTEM_POWER_UP",
+                        "label": "PowerUp",
                         "value": 0
                     },
                     {
-                        "label": "STOPPED",
+                        "label": "Fault",
                         "value": 1
                     },
                     {
-                        "label": "SYSTEM_INITIALISING",
+                        "label": "Stopping",
                         "value": 2
                     },
                     {
-                        "label": "SYSTEM_READY_TO_START",
+                        "label": "Stopped",
                         "value": 3
                     },
                     {
-                        "label": "SYSTEM_AUTO_CYCLE",
+                        "label": "Initialising",
                         "value": 4
                     },
                     {
-                        "label": "STOPPING",
+                        "label": "ReadyToStart",
                         "value": 5
                     },
                     {
-                        "label": "MANUAL_MODE",
+                        "label": "AutoCycle",
                         "value": 6
                     },
                     {
-                        "label": "FAULT",
+                        "label": "Manual",
                         "value": 7
-                    },
-                    {
-                        "label": "SAFETY",
-                        "value": 99
                     }
                 ],
                 "type": "integer"
@@ -1402,6 +1397,145 @@
             "MAPPING": "PLC1::GVL_HMI::bIvekSettingsLaunchPending",
             "SCHEMA": {
                 "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportExtend": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bAssemblySupportExtend",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Assembly Support",
+                        "propertyOrder": 11
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportRetract": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bAssemblySupportRetract",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 12
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bIndexerManualEnable": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bIndexerManualEnable",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 20
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bManualModeEnable": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bManualModeEnable",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 5
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bManualModeRequest",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Legacy compatibility",
+                        "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bSiliconeSupportExtend",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Silicone Support",
+                        "propertyOrder": 9
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bSiliconeSupportRetract",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 10
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_MASTER.stStatus.eMachineState": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_MASTER::stStatus::eMachineState",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.E_MachineState"
+                    },
+                    {
+                        "propertyOrder": 1
+                    }
+                ]
             },
             "USEMAPPING": true
         },
@@ -4692,6 +4826,13 @@
                 "ADS.PLC1.GVL_HMI.i_bHMIIndexerManualEnable": 3,
                 "ADS.PLC1.GVL_HMI.sHMIVersion": 3,
                 "ADS.PLC1.GVL_HMI.sSystemName": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportExtend": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportRetract": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bIndexerManualEnable": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bManualModeEnable": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
                 "ADS.PLC1.GVL_IO.stSafety.bTwoHandsLeft": 3,
                 "ADS.PLC1.GVL_MASTER.astActiveEvents": 3,
@@ -4699,6 +4840,7 @@
                 "ADS.PLC1.GVL_MASTER.stNestTable.bNestCompletedSensor": 3,
                 "ADS.PLC1.GVL_MASTER.stNestTable.bNestReadySensor": 3,
                 "ADS.PLC1.GVL_MASTER.stProcess.bKistlerHomeDone": 3,
+                "ADS.PLC1.GVL_MASTER.stStatus.eMachineState": 3,
                 "ADS.PLC1.PRG_MachineControl.bKistlerReady": 3,
                 "ADS.PLC1.PRG_MachineControl.eCurrentNestPos": 3,
                 "ChangeUserSettings": 3,

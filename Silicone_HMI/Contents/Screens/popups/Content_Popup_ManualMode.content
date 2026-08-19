@@ -30,32 +30,95 @@
         "waitMode": "Synchronous"
       },
       {
-        "objectType": "WriteToSymbol",
+        "objectType": "Condition",
         "active": true,
-        "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest%/s%",
-        "value": {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:general#/definitions/BOOL",
-          "value": true
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%ctrl%Main_Region::TargetContent%/ctrl%",
-        "value": {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:framework#/definitions/ContentPath",
-          "value": "Contents/Screens/Manual_Mode.content"
-        },
-        "asyncWait": true
-      },
-      {
-        "objectType": "ControlApiFunction",
-        "active": true,
-        "control": "Main_Popup",
-        "fn": "close",
+        "parts": [
+          {
+            "if": [
+              {
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:server#/definitions/ADS-PLC1.E_MachineState",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_MASTER.stStatus.eMachineState%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:server#/definitions/ADS-PLC1.E_MachineState",
+                  "value": 5
+                },
+                "compareOperator": "==",
+                "logic": null
+              },
+              {
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:server#/definitions/ADS-PLC1.E_MachineState",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_MASTER.stStatus.eMachineState%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:server#/definitions/ADS-PLC1.E_MachineState",
+                  "value": 7
+                },
+                "compareOperator": "==",
+                "logic": "OR"
+              }
+            ],
+            "then": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest%/s%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "value": true
+                },
+                "asyncWait": true
+              },
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%Main_Region::TargetContent%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/ContentPath",
+                  "value": "Contents/Screens/Manual_Mode.content"
+                },
+                "asyncWait": true
+              },
+              {
+                "objectType": "ControlApiFunction",
+                "active": true,
+                "control": "Main_Popup",
+                "fn": "close",
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "else": [
+              {
+                "objectType": "JavaScript",
+                "active": true,
+                "sourceLines": [
+                  "window.alert(",
+                  "    'Manual Mode blocked: the machine must be in Ready To Start.'",
+                  ");"
+                ],
+                "asyncWait": true,
+                "waitMode": "Synchronous"
+              },
+              {
+                "objectType": "ControlApiFunction",
+                "active": true,
+                "control": "Main_Popup",
+                "fn": "close",
+                "asyncWait": true
+              }
+            ]
+          }
+        ],
         "asyncWait": true
       }
     ]

@@ -98,9 +98,21 @@ ELSIF bStopRequest THEN
     ELSE
         eState := E_ProcessStationState.Retracting;
     END_IF
-ELSIF NOT bEnable AND NOT bManualEnable THEN
+ELSIF bManualEnable THEN
+
     ipEquipment.RequestStop();
-    IF bCylinderRetracted THEN eState := E_ProcessStationState.Disabled; ELSE eState := E_ProcessStationState.Retracting; END_IF
+	eState := E_ProcessStationState.Disabled;
+
+ELSIF NOT bEnable THEN
+
+    ipEquipment.RequestStop();
+
+    IF bCylinderRetracted THEN
+        eState := E_ProcessStationState.Disabled;
+    ELSE
+        eState := E_ProcessStationState.Retracting;
+    END_IF
+
 END_IF
 
 CASE eState OF

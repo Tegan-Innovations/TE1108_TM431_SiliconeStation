@@ -171,36 +171,52 @@ ELSE
     // Stop request
     // -----------------------------------------------------
 
-    IF bStopRequest THEN
+// -----------------------------------------------------
+// MANUAL MODE EXIT / RESET SEQUENCE
+// -----------------------------------------------------
 
-        eState := E_ManualModeState.Stopping;
-        eMessage := E_ManualModeMessage.WaitingSafeExit;
+IF bStopRequest THEN
 
+    // Manual Mode remains active while all manually
+    // controlled equipment returns to its standard state.
+    eState := E_ManualModeState.Stopping;
+    eMessage := E_ManualModeMessage.WaitingSafeExit;
+    // -------------------------------------------------
+    // Cancel active manual commands
+    // -------------------------------------------------
+    stRequestsInternal.bIndexMoveRequest := FALSE;
+    stRequestsInternal.bIndexHomeRequest := FALSE;
 
-        // Stop equipment when it is active.
-        stRequestsInternal.bEquipmentStop :=
-            stInputs.bEquipmentBusy;
-
-
+    stRequestsInternal.bEquipmentStart 				:= FALSE;
+    stRequestsInternal.bEquipmentReset 				:= FALSE;
+    stRequestsInternal.bSiliconeSupportExtend 		:= FALSE;
+    stRequestsInternal.bAssemblySupportExtend 		:= FALSE;
+    // -------------------------------------------------
+    // Stop process equipment
+    // -------------------------------------------------
+    stRequestsInternal.bEquipmentStop :=stInputs.bEquipmentBusy;
+    // -------------------------------------------------
+    // Return Silicone Support to standard position
+    // -------------------------------------------------
+    stRequestsInternal.bSiliconeSupportRetract :=NOT stInputs.bSiliconeSupportRetracted;
+    // -------------------------------------------------
+    // Return Assembly Support to standard position
+    // -------------------------------------------------
+    stRequestsInternal.bAssemblySupportRetract :=NOT stInputs.bAssemblySupportRetracted;
     // -----------------------------------------------------
     // Safety unavailable
     // -----------------------------------------------------
-
     ELSIF NOT stInputs.bSafetyOk THEN
 
         eState := E_ManualModeState.Ready;
         eMessage := E_ManualModeMessage.SafetyNotAvailable;
-
-
     // -----------------------------------------------------
     // Manual commands
     // -----------------------------------------------------
 
     ELSE
-
         eState := E_ManualModeState.Ready;
         eMessage := E_ManualModeMessage.ManualReady;
-
 
         // =================================================
         // MAIN DOOR UNLOCK
@@ -211,17 +227,11 @@ ELSE
             IF stStatusInternal.bDoorUnlockPermissive THEN
 
                 bMainDoorLockLatched := FALSE;
-
-                eMessage :=
-                    E_ManualModeMessage.MainDoorUnlockRequested;
+                eMessage := E_ManualModeMessage.MainDoorUnlockRequested;
 
             ELSE
-
                 stStatusInternal.bCommandRejected := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.DoorCommandNotPermitted;
-
+                eMessage := E_ManualModeMessage.DoorCommandNotPermitted;
             END_IF
 
         END_IF
@@ -234,18 +244,11 @@ ELSE
         IF rtIndexMove.Q THEN
 
             IF stStatusInternal.bIndexPermissive THEN
-
                 stRequestsInternal.bIndexMoveRequest := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.IndexCommandActive;
-
+                eMessage := E_ManualModeMessage.IndexCommandActive;
             ELSE
-
                 stStatusInternal.bCommandRejected := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.IndexCommandNotPermitted;
+                eMessage := E_ManualModeMessage.IndexCommandNotPermitted;
 
             END_IF
 
@@ -261,17 +264,10 @@ ELSE
             IF stStatusInternal.bIndexPermissive THEN
 
                 stRequestsInternal.bIndexHomeRequest := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.IndexCommandActive;
-
+                eMessage := E_ManualModeMessage.IndexCommandActive;
             ELSE
-
                 stStatusInternal.bCommandRejected := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.IndexCommandNotPermitted;
-
+                eMessage := E_ManualModeMessage.IndexCommandNotPermitted;
             END_IF
 
         END_IF
@@ -286,26 +282,16 @@ ELSE
         THEN
 
             stStatusInternal.bCommandRejected := TRUE;
-
-            eMessage :=
-                E_ManualModeMessage.PneumaticActuatorCommandConflict;
-
-
+            eMessage := E_ManualModeMessage.PneumaticActuatorCommandConflict;
         ELSIF stCommand.bSiliconeSupportExtend THEN
 
             IF stStatusInternal.bSiliconeSupportPermissive THEN
 
                 stRequestsInternal.bSiliconeSupportExtend := TRUE;
-
-                eMessage :=
-                   E_ManualModeMessage.PneumaticActuatorMoving;
-
+                eMessage := E_ManualModeMessage.PneumaticActuatorMoving;
             ELSE
-
                 stStatusInternal.bCommandRejected := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
+                eMessage :=E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
 
             END_IF
 
@@ -313,19 +299,12 @@ ELSE
         ELSIF stCommand.bSiliconeSupportRetract THEN
 
             IF stStatusInternal.bSiliconeSupportPermissive THEN
-
                 stRequestsInternal.bSiliconeSupportRetract := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.PneumaticActuatorMoving;
+                eMessage :=E_ManualModeMessage.PneumaticActuatorMoving;
 
             ELSE
-
                 stStatusInternal.bCommandRejected := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
-
+                eMessage :=E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
             END_IF
 
         END_IF
@@ -340,27 +319,16 @@ ELSE
         THEN
 
             stStatusInternal.bCommandRejected := TRUE;
-
-            eMessage :=
-                E_ManualModeMessage.PneumaticActuatorCommandConflict;
-
-
+            eMessage :=E_ManualModeMessage.PneumaticActuatorCommandConflict;
+			
         ELSIF stCommand.bAssemblySupportExtend THEN
 
             IF stStatusInternal.bAssemblySupportPermissive THEN
-
                 stRequestsInternal.bAssemblySupportExtend := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.PneumaticActuatorMoving;
-
+                eMessage := E_ManualModeMessage.PneumaticActuatorMoving;
             ELSE
-
                 stStatusInternal.bCommandRejected := TRUE;
-
-                eMessage :=
-                    E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
-
+                eMessage :=E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
             END_IF
 
 
@@ -369,17 +337,11 @@ ELSE
 			IF stStatusInternal.bAssemblySupportPermissive THEN
 		
 				stRequestsInternal.bAssemblySupportRetract := TRUE;
-		
-				eMessage :=
-					E_ManualModeMessage.PneumaticActuatorMoving;
-		
+				eMessage :=E_ManualModeMessage.PneumaticActuatorMoving;
 			ELSE
 		
 				stStatusInternal.bCommandRejected := TRUE;
-		
-				eMessage :=
-					E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
-		
+				eMessage :=E_ManualModeMessage.PneumaticActuatorCommandNotPermitted;
 			END_IF
 		
 
@@ -483,9 +445,10 @@ stStatusInternal.bActive :=
 // Manual Mode may only be exited after all movements stop
 // and the Silicone Support is retracted.
 
-stStatusInternal.bSafeToExit :=
-    NOT stInputs.bIndexBusy
-    AND NOT stInputs.bEquipmentBusy;
+stStatusInternal.bSafeToExit := NOT stInputs.bIndexBusy
+    AND NOT stInputs.bEquipmentBusy
+    AND stInputs.bSiliconeSupportRetracted
+    AND stInputs.bAssemblySupportRetracted;
 
 
 // Update the textual message.

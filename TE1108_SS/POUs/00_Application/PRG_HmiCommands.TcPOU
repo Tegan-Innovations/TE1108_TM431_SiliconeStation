@@ -6,6 +6,7 @@ VAR
     rtStart : R_TRIG; rtReset : R_TRIG; rtAck : R_TRIG; rtPuckAck : R_TRIG;
 	rtManualRequest 			: R_TRIG;
 	bManualRequestLatched 		: BOOL;
+	tonManualModeHmiGuard 		: TON;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -20,8 +21,14 @@ GVL_MASTER.stCommand.bStop 							:= GVL_MASTER.stInputs.bStopButton;
 GVL_MASTER.stCommand.bReset 						:= rtReset.Q;
 GVL_MASTER.stCommand.bAcknowledge 					:= rtAck.Q;
 
+
+// Gives the HMI time to stabilise after entering Manual Mode.
+tonManualModeHmiGuard(
+    IN := GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual,
+    PT := T#1S
+); 
 rtManualRequest(
-    CLK := GVL_HMI.stCommands.bManualModeRequest
+    CLK := GVL_HMI.stCommands.bManualModeRequest 	
 );
 
 // Memorise a new HMI request until the machine accepts Manual mode.
@@ -38,26 +45,59 @@ END_IF
 GVL_MASTER.stCommand.bManualRequest := bManualRequestLatched;
 
 // Keep the HMI Manual Mode indication active until the machine reaches Stopped.
-IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual THEN
+// IF GVL_HMI.stCommands.bManualModeEnable  THEN
+// 
+//     GVL_MASTER.stStatus.eMachineState := E_MachineState.Manual;
 
-    GVL_HMI.stCommands.bManualModeEnable := TRUE;
-
-ELSIF GVL_MASTER.stStatus.eMachineState = E_MachineState.Stopped THEN
-
-    GVL_HMI.stCommands.bManualModeEnable := FALSE;
-
+IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual AND tonManualModeHmiGuard.Q THEN
+	 IF NOT GVL_HMI.stCommands.bManualModeEnable THEN
+    	GVL_MASTER.stCommand.bStop := TRUE;
+	 END_IF
 END_IF
 
 
-GVL_MASTER.stCommand.bIndexerManualEnable 			:= GVL_HMI.stCommands.bIndexerManualEnable;
+
+// This command is only valid while the machine is in Manual Mode.
+IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual THEN
+
+    GVL_MASTER.stCommand.bIndexerManualEnable 			:=GVL_HMI.stCommands.bIndexerManualEnable;
+	
+	GVL_MASTER.stCommand.bSiliconeSupportExtend 		:=GVL_HMI.stCommands.bSiliconeSupportExtend;
+	GVL_MASTER.stCommand.bSiliconeSupportRetract 		:=GVL_HMI.stCommands.bSiliconeSupportRetract;
+	GVL_MASTER.stCommand.bAssemblySupportExtend 		:=GVL_HMI.stCommands.bAssemblySupportExtend;
+	GVL_MASTER.stCommand.bAssemblySupportRetract 		:=GVL_HMI.stCommands.bAssemblySupportRetract;
+ELSE
+    GVL_HMI.stCommands.bIndexerManualEnable 			:= FALSE;
+    GVL_MASTER.stCommand.bIndexerManualEnable 			:= FALSE;
+	
+	GVL_HMI.stCommands.bSiliconeSupportExtend 			:= FALSE;
+    GVL_HMI.stCommands.bSiliconeSupportRetract 			:= FALSE;
+    GVL_HMI.stCommands.bAssemblySupportExtend 			:= FALSE;
+    GVL_HMI.stCommands.bAssemblySupportRetract 			:= FALSE;
+    GVL_MASTER.stCommand.bSiliconeSupportExtend 		:= FALSE;
+    GVL_MASTER.stCommand.bSiliconeSupportRetract 		:= FALSE;
+    GVL_MASTER.stCommand.bAssemblySupportExtend 		:= FALSE;
+    GVL_MASTER.stCommand.bAssemblySupportRetract 		:= FALSE;
+	
+	 // TODO:
+    // Clear the remaining Manual Mode HMI commands here when their
+    // reset behaviour is implemented.
+    //
+    // Examples:
+    // bIndexForward
+    // bIndexHome
+    // bMainDoorUnlock
+    // bIvekStartManual
+    // bIvekStopManual
+    // bIvekReset
+	
+END_IF
+
+
 GVL_MASTER.stCommand.bManualIndexForward 			:= GVL_HMI.stCommands.bIndexForward;
 GVL_MASTER.stCommand.bManualIndexHome 				:= GVL_HMI.stCommands.bIndexHome;
 
-GVL_MASTER.stCommand.bSiliconeSupportExtend 		:=GVL_HMI.stCommands.bSiliconeSupportExtend;
-GVL_MASTER.stCommand.bSiliconeSupportRetract 		:=GVL_HMI.stCommands.bSiliconeSupportRetract;
 
-GVL_MASTER.stCommand.bAssemblySupportExtend 		:= GVL_HMI.stCommands.bAssemblySupportExtend;
-GVL_MASTER.stCommand.bAssemblySupportRetract 		:=GVL_HMI.stCommands.bAssemblySupportRetract;
 
 GVL_MASTER.stCommand.bManualMainDoorUnlock 			:= GVL_HMI.stCommands.bMainDoorUnlock;
 GVL_MASTER.stCommand.bManualEquipmentStart 			:= GVL_HMI.stCommands.bIvekStartManual;

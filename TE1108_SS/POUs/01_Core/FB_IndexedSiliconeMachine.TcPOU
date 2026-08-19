@@ -1000,18 +1000,18 @@ CASE eMachineState OF
 		// ---------------------------------------------------------
 		// LEAVE MANUAL MODE
 		// ---------------------------------------------------------
-		IF stCommand.bStop THEN
+		//
+		// The Manual Mode coordinator first returns all manually
+		// controlled components to their standard state.
+		//
+		// Machine state may leave Manual only after the coordinator
+		// confirms that the exit sequence is complete.
+		// ---------------------------------------------------------
 		
-			// Clear Silicone Support manual commands.
-			GVL_HMI.stCommands.bSiliconeSupportExtend := FALSE;
-			GVL_HMI.stCommands.bSiliconeSupportRetract := FALSE;
-		
-			// Clear Assembly Support manual commands.
-			GVL_HMI.stCommands.bAssemblySupportExtend := FALSE;
-			GVL_HMI.stCommands.bAssemblySupportRetract := FALSE;
-		
+		IF stCommand.bStop
+			AND stManualModeStatus.bSafeToExit
+		THEN
 			eMachineState := E_MachineState.Stopping;
-		
 		END_IF
 		
 END_CASE
@@ -1063,34 +1063,6 @@ ELSIF eMachineState = E_MachineState.AutoCycle THEN
 
 END_IF
 
-// =========================================================
-// MANUAL SUPPORT COMMAND MAPPING
-// =========================================================
-
-IF eMachineState = E_MachineState.Manual THEN
-
-    // -----------------------------------------------------
-    // Silicone Support
-    // -----------------------------------------------------
-
-    bSiliconeSupportRaiseRequest :=
-        stManualModeRequests.bSiliconeSupportExtend;
-
-    bSiliconeSupportLowerRequest :=
-        stManualModeRequests.bSiliconeSupportRetract;
-
-
-    // -----------------------------------------------------
-    // Assembly Support
-    // -----------------------------------------------------
-
-    bAssemblySupportRaiseRequest :=
-        stManualModeRequests.bAssemblySupportExtend;
-
-    bAssemblySupportLowerRequest :=
-        stManualModeRequests.bAssemblySupportRetract;
-
-END_IF
 
 // =========================================================
 // SILICONE SUPPORT CONTROL
@@ -1132,7 +1104,8 @@ fbAssemblySupportCylinder.Cyclic(
 fbProcessStation.Cyclic(
     bEnable := eMachineState = E_MachineState.AutoCycle,
     bAutomaticStartRequest := bProcessStartPulse,
-    bManualEnable := FALSE,
+    bManualEnable :=
+    eMachineState = E_MachineState.Manual,
     bManualExtendRequest := FALSE,
     bManualRetractRequest := FALSE,
     bStopRequest :=

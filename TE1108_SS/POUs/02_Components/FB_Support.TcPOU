@@ -97,7 +97,8 @@ ELSE
     IF bRaiseRequest AND NOT bLowerRequest THEN
 
         tonMovementTimeout(
-            IN := NOT bExtended,
+            IN := (GVL_MASTER.stStatus.eMachineState <> E_MachineState.Manual)
+        AND NOT bExtended, 
             PT := tMovementTimeout
         );
 
@@ -117,7 +118,8 @@ ELSE
     ELSIF bLowerRequest AND NOT bRaiseRequest THEN
 
         tonMovementTimeout(
-            IN := NOT bRetracted,
+            IN := (GVL_MASTER.stStatus.eMachineState <> E_MachineState.Manual)
+        AND NOT bRetracted,
             PT := tMovementTimeout
         );
 
