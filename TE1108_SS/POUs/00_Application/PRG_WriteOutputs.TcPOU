@@ -26,7 +26,7 @@ GVL_IO.stOutputs.bLedReset             	 				:= GVL_MASTER.stOutputs.bLedReset;
 GVL_IO.stOutputs.bLedPass               				:= GVL_MASTER.stOutputs.bLedPass;
 GVL_IO.stOutputs.bLedFail               				:= GVL_MASTER.stOutputs.bLedFail;
 GVL_IO.stOutputs.bInternalLight         				:= GVL_MASTER.stOutputs.bInternalLight;
-GVL_IO.stOutputs.bExternalLight         				:= GVL_MASTER.stOutputs.bExternalLight;
+GVL_IO.stOutputs.bExternalLight         				:= GVL_MASTER.stOutputs.bExternalLight ;
 GVL_IO.stOutputs.bNestLight             				:= GVL_MASTER.stOutputs.bExternalLight;
 // Vacuum outputs are reserved for the future process implementation.
 GVL_IO.stOutputs.bVacuumPumpEnable      				:= FALSE;

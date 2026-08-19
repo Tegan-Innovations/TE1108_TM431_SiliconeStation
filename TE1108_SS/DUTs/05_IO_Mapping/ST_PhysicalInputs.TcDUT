@@ -10,6 +10,8 @@ STRUCT
     // Reset and validated safety diagnostics received through TwinSAFE aliases
     bResetButton                  : BOOL;
     bTwoHandsSafe                 : BOOL;
+	bTouchButtonleft              : BOOL;
+	bTouchButtonRight             : BOOL;
     bSafetyOk                     : BOOL;
     //bEmergencyStopOk              : BOOL;
     //bMainDoorSafe                 : BOOL;
@@ -39,6 +41,7 @@ STRUCT
     bGearboxAssemblyPartPresent   : BOOL;
     bReservoirPartPresent         : BOOL;
     bRejectChutePartPresent       : BOOL;
+	bBothPartPresent			  : BOOL;
 
     // Index table
     bIndexPositionSensor1         : BOOL;

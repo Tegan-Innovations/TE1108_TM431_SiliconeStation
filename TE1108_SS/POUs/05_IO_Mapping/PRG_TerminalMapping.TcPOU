@@ -30,7 +30,15 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[// ---------------------------------------------------------------------------
-// Term 7 - EL1809 (EPLAN page 13)
+// Term 5 - EL1918(EPLAN page 12)
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.bTouchButtonleft 				:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch3;
+GVL_IO.stInputs.bTouchButtonRight 				:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch4;
+
+
+
+// ---------------------------------------------------------------------------
+// Term 7 - EL1809 (EPLAN page 14)
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.bStartButton 					:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch1;
 GVL_IO.stInputs.bStopButton 					:= NOT GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch2;
@@ -51,7 +59,7 @@ GVL_IO.stInputs.bRejectChutePartPresent 		:= GVL_EtherCAT.stTerm7_EL1809.iEL1809
 GVL_IO.stInputs.bSiliconeMinimumLevelSensor1 	:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch15;
 GVL_IO.stInputs.bSiliconeMinimumLevelSensor2 	:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch16;
 
-
+GVL_IO.stInputs.bBothPartPresent				:= GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch12 AND GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch13;
 
 // Position inputs are documented as binary weights 1, 2 and 4.
 uiIndexPositionCode := UINT#0;

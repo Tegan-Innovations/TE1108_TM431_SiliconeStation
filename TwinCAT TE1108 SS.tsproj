@@ -41,8 +41,8 @@
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{9A71F321-FB53-7941-9BE9-BCA0640031AE}" AutoDeleteType="true">ST_PhysicalInputs</Name>
-			<BitSize>336</BitSize>
+			<Name GUID="{DD001810-49D8-1D02-CE4F-FBAB8B9F9326}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<BitSize>368</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
@@ -70,10 +70,22 @@
 				<BitOffs>24</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bSafetyOk</Name>
+				<Name>bTouchButtonleft</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bTouchButtonRight</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>40</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bSafetyOk</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>48</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bAirSupplyOk</Name>
@@ -86,174 +98,180 @@ bFlapsSafe                    : BOOL;
 bFsoeOk                       : BOOL;
 bSafetyLogicOk                : BOOL;]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>40</BitOffs>
+				<BitOffs>56</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bUp24VPowerSupplyOk</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Power and auxiliary diagnostics]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>48</BitOffs>
+				<BitOffs>64</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bUs24VPowerSupplyOk</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>56</BitOffs>
+				<BitOffs>72</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIvekHeaterControllerAlarm</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>64</BitOffs>
+				<BitOffs>80</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bSiliconeMinimumLevelSensor1</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>72</BitOffs>
+				<BitOffs>88</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bSiliconeMinimumLevelSensor2</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>80</BitOffs>
+				<BitOffs>96</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bMainDoorClosed</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Door diagnostics returned by TwinSAFE]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>88</BitOffs>
+				<BitOffs>104</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bMainDoorLocked</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>96</BitOffs>
+				<BitOffs>112</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bMainDoorUnsafe</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>104</BitOffs>
+				<BitOffs>120</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bMainDoorDiagnosticOk</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>112</BitOffs>
+				<BitOffs>128</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bMs6FeedbackOk</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>120</BitOffs>
+				<BitOffs>136</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bAirExhausted</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>128</BitOffs>
+				<BitOffs>144</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bGearboxAssemblyPartPresent</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Part detection]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>136</BitOffs>
+				<BitOffs>152</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bReservoirPartPresent</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>144</BitOffs>
+				<BitOffs>160</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bRejectChutePartPresent</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>152</BitOffs>
+				<BitOffs>168</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bBothPartPresent</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>176</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexPositionSensor1</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Index table]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>160</BitOffs>
+				<BitOffs>184</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexPositionSensor2</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>168</BitOffs>
+				<BitOffs>192</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexPositionSensor3</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>176</BitOffs>
+				<BitOffs>200</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexReady</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>184</BitOffs>
+				<BitOffs>208</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexLocked</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>192</BitOffs>
+				<BitOffs>216</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexCompletedSensor</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>200</BitOffs>
+				<BitOffs>224</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexSupportExtended</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>208</BitOffs>
+				<BitOffs>232</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bIndexSupportRetracted</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>216</BitOffs>
+				<BitOffs>240</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>eIndexPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>224</BitOffs>
+				<BitOffs>256</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bSiliconeSupportExtended</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Transfer nest support / process tooling cylinder]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>240</BitOffs>
+				<BitOffs>272</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bSiliconeSupportRetracted</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>248</BitOffs>
+				<BitOffs>280</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bAssemblySupportExtended</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>256</BitOffs>
+				<BitOffs>288</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bAssemblySupportRetracted</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>264</BitOffs>
+				<BitOffs>296</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiMainAirPressureRaw</Name>
@@ -261,25 +279,25 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 				<Comment><![CDATA[ Analog raw values. Engineering-unit scaling is intentionally kept
  outside the terminal mapping until the sensor ranges are confirmed.]]></Comment>
 				<BitSize>16</BitSize>
-				<BitOffs>272</BitOffs>
+				<BitOffs>304</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiSiliconePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>288</BitOffs>
+				<BitOffs>320</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiNozzlePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>304</BitOffs>
+				<BitOffs>336</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiVacuumPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>320</BitOffs>
+				<BitOffs>352</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -1058,7 +1076,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{F370BACB-04BD-26A3-C19E-35D165F08C2A}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{CC66F2C6-A9BF-BB09-5C2F-98D3273FB2E1}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1255,7 +1273,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 							<Name>GVL_IO.stInputs</Name>
 							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
  Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{9A71F321-FB53-7941-9BE9-BCA0640031AE}">ST_PhysicalInputs</Type>
+							<Type GUID="{DD001810-49D8-1D02-CE4F-FBAB8B9F9326}">ST_PhysicalInputs</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
@@ -1268,22 +1286,6 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bEmergencyStopOk</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bMainDoorUnSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bLeftFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bRightFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bFlapsSafe</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -1655,6 +1657,22 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 							<Name>GVL_EtherCAT.stTerm14_EL6652.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
 							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bMainDoorUnSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bLeftFlapSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bRightFlapSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bFlapsSafe</Name>
+							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bTwoHandSafe</Name>
@@ -3386,6 +3404,16 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 				<Link VarA="PlcTask Outputs^GVL_IO.stOutputs^bSafetyRunRequest" VarB="StandardOutputs^TwinSafeGroup1.SafetyRun_2"/>
 				<Link VarA="PlcTask Outputs^GVL_Safety.bAirSupplyEnableRequest" VarB="StandardOutputs^TwinSafeGroup1.AirSupplyEnabled_25"/>
 				<Link VarA="PlcTask Outputs^GVL_Safety.bMainDoorLockRequest" VarB="StandardOutputs^TwinSafeGroup1.MainDoorLockRequest_50"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 5 (EL1918)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch1" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 1.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch2" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 2.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch3" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 3.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch4" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 4.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch5" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 5.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch6" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 6.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch7" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 7.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch8" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 8.Input"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 7 (EL1809)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch1" VarB="Channel 1^Input"/>

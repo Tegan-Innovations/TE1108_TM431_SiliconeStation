@@ -96,7 +96,7 @@ END_IF
 
 GVL_MASTER.stCommand.bManualIndexForward 			:= GVL_HMI.stCommands.bIndexForward;
 GVL_MASTER.stCommand.bManualIndexHome 				:= GVL_HMI.stCommands.bIndexHome;
-
+GVL_MASTER.stCommand.bExternalLight                 := GVL_HMI.stCommands.bExternalLight;
 
 
 GVL_MASTER.stCommand.bManualMainDoorUnlock 			:= GVL_HMI.stCommands.bMainDoorUnlock;

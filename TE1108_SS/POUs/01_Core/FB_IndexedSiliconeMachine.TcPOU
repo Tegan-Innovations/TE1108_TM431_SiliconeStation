@@ -1270,7 +1270,7 @@ stOutputsInternal.bLedReset 		:= eMachineState = E_MachineState.Fault OR eMachin
 stOutputsInternal.bLedPass 			:= stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed;
 stOutputsInternal.bLedFail 			:= stOperatorNest.stResult.bValid AND NOT stOperatorNest.stResult.bPassed;
 stOutputsInternal.bInternalLight 	:= TRUE;
-stOutputsInternal.bExternalLight 	:= eMachineState = E_MachineState.AutoCycle;
+stOutputsInternal.bExternalLight 	:= stCommand.bExternalLight;
 
 // =========================================================
 // EQUIPMENT OUTPUT DATA
@@ -1524,7 +1524,7 @@ stOutputsInternal.bLedReset := FALSE;
 stOutputsInternal.bLedPass := FALSE;
 stOutputsInternal.bLedFail := FALSE;
 stOutputsInternal.bInternalLight := FALSE;
-stOutputsInternal.bExternalLight := FALSE;
+//stOutputsInternal.bExternalLight := FALSE;
 stOutputsInternal.bPuckLockerPinUp := FALSE;]]></ST>
       </Implementation>
     </Method>

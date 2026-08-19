@@ -1435,6 +1435,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.bExternalLight": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bExternalLight",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 9
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stCommands.bIndexerManualEnable": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -1517,6 +1534,110 @@
                     },
                     {
                         "propertyOrder": 10
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_IO::stInputs::bBothPartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 21
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_IO::stInputs::bGearboxAssemblyPartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Part detection",
+                        "propertyOrder": 18
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_IO::stInputs::bReservoirPartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 19
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_IO.stInputs.bTouchButtonRight": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_IO::stInputs::bTouchButtonRight",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_IO.stInputs.bTouchButtonleft": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_IO::stInputs::bTouchButtonleft",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 5
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_IO.stOutputs.bExternalLight": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_IO::stOutputs::bExternalLight",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Compatibility alias; mapped to nest light.",
+                        "propertyOrder": 18
                     }
                 ]
             },
@@ -4828,12 +4949,19 @@
                 "ADS.PLC1.GVL_HMI.sSystemName": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportRetract": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bExternalLight": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bIndexerManualEnable": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bManualModeEnable": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
+                "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": 3,
+                "ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent": 3,
+                "ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent": 3,
+                "ADS.PLC1.GVL_IO.stInputs.bTouchButtonRight": 3,
+                "ADS.PLC1.GVL_IO.stInputs.bTouchButtonleft": 3,
+                "ADS.PLC1.GVL_IO.stOutputs.bExternalLight": 3,
                 "ADS.PLC1.GVL_IO.stSafety.bTwoHandsLeft": 3,
                 "ADS.PLC1.GVL_MASTER.astActiveEvents": 3,
                 "ADS.PLC1.GVL_MASTER.stMachineStatus.bBusy": 3,

@@ -27,11 +27,13 @@ STRUCT
     uiVacuumPressureRaw              : UINT;
 
     bTwoHandsSafe                    : BOOL;
+	
+	bExternalLight					  :BOOL;
 
     bGearboxAssemblyPartPresent      : BOOL;
     bReservoirPartPresent            : BOOL;
     bRejectChutePartPresent          : BOOL;
-
+	bBothPartPresent		         : BOOL;
 
     bIndexReady                      : BOOL;
     bIndexLocked                     : BOOL;

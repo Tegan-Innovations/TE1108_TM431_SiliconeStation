@@ -8,6 +8,8 @@ STRUCT
     bSafetyErrorAcknowledgementRequest     : BOOL;
 
     bAirSupplyEnable                       : BOOL;
+	
+	
 
     // Index table
     bIndexRotatePortA                      : BOOL;

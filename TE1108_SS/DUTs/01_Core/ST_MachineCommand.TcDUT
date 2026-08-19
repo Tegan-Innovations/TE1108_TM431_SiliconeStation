@@ -14,6 +14,7 @@ STRUCT
     bManualEquipmentStart          : BOOL;
     bManualEquipmentStop           : BOOL;
     bManualEquipmentReset          : BOOL;
+	bExternalLight 				   : BOOL;
 	
     bIndexRequest                  : BOOL;
     bProcessRequest                : BOOL;

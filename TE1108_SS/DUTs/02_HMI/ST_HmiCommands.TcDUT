@@ -11,6 +11,7 @@ STRUCT
     bManualModeRequest              : BOOL; // Legacy compatibility
     bIndexForward                   : BOOL;
     bIndexHome                      : BOOL;
+	bExternalLight					: BOOl; 
 	
     // Silicone Support
 	bSiliconeSupportExtend  		: BOOL;
