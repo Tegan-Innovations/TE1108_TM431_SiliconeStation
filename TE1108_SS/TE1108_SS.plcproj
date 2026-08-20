@@ -132,6 +132,9 @@
     <Compile Include="DUTs\01_Core\ST_SafetyStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\02_HMI\E_LEDs_Mode.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\02_HMI\ST_HmiCommands.TcDUT">
       <SubType>Code</SubType>
     </Compile>

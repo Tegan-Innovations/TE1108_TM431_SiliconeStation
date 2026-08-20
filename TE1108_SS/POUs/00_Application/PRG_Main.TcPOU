@@ -1,9 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <POU Name="PRG_Main" Id="{f4d87ecd-c7bb-4ae4-b2e0-8161ff139d95}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PRG_Main
 VAR
 	fbMachine : FB_IndexedSiliconeMachine;
+	tonHMIAliveOn        : TON;
+    tonHMIAliveOff       : TON;
+    bOutHMI   			 : BOOL;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -13,6 +17,7 @@ END_VAR
 // 3. PRG_Main executes the reusable machine object.
 // 4. PRG_HmiInterface publishes status.
 // 5. PRG_IoMapping writes physical outputs at the end of the task.
+ACT_UserLogout();
 
 fbMachine.Cyclic(
     stInputs      := GVL_MASTER.stInputs,
@@ -20,9 +25,27 @@ fbMachine.Cyclic(
     stConfig      := GVL_Config.stMachine,
     stIvekInput   := GVL_MASTER.stIvekInput,
     bIvekCommsOk  := GVL_MASTER.bIvekCommsOk,
+	blogoutHMI 	  := bOutHMI,
     stOutputs     => GVL_MASTER.stOutputs,
-    stStatus      => GVL_MASTER.stStatus,
+    stStatus      => GVL_MASTER.stStatus,	
     stIvekOutput  => GVL_MASTER.stIvekOutput);]]></ST>
     </Implementation>
+    <Action Name="ACT_UserLogout" Id="{5c1cdba2-cfdc-4365-84bf-77af4bab5a6c}">
+      <Implementation>
+        <ST><![CDATA[tonHMIAliveOn(
+    IN := GVL_HMI.bHMIAlive,
+    PT := T#2S
+);
+
+tonHMIAliveOff(
+    IN := NOT GVL_HMI.bHMIAlive,
+    PT := T#2S
+);
+
+bOutHMI :=
+    tonHMIAliveOn.Q
+    OR tonHMIAliveOff.Q;]]></ST>
+      </Implementation>
+    </Action>
   </POU>
 </TcPlcObject>

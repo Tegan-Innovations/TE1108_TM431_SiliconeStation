@@ -158,6 +158,20 @@ VAR
     // CONFIGURATION
     // =====================================================
     bConfigured                   : BOOL;
+	
+	// =====================================================
+    // LEDS
+    // =====================================================
+	eMode_LED_Start 				: E_LEDs_Mode := E_LEDs_Mode.OFF;
+	eMode_LED_Reset 				: E_LEDs_Mode := E_LEDs_Mode.OFF;
+	eMode_LED_PASS  				: E_LEDs_Mode := E_LEDs_Mode.OFF;
+	eMode_LED_Fail  				: E_LEDs_Mode := E_LEDs_Mode.OFF;
+
+	tonLedBlink    					: TON;
+	bLedBlink      					: BOOL;
+	fbLedBlinkTrigger 				: R_TRIG;
+	bLedBlinkState 					: BOOL;
+
 
 END_VAR]]></Declaration>
     <Implementation>
@@ -199,6 +213,8 @@ VAR_INPUT
     stConfig       : ST_MachineConfig;
     stIvekInput    : ST_IvekCyclicInput;
     bIvekCommsOk   : BOOL;
+	blogoutHMI	   : BOOL;
+
 	
 END_VAR
 VAR_OUTPUT
@@ -206,6 +222,7 @@ VAR_OUTPUT
     stStatus       : ST_MachineStatus;
     stIvekOutput   : ST_IvekCyclicOutput;
 END_VAR
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[// =========================================================
@@ -225,6 +242,25 @@ IF stCommand.bStop THEN
     bStopRequested := TRUE;
 END_IF
 
+
+// =========================================================
+// LED BLINK GENERATOR
+// =========================================================
+
+tonLedBlink(
+    IN := NOT tonLedBlink.Q,
+    PT := T#500MS
+);
+
+fbLedBlinkTrigger(
+    CLK := tonLedBlink.Q
+);
+
+IF fbLedBlinkTrigger.Q THEN
+    bLedBlinkState := NOT bLedBlinkState;
+END_IF
+
+bLedBlink := bLedBlinkState;
 // =========================================================
 // DETERMINISTIC CYCLIC INITIALISATION
 // =========================================================
@@ -268,7 +304,30 @@ bIndexStable :=
     AND stInputs.eIndexPosition <> E_TablePosition.Unknown;
 bIndexDone := fbIndex.IsDone();
 
+// =========================================================
+// HMI LOGOUT SUPERVISION
+// =========================================================
+//
+// If the HMI heartbeat is lost while the machine is already
+// Stopped, the machine must remain Stopped.
+//
+// If the heartbeat is lost in any other operating state,
+// the machine enters Fault immediately.
+//
+// Fault is never overridden by the HMI logout condition.
+// =========================================================
 
+
+// Loss of HMI heartbeat also requests a controlled stop.
+// Fault has higher priority and is handled separately.
+IF blogoutHMI
+    AND (eMachineState = E_MachineState.Stopped OR eMachineState = E_MachineState.Stopping)THEN
+	bStopRequested := TRUE;
+	
+ELSIF blogoutHMI
+    AND (eMachineState <> E_MachineState.Stopped AND eMachineState <> E_MachineState.Stopping)THEN 
+    bSafetyDropRequest := TRUE;
+END_IF
 
 // =========================================================
 // FUTURE EVENT-BASED SAFETY DROP INTEGRATION
@@ -469,6 +528,12 @@ CASE eMachineState OF
 	
 
 	E_MachineState.PowerUp:
+	
+		eMode_LED_Start := E_LEDs_Mode.OFF;
+		eMode_LED_Reset := E_LEDs_Mode.FLASHING;
+		eMode_LED_PASS  := E_LEDs_Mode.OFF;
+		eMode_LED_Fail  := E_LEDs_Mode.OFF;
+		
 		// Air is not enabled during PowerUp or the first transition to Stopped.
 		bAirSupplyEnable := FALSE;
 
@@ -480,6 +545,12 @@ CASE eMachineState OF
 
 	E_MachineState.Fault:
 
+		eMode_LED_Start := E_LEDs_Mode.OFF;
+		eMode_LED_Reset := E_LEDs_Mode.FLASHING;
+		eMode_LED_PASS  := E_LEDs_Mode.OFF;
+		eMode_LED_Fail  := E_LEDs_Mode.ON;
+		
+		
 		bAirSupplyEnable := FALSE;
 	
 		tonInitialising(IN := FALSE);
@@ -490,7 +561,7 @@ CASE eMachineState OF
 		// -----------------------------------------------------
 		// LATCH RESET REQUEST
 		// -----------------------------------------------------
-		IF fbResetTrigger.Q THEN
+		IF fbResetTrigger.Q AND NOT blogoutHMI THEN
 	
 			bFaultResetRequested := TRUE;
 	
@@ -590,30 +661,45 @@ CASE eMachineState OF
 	
 	E_MachineState.Stopped:
 	
+		eMode_LED_Start := E_LEDs_Mode.OFF;
+		eMode_LED_Reset := E_LEDs_Mode.FLASHING;
+		eMode_LED_PASS  := E_LEDs_Mode.OFF;
+		eMode_LED_Fail  := E_LEDs_Mode.OFF;
+	
 		bStopRequested := FALSE;
 		
 		
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 		
+		IF blogoutHMI THEN
+				bStopRequested := TRUE;
+		ELSE
 		//ipEquipment.RequestStop();
 
-		// Air may remain enabled after returning from an active machine state,
-		// provided that the main door remains closed. Opening the door removes
-		// the request. Closing it again does not restore the air in Stopped.
-		IF NOT stInputs.bMainDoorClosed THEN
-			bAirSupplyEnable := FALSE;
-		END_IF
-	
-		IF NOT GVL_HMI.bIvekSettingsInterlock THEN
-	
-			IF stCommand.bReset AND stInputs.stSafety.bSafetyOk THEN
-				eMachineState := E_MachineState.Initialising;
+			// Air may remain enabled after returning from an active machine state,
+			// provided that the main door remains closed. Opening the door removes
+			// the request. Closing it again does not restore the air in Stopped.
+			IF NOT stInputs.bMainDoorClosed THEN
+				bAirSupplyEnable := FALSE;
 			END_IF
-			
-		END_IF
+		
+			IF NOT GVL_HMI.bIvekSettingsInterlock THEN
+		
+				IF stCommand.bReset AND stInputs.stSafety.bSafetyOk THEN
+					eMachineState := E_MachineState.Initialising;
+				END_IF
+				
+			END_IF
+		 END_IF
 // 	
 	E_MachineState.Initialising:
+	
+		eMode_LED_Start := E_LEDs_Mode.OFF;
+		eMode_LED_Reset := E_LEDs_Mode.OFF;
+		eMode_LED_PASS  := E_LEDs_Mode.OFF;
+		eMode_LED_Fail  := E_LEDs_Mode.OFF;
+		
 		// Initialising is the only state that initially enables the air supply.
 		bAirSupplyEnable := TRUE;
 
@@ -666,7 +752,13 @@ CASE eMachineState OF
 		END_IF
 // 	
 	E_MachineState.ReadyToStart:
-	
+		
+		eMode_LED_Start := E_LEDs_Mode.FLASHING;
+		eMode_LED_Reset := E_LEDs_Mode.OFF;
+		eMode_LED_PASS  := E_LEDs_Mode.OFF;
+		eMode_LED_Fail  := E_LEDs_Mode.OFF;
+		
+		
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 	
@@ -696,6 +788,39 @@ CASE eMachineState OF
 // 	
 	E_MachineState.AutoCycle:
 	
+		eMode_LED_Start := E_LEDs_Mode.OFF;
+		eMode_LED_Reset := E_LEDs_Mode.OFF;
+
+		// -----------------------------------------------------
+		// OPERATOR RESULT LED INDICATION
+		// -----------------------------------------------------
+		// Same behaviour as the original implementation:
+		//
+		// PASS = valid result AND passed
+		// FAIL = valid result AND not passed
+		// -----------------------------------------------------
+	
+		IF stOperatorNest.stResult.bValid THEN
+	
+			IF stOperatorNest.stResult.bPassed THEN
+	
+				eMode_LED_PASS := E_LEDs_Mode.ON;
+				eMode_LED_Fail := E_LEDs_Mode.OFF;
+	
+			ELSE
+	
+				eMode_LED_PASS := E_LEDs_Mode.OFF;
+				eMode_LED_Fail := E_LEDs_Mode.ON;
+	
+			END_IF
+	
+		ELSE
+	
+			eMode_LED_PASS := E_LEDs_Mode.OFF;
+			eMode_LED_Fail := E_LEDs_Mode.OFF;
+	
+		END_IF;
+
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 
@@ -960,6 +1085,11 @@ CASE eMachineState OF
 // 	
 	E_MachineState.Manual:
 
+		eMode_LED_Start := E_LEDs_Mode.OFF;
+		eMode_LED_Reset := E_LEDs_Mode.OFF;
+		eMode_LED_PASS  := E_LEDs_Mode.OFF;
+		eMode_LED_Fail  := E_LEDs_Mode.OFF;
+		
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 		
@@ -1273,14 +1403,52 @@ stOutputsInternal.bSafetyResetRequest := stCommand.bReset AND NOT stInputs.stSaf
 
 stOutputsInternal.bSafetyErrorAcknowledgementRequest :=stOutputsInternal.bSafetyResetRequest;
 
-stOutputsInternal.bLedStart 		:= eMachineState = E_MachineState.ReadyToStart;
-stOutputsInternal.bLedReset 		:= eMachineState = E_MachineState.Fault OR eMachineState = E_MachineState.Stopped;
-// Result LEDs represent only the part currently
-// located at the operator position.
-stOutputsInternal.bLedPass 			:= stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed;
-stOutputsInternal.bLedFail 			:= stOperatorNest.stResult.bValid AND NOT stOperatorNest.stResult.bPassed;
+// stOutputsInternal.bLedStart 		:= eMachineState = E_MachineState.ReadyToStart;
+// stOutputsInternal.bLedReset 		:= eMachineState = E_MachineState.Fault OR eMachineState = E_MachineState.Stopped;
+// // Result LEDs represent only the part currently
+// // located at the operator position.
+// stOutputsInternal.bLedPass 			:= stOperatorNest.stResult.bValid AND stOperatorNest.stResult.bPassed;
+// stOutputsInternal.bLedFail 			:= (stOperatorNest.stResult.bValid AND NOT stOperatorNest.stResult.bPassed) OR eMachineState = E_MachineState.Fault;
 stOutputsInternal.bInternalLight 	:= TRUE;
 stOutputsInternal.bExternalLight 	:= stCommand.bExternalLight;
+
+
+// =========================================================
+// LED OUTPUT MAPPING
+// =========================================================
+	
+	// START LED
+	CASE eMode_LED_Start OF
+		
+		E_LEDs_Mode.OFF:stOutputsInternal.bLedStart := FALSE;
+		E_LEDs_Mode.ON:stOutputsInternal.bLedStart := TRUE;
+		E_LEDs_Mode.FLASHING:stOutputsInternal.bLedStart := bLedBlink;
+	
+	END_CASE
+	// RESET LED
+	CASE eMode_LED_Reset OF
+	
+		E_LEDs_Mode.OFF:stOutputsInternal.bLedReset := FALSE;
+		E_LEDs_Mode.ON:stOutputsInternal.bLedReset := TRUE;
+		E_LEDs_Mode.FLASHING:stOutputsInternal.bLedReset := bLedBlink;
+	
+	END_CASE
+	// PASS LED
+	CASE eMode_LED_PASS OF
+	
+		E_LEDs_Mode.OFF:stOutputsInternal.bLedPass := FALSE;
+		E_LEDs_Mode.ON:stOutputsInternal.bLedPass := TRUE;
+		E_LEDs_Mode.FLASHING:stOutputsInternal.bLedPass := bLedBlink;
+	
+	END_CASE	
+	// FAIL LED
+	CASE eMode_LED_Fail OF
+		E_LEDs_Mode.OFF:stOutputsInternal.bLedFail := FALSE;
+		E_LEDs_Mode.ON:stOutputsInternal.bLedFail := TRUE;
+		E_LEDs_Mode.FLASHING:stOutputsInternal.bLedFail := bLedBlink;
+	
+	END_CASE
+
 
 // =========================================================
 // EQUIPMENT OUTPUT DATA

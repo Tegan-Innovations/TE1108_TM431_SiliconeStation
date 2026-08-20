@@ -95,6 +95,11 @@
       "name": "Contents/CSS_JAVA/ManualMode.js",
       "description": "",
       "type": "JavaScript"
+    },
+    {
+      "name": "Contents/CSS_JAVA/Heartbeat.js",
+      "description": "",
+      "type": "JavaScript"
     }
   ],
   "userControls": [

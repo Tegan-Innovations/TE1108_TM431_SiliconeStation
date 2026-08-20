@@ -1386,6 +1386,16 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.bHMIAlive": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bHMIAlive",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -5024,6 +5034,7 @@
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.2.rDistance": 3,
                 "ADS.PLC1.GVL_HMI.astActiveEvents": 3,
                 "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": 3,
+                "ADS.PLC1.GVL_HMI.bHMIAlive": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsActTimeout": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsActive": 3,

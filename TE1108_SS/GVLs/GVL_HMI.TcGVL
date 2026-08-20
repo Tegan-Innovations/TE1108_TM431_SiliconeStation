@@ -24,6 +24,7 @@ VAR_GLOBAL
     sSystemDate      : STRING(255);
     stStatistics     : ST_HmiStatistics;
     bBlink_1Hz       : BOOL;
+	bHMIAlive		 : BOOL;
 	
 	//==============================================================
     // IVEK native web interface
