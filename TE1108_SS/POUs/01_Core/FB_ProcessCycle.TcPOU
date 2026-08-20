@@ -18,8 +18,10 @@ VAR
     tonSiliconeProcess         : TON;
 	
 	// Timeout
-	tonProcessCycleTimeout : TON;
-	tonAutoCycleIdleTimeout : TON;
+	tonProcessCycleTimeout 		: TON;
+	tonAutoCycleIdleTimeout 	: TON;
+	
+	bStopPending 				: BOOL;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -106,29 +108,35 @@ IF tonProcessCycleTimeout.Q THEN
 END_IF
 
 
-// =========================================================
+/// =========================================================
 // GLOBAL STATE CONTROL
 // =========================================================
 
 IF bResetRequest THEN
-	
-	stStatusInternal.bTimeoutFault := FALSE;
+    // A reset starts a new process-cycle context.
+    bStopPending := FALSE;
+    stStatusInternal.bTimeoutFault := FALSE;
     eState := E_CycleState.Initialising;
-	
 
 ELSIF NOT bEnable THEN
-
+    // No Stop request may remain stored while the
+    // Process Cycle is disabled.
+    bStopPending := FALSE;
     eState := E_CycleState.Disabled;
-
-ELSIF bStopRequest
-    AND eState <> E_CycleState.Disabled
-    AND eState <> E_CycleState.ControlledStop
-THEN
-
-    eState := E_CycleState.ControlledStop;
 
 END_IF
 
+// =========================================================
+// STOP REQUEST LATCH
+// ========================================================
+
+// Memorise Stop only while the Process Cycle is enabled.
+// The request remains stored until the current process and
+// operator disposition have completed.
+IF bEnable
+    AND NOT bResetRequest AND bStopRequest THEN
+    bStopPending := TRUE;
+END_IF
 
 // =========================================================
 // PROCESS CYCLE STATE MACHINE
@@ -180,31 +188,36 @@ CASE eState OF
     // WAITING FOR PROCESS CYCLE TRIGGER
     // -----------------------------------------------------
 
-    E_CycleState.WaitingForProcessCycleTrigger:
+   E_CycleState.WaitingForProcessCycleTrigger:
 
-        stStatusInternal.eMessage :=
-            E_ProcessCycleMessage.WaitingForProcessCycleTrigger;
-
-        IF stInputs.bIndexFaulted
-            OR stInputs.bSiliconeSupportFaulted
-            OR stInputs.bAssemblySupportFaulted
-        THEN
-
-            eState :=
-                E_CycleState.Fault;
-
-        ELSIF rtProcessCycleTrigger.Q
-            AND stInputs.bSafetyOk
-            AND stInputs.bIndexMoveAllowed
-            AND stInputs.bIndexReady
-            AND stInputs.bIndexLocked
-            AND stInputs.bSiliconeSupportRetracted
-            AND stInputs.bAssemblySupportRetracted
-        THEN
-
-            eState :=  E_CycleState.ValidatingIndexPermissives;
-
-        END_IF
+		stStatusInternal.eMessage := E_ProcessCycleMessage.WaitingForProcessCycleTrigger;
+		// -----------------------------------------------------
+		// SAFE STOP POINT
+		// -----------------------------------------------------
+		// No automatic process is active at this point.
+		// A pending Stop request may therefore be executed
+		// immediately without starting another cycle.
+		IF bStopPending THEN
+	
+			bStopPending := FALSE;
+			eState := E_CycleState.ControlledStop;
+	
+		ELSIF stInputs.bIndexFaulted
+			OR stInputs.bSiliconeSupportFaulted
+			OR stInputs.bAssemblySupportFaulted
+		THEN
+			eState := E_CycleState.Fault;
+	
+		ELSIF rtProcessCycleTrigger.Q
+			AND stInputs.bSafetyOk
+			AND stInputs.bIndexMoveAllowed
+			AND stInputs.bIndexReady
+			AND stInputs.bIndexLocked
+			AND stInputs.bSiliconeSupportRetracted
+			AND stInputs.bAssemblySupportRetracted
+		THEN
+			eState := E_CycleState.ValidatingIndexPermissives;
+		END_IF
 		
 		// -----------------------------------------------------
 		// PREPARING OPERATOR EXCHANGE
@@ -241,27 +254,30 @@ CASE eState OF
 	
 	E_CycleState.ConfirmingOperatorExchange:
 	
-		stStatusInternal.eMessage :=
-			E_ProcessCycleMessage.ConfirmingOperatorExchange;
-	
+		stStatusInternal.eMessage := E_ProcessCycleMessage.ConfirmingOperatorExchange;
 		stRequestsInternal.bConfirmOperatorExchange := TRUE;
+		// -----------------------------------------------------
+		// EXECUTE PENDING STOP
+		// -----------------------------------------------------
+		// The automatic cycle and operator disposition are
+		// complete. A pending Stop request may now be executed.
+		IF bStopPending THEN
 	
-		eState :=
-    		E_CycleState.WaitingForProcessCycleTrigger;
-
+			bStopPending := FALSE;
+			eState := E_CycleState.ControlledStop;
+		ELSE
+			eState := E_CycleState.WaitingForProcessCycleTrigger;
+		END_IF
     // -----------------------------------------------------
     // VALIDATING INDEX PERMISSIVES
     // -----------------------------------------------------
 
     E_CycleState.ValidatingIndexPermissives:
 
-        stStatusInternal.eMessage :=
-            E_ProcessCycleMessage.ValidatingIndexPermissives;
-
+        stStatusInternal.eMessage := E_ProcessCycleMessage.ValidatingIndexPermissives;
+		
         IF stInputs.bIndexFaulted THEN
-
-            eState :=
-                E_CycleState.Fault;
+            eState :=E_CycleState.Fault;
 
         ELSIF stInputs.bIndexMoveAllowed
             AND stInputs.bIndexReady

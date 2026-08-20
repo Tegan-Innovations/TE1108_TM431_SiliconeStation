@@ -134,7 +134,8 @@ VAR
     tonInitialising               : TON;
     tonStopping                   : TON;
     tonAutoCycleIdleTimeout       : TON;
-
+	
+	bStopRequested 				  : BOOL;
     // =====================================================
     // AIR / DOOR CONTROL
     // =====================================================
@@ -213,14 +214,16 @@ END_VAR
 IF NOT stInputs.stSafety.bSafetyOk OR  bSafetyDropRequest THEN
 	eMachineState := E_MachineState.Fault;
 END_IF
-// 
-// // A PLC machine fault or a loss of SafetyOk forces the machine into Fault.
-// IF stInputs.bEventFault
-//     OR NOT stInputs.stSafety.bSafetyOk
-// THEN
-//     eMachineState := E_MachineState.Fault;
-// END_IF
 
+// =========================================================
+// MACHINE STOP REQUEST LATCH
+// =========================================================
+
+// Memorise the Stop command until the machine has
+// completed the required stopping sequence.
+IF stCommand.bStop THEN
+    bStopRequested := TRUE;
+END_IF
 
 // =========================================================
 // DETERMINISTIC CYCLIC INITIALISATION
@@ -452,7 +455,7 @@ stManualModeInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
 
 fbManualMode.Cyclic(
     bEnable := eMachineState = E_MachineState.Manual,
-    bStopRequest := stCommand.bStop,
+    bStopRequest := bStopRequested,
     stCommand := stCommand,
     stInputs := stManualModeInputs,
     stRequests => stManualModeRequests,
@@ -586,8 +589,12 @@ CASE eMachineState OF
 		END_IF
 	
 	E_MachineState.Stopped:
+	
+		bStopRequested := FALSE;
+		
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
+		
 		//ipEquipment.RequestStop();
 
 		// Air may remain enabled after returning from an active machine state,
@@ -662,7 +669,7 @@ CASE eMachineState OF
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 	
-		IF stCommand.bStop THEN
+		IF bStopRequested THEN
 	
 			eMachineState := E_MachineState.Stopping;
 
@@ -765,7 +772,7 @@ CASE eMachineState OF
 		// PROCESS CYCLE EXECUTION
 		fbProcessCycle.Cyclic(
 			bEnable := TRUE,
-			bStopRequest := stCommand.bStop,
+			bStopRequest := bStopRequested,
 			bResetRequest := stCommand.bReset,
 			stInputs := stProcessCycleInputs,
 			stRequests => stProcessCycleRequests,
@@ -940,14 +947,14 @@ CASE eMachineState OF
 		END_IF
 	
 		// LEAVE AUTO CYCLE
-		IF stCommand.bStop
+		IF bStopRequested
 			AND stProcessCycleStatus.eState = E_CycleState.Disabled
 		THEN
 			eMachineState := E_MachineState.Stopping;
 		END_IF
 		
 		IF tonAutoCycleIdleTimeout.Q THEN
-			eMachineState := E_MachineState.Stopping;
+			 bStopRequested := TRUE;
 		END_IF
 // 	
 	E_MachineState.Manual:
@@ -1010,7 +1017,7 @@ CASE eMachineState OF
 		// confirms that the exit sequence is complete.
 		// ---------------------------------------------------------
 		
-		IF stCommand.bStop
+		IF bStopRequested
 			AND stManualModeStatus.bSafeToExit
 		THEN
 			eMachineState := E_MachineState.Stopping;

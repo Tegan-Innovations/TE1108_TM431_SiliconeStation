@@ -936,6 +936,15 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{2438F91B-E188-4ED7-8594-54354F9ED6A4}" Namespace="Safety" TcBaseType="true">FSOE_6</Name>
 			<BitSize>48</BitSize>
 			<SubItem>
@@ -1076,7 +1085,7 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{496DB682-0A4D-C535-4B67-2AB49E528563}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{B0722EB7-2D80-BC0F-FBB9-E77FD3283CB8}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1105,6 +1114,11 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 						<Var>
 							<Name>GVL_Persistent.astEventsHistory</Name>
 							<Type GUID="{385AF722-F2E3-E02B-BA4E-6FD795CA6941}">ARRAY [0..200] OF ST_EventsHistory</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 					</Vars>
