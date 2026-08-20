@@ -36,6 +36,9 @@
         "Name": "Enable Nests"
       },
       {
+        "Name": "Silicone Station"
+      },
+      {
         "Name": "Assembly Station"
       }
     ]
@@ -132,7 +135,27 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Screens/Settings/settings_Puck.content"
+                  "value": "Contents/Screens/Settings/settings_Assembly.content"
+                },
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "caseValue": {
+              "objectType": "StaticValue",
+              "valueType": "tchmi:general#/definitions/Any",
+              "value": "Silicone Station"
+            },
+            "actions": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%IO_Region_18::TargetContent%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/ContentPath",
+                  "value": "Contents/Screens/Settings/settings_Silicone.content"
                 },
                 "asyncWait": true
               }

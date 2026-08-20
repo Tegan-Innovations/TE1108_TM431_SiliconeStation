@@ -592,6 +592,7 @@ CASE eMachineState OF
 	
 		bStopRequested := FALSE;
 		
+		
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 		
@@ -1319,6 +1320,7 @@ stStatus.bIndexPermissive 		:= stPermissives.bIndexMoveAllowed;
 stStatus.bProcessPermissive 	:= stPermissives.bProcessStartAllowed;
 stStatus.stPermissives 			:= stPermissives;
 stStatus.stLastResult 			:= stLastResult;
+stStatus.bEnableSetting 		:= eMachineState = E_MachineState.Stopped;
 // =========================================================
 // ACTIVE FAULT SUMMARY FOR MAIN HMI GRID
 // =========================================================

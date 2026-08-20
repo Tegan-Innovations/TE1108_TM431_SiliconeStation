@@ -77,6 +77,7 @@ GVL_HMI.stStatus.aNest := GVL_MASTER.stStatus.aNest;
 GVL_HMI.stStatus.stAlarms := GVL_MASTER.stStatus.stAlarms;
 GVL_HMI.stStatus.sMachineMessage := GVL_MASTER.stStatus.sMachineMessage;
 GVL_HMI.stStatus.sOperatorMessage := GVL_MASTER.stStatus.sOperatorMessage;
+GVL_HMI.stStatus.bEnableSettings := GVL_MASTER.stStatus.bEnableSetting;
 
 
 // Machine-state banner. Colour and flashing behaviour match the Kistler standard.

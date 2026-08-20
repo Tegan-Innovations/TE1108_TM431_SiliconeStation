@@ -36,6 +36,9 @@ STRUCT
     bMainDoorDiagnosticOk           : BOOL;
     bMs6FeedbackOk                  : BOOL;
     bAirExhausted                   : BOOL;
+	bEnableSettings					: BOOL;
+	
+	
     uiMainAirPressureRaw            : UINT;
     uiSiliconePressureRaw           : UINT;
     uiNozzlePressureRaw             : UINT;
@@ -58,6 +61,7 @@ STRUCT
     stAlarms                        : ST_AlarmManagerStatus;
     sMachineMessage                : STRING(160);
     sOperatorMessage               : STRING(255);
+	
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

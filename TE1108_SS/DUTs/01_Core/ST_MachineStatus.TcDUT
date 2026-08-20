@@ -29,6 +29,8 @@ STRUCT
     bCycleStopRequested    : BOOL;
     bIndexPermissive       : BOOL;
     bProcessPermissive     : BOOL;
+	bEnableSetting		   : BOOL;
+	
     stPermissives          : ST_MachinePermissives;
     stLastResult           : ST_ProcessResult;
     stAlarms               : ST_AlarmManagerStatus;
@@ -38,6 +40,7 @@ STRUCT
     sOperatorMessage       : STRING(255);
 END_STRUCT
 END_TYPE
+
 ]]></Declaration>
   </DUT>
 </TcPlcObject>

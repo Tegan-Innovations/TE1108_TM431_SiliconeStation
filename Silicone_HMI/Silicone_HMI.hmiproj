@@ -268,22 +268,22 @@
     <Content Include="Contents\Screens\popups\Content_Popup_Puck.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\Settings\settings_Assembly.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\Settings\settings_IVEK.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Screens\Settings\settings_kister.content">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Contents\Screens\Settings\settings_Nest.content">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Contents\Screens\Settings\settings_Puck.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\Settings.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\Alarms.content">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Contents\Screens\Settings\settings_Silicone.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\Statistics.content">
