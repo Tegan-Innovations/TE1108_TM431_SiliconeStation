@@ -14,9 +14,11 @@ STRUCT
     eCurrentIndexPosition           : E_TablePosition;
     bIndexPositionValid             : BOOL;
     bTwoHandsSafe                   : BOOL;
-    bGearboxAssemblyPartPresent            : BOOL;
-    bReservoirPartPresent             : BOOL;
-    bRejectChutePartPresent              : BOOL;
+    bGearboxAssemblyPartPresent     : BOOL;
+    bReservoirPartPresent           : BOOL;
+    bRejectChutePartPresent         : BOOL;
+	bRejectPopup			        : BOOL;
+	
     bIndexReady                     : BOOL;
     bIndexLocked                    : BOOL;
     bIndexCompletedSensor           : BOOL;

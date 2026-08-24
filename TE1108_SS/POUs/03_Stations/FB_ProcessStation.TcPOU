@@ -47,6 +47,8 @@ VAR_INPUT
     bCylinderRetracted       : BOOL;
     tCylinderTimeout         : TIME;
     tProcessTimeout          : TIME;
+	bAirSupplySafe 			 : BOOL;
+	
 END_VAR
 VAR_OUTPUT
     bCylinderExtendOutput    : BOOL;
@@ -65,9 +67,12 @@ stStatusInternal.bExtendPermissive :=
     AND bMainDoorSafe
     AND bIndexReady
     AND bIndexLocked
+	AND bAirSupplySafe
     AND NOT bIndexBusy;
+	
 stStatusInternal.bRetractPermissive :=
     bProcessSafetyPermitted
+    AND bAirSupplySafe
     AND NOT bIndexBusy;
 
 IF bCylinderExtended AND bCylinderRetracted THEN
@@ -75,50 +80,93 @@ IF bCylinderExtended AND bCylinderRetracted THEN
     eState := E_ProcessStationState.Fault;
 END_IF
 
+// =========================================================
+// RESET
+// =========================================================
+//
+// Reset clears the Process Station fault only after the
+// contradictory cylinder-sensor condition has disappeared.
+//
+// Pneumatic position recovery is NOT performed during Fault.
+// The station returns to Disabled and will recover its safe
+// position when it is enabled again during Initialising.
+// =========================================================
+
 IF bResetRequest THEN
-    IF bConfigured THEN ipEquipment.RequestReset(); END_IF
+
+    IF bConfigured THEN
+        ipEquipment.RequestReset();
+    END_IF
+
+    // A simultaneous Extended + Retracted indication is a real
+    // sensor contradiction and must not be cleared by Reset.
     IF NOT (bCylinderExtended AND bCylinderRetracted) THEN
+
         eFault := E_ProcessStationFault.None;
         stResult.bValid := FALSE;
-        IF bEnable OR bManualEnable THEN
-            eState := E_ProcessStationState.Idle;
-        ELSE
-            eState := E_ProcessStationState.Disabled;
-        END_IF
+
+        eState := E_ProcessStationState.Disabled;
+
     END_IF
+
 END_IF
 
+// =========================================================
+// GLOBAL CONTROL
+// =========================================================
+
 IF NOT bConfigured THEN
+
     eFault := E_ProcessStationFault.EquipmentFault;
     eState := E_ProcessStationState.Fault;
+
+
 ELSIF bStopRequest THEN
+
+    // Fault / Stopping:
+    //
+    // Stop the process equipment, but do not attempt pneumatic
+    // recovery here. The machine air supply may already have
+    // been removed.
     ipEquipment.RequestStop();
-    IF bCylinderRetracted AND NOT ipEquipment.IsBusy() THEN
-        IF bEnable OR bManualEnable THEN eState := E_ProcessStationState.Idle; ELSE eState := E_ProcessStationState.Disabled; END_IF
-    ELSE
-        eState := E_ProcessStationState.Retracting;
+
+    IF eState <> E_ProcessStationState.Fault THEN
+        eState := E_ProcessStationState.Disabled;
     END_IF
+
+
 ELSIF bManualEnable THEN
 
     ipEquipment.RequestStop();
-	eState := E_ProcessStationState.Disabled;
+    eState := E_ProcessStationState.Disabled;
+
 
 ELSIF NOT bEnable THEN
 
+    // Station disabled outside Automatic / Initialising.
+    //
+    // Do not start a retract sequence here because air may not
+    // currently be available.
     ipEquipment.RequestStop();
 
-    IF bCylinderRetracted THEN
-        eState := E_ProcessStationState.Disabled;
-    ELSE
-        eState := E_ProcessStationState.Retracting;
-    END_IF
+    eState := E_ProcessStationState.Disabled;
 
 END_IF
 
 CASE eState OF
+	
     E_ProcessStationState.Disabled:
-        bCylinderRetractOutput := NOT bCylinderRetracted;
-        IF (bEnable OR bManualEnable) AND bCylinderRetracted THEN eState := E_ProcessStationState.Idle; END_IF
+
+    // Recovery is only performed when the station is enabled.
+    // Machine Initialising enables the station after requesting
+    // the pneumatic supply.
+    IF bEnable THEN
+        IF bCylinderRetracted THEN
+            eState := E_ProcessStationState.Idle;
+        ELSIF stStatusInternal.bRetractPermissive THEN
+            //eState := E_ProcessStationState.Retracting;
+        END_IF
+    END_IF
 
     E_ProcessStationState.Idle:
         bCylinderRetractOutput := NOT bCylinderRetracted;
@@ -179,10 +227,15 @@ CASE eState OF
     E_ProcessStationState.Retracting:
         bCylinderRetractOutput := NOT bCylinderRetracted;
         IF bCylinderRetracted AND NOT ipEquipment.IsBusy() THEN
-            IF stResult.bValid THEN eState := E_ProcessStationState.Complete;
-            ELSIF bEnable OR bManualEnable THEN eState := E_ProcessStationState.Idle;
-            ELSE eState := E_ProcessStationState.Disabled;
+			
+            IF stResult.bValid THEN 
+				eState := E_ProcessStationState.Complete;
+            ELSIF bEnable OR bManualEnable THEN 
+				eState := E_ProcessStationState.Idle;
+            ELSE 
+				eState := E_ProcessStationState.Disabled;
             END_IF
+			
         END_IF
 
     E_ProcessStationState.Complete:
@@ -192,8 +245,13 @@ CASE eState OF
         END_IF
 
     E_ProcessStationState.Fault:
-        ipEquipment.RequestStop();
-        bCylinderRetractOutput := bProcessSafetyPermitted AND NOT bIndexBusy AND NOT bCylinderRetracted;
+
+    // Fault is a non-recovery state.
+    // Pneumatic recovery is performed during machine Initialising.
+    ipEquipment.RequestStop();
+
+    bCylinderExtendOutput := FALSE;
+    bCylinderRetractOutput := FALSE;
 END_CASE
 
 tonCylinder(

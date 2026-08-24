@@ -240,6 +240,7 @@ CASE eState OF
 		
 			stStatusInternal.eMessage :=
 				E_ProcessCycleMessage.WaitingOperatorExchange;
+	
 		
 			IF stInputs.bOperatorExchangeComplete THEN
 		
@@ -518,8 +519,8 @@ CASE eState OF
 
     E_CycleState.RequestingSupportsRetract:
 
-        stRequestsInternal.bSiliconeSupportRetract := stInputs.bSiliconeProcessRequired;
-		stRequestsInternal.bAssemblySupportRetract := stInputs.bAssemblyProcessRequired;
+        stRequestsInternal.bSiliconeSupportRetract := NOT stInputs.bSiliconeSupportRetracted;
+		stRequestsInternal.bAssemblySupportRetract := NOT stInputs.bAssemblySupportRetracted;
 
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.RequestingSupportsRetract;
@@ -534,8 +535,8 @@ CASE eState OF
 
     E_CycleState.WaitingForSupportsRetracted:
 
-        stRequestsInternal.bSiliconeSupportRetract := stInputs.bSiliconeProcessRequired;
-		stRequestsInternal.bAssemblySupportRetract := stInputs.bAssemblyProcessRequired;
+        stRequestsInternal.bSiliconeSupportRetract := NOT stInputs.bSiliconeSupportRetracted;
+		stRequestsInternal.bAssemblySupportRetract := NOT stInputs.bAssemblySupportRetracted;
 
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.WaitingForSupportsRetracted;

@@ -60,30 +60,50 @@ astActiveEvents[0].sSolution := '';]]></ST>
 // ============================================================================
 //
 // astActiveEvents[0]:
-//     Reserved for the current machine message.
+//     Reserved exclusively for the current machine message.
 //
 // astActiveEvents[1..50]:
-//     Faults/events currently displayed on the main screen.
+//     Active Faults and Cycle Stop Requests.
 //
 // astEventsHistory:
-//     Complete event history. It is never cleared when the machine leaves Fault.
+//     Complete event history.
 //
-// Active fault rows are displayed only while the machine is in Fault.
-// When the machine leaves Fault, only the main-screen active rows are cleared.
+// EVENT BEHAVIOUR:
+//
+// MESSAGE:
+//     - Operator instruction.
+//     - Displayed only through astActiveEvents[0].
+//     - Never added to rows 1..50.
+//
+// FAULT:
+//     - Latched individually through bActive.
+//     - Displayed only while the machine is in Fault.
+//     - Remains latched after the live condition disappears.
+//     - Cleared by Reset only after bEventFlag is FALSE.
+//
+// CYCLE STOP REQUEST:
+//     - Latched individually through bActive.
+//     - Displayed in any machine state.
+//     - Remains visible after the live condition disappears.
+//     - Cleared by Reset only after bEventFlag is FALSE.
+//
+// bEventFlag:
+//     Live condition.
+//
+// bActive:
+//     Individual event presentation latch.
+//
 // ============================================================================
 
 
-// -----------------------------------------------------------------------------
-// MACHINE IS NOT IN FAULT
-// -----------------------------------------------------------------------------
-// Clear only the active-event rows shown on the main screen.
-//
-// Row 0 is intentionally preserved because it contains the current machine
-// message.
-//
-// The historical array astEventsHistory is not modified.
-// -----------------------------------------------------------------------------
-IF eMachineState <> E_MachineState.Fault THEN
+IF bPulse THEN
+
+    // ------------------------------------------------------------------------
+    // REBUILD ACTIVE EVENT GRID
+    // ------------------------------------------------------------------------
+    // Row 0 is intentionally preserved because it contains the current
+    // machine instruction/message.
+    // ------------------------------------------------------------------------
 
     FOR l := 1 TO 50 DO
 
@@ -95,169 +115,291 @@ IF eMachineState <> E_MachineState.Fault THEN
     END_FOR
 
 
-    // Rearm the event detection so that a future Fault can be inserted again
-    // into the active grid and into the historical event list.
-    FOR k[0] := 0 TO nArraySize DO
-
-        FOR k[1] := 0 TO 100 DO
-
-            stStationEvents[k[0]].aEvents[k[1]].bActive := FALSE;
-
-        END_FOR
-
-    END_FOR
-
-
-    // Active-event rows start from index 1.
-    // Index 0 remains reserved for the machine message.
+    // Rows 1..50 are used for Faults and Alerts.
     l := 0;
 
 
-// -----------------------------------------------------------------------------
-// MACHINE IS IN FAULT
-// -----------------------------------------------------------------------------
-// Build the active-event grid and register newly detected events in history.
-// -----------------------------------------------------------------------------
-ELSIF bPulse THEN
+    // ------------------------------------------------------------------------
+    // SCAN ALL STATION EVENTS
+    // ------------------------------------------------------------------------
 
     FOR k[0] := 0 TO nArraySize DO
 
         FOR k[1] := 0 TO 100 DO
 
-            IF NOT stStationEvents[k[0]].aEvents[k[1]].bActive
-                AND stStationEvents[k[0]].aEvents[k[1]].bEventFlag
-            THEN
+
+            // =================================================================
+            // FAULT
+            // =================================================================
+
+            IF stStationEvents[k[0]].aEvents[k[1]].bFault THEN
 
 
-                // =============================================================
-                // FAULT
-                // =============================================================
-                IF stStationEvents[k[0]].aEvents[k[1]].bFault THEN
+                // -------------------------------------------------------------
+                // NEW FAULT DETECTED
+                // -------------------------------------------------------------
+                // Register in history only once, when the live condition
+                // activates an event that was not already latched.
+                // -------------------------------------------------------------
 
-                    // Add the event to the active grid on the main screen.
-                    IF l < 50 THEN
+                IF stStationEvents[k[0]].aEvents[k[1]].bEventFlag
+                    AND NOT stStationEvents[k[0]].aEvents[k[1]].bActive
+                THEN
 
-                        l := l + 1;
-
-                        astActiveEvents[l].sEventTex :=
-                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
-
-                        astActiveEvents[l].sType := 'Fault';
-                        astActiveEvents[l].abType := 1;
-
-                        astActiveEvents[l].sSolution :=
-                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
-
-                    END_IF
-
-
-                    // Shift the history and insert the newest event at index 0.
+                    // Shift history.
                     FOR n := 200 TO 1 BY -1 DO
 
-                        astEventsHistory[n] := astEventsHistory[n - 1];
+                        astEventsHistory[n] :=
+                            astEventsHistory[n - 1];
 
                     END_FOR
 
 
+                    // Insert newest event.
                     astEventsHistory[0].sEventTex :=
                         stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
 
-                    astEventsHistory[0].sType := 'Fault';
-                    astEventsHistory[0].abType := 1;
-                    astEventsHistory[0].sDate := sSystemDate;
-                    astEventsHistory[0].sTime := sSystemTime;
+                    astEventsHistory[0].sType :=
+                        'Fault';
 
-                    stStationEvents[k[0]].aEvents[k[1]].bActive := TRUE;
+                    astEventsHistory[0].abType :=
+                        1;
 
+                    astEventsHistory[0].sDate :=
+                        sSystemDate;
 
-                // =============================================================
-                // CYCLE STOP REQUEST
-                // =============================================================
-                ELSIF stStationEvents[k[0]].aEvents[k[1]].bCycleStopRequest THEN
-
-                    // Add the event to the active grid on the main screen.
-                    IF l < 50 THEN
-
-                        l := l + 1;
-
-                        astActiveEvents[l].sEventTex :=
-                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
-
-                        astActiveEvents[l].sType := 'Cycle Stop Request';
-                        astActiveEvents[l].abType := 2;
-
-                        astActiveEvents[l].sSolution :=
-                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
-
-                    END_IF
+                    astEventsHistory[0].sTime :=
+                        sSystemTime;
 
 
-                    // Shift the history and insert the newest event at index 0.
-                    FOR n := 200 TO 1 BY -1 DO
-
-                        astEventsHistory[n] := astEventsHistory[n - 1];
-
-                    END_FOR
-
-
-                    astEventsHistory[0].sEventTex :=
-                        stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
-
-                    astEventsHistory[0].sType := 'Cycle Stop Request';
-                    astEventsHistory[0].abType := 2;
-                    astEventsHistory[0].sDate := sSystemDate;
-                    astEventsHistory[0].sTime := sSystemTime;
-
-                    stStationEvents[k[0]].aEvents[k[1]].bActive := TRUE;
-
-
-                // =============================================================
-                // MESSAGE
-                // =============================================================
-                ELSIF stStationEvents[k[0]].aEvents[k[1]].bMessage THEN
-
-                    // Add the event to the active grid on the main screen.
-                    IF l < 50 THEN
-
-                        l := l + 1;
-
-                        astActiveEvents[l].sEventTex :=
-                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
-
-                        astActiveEvents[l].sType := 'Message';
-                        astActiveEvents[l].abType := 3;
-
-                        astActiveEvents[l].sSolution :=
-                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
-
-                    END_IF
-
-
-                    // Shift the history and insert the newest event at index 0.
-                    FOR n := 200 TO 1 BY -1 DO
-
-                        astEventsHistory[n] := astEventsHistory[n - 1];
-
-                    END_FOR
-
-
-                    astEventsHistory[0].sEventTex :=
-                        stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
-
-                    astEventsHistory[0].sType := 'Message';
-                    astEventsHistory[0].abType := 3;
-                    astEventsHistory[0].sDate := sSystemDate;
-                    astEventsHistory[0].sTime := sSystemTime;
-
-                    stStationEvents[k[0]].aEvents[k[1]].bActive := TRUE;
+                    // Latch the individual event.
+                    stStationEvents[k[0]].aEvents[k[1]].bActive :=
+                        TRUE;
 
                 END_IF
 
+
+                // -------------------------------------------------------------
+                // RESET FAULT LATCH
+                // -------------------------------------------------------------
+                // Reset is allowed to clear the individual event only after
+                // the originating fault condition has disappeared.
+                // -------------------------------------------------------------
+
+                IF bResetFaults
+                    AND NOT stStationEvents[k[0]].aEvents[k[1]].bEventFlag
+                THEN
+
+                    stStationEvents[k[0]].aEvents[k[1]].bActive :=
+                        FALSE;
+
+                END_IF
+
+
+                // -------------------------------------------------------------
+                // ACTIVE GRID
+                // -------------------------------------------------------------
+                // Faults are shown only while the machine itself is in Fault.
+                //
+                // bActive allows the original cause to remain displayed after
+                // bEventFlag has returned FALSE, until the operator resets.
+                // -------------------------------------------------------------
+
+                IF stStationEvents[k[0]].aEvents[k[1]].bActive
+                    AND eMachineState = E_MachineState.Fault
+                THEN
+
+                    IF l < 50 THEN
+
+                        l := l + 1;
+
+                        astActiveEvents[l].sEventTex :=
+                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+                        astActiveEvents[l].sType :=
+                            'Fault';
+
+                        astActiveEvents[l].abType :=
+                            1;
+
+                        astActiveEvents[l].sSolution :=
+                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
+                    END_IF
+
+                END_IF
+
+
+
+            // =================================================================
+            // CYCLE STOP REQUEST / ALERT
+            // =================================================================
+
+            ELSIF stStationEvents[k[0]].aEvents[k[1]].bCycleStopRequest THEN
+
+
+                // -------------------------------------------------------------
+                // NEW ALERT DETECTED
+                // -------------------------------------------------------------
+
+                IF stStationEvents[k[0]].aEvents[k[1]].bEventFlag
+                    AND NOT stStationEvents[k[0]].aEvents[k[1]].bActive
+                THEN
+
+                    // Shift history.
+                    FOR n := 200 TO 1 BY -1 DO
+
+                        astEventsHistory[n] :=
+                            astEventsHistory[n - 1];
+
+                    END_FOR
+
+
+                    // Insert newest event.
+                    astEventsHistory[0].sEventTex :=
+                        stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+                    astEventsHistory[0].sType :=
+                        'Cycle Stop Request';
+
+                    astEventsHistory[0].abType :=
+                        2;
+
+                    astEventsHistory[0].sDate :=
+                        sSystemDate;
+
+                    astEventsHistory[0].sTime :=
+                        sSystemTime;
+
+
+                    // Latch the individual Alert.
+                    stStationEvents[k[0]].aEvents[k[1]].bActive :=
+                        TRUE;
+
+                END_IF
+
+
+                // -------------------------------------------------------------
+                // RESET ALERT LATCH
+                // -------------------------------------------------------------
+                // The Alert remains displayed after the live condition has
+                // disappeared and is acknowledged by Reset.
+                // -------------------------------------------------------------
+
+                IF bResetFaults
+                    AND NOT stStationEvents[k[0]].aEvents[k[1]].bEventFlag
+                THEN
+
+                    stStationEvents[k[0]].aEvents[k[1]].bActive :=
+                        FALSE;
+
+                END_IF
+
+
+                // -------------------------------------------------------------
+                // ACTIVE GRID
+                // -------------------------------------------------------------
+                // Alerts may be shown in any machine state.
+                // -------------------------------------------------------------
+
+                IF stStationEvents[k[0]].aEvents[k[1]].bActive THEN
+
+                    IF l < 50 THEN
+
+                        l := l + 1;
+
+                        astActiveEvents[l].sEventTex :=
+                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+                        astActiveEvents[l].sType :=
+                            'Cycle Stop Request';
+
+                        astActiveEvents[l].abType :=
+                            2;
+
+                        astActiveEvents[l].sSolution :=
+                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
+
+                    END_IF
+
+                END_IF
+
+
+
+            // =================================================================
+            // MESSAGE
+            // =================================================================
+            //
+            // Messages are instructions for the operator.
+            //
+            // They are NOT inserted into astActiveEvents[1..50].
+            // Row 0 remains exclusively responsible for the current machine
+            // instruction through sMachineMessage.
+            //
+            // bActive is not used as an operator-reset latch for Messages.
+            // =================================================================
+
+            ELSIF stStationEvents[k[0]].aEvents[k[1]].bMessage THEN
+
+
+                // -------------------------------------------------------------
+                // OPTIONAL MESSAGE HISTORY
+                // -------------------------------------------------------------
+                // Preserve the existing ability to register message events in
+                // history, but rearm them automatically when their condition
+                // disappears because Messages do not require operator Reset.
+                // -------------------------------------------------------------
+
+                IF stStationEvents[k[0]].aEvents[k[1]].bEventFlag
+                    AND NOT stStationEvents[k[0]].aEvents[k[1]].bActive
+                THEN
+
+                    FOR n := 200 TO 1 BY -1 DO
+
+                        astEventsHistory[n] :=
+                            astEventsHistory[n - 1];
+
+                    END_FOR
+
+
+                    astEventsHistory[0].sEventTex :=
+                        stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+
+                    astEventsHistory[0].sType :=
+                        'Message';
+
+                    astEventsHistory[0].abType :=
+                        3;
+
+                    astEventsHistory[0].sDate :=
+                        sSystemDate;
+
+                    astEventsHistory[0].sTime :=
+                        sSystemTime;
+
+
+                    stStationEvents[k[0]].aEvents[k[1]].bActive :=
+                        TRUE;
+
+                END_IF
+
+
+                // Messages automatically rearm when their live condition ends.
+                IF NOT stStationEvents[k[0]].aEvents[k[1]].bEventFlag THEN
+
+                    stStationEvents[k[0]].aEvents[k[1]].bActive :=
+                        FALSE;
+
+                END_IF
+
+
             END_IF
+
 
         END_FOR
 
     END_FOR
+
 
 END_IF]]></ST>
       </Implementation>

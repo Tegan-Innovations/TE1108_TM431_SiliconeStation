@@ -61,6 +61,7 @@ VAR
     stSiliconeNest              : ST_Nest;
     stAssemblyNest              : ST_Nest;
     stProcessNest               : ST_Nest;
+	stFaultNest 				: ST_Nest;
 
     stLastResult                : ST_ProcessResult;
 
@@ -71,13 +72,14 @@ VAR
     stIndexStatus               : ST_IndexStatus;
     stProcessStationStatus      : ST_ProcessStationStatus;
     stMainDoorLockStatus        : ST_MainDoorLockStatus;
+	
 
     // =====================================================
     // MACHINE PERMISSIVES / OUTPUTS
     // =====================================================
     stPermissives               : ST_MachinePermissives;
     stOutputsInternal           : ST_MachineOutputs;
-
+	stFaultRejectResult 		: ST_ProcessResult;
     // =====================================================
     // PROCESS CYCLE INTERFACE
     // =====================================================
@@ -520,6 +522,11 @@ fbManualMode.Cyclic(
     stRequests => stManualModeRequests,
     stStatus => stManualModeStatus);
 
+
+stProcessCycleInputs.bSiliconeSupportExtended := stInputs.bSiliconeSupportExtended;
+stProcessCycleInputs.bSiliconeSupportRetracted := stInputs.bSiliconeSupportRetracted;
+stProcessCycleInputs.bAssemblySupportExtended := stInputs.bAssemblySupportExtended;
+stProcessCycleInputs.bAssemblySupportRetracted := stInputs.bAssemblySupportRetracted;
 // =========================================================
 // MACHINE STATE MANAGEMENT
 // =========================================================
@@ -550,7 +557,35 @@ CASE eMachineState OF
 		eMode_LED_PASS  := E_LEDs_Mode.OFF;
 		eMode_LED_Fail  := E_LEDs_Mode.ON;
 		
+		IF bMachineStateEntry THEN
+
+			stFaultRejectResult.bValid := TRUE;
+			stFaultRejectResult.bPassed := FALSE;
+			stFaultRejectResult.eCode := E_ProcessResultCode.Aborted;
+			stFaultRejectResult.sDetail := 'Rejected due to machine fault';
 		
+			// Position 2
+			stFaultNest := fbNestManager.GetNestAtPosition(E_TablePosition.Position2);
+		
+			IF stFaultNest.bGearboxAssemblyPartPresent OR stFaultNest.bReservoirPartPresent THEN
+				fbNestManager.StoreResultAtPosition(ePosition := E_TablePosition.Position2, stResult := stFaultRejectResult);
+			END_IF
+		
+			// Position 3
+			stFaultNest := fbNestManager.GetNestAtPosition(E_TablePosition.Position3);
+		
+			IF stFaultNest.bGearboxAssemblyPartPresent OR stFaultNest.bReservoirPartPresent THEN
+				fbNestManager.StoreResultAtPosition(ePosition := E_TablePosition.Position3, stResult := stFaultRejectResult);
+			END_IF
+		
+			// Position 4
+			stFaultNest := fbNestManager.GetNestAtPosition(E_TablePosition.Position4);
+		
+			IF stFaultNest.bGearboxAssemblyPartPresent OR stFaultNest.bReservoirPartPresent THEN
+				fbNestManager.StoreResultAtPosition(ePosition := E_TablePosition.Position4, stResult := stFaultRejectResult);
+			END_IF
+		
+		END_IF
 		bAirSupplyEnable := FALSE;
 	
 		tonInitialising(IN := FALSE);
@@ -694,63 +729,121 @@ CASE eMachineState OF
 		 END_IF
 // 	
 	E_MachineState.Initialising:
-	
+
 		eMode_LED_Start := E_LEDs_Mode.OFF;
 		eMode_LED_Reset := E_LEDs_Mode.OFF;
-		eMode_LED_PASS  := E_LEDs_Mode.OFF;
-		eMode_LED_Fail  := E_LEDs_Mode.OFF;
-		
-		// Initialising is the only state that initially enables the air supply.
+		eMode_LED_PASS := E_LEDs_Mode.OFF;
+		eMode_LED_Fail := E_LEDs_Mode.OFF;
+	
+		// =========================================================
+		// AIR SUPPLY
+		// =========================================================
+		// Initialising restores the pneumatic supply before
+		// recovering and validating safe component positions.
+		// =========================================================
+	
 		bAirSupplyEnable := TRUE;
-
-// 		// Initialising normalises software objects once and never moves the index.
+		// =========================================================
+		// TIMERS
+		// =========================================================
+	
 		tonStopping(IN := FALSE);
 		tonInitialising(IN := TRUE, PT := stConfig.tInitialiseTimeout);
- 		IF bMachineStateEntry THEN
-// 			fbProcessCycle.Initialise();
-// 			fbManualMode.Initialise();
-// 			fbProcessStation.Initialise();
- 			fbMainDoorLock.Initialise();
-// 			bResultStoredFeedback := FALSE;
+		// =========================================================
+		// STATE ENTRY
+		// =========================================================
+	
+		IF bMachineStateEntry THEN
+	
+			// fbProcessCycle.Initialise();
+			// fbManualMode.Initialise();
+			// fbProcessStation.Initialise();
+	
+			fbMainDoorLock.Initialise();
+	
+			// bResultStoredFeedback := FALSE;
+	
 			bIndexRequestAcceptedFeedback := FALSE;
- 			bIndexRecoveryRequestAcceptedFeedback := FALSE;
-// 			bProcessStartPulse := FALSE;
-		END_IF
-// 		ipEquipment.RequestReset();
- 		stIndexStatus := fbIndex.GetStatus();
-// 		stProcessStationStatus := fbProcessStation.GetStatus();
- 		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
- 		eInitialisingWaitReason := E_InitialisingWaitReason.None;
-		
-		
-		IF stIndexStatus.bBusy THEN
-			 eInitialisingWaitReason := E_InitialisingWaitReason.IndexBusy;
-// 		ELSIF NOT stInputs.stSafety.bFsoeOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.FsoeNotReady;
-// 		ELSIF NOT stInputs.stSafety.bSafetyLogicOk THEN eInitialisingWaitReason := E_InitialisingWaitReason.SafetyLogicNotReady;
-// 		ELSIF
-			
-// 		ELSIF fbProcessStation.IsFaulted() THEN eInitialisingWaitReason := E_InitialisingWaitReason.ProcessStationFaulted;
- 		ELSIF fbMainDoorLock.IsFaulted() THEN 
-			eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorFaulted;
-		
-		ELSIF NOT fbMainDoorLock.IsReadyForAutomatic() THEN
-    		eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorNotReady;
-			
+			bIndexRecoveryRequestAcceptedFeedback := FALSE;
+	
+			// bProcessStartPulse := FALSE;
 	
 		END_IF
-
-
- 		bInitialisationComplete := eInitialisingWaitReason = E_InitialisingWaitReason.None;
-		
+		// =========================================================
+		// CURRENT COMPONENT STATUS
+		// =========================================================
+	
+		stIndexStatus := fbIndex.GetStatus();
+		stProcessStationStatus := fbProcessStation.GetStatus();
+		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
+		// =========================================================
+		// INITIALISING WAIT REASON
+		// =========================================================
+	
+		eInitialisingWaitReason := E_InitialisingWaitReason.None;
+		// ---------------------------------------------------------
+		// INDEX MUST NOT BE BUSY
+		// ---------------------------------------------------------
+	
+		IF stIndexStatus.bBusy THEN
+	
+			eInitialisingWaitReason := E_InitialisingWaitReason.IndexBusy;
+		// ---------------------------------------------------------
+		// PROCESS STATION MUST NOT BE FAULTED
+		// ---------------------------------------------------------
+	
+// 		ELSIF fbProcessStation.IsFaulted() THEN
+// 	
+// 			eInitialisingWaitReason := E_InitialisingWaitReason.ProcessStationFaulted;
+		// ---------------------------------------------------------
+		// PROCESS STATION CYLINDER MUST BE RETRACTED
+		// ---------------------------------------------------------
+		//
+		// During Initialising the ProcessStation is enabled and
+		// recovers the cylinder to its safe retracted position.
+		//
+		// Initialising waits until the retracted sensor is confirmed.
+		// ---------------------------------------------------------
+	
+		ELSIF NOT stProcessStationStatus.bCylinderRetracted THEN
+	
+			eInitialisingWaitReason := E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted;
+		// ---------------------------------------------------------
+		// MAIN DOOR MUST NOT BE FAULTED
+		// ---------------------------------------------------------
+	
+		ELSIF fbMainDoorLock.IsFaulted() THEN
+	
+			eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorFaulted;
+		// ---------------------------------------------------------
+		// MAIN DOOR MUST BE READY FOR AUTOMATIC OPERATION
+		// ---------------------------------------------------------
+	
+		ELSIF NOT fbMainDoorLock.IsReadyForAutomatic() THEN
+	
+			eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorNotReady;
+	
+		END_IF
+		// =========================================================
+		// INITIALISATION COMPLETE
+		// =========================================================
+	
+		bInitialisationComplete := eInitialisingWaitReason = E_InitialisingWaitReason.None;
+	
 		IF bInitialisationComplete THEN
+	
 			tonInitialising(IN := FALSE);
 			eCycleState := E_CycleState.Disabled;
 			eMachineState := E_MachineState.ReadyToStart;
+	
 		ELSIF tonInitialising.Q THEN
+	
 			bInitialisationTimeoutFault := TRUE;
 			eMachineState := E_MachineState.Fault;
+	
 		END_IF
-// 	
+	
+ 	
 	E_MachineState.ReadyToStart:
 		
 		eMode_LED_Start := E_LEDs_Mode.FLASHING;
@@ -833,12 +926,14 @@ CASE eMachineState OF
 		stProcessCycleInputs.bSiliconeProcessRequired :=
 			stSiliconeNest.bEnabled
 			AND stSiliconeNest.bGearboxAssemblyPartPresent
-			AND stSiliconeNest.bReservoirPartPresent;
+			AND stSiliconeNest.bReservoirPartPresent
+			AND NOT stSiliconeNest.stResult.bValid;
 		
 		stProcessCycleInputs.bAssemblyProcessRequired :=
 			stAssemblyNest.bEnabled
 			AND stAssemblyNest.bGearboxAssemblyPartPresent
-			AND stAssemblyNest.bReservoirPartPresent;
+			AND stAssemblyNest.bReservoirPartPresent
+			AND NOT stAssemblyNest.stResult.bValid;
 			
 		// Indexer
 		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
@@ -1242,32 +1337,30 @@ fbAssemblySupportCylinder.Cyclic(
 
 // Cyclic component execution
 fbProcessStation.Cyclic(
-    bEnable := eMachineState = E_MachineState.AutoCycle,
-    bAutomaticStartRequest := bProcessStartPulse,
-    bManualEnable :=
-    eMachineState = E_MachineState.Manual,
-    bManualExtendRequest := FALSE,
-    bManualRetractRequest := FALSE,
-    bStopRequest :=
-        (eMachineState = E_MachineState.Stopping)
-        OR (eMachineState = E_MachineState.Fault),
-    bResetRequest := stCommand.bReset,
-    bPartPresent := stInputs.bReservoirPartPresent,
-    bProcessPermissive := stPermissives.bProcessStartAllowed,
-    bIndexReady := stInputs.bIndexReady,
-    bIndexLocked := stInputs.bIndexLocked,
-    bIndexBusy := stIndexStatus.bBusy,
-    bProcessSafetyPermitted :=
-        stInputs.stSafety.bProcessSafetyPermitted,
-    bMainDoorSafe := stInputs.stSafety.bMainDoorSafe,
-    bCylinderExtended :=
-        stInputs.bSiliconeSupportExtended,
-    bCylinderRetracted :=
-        stInputs.bSiliconeSupportRetracted,
-    tCylinderTimeout := stConfig.tCylinderTimeout,
-    tProcessTimeout := stConfig.tProcessTimeout,
-    bCylinderExtendOutput => bProcExtend,
-    bCylinderRetractOutput => bProcRetract
+    bEnable :=
+    (eMachineState = E_MachineState.Initialising)
+    OR
+    (eMachineState = E_MachineState.AutoCycle),
+    bAutomaticStartRequest 			:= bProcessStartPulse,
+    bManualEnable 					:= eMachineState = E_MachineState.Manual,
+	bAirSupplySafe 					:= GVL_Safety.bAirSupplySafe,
+    bManualExtendRequest 			:= FALSE,
+    bManualRetractRequest 			:= FALSE,
+    bStopRequest 					:= (eMachineState = E_MachineState.Stopping) OR (eMachineState = E_MachineState.Fault),
+    bResetRequest 					:= stCommand.bReset,
+    bPartPresent					:= stInputs.bReservoirPartPresent,
+    bProcessPermissive 				:= stPermissives.bProcessStartAllowed,
+    bIndexReady 					:= stInputs.bIndexReady,
+    bIndexLocked 					:= stInputs.bIndexLocked,
+    bIndexBusy 						:= stIndexStatus.bBusy,
+    bProcessSafetyPermitted 		:= stInputs.stSafety.bProcessSafetyPermitted,
+    bMainDoorSafe 					:= stInputs.stSafety.bMainDoorSafe,
+    bCylinderExtended 				:= stInputs.bSiliconeSupportExtended,
+    bCylinderRetracted 				:= stInputs.bSiliconeSupportRetracted,
+    tCylinderTimeout 				:= stConfig.tCylinderTimeout,
+    tProcessTimeout 				:= stConfig.tProcessTimeout,
+    bCylinderExtendOutput 			=> bProcExtend,
+    bCylinderRetractOutput 			=> bProcRetract
 );
 
 // =========================================================
@@ -1483,7 +1576,7 @@ stStatus.bStoppingTimeoutFault 	:= bStoppingTimeoutFault;
 stStatus.bSafetyStopRequested 	:= tpSafetyRunDrop.Q;
 stStatus.bSafetyRunRequested 	:= stOutputsInternal.bSafetyRunRequest;
 stStatus.bEventFault 			:= stInputs.bEventFault;
-stStatus.bCycleStopRequested 	:= stInputs.bEventCycleStopRequest;
+//stStatus.bCycleStopRequested    :=bStopRequested;
 stStatus.bIndexPermissive 		:= stPermissives.bIndexMoveAllowed;
 stStatus.bProcessPermissive 	:= stPermissives.bProcessStartAllowed;
 stStatus.stPermissives 			:= stPermissives;

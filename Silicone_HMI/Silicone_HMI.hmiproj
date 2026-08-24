@@ -271,6 +271,9 @@
     <Content Include="Contents\Screens\popups\Content_Popup_Puck.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\popups\Content_Popup_Reject_Part.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\Settings\settings_Assembly.content">
       <SubType>Content</SubType>
     </Content>

@@ -1629,6 +1629,40 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.bEnableSettings": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bEnableSettings",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 34
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bRejectPopup",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 15
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4799,7 +4833,7 @@
             "ENABLED": true,
             "FILEACCESS": 3,
             "FILES": {},
-            "SYMBOLACCESS": 1,
+            "SYMBOLACCESS": 3,
             "SYMBOLS": {
                 "ADS.AdsSyncReadDeviceInfoReq": 3,
                 "ADS.AdsSyncReadReq": 3,
@@ -4884,9 +4918,9 @@
         },
         "Operator": {
             "ENABLED": true,
-            "FILEACCESS": 1,
+            "FILEACCESS": 3,
             "FILES": {},
-            "SYMBOLACCESS": 0,
+            "SYMBOLACCESS": 3,
             "SYMBOLS": {
                 "ADS.AdsSyncReadDeviceInfoReq": 3,
                 "ADS.AdsSyncReadReq": 3,
@@ -5013,7 +5047,7 @@
             "FILES": {
                 "/Config": 1
             },
-            "SYMBOLACCESS": 0,
+            "SYMBOLACCESS": 3,
             "SYMBOLS": {
                 "ADS.AdsSyncReadDeviceInfoReq": 3,
                 "ADS.AdsSyncReadStateReq": 3,
@@ -5055,6 +5089,8 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bEnableSettings": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent": 3,
@@ -5110,19 +5146,35 @@
     },
     "USERGROUPUSERS": {
         "TcHmiUserManagement": {
-            "442222": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
+            "Administrator": {
+                "USERGROUPUSERS_AUTO_LOGOFF": "PT10M",
+                "USERGROUPUSERS_FORCE_PASSWORD_CHANGE": false,
                 "USERGROUPUSERS_GROUPS": [
                     "Administrator"
                 ],
-                "USERGROUPUSERS_LOCALE": "de"
+                "USERGROUPUSERS_LOCALE": "client",
+                "USERGROUPUSERS_TIMEFORMATLOCALE": "project",
+                "USERGROUPUSERS_TIMEZONE": "project"
             },
-            "44ppp71": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
+            "Engineer": {
+                "USERGROUPUSERS_AUTO_LOGOFF": "PT10M",
+                "USERGROUPUSERS_FORCE_PASSWORD_CHANGE": false,
                 "USERGROUPUSERS_GROUPS": [
-                    "Administrator"
+                    "Engineer"
                 ],
-                "USERGROUPUSERS_LOCALE": "de"
+                "USERGROUPUSERS_LOCALE": "client",
+                "USERGROUPUSERS_TIMEFORMATLOCALE": "project",
+                "USERGROUPUSERS_TIMEZONE": "project"
+            },
+            "Operator": {
+                "USERGROUPUSERS_AUTO_LOGOFF": "P30D",
+                "USERGROUPUSERS_FORCE_PASSWORD_CHANGE": false,
+                "USERGROUPUSERS_GROUPS": [
+                    "Operator"
+                ],
+                "USERGROUPUSERS_LOCALE": "client",
+                "USERGROUPUSERS_TIMEFORMATLOCALE": "project",
+                "USERGROUPUSERS_TIMEZONE": "project"
             },
             "Thays": {
                 "USERGROUPUSERS_AUTO_LOGOFF": "P30D",
@@ -5168,87 +5220,6 @@
                 "USERGROUPUSERS_LOCALE": "project",
                 "USERGROUPUSERS_TIMEFORMATLOCALE": "project",
                 "USERGROUPUSERS_TIMEZONE": "project"
-            },
-            "h": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Engineer"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "ho": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Administrator"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "hoo": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Engineer"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "oozz": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Administrator"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "tyte": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Engineer",
-                    "Administrator"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "uu": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "P30D",
-                "USERGROUPUSERS_GROUPS": [
-                    "Operator"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "zz": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Administrator"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "zzz": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_FORCE_PASSWORD_CHANGE": false,
-                "USERGROUPUSERS_GROUPS": [
-                    "Engineer"
-                ],
-                "USERGROUPUSERS_LOCALE": "de",
-                "USERGROUPUSERS_TIMEFORMATLOCALE": "project",
-                "USERGROUPUSERS_TIMEZONE": "project"
-            },
-            "zzzz": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Engineer"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "zzzzz": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Engineer"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
-            },
-            "zzzzzz": {
-                "USERGROUPUSERS_AUTO_LOGOFF": "PT15M",
-                "USERGROUPUSERS_GROUPS": [
-                    "Engineer"
-                ],
-                "USERGROUPUSERS_LOCALE": "de"
             }
         }
     },
