@@ -10,11 +10,13 @@ STRUCT
     // PART PRESENCE MEMORY
     bGearboxAssemblyPartPresent    : BOOL;
     bReservoirPartPresent          : BOOL;
+	bPartComplete 				   : BOOL;
 
     // OPERATOR EXCHANGE TRACKING
     bPreviousPartPresent           : BOOL;
     bPartLoadedPulse               : BOOL;
     bPartRemovedPulse              : BOOL;
+
 
     // PROCESS TRACKING
     bProcessRequired               : BOOL;

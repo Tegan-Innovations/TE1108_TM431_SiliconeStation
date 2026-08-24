@@ -245,7 +245,19 @@ IF bIndexStable THEN
     aNestInternal[uiNest].bReservoirPartPresent :=
         bReservoirPartPresent;
 
-END_IF]]></ST>
+END_IF
+
+// =========================================================
+// NEST PART COMPLETENESS
+// =========================================================
+
+FOR i := 1 TO 4 DO
+
+    aNestInternal[i].bPartComplete :=
+        aNestInternal[i].bGearboxAssemblyPartPresent
+        AND aNestInternal[i].bReservoirPartPresent;
+
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetAllNests" Id="{040243fe-9195-4d5a-9ec4-ac09c7b1f29a}">

@@ -80,7 +80,7 @@ GVL_HMI.stStatus.sOperatorMessage 			:= GVL_MASTER.stStatus.sOperatorMessage;
 GVL_HMI.stStatus.bEnableSettings 			:= GVL_MASTER.stStatus.bEnableSetting;
 GVL_HMI.stStatus.bRejectPopup 				:= (GVL_MASTER.stStatus.eOperatorInstruction = E_OperatorInstruction.RemoveFailedPart)
     											OR(GVL_MASTER.stStatus.eOperatorInstruction = E_OperatorInstruction.PlacePartInRejectBin);
-
+GVL_HMI.stStatus.aNest 						:= GVL_MASTER.stStatus.aNest;
 // Machine-state banner. Colour and flashing behaviour match the Kistler standard.
 CASE GVL_MASTER.stStatus.eMachineState OF
 

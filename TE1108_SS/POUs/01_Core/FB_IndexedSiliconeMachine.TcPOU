@@ -925,14 +925,12 @@ CASE eMachineState OF
 		// PROCESS REQUIREMENTS
 		stProcessCycleInputs.bSiliconeProcessRequired :=
 			stSiliconeNest.bEnabled
-			AND stSiliconeNest.bGearboxAssemblyPartPresent
-			AND stSiliconeNest.bReservoirPartPresent
+			AND stSiliconeNest.bPartComplete
 			AND NOT stSiliconeNest.stResult.bValid;
 		
 		stProcessCycleInputs.bAssemblyProcessRequired :=
 			stAssemblyNest.bEnabled
-			AND stAssemblyNest.bGearboxAssemblyPartPresent
-			AND stAssemblyNest.bReservoirPartPresent
+			AND stAssemblyNest.bPartComplete
 			AND NOT stAssemblyNest.stResult.bValid;
 			
 		// Indexer
