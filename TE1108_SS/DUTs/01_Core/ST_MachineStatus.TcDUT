@@ -35,6 +35,7 @@ STRUCT
     stLastResult            : ST_ProcessResult;
     stAlarms                : ST_AlarmManagerStatus;
     aNest                   : ARRAY[1..4] OF ST_Nest;
+	aNestStatistics 		: ARRAY[1..4] OF ST_NestStatistics;
     udiAlarmCode            : UDINT;
     sMachineMessage         : STRING(160);
     sOperatorMessage        : STRING(255);

@@ -3,9 +3,11 @@
   <POU Name="ST_NestStatistics" Id="{980539a7-3419-44a4-b772-051e36a050d9}" SpecialFunc="None">
     <Declaration><![CDATA[TYPE ST_NestStatistics :
 STRUCT
-    udiTotalTests : UDINT;
-    udiGoodParts  : UDINT;
-    udiBadParts   : UDINT;
+    uiNestId       : UINT;
+    udiTotalTests  : UDINT;
+    udiGoodParts   : UDINT;
+    udiBadParts    : UDINT;
+    lrEfficiency   : LREAL;
 END_STRUCT
 END_TYPE]]></Declaration>
     <Implementation>

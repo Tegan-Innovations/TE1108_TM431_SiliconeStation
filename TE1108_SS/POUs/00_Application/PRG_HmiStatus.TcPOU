@@ -32,7 +32,8 @@ GVL_HMI.stStatus.eInitialisingWaitReason 	:= GVL_MASTER.stStatus.eInitialisingWa
 GVL_HMI.stStatus.eStoppingWaitReason 		:= GVL_MASTER.stStatus.eStoppingWaitReason;
 GVL_HMI.stStatus.eCurrentIndexPosition 		:= GVL_MASTER.stInputs.eIndexPosition;
 GVL_HMI.stStatus.bIndexPositionValid 		:= GVL_MASTER.stInputs.eIndexPosition <> E_TablePosition.Unknown;
-GVL_HMI.stStatistics 						:= GVL_Persistent.stStatistics;
+//GVL_HMI.stStatistics 						:= GVL_Persistent.stStatistics;
+GVL_HMI.stStatistics.aNest 					:= GVL_MASTER.stStatus.aNestStatistics;
 
 CASE GVL_MASTER.stInputs.eIndexPosition OF
 

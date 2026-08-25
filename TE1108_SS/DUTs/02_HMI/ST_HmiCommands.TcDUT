@@ -12,6 +12,7 @@ STRUCT
     bIndexForward                   : BOOL;
     bIndexHome                      : BOOL;
 	bExternalLight					: BOOL;
+	uiResetStatisticsNestId 		: UINT;
 	 
 	
     // Silicone Support

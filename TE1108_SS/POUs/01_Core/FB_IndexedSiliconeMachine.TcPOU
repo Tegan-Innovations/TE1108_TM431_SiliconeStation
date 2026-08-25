@@ -72,6 +72,7 @@ VAR
     stIndexStatus               : ST_IndexStatus;
     stProcessStationStatus      : ST_ProcessStationStatus;
     stMainDoorLockStatus        : ST_MainDoorLockStatus;
+	uiResetStatisticsNestIdOld 	: UINT;
 	
 
     // =====================================================
@@ -390,9 +391,32 @@ stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
 stSiliconeNest := fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
 stAssemblyNest := fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
 
+// =========================================================
+// RESET CURRENT NEST STATISTICS
+// =========================================================
+
+IF stCommand.uiResetStatisticsNestId >= 1
+    AND stCommand.uiResetStatisticsNestId <= 4
+    AND stCommand.uiResetStatisticsNestId <> uiResetStatisticsNestIdOld
+THEN
+
+    fbNestManager.ResetNestStatistics(
+        uiNestId := stCommand.uiResetStatisticsNestId
+    );
+
+END_IF
+
+uiResetStatisticsNestIdOld :=stCommand.uiResetStatisticsNestId;
+
 fbNestManager.CountStatisticsAtPosition(
     ePosition := stConfig.eOperatorPosition
 );
+
+
+
+
+
+
 // =========================================================
 // OPERATOR STATION CONTROL
 // =========================================================
@@ -1671,10 +1695,11 @@ ELSE
 
 END_IF
 
-stStatus.stAlarms.eHighestAlarm := E_AlarmId.None;
-stStatus.aNest := fbNestManager.GetAllNests();
-stStatus.udiAlarmCode := 0;
-stStatus.sOperatorMessage := fbOperatorStation.GetMessage();
+stStatus.stAlarms.eHighestAlarm 			:= E_AlarmId.None;
+stStatus.aNest 								:= fbNestManager.GetAllNests();
+stStatus.aNestStatistics 					:= fbNestManager.GetAllNestStatistics();
+stStatus.udiAlarmCode 						:= 0;
+stStatus.sOperatorMessage 					:= fbOperatorStation.GetMessage();
 // =========================================================
 // MACHINE MESSAGE SELECTION
 // =========================================================

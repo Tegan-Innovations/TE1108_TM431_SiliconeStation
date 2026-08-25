@@ -48,6 +48,15 @@
                 "startOffset": 1,
                 "type": "array"
             },
+            "ADS-PLC1.ARRAY_1..4_OF-ST_NestStatistics": {
+                "items": {
+                    "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_NestStatistics"
+                },
+                "maxItems": 4,
+                "minItems": 4,
+                "startOffset": 1,
+                "type": "array"
+            },
             "ADS-PLC1.E_Alarms": {
                 "attributes": {
                     "generate_implicit_init_function": "",
@@ -398,6 +407,179 @@
                     "eSeverity",
                     "nEventId",
                     "sMessage"
+                ],
+                "type": "object"
+            },
+            "ADS-PLC1.ST_HmiStatistics": {
+                "additionalProperties": false,
+                "properties": {
+                    "aNest": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.ARRAY_1..4_OF-ST_NestStatistics"
+                            },
+                            {
+                                "comment": "PER-NEST PRODUCTION",
+                                "propertyOrder": 4
+                            }
+                        ]
+                    },
+                    "dtLastCycleCompleted": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/DATE_AND_TIME"
+                            },
+                            {
+                                "propertyOrder": 9
+                            }
+                        ]
+                    },
+                    "udiAbortedCycles": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 8
+                            }
+                        ]
+                    },
+                    "udiEquipmentFaults": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "comment": "MACHINE STATISTICS",
+                                "propertyOrder": 5
+                            }
+                        ]
+                    },
+                    "udiIndexFaults": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 6
+                            }
+                        ]
+                    },
+                    "udiSafetyStops": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 7
+                            }
+                        ]
+                    },
+                    "udiTotalCycles": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "comment": "OVERALL PRODUCTION",
+                                "propertyOrder": 1
+                            }
+                        ]
+                    },
+                    "udiTotalFail": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 3
+                            }
+                        ]
+                    },
+                    "udiTotalPass": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 2
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "udiTotalCycles",
+                    "udiTotalPass",
+                    "udiTotalFail",
+                    "aNest",
+                    "udiEquipmentFaults",
+                    "udiIndexFaults",
+                    "udiSafetyStops",
+                    "udiAbortedCycles",
+                    "dtLastCycleCompleted"
+                ],
+                "type": "object"
+            },
+            "ADS-PLC1.ST_NestStatistics": {
+                "additionalProperties": false,
+                "properties": {
+                    "lrEfficiency": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/LREAL"
+                            },
+                            {
+                                "propertyOrder": 5
+                            }
+                        ]
+                    },
+                    "udiBadParts": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 4
+                            }
+                        ]
+                    },
+                    "udiGoodParts": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 3
+                            }
+                        ]
+                    },
+                    "udiTotalTests": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UDINT"
+                            },
+                            {
+                                "propertyOrder": 2
+                            }
+                        ]
+                    },
+                    "uiNestId": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UINT"
+                            },
+                            {
+                                "propertyOrder": 1
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "uiNestId",
+                    "udiTotalTests",
+                    "udiGoodParts",
+                    "udiBadParts",
+                    "lrEfficiency"
                 ],
                 "type": "object"
             },
@@ -1629,6 +1811,34 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatistics": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics",
+            "SCHEMA": {
+                "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_HmiStatistics"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.ARRAY_1..4_OF-ST_NestStatistics"
+                    },
+                    {
+                        "comment": "PER-NEST PRODUCTION",
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatistics.aNest.0.udiBadParts": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -1753,6 +1963,58 @@
             "DOMAIN": "ADS",
             "DYNAMIC": true,
             "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[3]::udiGoodParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.udiTotalCycles": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::udiTotalCycles",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "comment": "OVERALL PRODUCTION",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.udiTotalFail": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::udiTotalFail",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.udiTotalPass": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::udiTotalPass",
             "SCHEMA": {
                 "allOf": [
                     {
@@ -2600,6 +2862,23 @@
                     },
                     {
                         "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Persistent.stStatistics.udiTotalFail": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Persistent::stStatistics::udiTotalFail",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 3
                     }
                 ]
             },
@@ -5910,6 +6189,8 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics.aNest.0.udiBadParts": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics.aNest.0.udiGoodParts": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics.aNest.1.udiBadParts": 3,
@@ -5918,6 +6199,9 @@
                 "ADS.PLC1.GVL_HMI.stStatistics.aNest.2.udiGoodParts": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics.aNest.3.udiBadParts": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics.aNest.3.udiGoodParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.udiTotalCycles": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.udiTotalFail": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.udiTotalPass": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.0.bGearboxAssemblyPartPresent": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.0.bPartComplete": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.0.bPreviousPartPresent": 3,
@@ -5973,6 +6257,7 @@
                 "ADS.PLC1.GVL_MASTER.stProcess.bKistlerHomeDone": 3,
                 "ADS.PLC1.GVL_MASTER.stStatus.aNest.1.bProcessComplete": 3,
                 "ADS.PLC1.GVL_MASTER.stStatus.eMachineState": 3,
+                "ADS.PLC1.GVL_Persistent.stStatistics.udiTotalFail": 3,
                 "ADS.PLC1.PRG_MachineControl.bKistlerReady": 3,
                 "ADS.PLC1.PRG_MachineControl.eCurrentNestPos": 3,
                 "ChangeUserSettings": 3,

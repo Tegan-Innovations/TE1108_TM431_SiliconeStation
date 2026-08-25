@@ -586,30 +586,42 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{B12E1667-75AA-ACC0-1536-4D92A3D1F0F4}" AutoDeleteType="true">ST_NestStatistics</Name>
-			<BitSize>96</BitSize>
+			<Name GUID="{F7DBE463-070B-11E6-E7FD-B33D5329F5C1}" AutoDeleteType="true">ST_NestStatistics</Name>
+			<BitSize>192</BitSize>
 			<SubItem>
-				<Name>udiTotalTests</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
+				<Name>uiNestId</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
 				<BitOffs>0</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>udiGoodParts</Name>
+				<Name>udiTotalTests</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
 				<BitSize>32</BitSize>
 				<BitOffs>32</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>udiBadParts</Name>
+				<Name>udiGoodParts</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
 				<BitSize>32</BitSize>
 				<BitOffs>64</BitOffs>
 			</SubItem>
+			<SubItem>
+				<Name>udiBadParts</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>lrEfficiency</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{58F7D64C-680E-9D85-8AC0-E3AB8413957D}" AutoDeleteType="true">ST_HmiStatistics</Name>
-			<BitSize>640</BitSize>
+			<Name GUID="{DFCA19C6-5E73-E574-E4AA-F7FF8D17A48E}" AutoDeleteType="true">ST_HmiStatistics</Name>
+			<BitSize>1088</BitSize>
 			<SubItem>
 				<Name>udiTotalCycles</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
@@ -631,45 +643,45 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 			</SubItem>
 			<SubItem>
 				<Name>aNest</Name>
-				<Type GUID="{B12E1667-75AA-ACC0-1536-4D92A3D1F0F4}">ST_NestStatistics</Type>
+				<Type GUID="{F7DBE463-070B-11E6-E7FD-B33D5329F5C1}">ST_NestStatistics</Type>
 				<ArrayInfo>
 					<LBound>1</LBound>
 					<Elements>4</Elements>
 				</ArrayInfo>
 				<Comment><![CDATA[ PER-NEST PRODUCTION]]></Comment>
-				<BitSize>384</BitSize>
-				<BitOffs>96</BitOffs>
+				<BitSize>768</BitSize>
+				<BitOffs>128</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>udiEquipmentFaults</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
 				<Comment><![CDATA[ MACHINE STATISTICS]]></Comment>
 				<BitSize>32</BitSize>
-				<BitOffs>480</BitOffs>
+				<BitOffs>896</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>udiIndexFaults</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>512</BitOffs>
+				<BitOffs>928</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>udiSafetyStops</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>544</BitOffs>
+				<BitOffs>960</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>udiAbortedCycles</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>576</BitOffs>
+				<BitOffs>992</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>dtLastCycleCompleted</Name>
 				<Type GUID="{18071995-0000-0000-0000-00000000004D}">DATE_AND_TIME</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>608</BitOffs>
+				<BitOffs>1024</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -1120,14 +1132,14 @@ bSafetyLogicOk                : BOOL;]]></Comment>
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{A111F166-866C-042E-95E7-E6E325D67736}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{1055551E-DA85-AB8A-4923-1452AD0B0279}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
 							<Name>GVL_Persistent.stStatistics</Name>
-							<Type GUID="{58F7D64C-680E-9D85-8AC0-E3AB8413957D}">ST_HmiStatistics</Type>
+							<Type GUID="{DFCA19C6-5E73-E574-E4AA-F7FF8D17A48E}">ST_HmiStatistics</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -3396,7 +3408,7 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 					<Name>Image</Name>
 				</Image>
 				<Ethernet DeviceDesc="EL6652 EtherNet/IP Scanner (Master)"/>
-				<EtherNetIPMasterDev m_EthIpMasterDevPar="02000000446576696365203220284543415420454950205363616e6e65722028454c36360c0000006c000000fa19000001010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010582411e140aa8c000ffffff000000000000800001001e000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
+				<EtherNetIPMasterDev m_EthIpMasterDevPar="02000000446576696365203220284543415420454950205363616e6e65722028454c36360c0000006c000000fa190000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000140aa8c000ffffff000000000000800001001e000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
 					<Ethernet/>
 				</EtherNetIPMasterDev>
 			</Device>

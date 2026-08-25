@@ -33,6 +33,7 @@ STRUCT
 	bAssemblySupportExtend  		: BOOL;
 	bAssemblySupportRetract 		: BOOL;
 	
+	uiResetStatisticsNestId 		: UINT;
 	
 END_STRUCT
 END_TYPE

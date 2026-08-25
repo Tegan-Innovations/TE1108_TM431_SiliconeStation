@@ -119,7 +119,27 @@ IF uiId >= 1 AND uiId <= 4 THEN
 
         END_IF
 
+		// ---------------------------------------------------------
+		// UPDATE NEST EFFICIENCY
+		// ---------------------------------------------------------
+		
+		IF aNestStatisticsInternal[uiId].udiTotalTests > 0 THEN
+		
+			aNestStatisticsInternal[uiId].lrEfficiency :=
+				UDINT_TO_LREAL(
+					aNestStatisticsInternal[uiId].udiGoodParts
+				)
+				/
+				UDINT_TO_LREAL(
+					aNestStatisticsInternal[uiId].udiTotalTests
+				)
+				* 100.0;
+		
+		ELSE
+		
+			aNestStatisticsInternal[uiId].lrEfficiency := 0.0;
 
+	    END_IF
         // Prevent counting the same part again while
         // the table remains at the operator position.
         aNestInternal[uiId].bStatisticsCounted := TRUE;
@@ -152,23 +172,24 @@ END_VAR]]></Declaration>
 
 IF NOT bInitialised THEN
 
-    // ---------------------------------------------------------
-    // INITIALISE NEST IDENTITIES
-    // ---------------------------------------------------------
     FOR i := 1 TO 4 DO
-
-        aNestInternal[i].nId :=
-            INT_TO_UINT(i);
-
-        aNestInternal[i].bEnabled :=
-            aNestEnabled[i];
-
+        aNestInternal[i].nId := INT_TO_UINT(i);
+        aNestInternal[i].bEnabled := aNestEnabled[i];
+        aNestStatisticsInternal[i].uiNestId := INT_TO_UINT(i);
     END_FOR
 
     bInitialised := TRUE;
 
 END_IF
 
+
+// =========================================================
+// STATISTICS NEST IDENTITIES
+// =========================================================
+
+FOR i := 1 TO 4 DO
+    aNestStatisticsInternal[i].uiNestId := INT_TO_UINT(i);
+END_FOR
 
 
 // =========================================================
@@ -378,6 +399,26 @@ VAR uiId : UINT; END_VAR
 IF uiId >= 1 AND uiId <= 4 THEN
     aNestInternal[uiId].bDispositionSent := TRUE;
     aNestInternal[uiId].bOperatorExchangeComplete := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ResetNestStatistics" Id="{d806f5d9-cf82-4df1-8992-be186b46b152}">
+      <Declaration><![CDATA[METHOD PUBLIC ResetNestStatistics : BOOL
+VAR_INPUT
+    uiNestId : UINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ResetNestStatistics := FALSE;
+
+IF uiNestId >= 1 AND uiNestId <= 4 THEN
+
+    aNestStatisticsInternal[uiNestId].udiTotalTests := 0;
+    aNestStatisticsInternal[uiNestId].udiGoodParts := 0;
+    aNestStatisticsInternal[uiNestId].udiBadParts := 0;
+    aNestStatisticsInternal[uiNestId].lrEfficiency := 0.0;
+
+    ResetNestStatistics := TRUE;
+
 END_IF]]></ST>
       </Implementation>
     </Method>
