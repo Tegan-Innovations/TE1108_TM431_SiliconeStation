@@ -1629,6 +1629,142 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.0.udiBadParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[0]::udiBadParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.0.udiGoodParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[0]::udiGoodParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.1.udiBadParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[1]::udiBadParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.1.udiGoodParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[1]::udiGoodParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.2.udiBadParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[2]::udiBadParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.2.udiGoodParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[2]::udiGoodParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.3.udiBadParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[3]::udiBadParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatistics.aNest.3.udiGoodParts": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatistics::aNest[3]::udiGoodParts",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UDINT"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.aNest.0.bGearboxAssemblyPartPresent": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -5774,6 +5910,14 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.0.udiBadParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.0.udiGoodParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.1.udiBadParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.1.udiGoodParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.2.udiBadParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.2.udiGoodParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.3.udiBadParts": 3,
+                "ADS.PLC1.GVL_HMI.stStatistics.aNest.3.udiGoodParts": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.0.bGearboxAssemblyPartPresent": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.0.bPartComplete": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.0.bPreviousPartPresent": 3,
