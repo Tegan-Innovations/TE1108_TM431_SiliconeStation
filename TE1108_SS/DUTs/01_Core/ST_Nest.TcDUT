@@ -16,6 +16,7 @@ STRUCT
     bPreviousPartPresent           : BOOL;
     bPartLoadedPulse               : BOOL;
     bPartRemovedPulse              : BOOL;
+	
 
 
     // PROCESS TRACKING
@@ -32,6 +33,7 @@ STRUCT
 	stSiliconeResult               : ST_ProcessResult;
 	stAssemblyResult               : ST_ProcessResult;
 	stResult                       : ST_ProcessResult;
+	bStatisticsCounted 				: BOOL;
 		
 END_STRUCT
 END_TYPE]]></Declaration>

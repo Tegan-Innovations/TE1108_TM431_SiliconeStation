@@ -390,7 +390,9 @@ stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
 stSiliconeNest := fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
 stAssemblyNest := fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
 
-
+fbNestManager.CountStatisticsAtPosition(
+    ePosition := stConfig.eOperatorPosition
+);
 // =========================================================
 // OPERATOR STATION CONTROL
 // =========================================================
@@ -1580,6 +1582,30 @@ stStatus.bProcessPermissive 	:= stPermissives.bProcessStartAllowed;
 stStatus.stPermissives 			:= stPermissives;
 stStatus.stLastResult 			:= stLastResult;
 stStatus.bEnableSetting 		:= eMachineState = E_MachineState.Stopped;
+GVL_Persistent.stStatistics.aNest := fbNestManager.GetAllNestStatistics();
+
+
+
+GVL_Persistent.stStatistics.udiTotalCycles :=
+    GVL_Persistent.stStatistics.aNest[1].udiTotalTests
+    + GVL_Persistent.stStatistics.aNest[2].udiTotalTests
+    + GVL_Persistent.stStatistics.aNest[3].udiTotalTests
+    + GVL_Persistent.stStatistics.aNest[4].udiTotalTests;
+
+GVL_Persistent.stStatistics.udiTotalPass :=
+    GVL_Persistent.stStatistics.aNest[1].udiGoodParts
+    + GVL_Persistent.stStatistics.aNest[2].udiGoodParts
+    + GVL_Persistent.stStatistics.aNest[3].udiGoodParts
+    + GVL_Persistent.stStatistics.aNest[4].udiGoodParts;
+
+GVL_Persistent.stStatistics.udiTotalFail :=
+    GVL_Persistent.stStatistics.aNest[1].udiBadParts
+    + GVL_Persistent.stStatistics.aNest[2].udiBadParts
+    + GVL_Persistent.stStatistics.aNest[3].udiBadParts
+    + GVL_Persistent.stStatistics.aNest[4].udiBadParts;
+	
+	
+	
 // =========================================================
 // ACTIVE FAULT SUMMARY FOR MAIN HMI GRID
 // =========================================================

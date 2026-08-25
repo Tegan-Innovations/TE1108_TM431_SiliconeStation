@@ -111,6 +111,9 @@
     <Compile Include="DUTs\01_Core\ST_Nest.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\01_Core\ST_NestStatistics.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\01_Core\ST_OperatorStationStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>

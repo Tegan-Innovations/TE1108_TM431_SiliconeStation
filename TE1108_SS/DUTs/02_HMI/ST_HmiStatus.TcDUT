@@ -18,6 +18,7 @@ STRUCT
     bReservoirPartPresent           : BOOL;
     bRejectChutePartPresent         : BOOL;
 	bRejectPopup			        : BOOL;
+	iNestRotationAngle 				: INT;
 	
     bIndexReady                     : BOOL;
     bIndexLocked                    : BOOL;
@@ -45,8 +46,8 @@ STRUCT
     uiSiliconePressureRaw           : UINT;
     uiNozzlePressureRaw             : UINT;
     uiVacuumPressureRaw             : UINT;
-    bSiliconeSupportExtended          : BOOL;
-    bSiliconeSupportRetracted         : BOOL;
+    bSiliconeSupportExtended        : BOOL;
+    bSiliconeSupportRetracted       : BOOL;
     bLeftFlapSafe                   : BOOL;
     bRightFlapSafe                  : BOOL;
     bIvekCommunicationOk            : BOOL;
@@ -57,12 +58,12 @@ STRUCT
     udiIvekAlertCode                : UDINT;
     usiIvekCurrentRecipe            : USINT;
     eOperatorInstruction            : E_OperatorInstruction;
-    stOperatorStation                : ST_OperatorStationStatus;
+    stOperatorStation               : ST_OperatorStationStatus;
     stManualMode                    : ST_ManualModeStatus;
     aNest                           : ARRAY[1..4] OF ST_Nest;
     stAlarms                        : ST_AlarmManagerStatus;
-    sMachineMessage                : STRING(160);
-    sOperatorMessage               : STRING(255);
+    sMachineMessage                 : STRING(160);
+    sOperatorMessage                : STRING(255);
 	
 END_STRUCT
 END_TYPE]]></Declaration>

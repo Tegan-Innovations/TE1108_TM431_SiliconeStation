@@ -2314,6 +2314,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::iNestRotationAngle",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/INT"
+                    },
+                    {
+                        "propertyOrder": 16
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -5797,6 +5814,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.3.stSiliconeResult.bValid": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bEnableSettings": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent": 3,

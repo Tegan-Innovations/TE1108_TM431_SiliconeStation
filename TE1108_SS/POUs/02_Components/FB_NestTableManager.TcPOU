@@ -4,6 +4,11 @@
     <Declaration><![CDATA[FUNCTION_BLOCK FB_NestTableManager
 VAR
     aNestInternal          : ARRAY[1..4] OF ST_Nest;
+	aNestStatisticsInternal: ARRAY[1..4] OF ST_NestStatistics;
+	udiTotalTestsInternal  : UDINT;
+	udiGoodPartsInternal   : UDINT;
+	udiBadPartsInternal    : UDINT;
+	
     bInitialised           : BOOL;
     bPreviousIndexComplete : BOOL;
     bIndexCompletePulse    : BOOL;
@@ -49,6 +54,9 @@ IF uiId >= 1 AND uiId <= 4 THEN
     aNestInternal[uiId].bOperatorExchangeComplete := FALSE;
     aNestInternal[uiId].eDisposition := E_PartDisposition.None;
 	
+	// Reset statistics tracking for the next part
+	aNestInternal[uiId].bStatisticsCounted := FALSE;
+	
 	aNestInternal[uiId].stSiliconeResult.bValid := FALSE;
 	aNestInternal[uiId].stSiliconeResult.bPassed := FALSE;
 	
@@ -57,6 +65,68 @@ IF uiId >= 1 AND uiId <= 4 THEN
 	
 	aNestInternal[uiId].stResult.bValid := FALSE;
 	aNestInternal[uiId].stResult.bPassed := FALSE;
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CountStatisticsAtPosition" Id="{8b3cd375-588b-4820-ae93-12542215e418}">
+      <Declaration><![CDATA[METHOD PUBLIC CountStatisticsAtPosition : BOOL
+VAR_INPUT
+    ePosition : E_TablePosition;
+END_VAR
+
+VAR
+    uiId : UINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+CountStatisticsAtPosition := FALSE;
+
+uiId := GetNestIdAtPosition(ePosition);
+
+IF uiId >= 1 AND uiId <= 4 THEN
+
+    // Count only a valid final result that has not
+    // already been counted for the current part.
+    IF aNestInternal[uiId].stResult.bValid
+        AND NOT aNestInternal[uiId].bStatisticsCounted
+    THEN
+
+        // Total completed parts for this physical nest.
+        aNestStatisticsInternal[uiId].udiTotalTests :=
+            aNestStatisticsInternal[uiId].udiTotalTests + 1;
+
+        udiTotalTestsInternal :=
+            udiTotalTestsInternal + 1;
+
+
+        // GOOD / BAD
+        IF aNestInternal[uiId].stResult.bPassed THEN
+
+            aNestStatisticsInternal[uiId].udiGoodParts :=
+                aNestStatisticsInternal[uiId].udiGoodParts + 1;
+
+            udiGoodPartsInternal :=
+                udiGoodPartsInternal + 1;
+
+        ELSE
+
+            aNestStatisticsInternal[uiId].udiBadParts :=
+                aNestStatisticsInternal[uiId].udiBadParts + 1;
+
+            udiBadPartsInternal :=
+                udiBadPartsInternal + 1;
+
+        END_IF
+
+
+        // Prevent counting the same part again while
+        // the table remains at the operator position.
+        aNestInternal[uiId].bStatisticsCounted := TRUE;
+
+        CountStatisticsAtPosition := TRUE;
+
+    END_IF
 
 END_IF]]></ST>
       </Implementation>
@@ -267,6 +337,15 @@ END_FOR]]></ST>
         <ST><![CDATA[GetAllNests := aNestInternal;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="GetAllNestStatistics" Id="{871802a9-143f-4f73-a687-6c9915a0bb47}">
+      <Declaration><![CDATA[METHOD PUBLIC GetAllNestStatistics : ARRAY[1..4] OF ST_NestStatistics
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetAllNestStatistics := aNestStatisticsInternal;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="GetNestAtPosition" Id="{0745dbbc-9394-432e-878b-30be589989e2}">
       <Declaration><![CDATA[METHOD PUBLIC GetNestAtPosition : ST_Nest
 VAR_INPUT ePosition : E_TablePosition; END_VAR
@@ -329,8 +408,15 @@ END_IF]]></ST>
     </Method>
     <Method Name="StoreResultAtPosition" Id="{ddb2e5e3-90e7-449e-bf71-eb713c031025}">
       <Declaration><![CDATA[METHOD PUBLIC StoreResultAtPosition : BOOL
-VAR_INPUT ePosition : E_TablePosition; stResult : ST_ProcessResult; END_VAR
-VAR uiId : UINT; END_VAR
+VAR_INPUT
+    ePosition : E_TablePosition;
+    stResult  : ST_ProcessResult;
+END_VAR
+
+VAR
+    uiId : UINT;
+END_VAR
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[StoreResultAtPosition := FALSE;
@@ -339,20 +425,17 @@ uiId := GetNestIdAtPosition(ePosition);
 
 IF uiId >= 1 AND uiId <= 4 THEN
 
+    // Always overwrite the final result for the current part.
     aNestInternal[uiId].stResult := stResult;
+
     aNestInternal[uiId].bProcessComplete := stResult.bValid;
     aNestInternal[uiId].bProcessRequired := FALSE;
 
     IF stResult.bValid AND stResult.bPassed THEN
-
-        aNestInternal[uiId].eDisposition :=
-            E_PartDisposition.Pass;
+        aNestInternal[uiId].eDisposition := E_PartDisposition.Pass;
 
     ELSIF stResult.bValid THEN
-
-        aNestInternal[uiId].eDisposition :=
-            E_PartDisposition.Reject;
-
+        aNestInternal[uiId].eDisposition := E_PartDisposition.Reject;
     END_IF
 
     StoreResultAtPosition := TRUE;
