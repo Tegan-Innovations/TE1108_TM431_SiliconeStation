@@ -1811,6 +1811,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.uiResetStatisticsNestId": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::uiResetStatisticsNestId",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "propertyOrder": 10
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatistics": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -2828,6 +2845,23 @@
                     {
                         "comment": "Compatibility alias; mapped to nest light.",
                         "propertyOrder": 18
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_MASTER.stCommand.uiResetStatisticsNestId": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_MASTER::stCommand::uiResetStatisticsNestId",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "propertyOrder": 25
                     }
                 ]
             },
@@ -6188,6 +6222,7 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.uiResetStatisticsNestId": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics.aNest": 3,
@@ -6251,6 +6286,7 @@
                 "ADS.PLC1.GVL_IO.stOutputs.bExternalLight": 3,
                 "ADS.PLC1.GVL_IO.stSafety.bTwoHandsLeft": 3,
                 "ADS.PLC1.GVL_MASTER.astActiveEvents": 3,
+                "ADS.PLC1.GVL_MASTER.stCommand.uiResetStatisticsNestId": 3,
                 "ADS.PLC1.GVL_MASTER.stMachineStatus.bBusy": 3,
                 "ADS.PLC1.GVL_MASTER.stNestTable.bNestCompletedSensor": 3,
                 "ADS.PLC1.GVL_MASTER.stNestTable.bNestReadySensor": 3,
