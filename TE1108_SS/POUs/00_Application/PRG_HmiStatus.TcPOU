@@ -3,9 +3,11 @@
   <POU Name="PRG_HmiStatus" Id="{c33053ba-a379-4397-8086-04253da64219}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PRG_HmiStatus
 VAR
-    fbBlinkTimer      : TON;
-    bBlinkTimerQOld   : BOOL;
-    bFlash            : BOOL;
+    fbBlinkTimer        : TON;
+    bBlinkTimerQOld     : BOOL;
+    bFlash              : BOOL;
+	iHistoryDisplay 	: INT;
+iHistorySource  		: INT;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
@@ -17,6 +19,42 @@ IF fbBlinkTimer.Q AND NOT bBlinkTimerQOld THEN
 END_IF
 
 GVL_HMI.astActiveEvents := GVL_MASTER.astActiveEvents;
+
+// =========================================================
+// TEST HISTORY
+// =========================================================
+// Persistent history is stored as a circular buffer.
+// HMI history is rebuilt with the newest entry at index [0].
+// =========================================================
+
+FOR iHistoryDisplay := 0 TO 2000 DO
+
+    IF iHistoryDisplay < UDINT_TO_INT(
+        GVL_Persistent.uiTestHistoryCount
+    ) THEN
+
+        // WriteIndex always points to the NEXT position
+        // that will be written.
+        iHistorySource :=
+            UINT_TO_INT(
+                GVL_Persistent.uiTestHistoryWriteIndex
+            )
+            - 1
+            - iHistoryDisplay;
+
+        // Circular buffer wrap-around.
+        IF iHistorySource < 0 THEN
+            iHistorySource :=
+                iHistorySource + 2001;
+        END_IF
+
+        GVL_HMI.astTestHistory[iHistoryDisplay] :=
+            GVL_Persistent.astTestHistory[iHistorySource];
+
+
+    END_IF
+
+END_FOR
 
 bBlinkTimerQOld := fbBlinkTimer.Q;
 bFlash := GVL_HMI.bBlink_1Hz;

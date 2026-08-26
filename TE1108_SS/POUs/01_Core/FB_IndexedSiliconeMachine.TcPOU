@@ -174,6 +174,10 @@ VAR
 	bLedBlink      					: BOOL;
 	fbLedBlinkTrigger 				: R_TRIG;
 	bLedBlinkState 					: BOOL;
+	
+	uiHistoryNestId 				: UINT;
+	bHistoryPassed  				: BOOL;
+	stHistoryNest   				: ST_Nest;
 
 
 END_VAR]]></Declaration>
@@ -293,18 +297,10 @@ fbAssemblyProcess.Cyclic();
 bProcessStartPulse := FALSE;
 
 // Automatic door-lock request. Air supply is managed independently by the machine states below.
-bAirAndDoorEnable :=
-    (eMachineState = E_MachineState.Initialising)
-    OR (eMachineState = E_MachineState.ReadyToStart)
-    OR (eMachineState = E_MachineState.AutoCycle)
-    OR (eMachineState = E_MachineState.Manual);
+bAirAndDoorEnable := (eMachineState = E_MachineState.Initialising) OR (eMachineState = E_MachineState.ReadyToStart) OR (eMachineState = E_MachineState.AutoCycle) OR (eMachineState = E_MachineState.Manual);
 
 stIndexStatus := fbIndex.GetStatus();
-bIndexStable :=
-    NOT stIndexStatus.bBusy
-    AND stInputs.bIndexReady
-    AND stInputs.bIndexLocked
-    AND stInputs.eIndexPosition <> E_TablePosition.Unknown;
+bIndexStable := NOT stIndexStatus.bBusy AND stInputs.bIndexReady AND stInputs.bIndexLocked AND stInputs.eIndexPosition <> E_TablePosition.Unknown;
 bIndexDone := fbIndex.IsDone();
 
 // =========================================================
@@ -414,8 +410,92 @@ fbNestManager.CountStatisticsAtPosition(
 
 
 
+// =========================================================
+// TEST HISTORY EVENT
+// =========================================================
+
+IF fbNestManager.GetStatisticsEvent(
+    uiNestId => uiHistoryNestId,
+    bPassed  => bHistoryPassed
+) THEN
+
+    // Get the complete nest data at the moment
+    // the result is added to the statistics.
+    stHistoryNest := fbNestManager.GetNestAtPosition( stConfig.eOperatorPosition );
 
 
+    // -----------------------------------------------------
+    // STORE TEST HISTORY ENTRY
+    // -----------------------------------------------------
+
+    GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].uiNestId 				:= uiHistoryNestId;
+    GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].eResult 				:= stHistoryNest.eDisposition;
+    GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].bSiliconeValid 		:= stHistoryNest.stSiliconeResult.bValid;
+    GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].bSiliconePass 		:= stHistoryNest.stSiliconeResult.bPassed;
+    GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].bAssemblyValid 		:= stHistoryNest.stAssemblyResult.bValid;
+    GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].bAssemblyPass 		:= stHistoryNest.stAssemblyResult.bPassed;
+	GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sDate 				:= GVL_MASTER.sSystemDate;
+	GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sTime 				:= GVL_MASTER.sSystemTime;
+				
+				// Final result text
+		IF stHistoryNest.stResult.bPassed THEN
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sResult := 'PASS';
+		ELSE
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sResult := 'FAIL';
+		END_IF;
+		
+		
+		// Silicone result text
+		IF NOT stHistoryNest.stSiliconeResult.bValid THEN
+		
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sSiliconeResult := 'NOT TESTED';
+		
+		ELSIF stHistoryNest.stSiliconeResult.bPassed THEN
+		
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sSiliconeResult := 'PASS';
+		
+		ELSE
+		
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sSiliconeResult := 'FAIL';
+		
+		END_IF;
+		
+		
+		// Flipping result text
+		IF NOT stHistoryNest.stAssemblyResult.bValid THEN
+		
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sFlippingResult := 'NOT TESTED';
+		
+		ELSIF stHistoryNest.stAssemblyResult.bPassed THEN
+		
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sFlippingResult := 'PASS';
+		
+		ELSE
+		
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sFlippingResult := 'FAIL';
+		
+		END_IF;
+				
+		// -----------------------------------------------------
+		// ADVANCE TEST HISTORY WRITE INDEX
+		// -----------------------------------------------------
+		
+		IF GVL_Persistent.uiTestHistoryCount < 2001 THEN
+			GVL_Persistent.uiTestHistoryCount := GVL_Persistent.uiTestHistoryCount + 1;
+		END_IF
+		
+		IF GVL_Persistent.uiTestHistoryWriteIndex < 2000 THEN
+		
+			GVL_Persistent.uiTestHistoryWriteIndex := GVL_Persistent.uiTestHistoryWriteIndex + 1;
+		
+		ELSE
+		
+			GVL_Persistent.uiTestHistoryWriteIndex := 0;
+		
+		END_IF
+		
+
+END_IF
 
 // =========================================================
 // OPERATOR STATION CONTROL
@@ -479,11 +559,7 @@ stPermissives.bIndexMoveAllowed :=
     AND stPermissives.bProcessIndexPermissive;
 	
 	
-stPermissives.bProcessStartAllowed := 
-		stInputs.stSafety.bProcessSafetyPermitted
-   		AND stInputs.bIndexReady 
-		AND stInputs.bIndexLocked
-    	AND stInputs.bReservoirPartPresent;
+stPermissives.bProcessStartAllowed := stInputs.stSafety.bProcessSafetyPermitted AND stInputs.bIndexReady AND stInputs.bIndexLocked AND stInputs.bReservoirPartPresent;
 
 // =========================================================
 // IVEK NATIVE SETTINGS LAUNCHER
@@ -635,8 +711,7 @@ CASE eMachineState OF
 			bInitialisationTimeoutFault := FALSE;
 			bStoppingTimeoutFault := FALSE;
 	
-			eCycleState :=
-				E_CycleState.Disabled;
+			eCycleState := E_CycleState.Disabled;
 	
 		END_IF
 
@@ -654,8 +729,7 @@ CASE eMachineState OF
 
         bFaultResetRequested := FALSE;
 
-        eMachineState :=
-            E_MachineState.Stopping;
+        eMachineState := E_MachineState.Stopping;
 
     END_IF
 	
@@ -669,14 +743,11 @@ CASE eMachineState OF
 	
 		ipEquipment.RequestStop();
 	
-		stIndexStatus :=
-			fbIndex.GetStatus();
+		stIndexStatus := fbIndex.GetStatus();
 	
-		stMainDoorLockStatus :=
-			fbMainDoorLock.GetStatus();
+		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
 	
-		eStoppingWaitReason :=
-			E_StoppingWaitReason.None;
+		eStoppingWaitReason := E_StoppingWaitReason.None;
 	
 	
 		// ---------------------------------------------------------
@@ -698,18 +769,15 @@ CASE eMachineState OF
 		// STOPPING COMPLETION
 		// ---------------------------------------------------------
 	
-		bStoppingComplete :=
-			eStoppingWaitReason = E_StoppingWaitReason.None;
+		bStoppingComplete := eStoppingWaitReason = E_StoppingWaitReason.None;
 	
 		IF bStoppingComplete THEN
 	
 			tonStopping(IN := FALSE);
 	
-			eCycleState :=
-				E_CycleState.Disabled;
+			eCycleState := E_CycleState.Disabled;
 	
-			eMachineState :=
-				E_MachineState.Stopped;
+			eMachineState := E_MachineState.Stopped;
 	
 		ELSIF tonStopping.Q THEN
 	
@@ -949,21 +1017,13 @@ CASE eMachineState OF
 		stProcessCycleInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
 		
 		// PROCESS REQUIREMENTS
-		stProcessCycleInputs.bSiliconeProcessRequired :=
-			stSiliconeNest.bEnabled
-			AND stSiliconeNest.bPartComplete
-			AND NOT stSiliconeNest.stResult.bValid;
+		stProcessCycleInputs.bSiliconeProcessRequired := stSiliconeNest.bEnabled AND stSiliconeNest.bPartComplete AND NOT stSiliconeNest.stResult.bValid;
 		
-		stProcessCycleInputs.bAssemblyProcessRequired :=
-			stAssemblyNest.bEnabled
-			AND stAssemblyNest.bPartComplete
-			AND NOT stAssemblyNest.stResult.bValid;
+		stProcessCycleInputs.bAssemblyProcessRequired := stAssemblyNest.bEnabled AND stAssemblyNest.bPartComplete AND NOT stAssemblyNest.stResult.bValid;
 			
 		// Indexer
 		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
-		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed
-			AND stInputs.bSiliconeSupportRetracted
-			AND stInputs.bAssemblySupportRetracted;
+		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed AND stInputs.bSiliconeSupportRetracted AND stInputs.bAssemblySupportRetracted;
 		stProcessCycleInputs.bIndexReady := fbIndex.IsReady();
 		stProcessCycleInputs.bIndexLocked := stInputs.bIndexLocked;
 		stProcessCycleInputs.bIndexBusy := stIndexStatus.bBusy;
@@ -1032,11 +1092,7 @@ CASE eMachineState OF
 		
 			stLastResult := fbSiliconeProcess.GetResult();
 		
-			bResultStoredFeedback :=
-				fbNestManager.StoreSiliconeResultAtPosition(
-					ePosition := stConfig.eSiliconePosition,
-					stResult := stLastResult
-				);
+			bResultStoredFeedback := fbNestManager.StoreSiliconeResultAtPosition( ePosition := stConfig.eSiliconePosition, stResult := stLastResult );
 		
 			IF bResultStoredFeedback THEN
 				fbSiliconeProcess.RequestReset();
@@ -1053,14 +1109,9 @@ CASE eMachineState OF
 			// STORE ASSEMBLY RESULT
 			// -----------------------------------------------------
 		
-			stLastResult :=
-				fbAssemblyProcess.GetResult();
+			stLastResult := fbAssemblyProcess.GetResult();
 		
-			bResultStoredFeedback :=
-				fbNestManager.StoreAssemblyResultAtPosition(
-					ePosition := stConfig.eAssemblyPosition,
-					stResult := stLastResult
-				);
+			bResultStoredFeedback := fbNestManager.StoreAssemblyResultAtPosition( ePosition := stConfig.eAssemblyPosition, stResult := stLastResult );
 		
 			IF bResultStoredFeedback THEN
 		
@@ -1068,33 +1119,21 @@ CASE eMachineState OF
 				// READ UPDATED NEST AT ASSEMBLY POSITION
 				// -------------------------------------------------
 		
-				stAssemblyNest :=
-					fbNestManager.GetNestAtPosition(
-						stConfig.eAssemblyPosition
-					);
+				stAssemblyNest := fbNestManager.GetNestAtPosition( stConfig.eAssemblyPosition );
 		
 				// -------------------------------------------------
 				// CALCULATE FINAL RESULT
 				// -------------------------------------------------
 		
-				stLastResult.bValid :=
-					stAssemblyNest.stSiliconeResult.bValid
-					AND stAssemblyNest.stAssemblyResult.bValid;
+				stLastResult.bValid := stAssemblyNest.stSiliconeResult.bValid AND stAssemblyNest.stAssemblyResult.bValid;
 		
-				stLastResult.bPassed :=
-					stLastResult.bValid
-					AND stAssemblyNest.stSiliconeResult.bPassed
-					AND stAssemblyNest.stAssemblyResult.bPassed;
+				stLastResult.bPassed := stLastResult.bValid AND stAssemblyNest.stSiliconeResult.bPassed AND stAssemblyNest.stAssemblyResult.bPassed;
 		
 				// -------------------------------------------------
 				// STORE FINAL RESULT IN NEST
 				// -------------------------------------------------
 		
-				bResultStoredFeedback :=
-					fbNestManager.StoreResultAtPosition(
-						ePosition := stConfig.eAssemblyPosition,
-						stResult := stLastResult
-					);
+				bResultStoredFeedback := fbNestManager.StoreResultAtPosition( ePosition := stConfig.eAssemblyPosition, stResult := stLastResult );
 		
 				// -------------------------------------------------
 				// RESET ASSEMBLY PROCESS
@@ -1217,8 +1256,7 @@ CASE eMachineState OF
 		// ---------------------------------------------------------
 		IF stManualModeRequests.bIndexMoveRequest THEN
 	
-			bManualIndexRequestAccepted :=
-				fbIndex.RequestManualMove();
+			bManualIndexRequestAccepted := fbIndex.RequestManualMove();
 	
 		END_IF
 	
@@ -1608,26 +1646,26 @@ stStatus.stLastResult 			:= stLastResult;
 stStatus.bEnableSetting 		:= eMachineState = E_MachineState.Stopped;
 GVL_Persistent.stStatistics.aNest := fbNestManager.GetAllNestStatistics();
 
-
-
-GVL_Persistent.stStatistics.udiTotalCycles :=
-    GVL_Persistent.stStatistics.aNest[1].udiTotalTests
-    + GVL_Persistent.stStatistics.aNest[2].udiTotalTests
-    + GVL_Persistent.stStatistics.aNest[3].udiTotalTests
-    + GVL_Persistent.stStatistics.aNest[4].udiTotalTests;
-
-GVL_Persistent.stStatistics.udiTotalPass :=
-    GVL_Persistent.stStatistics.aNest[1].udiGoodParts
-    + GVL_Persistent.stStatistics.aNest[2].udiGoodParts
-    + GVL_Persistent.stStatistics.aNest[3].udiGoodParts
-    + GVL_Persistent.stStatistics.aNest[4].udiGoodParts;
-
-GVL_Persistent.stStatistics.udiTotalFail :=
-    GVL_Persistent.stStatistics.aNest[1].udiBadParts
-    + GVL_Persistent.stStatistics.aNest[2].udiBadParts
-    + GVL_Persistent.stStatistics.aNest[3].udiBadParts
-    + GVL_Persistent.stStatistics.aNest[4].udiBadParts;
-	
+// 
+// 
+// GVL_Persistent.stStatistics.udiTotalCycles :=
+//     GVL_Persistent.stStatistics.aNest[1].udiTotalTests
+//     + GVL_Persistent.stStatistics.aNest[2].udiTotalTests
+//     + GVL_Persistent.stStatistics.aNest[3].udiTotalTests
+//     + GVL_Persistent.stStatistics.aNest[4].udiTotalTests;
+// 
+// GVL_Persistent.stStatistics.udiTotalPass :=
+//     GVL_Persistent.stStatistics.aNest[1].udiGoodParts
+//     + GVL_Persistent.stStatistics.aNest[2].udiGoodParts
+//     + GVL_Persistent.stStatistics.aNest[3].udiGoodParts
+//     + GVL_Persistent.stStatistics.aNest[4].udiGoodParts;
+// 
+// GVL_Persistent.stStatistics.udiTotalFail :=
+//     GVL_Persistent.stStatistics.aNest[1].udiBadParts
+//     + GVL_Persistent.stStatistics.aNest[2].udiBadParts
+//     + GVL_Persistent.stStatistics.aNest[3].udiBadParts
+//     + GVL_Persistent.stStatistics.aNest[4].udiBadParts;
+// 	
 	
 	
 // =========================================================
@@ -1640,49 +1678,40 @@ GVL_Persistent.stStatistics.udiTotalFail :=
 IF eMachineState = E_MachineState.Fault THEN
 
     stStatus.stAlarms.bHasFault := TRUE;
-    stStatus.stAlarms.bHasSafetyStopFault :=
-        NOT stInputs.stSafety.bSafetyOk;
+    stStatus.stAlarms.bHasSafetyStopFault := NOT stInputs.stSafety.bSafetyOk;
 
     stStatus.stAlarms.uiActiveCount := 0;
 
     IF NOT stInputs.stSafety.bSafetyOk THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
     IF bInitialisationTimeoutFault THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
     IF bStoppingTimeoutFault THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
     IF fbMainDoorLock.IsFaulted() THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
     IF fbIndex.IsFaulted() THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
     IF fbProcessStation.IsFaulted() THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
     IF ipEquipment.IsFaulted() THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
     IF stInputs.bEventFault THEN
-        stStatus.stAlarms.uiActiveCount :=
-            stStatus.stAlarms.uiActiveCount + 1;
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
 
 ELSE

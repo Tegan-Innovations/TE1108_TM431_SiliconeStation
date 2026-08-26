@@ -13,6 +13,7 @@ VAR
     tonIndexPositionInvalid : TON;
     tonIndexSupportMismatch : TON;
     tonTransferSupportMismatch : TON;
+	fbLocalSystemTime : FB_LocalSystemTime;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[// Station 0 - General and safety
@@ -20,7 +21,66 @@ END_VAR]]></Declaration>
 // GVL_MASTER.stStationEvents[0].aEvents[0].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bEmergencyStopOk;
 // GVL_MASTER.stStationEvents[0].aEvents[0].bEventText := 'Emergency stop activated';
 // GVL_MASTER.stStationEvents[0].aEvents[0].sSolution := 'Release the emergency stop and reset the machine';
+fbLocalSystemTime(
+    sNetID := '',
+    bEnable := TRUE,
+    dwCycle := 5,
+    dwOpt := 1,
+    tTimeout := T#5S
+);
 
+
+
+GVL_MASTER.sSystemDate :=
+    CONCAT(
+        CONCAT(
+            CONCAT(
+                UINT_TO_STRING(fbLocalSystemTime.systemTime.wDay),
+                '/'
+            ),
+            CONCAT(
+                UINT_TO_STRING(fbLocalSystemTime.systemTime.wMonth),
+                '/'
+            )
+        ),
+        UINT_TO_STRING(fbLocalSystemTime.systemTime.wYear)
+    );
+
+GVL_MASTER.sSystemTime := '';
+
+	IF fbLocalSystemTime.systemTime.wHour < 10 THEN
+		GVL_MASTER.sSystemTime := CONCAT(GVL_MASTER.sSystemTime, '0');
+	END_IF
+	
+	GVL_MASTER.sSystemTime := CONCAT(
+		GVL_MASTER.sSystemTime,
+		UINT_TO_STRING(fbLocalSystemTime.systemTime.wHour)
+	);
+	
+	GVL_MASTER.sSystemTime := CONCAT(GVL_MASTER.sSystemTime, ':');
+	
+	IF fbLocalSystemTime.systemTime.wMinute < 10 THEN
+		GVL_MASTER.sSystemTime := CONCAT(GVL_MASTER.sSystemTime, '0');
+	END_IF
+	
+	GVL_MASTER.sSystemTime := CONCAT(
+		GVL_MASTER.sSystemTime,
+		UINT_TO_STRING(fbLocalSystemTime.systemTime.wMinute)
+	);
+	
+	GVL_MASTER.sSystemTime := CONCAT(GVL_MASTER.sSystemTime, ':');
+	
+	IF fbLocalSystemTime.systemTime.wSecond < 10 THEN
+		GVL_MASTER.sSystemTime := CONCAT(GVL_MASTER.sSystemTime, '0');
+	END_IF
+	
+	GVL_MASTER.sSystemTime := CONCAT(
+		GVL_MASTER.sSystemTime,
+		UINT_TO_STRING(fbLocalSystemTime.systemTime.wSecond)
+	);
+	
+	
+	
 GVL_MASTER.stStationEvents[0].aEvents[1].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[1].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bFsoeOk;
 GVL_MASTER.stStationEvents[0].aEvents[1].bEventText := 'FSoE communication not healthy';

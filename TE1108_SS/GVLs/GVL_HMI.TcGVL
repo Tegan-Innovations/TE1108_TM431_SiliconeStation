@@ -6,6 +6,7 @@ VAR_GLOBAL
     // TcHMI writes commands only here and reads status only here.
     stCommands       : ST_HmiCommands;
     stStatus         : ST_HmiStatus;
+	
 
     // Dynamic machine-state banner. Names retained from the Kistler HMI.
     StatusHMI        : ST_StatusBanner;
@@ -19,6 +20,7 @@ VAR_GLOBAL
 
     astActiveEvents  : ARRAY[0..50] OF ST_ActiveEvents;
     astEventsHistory : ARRAY[0..200] OF ST_EventsHistory;
+	astTestHistory 	 : ARRAY[0..2000] OF ST_TestHistory;
     stEventsAssigment: ST_EventsAssigmentGeneral;
     sSystemTime      : STRING(255);
     sSystemDate      : STRING(255);

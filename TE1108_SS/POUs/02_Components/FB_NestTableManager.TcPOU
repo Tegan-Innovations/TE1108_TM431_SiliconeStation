@@ -14,6 +14,11 @@ VAR
     bIndexCompletePulse    : BOOL;
     i                      : INT;
     uiNest                 : UINT;
+	
+	bStatisticsCountedPulse : BOOL;
+	uiStatisticsCountedNestId : UINT;
+	bStatisticsCountedPass : BOOL;
+	
 END_VAR
 
 VAR RETAIN
@@ -140,11 +145,21 @@ IF uiId >= 1 AND uiId <= 4 THEN
 			aNestStatisticsInternal[uiId].lrEfficiency := 0.0;
 
 	    END_IF
+		
+		// ---------------------------------------------------------
+		// PUBLISH NEW STATISTICS EVENT
+		// ---------------------------------------------------------
+		
+		bStatisticsCountedPulse 		:= TRUE;
+		uiStatisticsCountedNestId 		:= uiId;
+		bStatisticsCountedPass 			:= aNestInternal[uiId].eDisposition = E_PartDisposition.Pass;
+		
+		
         // Prevent counting the same part again while
         // the table remains at the operator position.
         aNestInternal[uiId].bStatisticsCounted := TRUE;
 
-        CountStatisticsAtPosition := TRUE;
+        CountStatisticsAtPosition 		:= TRUE;
 
     END_IF
 
@@ -166,9 +181,18 @@ VAR_INPUT
     aNestEnabled                   : ARRAY[1..4] OF BOOL;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[// =========================================================
+        <ST><![CDATA[
+
+// =========================================================
+// RESET ONE-SCAN EVENTS
+// =========================================================
+
+bStatisticsCountedPulse := FALSE;
+
+// =========================================================
 // INITIALISATION
 // =========================================================
+
 
 IF NOT bInitialised THEN
 
@@ -387,6 +411,19 @@ VAR_INPUT ePosition : E_TablePosition; END_VAR
 ELSE
     GetNestIdAtPosition := 0;
 END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetStatisticsEvent" Id="{b78b52c2-ccb3-487c-83aa-d899ce37f340}">
+      <Declaration><![CDATA[METHOD PUBLIC GetStatisticsEvent : BOOL
+VAR_OUTPUT
+    uiNestId : UINT;
+    bPassed  : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetStatisticsEvent 	:= bStatisticsCountedPulse;
+uiNestId 			:=uiStatisticsCountedNestId;
+bPassed 			:=bStatisticsCountedPass;]]></ST>
       </Implementation>
     </Method>
     <Method Name="MarkDispositionComplete" Id="{c70a4344-213e-4717-8088-9601e267aed7}">

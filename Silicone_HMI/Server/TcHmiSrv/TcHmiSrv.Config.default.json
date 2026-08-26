@@ -31,6 +31,14 @@
     "DEFAULTTIMEZONE": "client",
     "DEFINITIONS": {
         "ADS": {
+            "ADS-PLC1.ARRAY_0..2000_OF-ST_TestHistory": {
+                "items": {
+                    "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_TestHistory"
+                },
+                "maxItems": 2001,
+                "minItems": 2001,
+                "type": "array"
+            },
             "ADS-PLC1.ARRAY_0..50_OF-ST_ActiveEvents": {
                 "items": {
                     "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_ActiveEvents"
@@ -243,6 +251,34 @@
                     {
                         "label": "ExitHMI",
                         "value": 4
+                    }
+                ],
+                "type": "integer"
+            },
+            "ADS-PLC1.E_PartDisposition": {
+                "attributes": {
+                    "generate_implicit_init_function": "",
+                    "qualified_only": "",
+                    "strict": "",
+                    "to_string": ""
+                },
+                "enum": [
+                    0,
+                    10,
+                    20
+                ],
+                "options": [
+                    {
+                        "label": "None",
+                        "value": 0
+                    },
+                    {
+                        "label": "Pass",
+                        "value": 10
+                    },
+                    {
+                        "label": "Reject",
+                        "value": 20
                     }
                 ],
                 "type": "integer"
@@ -621,6 +657,102 @@
                     "sMachineStatusText",
                     "sBannerBckColor",
                     "sBannerTextColor"
+                ],
+                "type": "object"
+            },
+            "ADS-PLC1.ST_TestHistory": {
+                "additionalProperties": false,
+                "properties": {
+                    "bAssemblyPass": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 6
+                            }
+                        ]
+                    },
+                    "bAssemblyValid": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 5
+                            }
+                        ]
+                    },
+                    "bSiliconePass": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 4
+                            }
+                        ]
+                    },
+                    "bSiliconeValid": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 3
+                            }
+                        ]
+                    },
+                    "eResult": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.E_PartDisposition"
+                            },
+                            {
+                                "propertyOrder": 2
+                            }
+                        ]
+                    },
+                    "sDate": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-255"
+                            },
+                            {
+                                "propertyOrder": 7
+                            }
+                        ]
+                    },
+                    "sTime": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-255"
+                            },
+                            {
+                                "propertyOrder": 8
+                            }
+                        ]
+                    },
+                    "uiNestId": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/UINT"
+                            },
+                            {
+                                "propertyOrder": 1
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "uiNestId",
+                    "eResult",
+                    "bSiliconeValid",
+                    "bSiliconePass",
+                    "bAssemblyValid",
+                    "bAssemblyPass",
+                    "sDate",
+                    "sTime"
                 ],
                 "type": "object"
             }
@@ -1548,6 +1680,16 @@
                         "$ref": "tchmi:server#/definitions/ADS-PLC1.ARRAY_0..50_OF-ST_ActiveEvents"
                     }
                 ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.astTestHistory": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::astTestHistory",
+            "SCHEMA": {
+                "$ref": "tchmi:server#/definitions/ADS-PLC1.ARRAY_0..2000_OF-ST_TestHistory"
             },
             "USEMAPPING": true
         },
@@ -6201,6 +6343,7 @@
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.2": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.2.rDistance": 3,
                 "ADS.PLC1.GVL_HMI.astActiveEvents": 3,
+                "ADS.PLC1.GVL_HMI.astTestHistory": 3,
                 "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": 3,
                 "ADS.PLC1.GVL_HMI.bHMIAlive": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": 3,
