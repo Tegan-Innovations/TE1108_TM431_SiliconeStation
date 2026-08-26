@@ -80,10 +80,16 @@ VAR_GLOBAL CONSTANT
     nGREY            : DWORD := 16#FFA9A9A9;
     nDARKGREY        : DWORD := 16#FF808080;
     nTRANSP          : DWORD := 16#00FFFFFF;
-
-    sSoftwareVersion : STRING := '0.13.0';
-    sSystemName      : STRING := 'Indexed Silicone Application Machine';
-    sProjectID       : STRING := 'TBD';
+	
+	sSystemName 	 : STRING := 'Silicone Station';
+	sApplication 	 : STRING := 'Silicone Machine';
+	sProjectID       : STRING := 'TE1108';
+    sSoftwareVersion : STRING := 'v1.0.0-rc.1';
+    sTwincat         : STRING := 'v3.1.4026.22.0, Runtime v3.1.4026.22.0 ';
+	sTwincatHMI      : STRING := 'TE2000 v14.16.2';
+	sHMIServer       : STRING := 'TF2000 v14.16.0';
+	sSoftwareDate	 : STRING := 'xx/09/2026';
+    
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

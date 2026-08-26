@@ -259,7 +259,28 @@ GVL_MASTER.stStationEvents[2].aEvents[10].bMessage := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[10].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.bWaitingOperatorExchange;
 GVL_MASTER.stStationEvents[2].aEvents[10].bEventText := 'Index waiting for operator exchange';
 GVL_MASTER.stStationEvents[2].aEvents[10].sSolution := 'Complete part removal, reject confirmation.';
+// =========================================================
+// PROCESS SUPPORT CYLINDER FAULTS
+// =========================================================
 
+// ---------------------------------------------------------
+// SILICONE SUPPORT CYLINDER
+// ---------------------------------------------------------
+
+GVL_MASTER.stStationEvents[1].aEvents[20].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[20].bEventFlag := GVL_MASTER.stStatus.bSiliconeSupportFaulted;
+GVL_MASTER.stStationEvents[1].aEvents[20].bEventText := 'Silicone Support Cylinder fault';
+GVL_MASTER.stStationEvents[1].aEvents[20].sSolution := 'Check Silicone Support Cylinder air supply, valve and position sensors';
+
+
+// ---------------------------------------------------------
+// ASSEMBLY SUPPORT CYLINDER
+// ---------------------------------------------------------
+
+GVL_MASTER.stStationEvents[1].aEvents[21].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[21].bEventFlag := GVL_MASTER.stStatus.bAssemblySupportFaulted;
+GVL_MASTER.stStationEvents[1].aEvents[21].bEventText := 'Assembly Support Cylinder fault';
+GVL_MASTER.stStationEvents[1].aEvents[21].sSolution := 'Check Assembly Support Cylinder air supply, valve and position sensors';
 
 // Operator station diagnostics. These are visual messages only; the active
 // operator instruction itself remains reserved for DataGrid row 0.
@@ -267,6 +288,8 @@ GVL_MASTER.stStationEvents[0].aEvents[30].bMessage := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[30].bEventFlag := GVL_MASTER.stStatus.stOperatorStation.bRejectWaitingForClear;
 GVL_MASTER.stStationEvents[0].aEvents[30].bEventText := 'Reject confirmation ignored because reject chute sensor was active before nest removal';
 GVL_MASTER.stStationEvents[0].aEvents[30].sSolution := 'Clear the reject chute sensor, then place the rejected part in the bin again';
+
+
 
 // Physical sensor coherence from EPLAN
 // A valid absolute position is required whenever the index reports ready and locked.

@@ -126,7 +126,7 @@
 }
 </script>
 </div>
-<div id="TcHmiTextblock_620" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="419" data-tchmi-left-unit="px" data-tchmi-text="%s%ADS.PLC1.GVL_HMI.sAplication%/s%" data-tchmi-top="188" data-tchmi-top-unit="px" data-tchmi-width="287" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-zindex="3" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%">
+<div id="TcHmiTextblock_620" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="419" data-tchmi-left-unit="px" data-tchmi-text="%s%ADS.PLC1.GVL_HMI.sApplication%/s%" data-tchmi-top="188" data-tchmi-top-unit="px" data-tchmi-width="287" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-zindex="3" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%">
 
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
@@ -150,7 +150,7 @@
 }
 </script>
 </div>
-<div id="TcHmiTextblock_623" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="419" data-tchmi-left-unit="px" data-tchmi-text="%s%ADS.PLC1.GVL_HMI.sTC3Version%/s%" data-tchmi-top="266" data-tchmi-top-unit="px" data-tchmi-width="287" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-zindex="3" data-tchmi-text-horizontal-alignment="Left" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-size="130">
+<div id="TcHmiTextblock_623" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="419" data-tchmi-left-unit="px" data-tchmi-text="%s%ADS.PLC1.GVL_HMI.sTwincat%/s%" data-tchmi-top="266" data-tchmi-top-unit="px" data-tchmi-width="287" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-zindex="3" data-tchmi-text-horizontal-alignment="Left" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-size="130">
 
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
@@ -158,7 +158,7 @@
 }
 </script>
 </div>
-<div id="TcHmiTextblock_624" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="419" data-tchmi-left-unit="px" data-tchmi-text="%s%ADS.PLC1.GVL_HMI.sHMIVersion%/s%" data-tchmi-top="292" data-tchmi-top-unit="px" data-tchmi-width="287" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-zindex="3" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="130" data-tchmi-text-font-size-unit="%">
+<div id="TcHmiTextblock_624" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="419" data-tchmi-left-unit="px" data-tchmi-text="%s%ADS.PLC1.GVL_HMI.sTwincatHMI%/s%" data-tchmi-top="292" data-tchmi-top-unit="px" data-tchmi-width="287" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-zindex="3" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="130" data-tchmi-text-font-size-unit="%">
 
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {

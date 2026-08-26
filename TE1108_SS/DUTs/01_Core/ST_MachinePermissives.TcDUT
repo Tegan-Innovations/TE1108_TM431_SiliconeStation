@@ -3,13 +3,25 @@
   <DUT Name="ST_MachinePermissives" Id="{9624589d-386c-44ad-aa47-20e604e8d2c5}">
     <Declaration><![CDATA[TYPE ST_MachinePermissives :
 STRUCT
+    // Index
     bSafetyIndexPermissive       : BOOL;
     bOperatorIndexPermissive     : BOOL;
     bProcessIndexPermissive      : BOOL;
     bIndexMoveAllowed            : BOOL;
+
+    // Process
     bProcessStartAllowed         : BOOL;
+
+    // Initialisation
+	bSiliconeSupportHome      : BOOL; // Silicone Support retracted sensor TRUE
+	bAssemblySupportHome      : BOOL; // Assembly Support retracted sensor TRUE
+	bSupportsHome             : BOOL; // Both supports retracted
+	bIndexInitialisationReady : BOOL; // Index stopped and fault-free
+	bDoorInitialisationReady  : BOOL; // Door healthy and ready for automatic
+	bInitialisationAllowed    : BOOL; // All initialisation requirements valid
+	bAirSupplyReady 		  : BOOL; // Pneumatic supply feedback confirmed
+	
 END_STRUCT
-END_TYPE
-]]></Declaration>
+END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>

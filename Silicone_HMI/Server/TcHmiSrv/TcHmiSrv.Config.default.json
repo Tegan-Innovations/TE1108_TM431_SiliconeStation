@@ -39,6 +39,14 @@
                 "minItems": 2001,
                 "type": "array"
             },
+            "ADS-PLC1.ARRAY_0..200_OF-ST_EventsHistory": {
+                "items": {
+                    "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_EventsHistory"
+                },
+                "maxItems": 201,
+                "minItems": 201,
+                "type": "array"
+            },
             "ADS-PLC1.ARRAY_0..50_OF-ST_ActiveEvents": {
                 "items": {
                     "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_ActiveEvents"
@@ -443,6 +451,81 @@
                     "eSeverity",
                     "nEventId",
                     "sMessage"
+                ],
+                "type": "object"
+            },
+            "ADS-PLC1.ST_EventsHistory": {
+                "additionalProperties": false,
+                "properties": {
+                    "abType": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/DINT"
+                            },
+                            {
+                                "comment": "1:Alarm",
+                                "propertyOrder": 6
+                            }
+                        ]
+                    },
+                    "nEventsAmount": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/DINT"
+                            },
+                            {
+                                "propertyOrder": 5
+                            }
+                        ]
+                    },
+                    "sDate": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-255"
+                            },
+                            {
+                                "propertyOrder": 3
+                            }
+                        ]
+                    },
+                    "sEventTex": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-255"
+                            },
+                            {
+                                "propertyOrder": 1
+                            }
+                        ]
+                    },
+                    "sTime": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-255"
+                            },
+                            {
+                                "propertyOrder": 4
+                            }
+                        ]
+                    },
+                    "sType": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-255"
+                            },
+                            {
+                                "propertyOrder": 2
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "sEventTex",
+                    "sType",
+                    "sDate",
+                    "sTime",
+                    "nEventsAmount",
+                    "abType"
                 ],
                 "type": "object"
             },
@@ -1683,6 +1766,16 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.astEventsHistory": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::astEventsHistory",
+            "SCHEMA": {
+                "$ref": "tchmi:server#/definitions/ADS-PLC1.ARRAY_0..200_OF-ST_EventsHistory"
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.astTestHistory": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -1811,6 +1904,86 @@
             "MAPPING": "PLC1::GVL_HMI::bIvekSettingsLaunchPending",
             "SCHEMA": {
                 "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sApplication": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sApplication",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sHMIServer": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sHMIServer",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sProjectID": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sProjectID",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sSoftwareDate": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sSoftwareDate",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sSoftwareVersion": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sSoftwareVersion",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sSystemName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sSystemName",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sTwincat": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sTwincat",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.sTwincatHMI": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::sTwincatHMI",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/STRING%2880%29"
             },
             "USEMAPPING": true
         },
@@ -3040,6 +3213,16 @@
                         "propertyOrder": 1
                     }
                 ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Persistent.astEventsHistory": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Persistent::astEventsHistory",
+            "SCHEMA": {
+                "$ref": "tchmi:server#/definitions/ADS-PLC1.ARRAY_0..200_OF-ST_EventsHistory"
             },
             "USEMAPPING": true
         },
@@ -6343,6 +6526,7 @@
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.2": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.2.rDistance": 3,
                 "ADS.PLC1.GVL_HMI.astActiveEvents": 3,
+                "ADS.PLC1.GVL_HMI.astEventsHistory": 3,
                 "ADS.PLC1.GVL_HMI.astTestHistory": 3,
                 "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": 3,
                 "ADS.PLC1.GVL_HMI.bHMIAlive": 3,
@@ -6355,8 +6539,15 @@
                 "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchError": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsLaunchPending": 3,
                 "ADS.PLC1.GVL_HMI.i_bHMIIndexerManualEnable": 3,
+                "ADS.PLC1.GVL_HMI.sApplication": 3,
+                "ADS.PLC1.GVL_HMI.sHMIServer": 3,
                 "ADS.PLC1.GVL_HMI.sHMIVersion": 3,
+                "ADS.PLC1.GVL_HMI.sProjectID": 3,
+                "ADS.PLC1.GVL_HMI.sSoftwareDate": 3,
+                "ADS.PLC1.GVL_HMI.sSoftwareVersion": 3,
                 "ADS.PLC1.GVL_HMI.sSystemName": 3,
+                "ADS.PLC1.GVL_HMI.sTwincat": 3,
+                "ADS.PLC1.GVL_HMI.sTwincatHMI": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bExternalLight": 3,
@@ -6436,6 +6627,7 @@
                 "ADS.PLC1.GVL_MASTER.stProcess.bKistlerHomeDone": 3,
                 "ADS.PLC1.GVL_MASTER.stStatus.aNest.1.bProcessComplete": 3,
                 "ADS.PLC1.GVL_MASTER.stStatus.eMachineState": 3,
+                "ADS.PLC1.GVL_Persistent.astEventsHistory": 3,
                 "ADS.PLC1.GVL_Persistent.stStatistics.udiTotalFail": 3,
                 "ADS.PLC1.PRG_MachineControl.bKistlerReady": 3,
                 "ADS.PLC1.PRG_MachineControl.eCurrentNestPos": 3,

@@ -6,17 +6,25 @@
 {attribute 'to_string'}
 TYPE E_InitialisingWaitReason :
 (
-    None 								:= 0,
-    SafetyNotReady 						:= 10,
-    FsoeNotReady 						:= 20,
-    SafetyLogicNotReady 				:= 30,
-    IndexBusy 							:= 40,
-    TransferNestSupportCylinderNotRetracted := 50,
-    ProcessStationFaulted 				:= 60,
-    MainDoorFaulted 					:= 70,
-	MainDoorNotReady 					:= 75,
-    PuckLockerFaulted 					:= 80,
-    ProcessEquipmentNotReady 			:= 90
+    None 						:= 0,
+    SafetyNotReady 				:= 10,
+    FsoeNotReady 				:= 20,
+    SafetyLogicNotReady 		:= 30,
+    IndexBusy 					:= 40,
+
+    SiliconeSupportNotRetracted := 50,
+    AssemblySupportNotRetracted := 55,
+
+    ProcessStationFaulted 		:= 60,
+    MainDoorFaulted 			:= 70,
+    PuckLockerFaulted 			:= 80,
+    ProcessEquipmentNotReady 	:= 90,
+
+    SiliconeSupportFaulted 		:= 100,
+    AssemblySupportFaulted 		:= 110,
+	AirSupplyNotReady 			:= 115,
+
+    MainDoorNotReady 			:= 120
 );
 END_TYPE]]></Declaration>
   </DUT>

@@ -40,10 +40,7 @@ END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[ACT_FaultTrig();
 
-IF bEventsAssigmentSignal THEN
-    ACT_EventTextAssigment();
-    bEventsAssigmentSignal := FALSE;
-END_IF
+ACT_EventTextAssigment();
 
 ACT_ActiveEvents_DataHistory();
 

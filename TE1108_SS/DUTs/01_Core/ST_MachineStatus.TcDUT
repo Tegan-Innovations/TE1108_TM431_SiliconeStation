@@ -30,6 +30,8 @@ STRUCT
     bIndexPermissive       			: BOOL;
     bProcessPermissive     			: BOOL;
 	bEnableSetting		   			: BOOL;
+	bSiliconeSupportFaulted 		: BOOL;
+	bAssemblySupportFaulted 		: BOOL;
 	
     stPermissives           : ST_MachinePermissives;
     stLastResult            : ST_ProcessResult;

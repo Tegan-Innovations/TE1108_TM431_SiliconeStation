@@ -235,8 +235,22 @@ END_VAR
         <ST><![CDATA[// =========================================================
 // MACHINE FAULT CONDITION
 // =========================================================
-IF NOT stInputs.stSafety.bSafetyOk OR  bSafetyDropRequest THEN
-	eMachineState := E_MachineState.Fault;
+//
+// During Initialising the machine is allowed to recover the
+// pneumatic supply. The Initialising state itself supervises
+// the air feedback and generates a timeout if it does not
+// become available.
+// =========================================================
+
+IF (
+        NOT stInputs.stSafety.bSafetyOk
+        AND eMachineState <> E_MachineState.Initialising
+    )
+    OR bSafetyDropRequest
+THEN
+
+    eMachineState := E_MachineState.Fault;
+
 END_IF
 
 // =========================================================
@@ -553,13 +567,51 @@ stPermissives.bSafetyIndexPermissive := stInputs.stSafety.bMotionSafetyPermitted
 stPermissives.bOperatorIndexPermissive := fbOperatorStation.IndexPermissive();
 stPermissives.bProcessIndexPermissive := fbProcessStation.IndexPermissive();
 
-stPermissives.bIndexMoveAllowed := 
-	stPermissives.bSafetyIndexPermissive
+stPermissives.bIndexMoveAllowed :=
+    stPermissives.bSafetyIndexPermissive
     //AND stPermissives.bOperatorIndexPermissive
     AND stPermissives.bProcessIndexPermissive;
+
+
+stPermissives.bProcessStartAllowed :=
+    stInputs.stSafety.bProcessSafetyPermitted
+    AND stInputs.bIndexReady
+    AND stInputs.bIndexLocked
+    AND stInputs.bReservoirPartPresent;
+
+
+// =========================================================
+// INITIALISATION PERMISSIVES
+// =========================================================
+
+stPermissives.bAirSupplyReady :=
+	GVL_Safety.bAirSupplySafe;
+
+stPermissives.bSiliconeSupportHome :=
+    stInputs.bSiliconeSupportRetracted;
+
+stPermissives.bAssemblySupportHome :=
+    stInputs.bAssemblySupportRetracted;
+
+stPermissives.bSupportsHome :=
+    stPermissives.bSiliconeSupportHome
+    AND stPermissives.bAssemblySupportHome;
+
+stPermissives.bIndexInitialisationReady :=
+    NOT stIndexStatus.bBusy
+    AND NOT fbIndex.IsFaulted();
+
+stPermissives.bDoorInitialisationReady :=
+    NOT fbMainDoorLock.IsFaulted()
+    AND fbMainDoorLock.IsReadyForAutomatic();
+
+stPermissives.bInitialisationAllowed :=
+    stInputs.stSafety.bSafetyOk
+    AND stPermissives.bAirSupplyReady
+    AND stPermissives.bIndexInitialisationReady
+    AND stPermissives.bSupportsHome
+    AND stPermissives.bDoorInitialisationReady;
 	
-	
-stPermissives.bProcessStartAllowed := stInputs.stSafety.bProcessSafetyPermitted AND stInputs.bIndexReady AND stInputs.bIndexLocked AND stInputs.bReservoirPartPresent;
 
 // =========================================================
 // IVEK NATIVE SETTINGS LAUNCHER
@@ -870,59 +922,105 @@ CASE eMachineState OF
 		stIndexStatus := fbIndex.GetStatus();
 		stProcessStationStatus := fbProcessStation.GetStatus();
 		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
+		
+		
+		
+		
 		// =========================================================
 		// INITIALISING WAIT REASON
 		// =========================================================
-	
+		
 		eInitialisingWaitReason := E_InitialisingWaitReason.None;
+		
+		
+		// ---------------------------------------------------------
+		// AIR SUPPLY MUST BE READY
+		// ---------------------------------------------------------
+		
+		IF NOT stPermissives.bAirSupplyReady THEN
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.AirSupplyNotReady;
+		
+		
 		// ---------------------------------------------------------
 		// INDEX MUST NOT BE BUSY
 		// ---------------------------------------------------------
-	
-		IF stIndexStatus.bBusy THEN
-	
-			eInitialisingWaitReason := E_InitialisingWaitReason.IndexBusy;
+		
+		ELSIF stIndexStatus.bBusy THEN
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.IndexBusy;
+		
+		
 		// ---------------------------------------------------------
-		// PROCESS STATION MUST NOT BE FAULTED
+		// SILICONE SUPPORT MUST NOT BE FAULTED
 		// ---------------------------------------------------------
-	
-// 		ELSIF fbProcessStation.IsFaulted() THEN
-// 	
-// 			eInitialisingWaitReason := E_InitialisingWaitReason.ProcessStationFaulted;
+		
+		ELSIF fbSiliconeSupportCylinder.IsFaulted() THEN
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.SiliconeSupportFaulted;
+		
+		
 		// ---------------------------------------------------------
-		// PROCESS STATION CYLINDER MUST BE RETRACTED
+		// ASSEMBLY SUPPORT MUST NOT BE FAULTED
 		// ---------------------------------------------------------
-		//
-		// During Initialising the ProcessStation is enabled and
-		// recovers the cylinder to its safe retracted position.
-		//
-		// Initialising waits until the retracted sensor is confirmed.
+		
+		ELSIF fbAssemblySupportCylinder.IsFaulted() THEN
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.AssemblySupportFaulted;
+		
+		
 		// ---------------------------------------------------------
-	
-		ELSIF NOT stProcessStationStatus.bCylinderRetracted THEN
-	
-			eInitialisingWaitReason := E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted;
+		// SILICONE SUPPORT MUST BE RETRACTED
+		// ---------------------------------------------------------
+		
+		ELSIF NOT stPermissives.bSiliconeSupportHome THEN
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.SiliconeSupportNotRetracted;
+		
+		
+		// ---------------------------------------------------------
+		// ASSEMBLY SUPPORT MUST BE RETRACTED
+		// ---------------------------------------------------------
+		
+		ELSIF NOT stPermissives.bAssemblySupportHome THEN
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.AssemblySupportNotRetracted;
+		
+		
 		// ---------------------------------------------------------
 		// MAIN DOOR MUST NOT BE FAULTED
 		// ---------------------------------------------------------
-	
+		
 		ELSIF fbMainDoorLock.IsFaulted() THEN
-	
-			eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorFaulted;
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.MainDoorFaulted;
+		
+		
 		// ---------------------------------------------------------
 		// MAIN DOOR MUST BE READY FOR AUTOMATIC OPERATION
 		// ---------------------------------------------------------
-	
+		
 		ELSIF NOT fbMainDoorLock.IsReadyForAutomatic() THEN
-	
-			eInitialisingWaitReason := E_InitialisingWaitReason.MainDoorNotReady;
-	
+		
+			eInitialisingWaitReason :=
+				E_InitialisingWaitReason.MainDoorNotReady;
+		
 		END_IF
+				
+		
+		
 		// =========================================================
 		// INITIALISATION COMPLETE
 		// =========================================================
 	
-		bInitialisationComplete := eInitialisingWaitReason = E_InitialisingWaitReason.None;
+		bInitialisationComplete 	:=stPermissives.bInitialisationAllowed;
 	
 		IF bInitialisationComplete THEN
 	
@@ -1342,13 +1440,42 @@ bSiliconeSupportLowerRequest := FALSE;
 bAssemblySupportRaiseRequest := FALSE;
 bAssemblySupportLowerRequest := FALSE;
 
-IF eMachineState = E_MachineState.Manual THEN
+
+// ---------------------------------------------------------
+// INITIALISING
+// ---------------------------------------------------------
+// Return both process supports to their standard
+// safe retracted position before ReadyToStart.
+// ---------------------------------------------------------
+
+IF eMachineState = E_MachineState.Initialising THEN
+
+    // Supports may only be recovered after the pneumatic
+    // supply has been confirmed by TwinSAFE.
+    IF stPermissives.bAirSupplyReady THEN
+
+        bSiliconeSupportLowerRequest := TRUE;
+        bAssemblySupportLowerRequest := TRUE;
+
+    END_IF
+
+
+// ---------------------------------------------------------
+// MANUAL MODE
+// ---------------------------------------------------------
+
+ELSIF eMachineState = E_MachineState.Manual THEN
 
     bSiliconeSupportRaiseRequest := stManualModeRequests.bSiliconeSupportExtend;
     bSiliconeSupportLowerRequest := stManualModeRequests.bSiliconeSupportRetract;
 
     bAssemblySupportRaiseRequest := stManualModeRequests.bAssemblySupportExtend;
     bAssemblySupportLowerRequest := stManualModeRequests.bAssemblySupportRetract;
+
+
+// ---------------------------------------------------------
+// AUTOMATIC CYCLE
+// ---------------------------------------------------------
 
 ELSIF eMachineState = E_MachineState.AutoCycle THEN
 
@@ -1361,13 +1488,15 @@ ELSIF eMachineState = E_MachineState.AutoCycle THEN
 END_IF
 
 
+
 // =========================================================
 // SILICONE SUPPORT CONTROL
 // =========================================================
 
 fbSiliconeSupportCylinder.Cyclic(
-    bEnable := (eMachineState = E_MachineState.Manual)
-        OR (eMachineState = E_MachineState.AutoCycle),
+	bEnable := (eMachineState = E_MachineState.Initialising)
+				OR (eMachineState = E_MachineState.Manual)
+				OR (eMachineState = E_MachineState.AutoCycle),
     bRaiseRequest := bSiliconeSupportRaiseRequest,
     bLowerRequest := bSiliconeSupportLowerRequest,
     bStopRequest := (eMachineState = E_MachineState.Stopping)
@@ -1384,8 +1513,9 @@ fbSiliconeSupportCylinder.Cyclic(
 // =========================================================
 
 fbAssemblySupportCylinder.Cyclic(
-    bEnable := (eMachineState = E_MachineState.Manual)
-        OR (eMachineState = E_MachineState.AutoCycle),
+	bEnable := (eMachineState = E_MachineState.Initialising)
+				OR (eMachineState = E_MachineState.Manual)
+				OR (eMachineState = E_MachineState.AutoCycle),
     bRaiseRequest := bAssemblySupportRaiseRequest,
     bLowerRequest := bAssemblySupportLowerRequest,
     bStopRequest := (eMachineState = E_MachineState.Stopping)
@@ -1645,6 +1775,8 @@ stStatus.stPermissives 			:= stPermissives;
 stStatus.stLastResult 			:= stLastResult;
 stStatus.bEnableSetting 		:= eMachineState = E_MachineState.Stopped;
 GVL_Persistent.stStatistics.aNest := fbNestManager.GetAllNestStatistics();
+stStatus.bSiliconeSupportFaulted := fbSiliconeSupportCylinder.IsFaulted();
+stStatus.bAssemblySupportFaulted := fbAssemblySupportCylinder.IsFaulted();
 
 // 
 // 
@@ -1693,7 +1825,13 @@ IF eMachineState = E_MachineState.Fault THEN
     IF bStoppingTimeoutFault THEN
         stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
-
+	IF fbSiliconeSupportCylinder.IsFaulted() THEN
+		stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+	END_IF
+	
+	IF fbAssemblySupportCylinder.IsFaulted() THEN
+		stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+	END_IF
     IF fbMainDoorLock.IsFaulted() THEN
         stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
@@ -1746,16 +1884,25 @@ ELSIF eMachineState = E_MachineState.Manual THEN
 	
 ELSIF eMachineState = E_MachineState.Initialising THEN
     CASE eInitialisingWaitReason OF
-		E_InitialisingWaitReason.MainDoorNotReady:stStatus.sMachineMessage :='System initialising - waiting for main door to lock';
-        E_InitialisingWaitReason.SafetyNotReady: stStatus.sMachineMessage := 'System initialising - waiting for Safety OK';
-        E_InitialisingWaitReason.FsoeNotReady: stStatus.sMachineMessage := 'System initialising - waiting for FSoE';
-        E_InitialisingWaitReason.SafetyLogicNotReady: stStatus.sMachineMessage := 'System initialising - waiting for TwinSAFE logic';
-        E_InitialisingWaitReason.IndexBusy: stStatus.sMachineMessage := 'System initialising - waiting for index to stop';
-        E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted: stStatus.sMachineMessage := 'System initialising - waiting for Silicone Support Cylinder retract';
-        E_InitialisingWaitReason.ProcessStationFaulted: stStatus.sMachineMessage := 'System initialising - process station fault';
-        E_InitialisingWaitReason.MainDoorFaulted: stStatus.sMachineMessage := 'System initialising - main door lock fault';
+		E_InitialisingWaitReason.MainDoorNotReady:stStatus.sMachineMessage 			:='System initialising - waiting for main door to lock';
+        E_InitialisingWaitReason.SafetyNotReady: stStatus.sMachineMessage			:= 'System initialising - waiting for Safety OK';
+        E_InitialisingWaitReason.FsoeNotReady: stStatus.sMachineMessage 			:= 'System initialising - waiting for FSoE';
+        E_InitialisingWaitReason.SafetyLogicNotReady: stStatus.sMachineMessage 		:= 'System initialising - waiting for TwinSAFE logic';
+        E_InitialisingWaitReason.IndexBusy: stStatus.sMachineMessage 				:= 'System initialising - waiting for index to stop';
+        E_InitialisingWaitReason.SiliconeSupportNotRetracted:stStatus.sMachineMessage := 'System initialising - waiting for Silicone Support Cylinder retract';
+		E_InitialisingWaitReason.AssemblySupportNotRetracted:stStatus.sMachineMessage := 'System initialising - waiting for Assembly Support Cylinder retract';
+		E_InitialisingWaitReason.SiliconeSupportFaulted:stStatus.sMachineMessage 	:= 'System initialising - Silicone Support Cylinder fault';
+		E_InitialisingWaitReason.AssemblySupportFaulted: stStatus.sMachineMessage 	:= 'System initialising - Assembly Support Cylinder fault';
+        E_InitialisingWaitReason.ProcessStationFaulted: stStatus.sMachineMessage 	:= 'System initialising - process station fault';
+        E_InitialisingWaitReason.MainDoorFaulted: stStatus.sMachineMessage 			:= 'System initialising - main door lock fault';
         E_InitialisingWaitReason.ProcessEquipmentNotReady: stStatus.sMachineMessage := 'System initialising - waiting for process equipment';
-    ELSE stStatus.sMachineMessage := 'System initialising'; 
+   		E_InitialisingWaitReason.AirSupplyNotReady:stStatus.sMachineMessage 		:= 'System initialising - waiting for air supply';
+
+
+ ELSE stStatus.sMachineMessage 													:= 'System initialising'; 
+		
+		
+		
 END_CASE
 	
 ELSIF eMachineState = E_MachineState.ReadyToStart THEN
@@ -1780,25 +1927,76 @@ ELSIF eMachineState = E_MachineState.Stopping THEN
 	
 	
 ELSIF eMachineState = E_MachineState.Fault THEN
+
     IF NOT stInputs.stSafety.bSafetyOk THEN
-        stStatus.sMachineMessage := 'Machine fault - safety system not ready';
+
+        stStatus.sMachineMessage :=
+            'Machine fault - safety system not ready';
+
+
+    // ---------------------------------------------------------
+    // SILICONE SUPPORT FAULT
+    // ---------------------------------------------------------
+
+    ELSIF fbSiliconeSupportCylinder.IsFaulted() THEN
+
+        stStatus.sMachineMessage :=
+            'Machine fault - Silicone Support Cylinder feedback fault';
+
+
+    // ---------------------------------------------------------
+    // ASSEMBLY SUPPORT FAULT
+    // ---------------------------------------------------------
+
+    ELSIF fbAssemblySupportCylinder.IsFaulted() THEN
+
+        stStatus.sMachineMessage :=
+            'Machine fault - Assembly Support Cylinder feedback fault';
+
+
+    // ---------------------------------------------------------
+    // INITIALISATION TIMEOUT
+    // ---------------------------------------------------------
+
     ELSIF bInitialisationTimeoutFault THEN
+
         CASE eInitialisingWaitReason OF
+
+            E_InitialisingWaitReason.AirSupplyNotReady:
+                stStatus.sMachineMessage := 'Initialisation timeout - air supply not ready';
+
             E_InitialisingWaitReason.IndexBusy:
                 stStatus.sMachineMessage := 'Initialisation timeout - index did not stop';
-            E_InitialisingWaitReason.TransferNestSupportCylinderNotRetracted:
+
+            E_InitialisingWaitReason.SiliconeSupportNotRetracted:
                 stStatus.sMachineMessage := 'Initialisation timeout - Silicone Support Cylinder not retracted';
+
+            E_InitialisingWaitReason.AssemblySupportNotRetracted:
+                stStatus.sMachineMessage := 'Initialisation timeout - Assembly Support Cylinder not retracted';
+
+            E_InitialisingWaitReason.SiliconeSupportFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - Silicone Support Cylinder fault';
+
+            E_InitialisingWaitReason.AssemblySupportFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - Assembly Support Cylinder fault';
+
             E_InitialisingWaitReason.MainDoorFaulted:
                 stStatus.sMachineMessage := 'Initialisation timeout - main door lock fault';
+
             E_InitialisingWaitReason.MainDoorNotReady:
                 stStatus.sMachineMessage := 'Initialisation timeout - main door did not lock';
+
             E_InitialisingWaitReason.ProcessStationFaulted:
                 stStatus.sMachineMessage := 'Initialisation timeout - process station fault';
-            
+
             E_InitialisingWaitReason.ProcessEquipmentNotReady:
                 stStatus.sMachineMessage := 'Initialisation timeout - process equipment not ready';
+
         ELSE
-            stStatus.sMachineMessage := 'Machine fault - initialisation timeout';
+
+            stStatus.sMachineMessage :=
+                'Machine fault - initialisation timeout';
+
         END_CASE
     ELSIF bStoppingTimeoutFault THEN
         CASE eStoppingWaitReason OF

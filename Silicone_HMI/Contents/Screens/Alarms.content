@@ -270,7 +270,7 @@
 
 
 </div>
-<div id="TcHmiDatagrid_14" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="448" data-tchmi-height-unit="px" data-tchmi-left="239" data-tchmi-left-unit="px" data-tchmi-top="17" data-tchmi-top-unit="px" data-tchmi-width="1081" data-tchmi-width-unit="px" data-tchmi-src-data="%s%ADS.PLC1.GVL_HMI.arrAlarmHistory%/s%" data-tchmi-grid-font-size="20" data-tchmi-grid-font-style="Normal" data-tchmi-grid-font-weight="Normal" data-tchmi-zindex="1" data-tchmi-show-row-numbers="True" data-tchmi-data-symbol="%s%ADS.PLC1.GVL_HMI.arrAlarmHistory%/s%" data-tchmi-combobox-drop-down-style="Mobile">
+<div id="TcHmiDatagrid_14" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiDatagrid" data-tchmi-height="448" data-tchmi-height-unit="px" data-tchmi-left="239" data-tchmi-left-unit="px" data-tchmi-top="17" data-tchmi-top-unit="px" data-tchmi-width="1081" data-tchmi-width-unit="px" data-tchmi-src-data="%s%ADS.PLC1.GVL_Persistent.astEventsHistory%/s%" data-tchmi-grid-font-size="20" data-tchmi-grid-font-style="Normal" data-tchmi-grid-font-weight="Normal" data-tchmi-zindex="1" data-tchmi-show-row-numbers="True" data-tchmi-data-symbol="%s%ADS.PLC1.GVL_Persistent.astEventsHistory%/s%" data-tchmi-combobox-drop-down-style="Mobile">
 <script data-tchmi-target-attribute="data-tchmi-cell-content-padding" type="application/json">
 {
   "left": 3,
@@ -370,7 +370,7 @@
     "sortable": false
   },
   {
-    "name": "sMessage",
+    "name": "sEventTex",
     "label": "EVENT",
     "control": "TextBox",
     "width": 610,
