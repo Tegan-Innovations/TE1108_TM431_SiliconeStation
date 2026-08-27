@@ -30,10 +30,26 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[// ---------------------------------------------------------------------------
+// Term 4 - EL1918(EPLAN page 11)
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.bEmergencyStopChannel1 			:= GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch1;
+GVL_IO.stInputs.bEmergencyStopChannel2 			:= GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch2;
+GVL_IO.stInputs.bMainDoorChannel1 				:= GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch4;
+GVL_IO.stInputs.bMainDoorChannel2 				:= GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch5;
+GVL_IO.stInputs.bMainDoorFeedback 				:= GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch6;
+GVL_IO.stInputs.bMs6FeedbackOk 					:= GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch7;
+GVL_IO.stInputs.bAirExhausted 					:= GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch8;
+
+// ---------------------------------------------------------------------------
 // Term 5 - EL1918(EPLAN page 12)
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.bTouchButtonleft 				:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch3;
 GVL_IO.stInputs.bTouchButtonRight 				:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch4;
+
+GVL_IO.stInputs.bRightFlapChannel1   			:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch5;
+GVL_IO.stInputs.bRightFlapChannel2     			:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch6;
+GVL_IO.stInputs.bLeftFlapChannel1  				:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch7;
+GVL_IO.stInputs.bLeftFlapChannel2  				:= GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch8;
 
 
 
@@ -119,8 +135,8 @@ GVL_IO.stInputs.bMainDoorClosed 							:= GVL_Safety.bMainDoorClosed;
 GVL_IO.stInputs.bMainDoorLocked 							:= GVL_Safety.bMainDoorLocked;
 GVL_IO.stInputs.bMainDoorUnsafe 							:= GVL_Safety.bMainDoorUnsafe;
 GVL_IO.stInputs.bMainDoorDiagnosticOk 						:= GVL_Safety.bMainDoorDiagnosticOk;
-GVL_IO.stInputs.bMs6FeedbackOk 								:= GVL_Safety.bMs6FeedbackOk;
-GVL_IO.stInputs.bAirExhausted 								:= GVL_Safety.bAirExhausted;
+// GVL_IO.stInputs.bMs6FeedbackOk 								:= GVL_Safety.bMs6FeedbackOk;
+// GVL_IO.stInputs.bAirExhausted 								:= GVL_Safety.bAirExhausted;
 
 ]]></ST>
       </Implementation>

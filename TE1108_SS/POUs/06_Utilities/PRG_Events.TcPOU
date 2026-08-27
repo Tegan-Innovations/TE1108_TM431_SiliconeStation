@@ -3,8 +3,8 @@
   <POU Name="PRG_Events" Id="{e737e082-d667-460d-b7e6-01e02be943ba}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PRG_Events
 VAR
-    fbEventsManager : FB_EventsManager;
-    tonDoorNotSafe  : TON;
+    fbEventsManager 		: FB_EventsManager;
+    tonDoorNotSafe  		: TON;
     tonUpSupplyLost : TON;
     tonUsSupplyLost : TON;
     tonAirSupplyLost : TON;
@@ -14,13 +14,11 @@ VAR
     tonIndexSupportMismatch : TON;
     tonTransferSupportMismatch : TON;
 	fbLocalSystemTime : FB_LocalSystemTime;
+	bAirLostDuringOperation		:BOOL;
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// Station 0 - General and safety
-// GVL_MASTER.stStationEvents[0].aEvents[0].bFault := TRUE;
-// GVL_MASTER.stStationEvents[0].aEvents[0].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bEmergencyStopOk;
-// GVL_MASTER.stStationEvents[0].aEvents[0].bEventText := 'Emergency stop activated';
-// GVL_MASTER.stStationEvents[0].aEvents[0].sSolution := 'Release the emergency stop and reset the machine';
+      <ST><![CDATA[
+
 fbLocalSystemTime(
     sNetID := '',
     bEnable := TRUE,
@@ -79,34 +77,67 @@ GVL_MASTER.sSystemTime := '';
 		UINT_TO_STRING(fbLocalSystemTime.systemTime.wSecond)
 	);
 	
-	
-	
+// -----------------------------------------------------------------------------
+// EMERGENCY STOP
+// -----------------------------------------------------------------------------
+// Both physical channels are normally closed.
+// A FALSE state on either channel indicates an open E-stop safety circuit.
+GVL_MASTER.stStationEvents[0].aEvents[0].bFault := TRUE;
+GVL_MASTER.stStationEvents[0].aEvents[0].bEventFlag := NOT GVL_MASTER.stInputs.bEmergencyStopChannel1 OR NOT GVL_MASTER.stInputs.bEmergencyStopChannel2;
+GVL_MASTER.stStationEvents[0].aEvents[0].bEventText := 'Emergency stop activated';
+GVL_MASTER.stStationEvents[0].aEvents[0].sSolution := 'Release the emergency stop and check both E-stop safety channels';
+
+// -----------------------------------------------------------------------------
+// EMERGENCY STOP CHANNEL 1 FAULT
+// -----------------------------------------------------------------------------
 GVL_MASTER.stStationEvents[0].aEvents[1].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[1].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bFsoeOk;
-GVL_MASTER.stStationEvents[0].aEvents[1].bEventText := 'FSoE communication not healthy';
-GVL_MASTER.stStationEvents[0].aEvents[1].sSolution := 'Check EtherCAT, FSoE connections and TwinSAFE diagnostics';
+GVL_MASTER.stStationEvents[0].aEvents[1].bEventFlag := NOT GVL_MASTER.stInputs.bEmergencyStopChannel1 AND GVL_MASTER.stInputs.bEmergencyStopChannel2;
+GVL_MASTER.stStationEvents[0].aEvents[1].bEventText := 'Emergency stop Channel 1 fault';
+GVL_MASTER.stStationEvents[0].aEvents[1].sSolution := 'Check Emergency Stop Channel 1 wiring, contact and EL1918 input';
 
+// -----------------------------------------------------------------------------
+// EMERGENCY STOP CHANNEL 2 FAULT
+// -----------------------------------------------------------------------------
 GVL_MASTER.stStationEvents[0].aEvents[2].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[2].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bSafetyLogicOk;
-GVL_MASTER.stStationEvents[0].aEvents[2].bEventText := 'TwinSAFE logic not healthy';
-GVL_MASTER.stStationEvents[0].aEvents[2].sSolution := 'Check the TwinSAFE project and active safety diagnostics';
+GVL_MASTER.stStationEvents[0].aEvents[2].bEventFlag := GVL_MASTER.stInputs.bEmergencyStopChannel1 AND NOT GVL_MASTER.stInputs.bEmergencyStopChannel2;
+GVL_MASTER.stStationEvents[0].aEvents[2].bEventText := 'Emergency stop Channel 2 fault';
+GVL_MASTER.stStationEvents[0].aEvents[2].sSolution := 'Check Emergency Stop Channel 2 wiring, contact and EL1918 input';
 
-tonDoorNotSafe(IN := NOT GVL_MASTER.stInputs.stSafety.bMainDoorSafe AND GVL_MASTER.stStatus.eMachineState = E_MachineState.AutoCycle, PT := T#1S);
+
+// -----------------------------------------------------------------------------
+// MAIN SAFETY DOOR OPEN
+// -----------------------------------------------------------------------------
+// All three physical signals are FALSE when the door is normally opened.
+// Individual channel mismatches are diagnosed by separate events.
 GVL_MASTER.stStationEvents[0].aEvents[3].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[3].bEventFlag := tonDoorNotSafe.Q;
-GVL_MASTER.stStationEvents[0].aEvents[3].bEventText := 'Main safety door not safe';
-GVL_MASTER.stStationEvents[0].aEvents[3].sSolution := 'Close and lock the main door, then reset the machine';
+GVL_MASTER.stStationEvents[0].aEvents[3].bEventFlag :=
+    NOT GVL_MASTER.stInputs.bMainDoorChannel1
+    AND NOT GVL_MASTER.stInputs.bMainDoorChannel2
+    AND NOT GVL_MASTER.stInputs.bMainDoorFeedback
+	AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.Stopped;
 
+GVL_MASTER.stStationEvents[0].aEvents[3].bEventText := 'Main safety door open';
+GVL_MASTER.stStationEvents[0].aEvents[3].sSolution := 'Close the main safety door and reset the machine';
+
+// -----------------------------------------------------------------------------
+// LEFT SAFETY FLAP
+// -----------------------------------------------------------------------------
+// Diagnostic is based directly on the two physical safety channels.
+// Both channels must be active for the left flap to be considered safe.
 GVL_MASTER.stStationEvents[0].aEvents[4].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[4].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bLeftFlapSafe AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
+GVL_MASTER.stStationEvents[0].aEvents[4].bEventFlag := (NOT GVL_MASTER.stInputs.bLeftFlapChannel1 OR NOT GVL_MASTER.stInputs.bLeftFlapChannel2) AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
 GVL_MASTER.stStationEvents[0].aEvents[4].bEventText := 'Left safety flap activated';
 GVL_MASTER.stStationEvents[0].aEvents[4].sSolution := 'Clear the left flap, inspect the safety device and reset the safety circuit';
 
+// -----------------------------------------------------------------------------
+// RIGHT SAFETY FLAP
+// -----------------------------------------------------------------------------
+// Diagnostic is based directly on the two physical safety channels.
+// Both channels must be active for the right flap to be considered safe.
 GVL_MASTER.stStationEvents[0].aEvents[5].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[5].bEventFlag := NOT GVL_MASTER.stInputs.stSafety.bRightFlapSafe AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
+GVL_MASTER.stStationEvents[0].aEvents[5].bEventFlag := (NOT GVL_MASTER.stInputs.bRightFlapChannel1 OR NOT GVL_MASTER.stInputs.bRightFlapChannel2) AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
 GVL_MASTER.stStationEvents[0].aEvents[5].bEventText := 'Right safety flap activated';
 GVL_MASTER.stStationEvents[0].aEvents[5].sSolution := 'Clear the right flap, inspect the safety device and reset the safety circuit';
-
 GVL_MASTER.stStationEvents[0].aEvents[6].bCycleStopRequest := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[6].bEventFlag := GVL_MASTER.stCommand.bStop;
 GVL_MASTER.stStationEvents[0].aEvents[6].bEventText := 'Cycle stop requested';
@@ -135,11 +166,39 @@ GVL_MASTER.stStationEvents[0].aEvents[11].bEventFlag := tonUsSupplyLost.Q;
 GVL_MASTER.stStationEvents[0].aEvents[11].bEventText := '24 V Us power supply not healthy';
 GVL_MASTER.stStationEvents[0].aEvents[11].sSolution := 'Check PSU 2, DC-OK signal, fuse and Term 7 Channel 4 wiring';
 
-tonAirSupplyLost(IN := NOT GVL_MASTER.stInputs.stSafety.bSafetyOk AND NOT GVL_IO.stInputs.bAirSupplyOk AND (GVL_MASTER.stStatus.eMachineState = E_MachineState.Initialising OR GVL_MASTER.stStatus.eMachineState = E_MachineState.ReadyToStart OR GVL_MASTER.stStatus.eMachineState = E_MachineState.AutoCycle OR GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual), PT := T#1S);
+
+// -----------------------------------------------------------------------------
+// AIR SUPPLY NOT AVAILABLE
+// -----------------------------------------------------------------------------
+// During Initialising, when the pneumatic supply is requested, the MS6/dump
+// feedback must confirm that the pneumatic system becomes available.
+//
+// The timeout is intentionally set to 9 seconds:
+// - the pneumatic supply normally takes almost 8 seconds to become available;
+// - the machine Initialising timeout is 10 seconds;
+// - using 9 seconds allows the air fault to be identified before the machine
+//   reaches the general Initialising timeout / ReadyToStart transition.
+// -----------------------------------------------------------------------------
+tonAirSupplyLost(
+    IN := GVL_Safety.bAirSupplyEnableRequest
+        AND NOT GVL_MASTER.stInputs.bAirExhausted
+        AND GVL_MASTER.stStatus.eMachineState = E_MachineState.Initialising,
+    PT := T#9S
+);
+
+bAirLostDuringOperation :=
+    NOT GVL_MASTER.stInputs.bAirExhausted
+    AND (
+        GVL_MASTER.stStatus.eMachineState = E_MachineState.ReadyToStart
+        OR GVL_MASTER.stStatus.eMachineState = E_MachineState.AutoCycle
+        OR GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual
+    );
+
 GVL_MASTER.stStationEvents[0].aEvents[12].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[12].bEventFlag := tonAirSupplyLost.Q;
-GVL_MASTER.stStationEvents[0].aEvents[12].bEventText := 'Festo MS6 air supply not safe';
-GVL_MASTER.stStationEvents[0].aEvents[12].sSolution := 'Check the MS6 enable/reset circuit, air pressure and TwinSAFE diagnostics';
+GVL_MASTER.stStationEvents[0].aEvents[12].bEventFlag := tonAirSupplyLost.Q OR bAirLostDuringOperation;
+GVL_MASTER.stStationEvents[0].aEvents[12].bEventText := 'Air supply not available';
+GVL_MASTER.stStationEvents[0].aEvents[12].sSolution := 'Check the main air supply, MS6 unit and dump valve feedback';
+
 
 tonDoorDiagnostic(IN := NOT GVL_MASTER.stInputs.bMainDoorDiagnosticOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[13].bFault := TRUE;
@@ -312,6 +371,28 @@ GVL_MASTER.stStationEvents[1].aEvents[14].bEventText := 'Silicone Support Cylind
 GVL_MASTER.stStationEvents[1].aEvents[14].sSolution := 'Check the Silicone Support Cylinder sensors on Term 8 Channels 3 and 4';
 
 
+
+//=======================
+//DELETE
+//=========================
+
+
+//GVL_MASTER.stStationEvents[0].aEvents[1].bEventFlag := FALSE;
+//GVL_MASTER.stStationEvents[0].aEvents[2].bEventFlag := FALSE;
+//GVL_MASTER.stStationEvents[0].aEvents[3].bEventFlag := FALSE;
+//GVL_MASTER.stStationEvents[0].aEvents[4].bEventFlag := FALSE;
+//GVL_MASTER.stStationEvents[0].aEvents[5].bEventFlag := FALSE;
+
+//GVL_MASTER.stStationEvents[0].aEvents[10].bEventFlag := FALSE;
+//GVL_MASTER.stStationEvents[0].aEvents[11].bEventFlag := FALSE;
+//GVL_MASTER.stStationEvents[0].aEvents[12].bEventFlag := FALSE;
+GVL_MASTER.stStationEvents[0].aEvents[13].bEventFlag := FALSE;
+GVL_MASTER.stStationEvents[0].aEvents[14].bEventFlag := FALSE;
+GVL_MASTER.stStationEvents[0].aEvents[15].bEventFlag := FALSE;
+
+GVL_MASTER.stStationEvents[0].aEvents[20].bEventFlag := FALSE;
+GVL_MASTER.stStationEvents[0].aEvents[21].bEventFlag := FALSE;
+GVL_MASTER.stStationEvents[0].aEvents[22].bEventFlag := FALSE;
 
 // Operator instructions are reserved for astActiveEvents[0] and are not event triggers.
 

@@ -36,10 +36,10 @@
         "Name": "Enable Nests"
       },
       {
-        "Name": "Silicone Station"
+        "Name": "Puck Gate"
       },
       {
-        "Name": "Assembly Station"
+        "Name": "Silicone Reservoirs"
       }
     ]
   }
@@ -125,7 +125,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "Assembly Station"
+              "value": "Puck Gate"
             },
             "actions": [
               {
@@ -135,7 +135,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Screens/Settings/settings_Assembly.content"
+                  "value": "Contents/Screens/Settings/settings_Puck.content"
                 },
                 "asyncWait": true
               }
@@ -145,7 +145,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "Silicone Station"
+              "value": "Silicone Reservoirs"
             },
             "actions": [
               {
@@ -155,7 +155,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Screens/Settings/settings_Silicone.content"
+                  "value": "Contents/Screens/Settings/settings_Reservoirs.content"
                 },
                 "asyncWait": true
               }

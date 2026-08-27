@@ -51,6 +51,20 @@ STRUCT
 	bAssemblySupportExtended  		 : BOOL;
 	bAssemblySupportRetracted 		 : BOOL;
 	
+	// Physical safety diagnostics used for root-cause alarm identification.
+	bEmergencyStopChannel1 			 : BOOL;
+	bEmergencyStopChannel2 			 : BOOL;
+	
+	// Main door physical channels used for root-cause diagnostics
+	bMainDoorChannel1             	 : BOOL;
+	bMainDoorChannel2             	 : BOOL;
+	bMainDoorFeedback                : BOOL;
+	// Safety flap physical channels used for root-cause diagnostics
+	bLeftFlapChannel1             	 : BOOL;
+	bLeftFlapChannel2             	 : BOOL;
+	bRightFlapChannel1            	 : BOOL;
+	bRightFlapChannel2            	 : BOOL;
+	
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

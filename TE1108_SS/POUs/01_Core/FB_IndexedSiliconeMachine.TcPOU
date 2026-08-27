@@ -137,6 +137,7 @@ VAR
     tonInitialising               : TON;
     tonStopping                   : TON;
     tonAutoCycleIdleTimeout       : TON;
+	tonMainDoorNotClosed 		  : TON;
 	
 	bStopRequested 				  : BOOL;
     // =====================================================
@@ -233,21 +234,13 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[// =========================================================
-// MACHINE FAULT CONDITION
+// GLOBAL MACHINE FAULT CONDITION
 // =========================================================
-//
-// During Initialising the machine is allowed to recover the
-// pneumatic supply. The Initialising state itself supervises
-// the air feedback and generates a timeout if it does not
-// become available.
+// Any loss of the validated TwinSAFE safety status must place
+// the machine in Fault immediately, regardless of machine state.
 // =========================================================
 
-IF (
-        NOT stInputs.stSafety.bSafetyOk
-        AND eMachineState <> E_MachineState.Initialising
-    )
-    OR bSafetyDropRequest
-THEN
+IF NOT stInputs.stSafety.bSafetyOk OR bSafetyDropRequest THEN
 
     eMachineState := E_MachineState.Fault;
 
@@ -875,26 +868,31 @@ CASE eMachineState OF
 		 END_IF
 // 	
 	E_MachineState.Initialising:
-
-		eMode_LED_Start := E_LEDs_Mode.OFF;
-		eMode_LED_Reset := E_LEDs_Mode.OFF;
-		eMode_LED_PASS := E_LEDs_Mode.OFF;
-		eMode_LED_Fail := E_LEDs_Mode.OFF;
-	
-		// =========================================================
-		// AIR SUPPLY
-		// =========================================================
-		// Initialising restores the pneumatic supply before
-		// recovering and validating safe component positions.
-		// =========================================================
-	
-		bAirSupplyEnable := TRUE;
 		// =========================================================
 		// TIMERS
 		// =========================================================
 	
 		tonStopping(IN := FALSE);
 		tonInitialising(IN := TRUE, PT := stConfig.tInitialiseTimeout);
+
+		eMode_LED_Start := E_LEDs_Mode.OFF;
+		eMode_LED_Reset := E_LEDs_Mode.OFF;
+		eMode_LED_PASS := E_LEDs_Mode.OFF;
+		eMode_LED_Fail := E_LEDs_Mode.OFF;
+
+		IF NOT stInputs.bMainDoorClosed AND NOT stInputs.bMainDoorFeedback THEN
+			eMachineState := E_MachineState.Fault;
+		END_IF
+		
+		// =========================================================
+		// AIR SUPPLY
+		// =========================================================
+		// Initialising restores the pneumatic supply before
+		// recovering and validating safe component positions.
+		// =========================================================
+		
+		bAirSupplyEnable := TRUE;
+	
 		// =========================================================
 		// STATE ENTRY
 		// =========================================================

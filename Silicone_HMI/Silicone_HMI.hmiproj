@@ -289,6 +289,9 @@
     <Content Include="Contents\Screens\Alarms.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\Settings\settings_Reservoirs.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\Settings\settings_Silicone.content">
       <SubType>Content</SubType>
     </Content>
@@ -811,6 +814,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Project\SiliconeIndexTableV3.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\SiliconeIndexTableV4.png">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Project\SS_PneumaticsPopUp.png">
