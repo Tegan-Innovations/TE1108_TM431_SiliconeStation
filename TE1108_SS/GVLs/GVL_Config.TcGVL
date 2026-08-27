@@ -5,7 +5,7 @@
 VAR_GLOBAL PERSISTENT RETAIN
     // Machine behavior configuration. Values should be editable only by authorised users.
     stMachine : ST_MachineConfig := (
-        tInitialiseTimeout   := T#30S,
+        tInitialiseTimeout   := T#20S,
         tStoppingTimeout     := T#15S,
         tIndexTimeout        := T#10S,
         tCylinderTimeout     := T#5S,

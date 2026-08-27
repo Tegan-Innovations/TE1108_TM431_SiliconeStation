@@ -35,13 +35,13 @@
             "Name": "T01_EK1100"
           },
           {
-            "Name": "T02_EL6070-0033"
+            "Name": "T02_EL6070_0033"
           },
           {
             "Name": "T03_EL6910"
           },
           {
-            "Name": "T12_EL9410"
+            "Name": "T13_EL9410"
           },
           {
             "Name": "Inputs",
@@ -53,16 +53,16 @@
                 "Name": "T05_EL1918"
               },
               {
-                "Name": "T06_EL1918"
+                "Name": "T07_EL1809"
               },
               {
-                "Name": "T09_EL1809"
+                "Name": "T08_EL1809"
               },
               {
-                "Name": "T10_EL1809"
+                "Name": "T11_EL3058"
               },
               {
-                "Name": "T14_EL3058"
+                "Name": "T12_EL3064"
               }
             ]
           },
@@ -70,24 +70,21 @@
             "Name": "Outputs",
             "children": [
               {
-                "Name": "T07_EL2904"
+                "Name": "T06_EL2904"
               },
               {
-                "Name": "T08_EL2904"
+                "Name": "T09_EL2809"
               },
               {
-                "Name": "T11_EL2809-0015"
-              },
-              {
-                "Name": "T13_EL2809-0015"
+                "Name": "T10_EL2809"
               }
             ]
           },
           {
-            "Name": "EL9188"
+            "Name": "T13_EL9410"
           },
           {
-            "Name": "EL9189"
+            "Name": "T14_EL6652"
           }
         ]
       }
@@ -155,7 +152,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T02_EL6070"
+              "value": "T02_EL6070_0033"
             },
             "actions": [
               {
@@ -165,7 +162,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T02_EL6070.content"
+                  "value": "Contents/Hardware/T02_EL6070_0033.content"
                 },
                 "asyncWait": true
               }
@@ -235,7 +232,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/String",
-              "value": "T07_EL2904"
+              "value": "T07_EL1809"
             },
             "actions": [
               {
@@ -245,7 +242,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T07_EL2904.content"
+                  "value": "Contents/Hardware/T07_EL1809.content"
                 },
                 "asyncWait": true
               }
@@ -255,7 +252,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T08_EL2904"
+              "value": "T08_EL1809"
             },
             "actions": [
               {
@@ -265,7 +262,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T08_EL2904.content"
+                  "value": "Contents/Hardware/T08_EL1809.content"
                 },
                 "asyncWait": true
               }
@@ -275,7 +272,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T09_EL1809"
+              "value": "T09_EL2809"
             },
             "actions": [
               {
@@ -285,7 +282,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T09_EL1809.content"
+                  "value": "Contents/Hardware/T09_EL2809.content"
                 },
                 "asyncWait": true
               }
@@ -301,10 +298,10 @@
               {
                 "objectType": "WriteToSymbol",
                 "active": true,
-                "symbolExpression": "%f%%ctrl%IO_Region_21::TargetContent%/ctrl%%/f%",
+                "symbolExpression": "%ctrl%IO_Region_21::TargetContent%/ctrl%",
                 "value": {
                   "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Path",
+                  "valueType": "tchmi:framework#/definitions/ContentPath",
                   "value": "Contents/Hardware/T10_EL2809.content"
                 },
                 "asyncWait": true
@@ -315,7 +312,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T11_EL2809"
+              "value": "T11_EL3058"
             },
             "actions": [
               {
@@ -325,7 +322,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T11_EL2809.content"
+                  "value": "Contents/Hardware/T11_EL3058.content"
                 },
                 "asyncWait": true
               }
@@ -335,7 +332,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T12_EL9410"
+              "value": "T12_EL3064"
             },
             "actions": [
               {
@@ -345,7 +342,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T12_EL9410.content"
+                  "value": "Contents/Hardware/T12_EL3064.content"
                 },
                 "asyncWait": true
               }
@@ -355,7 +352,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T13_EL2809"
+              "value": "T13_EL9410"
             },
             "actions": [
               {
@@ -365,7 +362,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T13_EL2809.content"
+                  "value": "Contents/Hardware/T13_EL9410.content"
                 },
                 "asyncWait": true
               }
@@ -395,7 +392,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T06_EL1918"
+              "value": "T06_EL2904"
             },
             "actions": [
               {
@@ -405,7 +402,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T06_EL1918.content"
+                  "value": "Contents/Hardware/T06_EL2904.content"
                 },
                 "asyncWait": true
               }

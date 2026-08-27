@@ -23,6 +23,8 @@ STRUCT
     bFaulted               			: BOOL;
     bInitialisationTimeoutFault 	: BOOL;
     bStoppingTimeoutFault       	: BOOL;
+	bStopRequestTimeout 			: BOOL;
+	bHmiLogoutFault 				: BOOL;
     bSafetyStopRequested   			: BOOL;
     bSafetyRunRequested    			: BOOL;
     bEventFault            			: BOOL;

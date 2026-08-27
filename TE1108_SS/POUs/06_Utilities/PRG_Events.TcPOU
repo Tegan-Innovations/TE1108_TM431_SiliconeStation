@@ -200,12 +200,6 @@ GVL_MASTER.stStationEvents[0].aEvents[12].bEventText := 'Air supply not availabl
 GVL_MASTER.stStationEvents[0].aEvents[12].sSolution := 'Check the main air supply, MS6 unit and dump valve feedback';
 
 
-tonDoorDiagnostic(IN := NOT GVL_MASTER.stInputs.bMainDoorDiagnosticOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
-GVL_MASTER.stStationEvents[0].aEvents[13].bFault := TRUE;
-GVL_MASTER.stStationEvents[0].aEvents[13].bEventFlag := tonDoorDiagnostic.Q;
-GVL_MASTER.stStationEvents[0].aEvents[13].bEventText := 'Front door interlock diagnostic fault';
-GVL_MASTER.stStationEvents[0].aEvents[13].sSolution := 'Check the AZM300 diagnostic output, actuator alignment, cable and TwinSAFE input channels';
-
 tonMs6Feedback(IN := NOT GVL_MASTER.stInputs.bMs6FeedbackOk AND (GVL_MASTER.stStatus.eMachineState = E_MachineState.Initialising OR GVL_MASTER.stStatus.eMachineState = E_MachineState.ReadyToStart OR GVL_MASTER.stStatus.eMachineState = E_MachineState.AutoCycle OR GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual), PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[14].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[14].bEventFlag := tonMs6Feedback.Q;
@@ -216,6 +210,25 @@ GVL_MASTER.stStationEvents[0].aEvents[15].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[15].bEventFlag := GVL_MASTER.stInputs.bAirExhausted AND (GVL_MASTER.stStatus.eMachineState = E_MachineState.ReadyToStart OR GVL_MASTER.stStatus.eMachineState = E_MachineState.AutoCycle OR GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual);
 GVL_MASTER.stStationEvents[0].aEvents[15].bEventText := 'Pneumatic system is exhausted while operation is requested';
 GVL_MASTER.stStationEvents[0].aEvents[15].sSolution := 'Check the MS6 dump valve, reset circuit and air exhaust feedback';
+
+// -----------------------------------------------------------------------------
+// UNEXPECTED HMI LOGOUT
+// -----------------------------------------------------------------------------
+GVL_MASTER.stStationEvents[0].aEvents[16].bFault := TRUE;
+GVL_MASTER.stStationEvents[0].aEvents[16].bEventFlag := GVL_MASTER.stStatus.bHmiLogoutFault;
+GVL_MASTER.stStationEvents[0].aEvents[16].bEventText := 'Unexpected HMI logout during machine operation';
+GVL_MASTER.stStationEvents[0].aEvents[16].sSolution := 'Log in to the HMI and reset the machine';
+
+// -----------------------------------------------------------------------------
+// STOP REQUEST TIMEOUT
+// -----------------------------------------------------------------------------
+// A Stop request was issued, but the machine could not reach the Stopping
+// state within the allowed time because an exit condition was not satisfied.
+GVL_MASTER.stStationEvents[0].aEvents[17].bFault := TRUE;
+GVL_MASTER.stStationEvents[0].aEvents[17].bEventFlag := GVL_MASTER.stStatus.bStopRequestTimeout;
+GVL_MASTER.stStationEvents[0].aEvents[17].bEventText := 'Stop request timeout';
+GVL_MASTER.stStationEvents[0].aEvents[17].sSolution := 'Check why the current machine state could not complete the stop sequence';
+
 
 // Station 1 - Process station / simulated IVEK
 GVL_MASTER.stStationEvents[1].aEvents[0].bFault := TRUE;
@@ -377,22 +390,6 @@ GVL_MASTER.stStationEvents[1].aEvents[14].sSolution := 'Check the Silicone Suppo
 //=========================
 
 
-//GVL_MASTER.stStationEvents[0].aEvents[1].bEventFlag := FALSE;
-//GVL_MASTER.stStationEvents[0].aEvents[2].bEventFlag := FALSE;
-//GVL_MASTER.stStationEvents[0].aEvents[3].bEventFlag := FALSE;
-//GVL_MASTER.stStationEvents[0].aEvents[4].bEventFlag := FALSE;
-//GVL_MASTER.stStationEvents[0].aEvents[5].bEventFlag := FALSE;
-
-//GVL_MASTER.stStationEvents[0].aEvents[10].bEventFlag := FALSE;
-//GVL_MASTER.stStationEvents[0].aEvents[11].bEventFlag := FALSE;
-//GVL_MASTER.stStationEvents[0].aEvents[12].bEventFlag := FALSE;
-GVL_MASTER.stStationEvents[0].aEvents[13].bEventFlag := FALSE;
-GVL_MASTER.stStationEvents[0].aEvents[14].bEventFlag := FALSE;
-GVL_MASTER.stStationEvents[0].aEvents[15].bEventFlag := FALSE;
-
-GVL_MASTER.stStationEvents[0].aEvents[20].bEventFlag := FALSE;
-GVL_MASTER.stStationEvents[0].aEvents[21].bEventFlag := FALSE;
-GVL_MASTER.stStationEvents[0].aEvents[22].bEventFlag := FALSE;
 
 // Operator instructions are reserved for astActiveEvents[0] and are not event triggers.
 

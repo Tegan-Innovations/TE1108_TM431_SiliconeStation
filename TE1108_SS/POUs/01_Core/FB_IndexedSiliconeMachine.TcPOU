@@ -133,11 +133,14 @@ VAR
 
     bInitialisationTimeoutFault   : BOOL;
     bStoppingTimeoutFault         : BOOL;
-
+	bStopRequestTimeout 		  : BOOL;
+	
     tonInitialising               : TON;
     tonStopping                   : TON;
     tonAutoCycleIdleTimeout       : TON;
 	tonMainDoorNotClosed 		  : TON;
+	tonStopRequest 				  : TON;
+	
 	
 	bStopRequested 				  : BOOL;
     // =====================================================
@@ -157,6 +160,7 @@ VAR
 	bFaultResetRequested 		  : BOOL;
 
     tpSafetyRunDrop               : TP;
+	bHmiLogoutFault 				: BOOL;
 
     // =====================================================
     // CONFIGURATION
@@ -332,24 +336,11 @@ IF blogoutHMI
 	
 ELSIF blogoutHMI
     AND (eMachineState <> E_MachineState.Stopped AND eMachineState <> E_MachineState.Stopping)THEN 
+	bHmiLogoutFault := TRUE;
     bSafetyDropRequest := TRUE;
 END_IF
 
-// =========================================================
-// FUTURE EVENT-BASED SAFETY DROP INTEGRATION
-// =========================================================
 
-// Enable this implementation only after the event classification is validated.
-// Detect a newly latched PLC machine fault.
-// fbEventFaultTrigger(
-//     CLK := stInputs.bEventFault
-// );
-
-// Temporarily remove the TwinSAFE run request for each new PLC fault.
-// tpSafetyRunDrop(
-//     IN := fbEventFaultTrigger.Q,
-//     PT := T#500MS
-// );
 
 
 // =========================================================
@@ -674,6 +665,29 @@ stProcessCycleInputs.bSiliconeSupportExtended := stInputs.bSiliconeSupportExtend
 stProcessCycleInputs.bSiliconeSupportRetracted := stInputs.bSiliconeSupportRetracted;
 stProcessCycleInputs.bAssemblySupportExtended := stInputs.bAssemblySupportExtended;
 stProcessCycleInputs.bAssemblySupportRetracted := stInputs.bAssemblySupportRetracted;
+
+// =========================================================
+// STOP REQUEST TIMEOUT SUPERVISION
+// =========================================================
+// Once a Stop request has been latched, the machine must
+// reach the Stopping state within the allowed time.
+//
+// This supervises the conditions that may delay leaving
+// AutoCycle or Manual mode after a Stop request.
+tonStopRequest(
+    IN := bStopRequested
+        AND eMachineState <> E_MachineState.Stopping
+        AND eMachineState <> E_MachineState.Stopped
+        AND eMachineState <> E_MachineState.Fault,
+    PT := T#10S
+);
+
+IF tonStopRequest.Q THEN
+    bStopRequestTimeout := TRUE;
+    bSafetyDropRequest := TRUE;
+END_IF
+
+
 // =========================================================
 // MACHINE STATE MANAGEMENT
 // =========================================================
@@ -746,6 +760,8 @@ CASE eMachineState OF
 		IF fbResetTrigger.Q AND NOT blogoutHMI THEN
 	
 			bFaultResetRequested := TRUE;
+			bHmiLogoutFault := FALSE;
+			bStopRequestTimeout := FALSE;
 	
 			fbIndex.Reset();
 			fbSiliconeSupportCylinder.Reset();
@@ -1762,11 +1778,13 @@ stStatus.bReady 				:= eMachineState = E_MachineState.ReadyToStart;
 stStatus.bBusy 					:= eMachineState = E_MachineState.AutoCycle;
 stStatus.bFaulted 				:= eMachineState = E_MachineState.Fault;
 stStatus.bInitialisationTimeoutFault := bInitialisationTimeoutFault;
+stStatus.bHmiLogoutFault 		:= bHmiLogoutFault;
 stStatus.bStoppingTimeoutFault 	:= bStoppingTimeoutFault;
 stStatus.bSafetyStopRequested 	:= tpSafetyRunDrop.Q;
 stStatus.bSafetyRunRequested 	:= stOutputsInternal.bSafetyRunRequest;
 stStatus.bEventFault 			:= stInputs.bEventFault;
-//stStatus.bCycleStopRequested    :=bStopRequested;
+stStatus.bStopRequestTimeout 	:= bStopRequestTimeout;
+
 stStatus.bIndexPermissive 		:= stPermissives.bIndexMoveAllowed;
 stStatus.bProcessPermissive 	:= stPermissives.bProcessStartAllowed;
 stStatus.stPermissives 			:= stPermissives;
