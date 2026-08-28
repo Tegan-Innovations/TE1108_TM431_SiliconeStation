@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_EL2904" Id="{b47fa1ee-8218-430d-bdaf-20385f9eef63}">
-    <Declaration>TYPE ST_EL2904 :
+    <Declaration><![CDATA[TYPE ST_EL2904 :
 STRUCT
     sTerminalName : STRING(80) := 'EL2904 | 4-Channel TwinSAFE Digital Output';
 
@@ -14,6 +14,6 @@ STRUCT
     stTerminalInfo : ST_Terminal_Info;
 END_STRUCT
 END_TYPE
-</Declaration>
+]]></Declaration>
   </DUT>
 </TcPlcObject>
