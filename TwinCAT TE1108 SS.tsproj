@@ -636,103 +636,13 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{F7DBE463-070B-11E6-E7FD-B33D5329F5C1}" AutoDeleteType="true">ST_NestStatistics</Name>
-			<BitSize>192</BitSize>
-			<SubItem>
-				<Name>uiNestId</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiTotalTests</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>32</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiGoodParts</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>64</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiBadParts</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>96</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>lrEfficiency</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
-				<BitSize>64</BitSize>
-				<BitOffs>128</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{DFCA19C6-5E73-E574-E4AA-F7FF8D17A48E}" AutoDeleteType="true">ST_HmiStatistics</Name>
-			<BitSize>1088</BitSize>
-			<SubItem>
-				<Name>udiTotalCycles</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ OVERALL PRODUCTION]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiTotalPass</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>32</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiTotalFail</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>64</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>aNest</Name>
-				<Type GUID="{F7DBE463-070B-11E6-E7FD-B33D5329F5C1}">ST_NestStatistics</Type>
-				<ArrayInfo>
-					<LBound>1</LBound>
-					<Elements>4</Elements>
-				</ArrayInfo>
-				<Comment><![CDATA[ PER-NEST PRODUCTION]]></Comment>
-				<BitSize>768</BitSize>
-				<BitOffs>128</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiEquipmentFaults</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ MACHINE STATISTICS]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>896</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiIndexFaults</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>928</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiSafetyStops</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>960</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiAbortedCycles</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>992</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>dtLastCycleCompleted</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000004D}">DATE_AND_TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>1024</BitOffs>
-			</SubItem>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
 		</DataType>
 		<DataType>
 			<Name GUID="{B4B31B11-AEB4-79F4-6B56-D54E4209FD6A}" AutoDeleteType="true">ST_MachineConfig</Name>
@@ -983,6 +893,105 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
+			<Name GUID="{F7DBE463-070B-11E6-E7FD-B33D5329F5C1}" AutoDeleteType="true">ST_NestStatistics</Name>
+			<BitSize>192</BitSize>
+			<SubItem>
+				<Name>uiNestId</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiTotalTests</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiGoodParts</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiBadParts</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>lrEfficiency</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000E}">LREAL</Type>
+				<BitSize>64</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{DFCA19C6-5E73-E574-E4AA-F7FF8D17A48E}" AutoDeleteType="true">ST_HmiStatistics</Name>
+			<BitSize>1088</BitSize>
+			<SubItem>
+				<Name>udiTotalCycles</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ OVERALL PRODUCTION]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiTotalPass</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiTotalFail</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>aNest</Name>
+				<Type GUID="{F7DBE463-070B-11E6-E7FD-B33D5329F5C1}">ST_NestStatistics</Type>
+				<ArrayInfo>
+					<LBound>1</LBound>
+					<Elements>4</Elements>
+				</ArrayInfo>
+				<Comment><![CDATA[ PER-NEST PRODUCTION]]></Comment>
+				<BitSize>768</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiEquipmentFaults</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ MACHINE STATISTICS]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>896</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiIndexFaults</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>928</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiSafetyStops</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>960</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiAbortedCycles</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>992</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>dtLastCycleCompleted</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000004D}">DATE_AND_TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>1024</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
 			<Name GUID="{FAFB0BC4-EEAC-70C9-2FC4-E0B82AF34D09}" AutoDeleteType="true">ST_EventsHistory</Name>
 			<BitSize>8256</BitSize>
 			<SubItem>
@@ -1030,15 +1039,6 @@
 			<ArrayInfo>
 				<LBound>0</LBound>
 				<Elements>201</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
-			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
 			</ArrayInfo>
 		</DataType>
 		<DataType>
@@ -1143,7 +1143,7 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name IecBaseType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
+			<Name GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
 			<BitSize>9348672</BitSize>
 			<BaseType GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}">ST_TestHistory</BaseType>
 			<ArrayInfo>
@@ -1292,24 +1292,14 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{E1A77210-BA7C-E9EF-1FD4-B3C3C090D9C6}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{B0B520C4-AEB3-AE81-2541-2E9BB39E981E}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>GVL_Persistent.uiTestHistoryWriteIndex</Name>
-							<Type>UINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Persistent.uiTestHistoryCount</Name>
-							<Type>UINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Persistent.stStatistics</Name>
-							<Type GUID="{DFCA19C6-5E73-E574-E4AA-F7FF8D17A48E}">ST_HmiStatistics</Type>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1329,18 +1319,28 @@
 							<InOut>7</InOut>
 						</Var>
 						<Var>
+							<Name>GVL_Persistent.stStatistics</Name>
+							<Type GUID="{DFCA19C6-5E73-E574-E4AA-F7FF8D17A48E}">ST_HmiStatistics</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
 							<Name>GVL_Persistent.astEventsHistory</Name>
 							<Type GUID="{385AF722-F2E3-E02B-BA4E-6FD795CA6941}">ARRAY [0..200] OF ST_EventsHistory</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
-							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
-							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
+							<Name>GVL_Persistent.astTestHistory</Name>
+							<Type GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}">ARRAY [0..2000] OF ST_TestHistory</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
-							<Name>GVL_Persistent.astTestHistory</Name>
-							<Type GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}">ARRAY [0..2000] OF ST_TestHistory</Type>
+							<Name>GVL_Persistent.uiTestHistoryWriteIndex</Name>
+							<Type>UINT</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>GVL_Persistent.uiTestHistoryCount</Name>
+							<Type>UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 					</Vars>
@@ -1518,6 +1518,10 @@
  project). These are validated statuses/diagnostics, not reconstructed
  safety logic in the standard PLC.
  ---------------------------------------------------------------------]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bEmergencyStopOk</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -1889,10 +1893,6 @@
 							<Name>GVL_EtherCAT.stTerm14_EL6652.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
 							<Type>UINT</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bEmergencyStopOk</Name>
-							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bMainDoorUnSafe</Name>

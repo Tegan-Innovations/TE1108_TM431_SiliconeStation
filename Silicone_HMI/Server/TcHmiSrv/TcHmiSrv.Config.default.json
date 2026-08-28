@@ -1732,6 +1732,310 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm1_EK1100::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.sTerminalInfo": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm1_EK1100::stTerminalInfo::sTerminalInfo",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm2_EL6070::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.sTerminalInfo": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm2_EL6070::stTerminalInfo::sTerminalInfo",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm3_EL6910::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.sTerminalInfo": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm3_EL6910::stTerminalInfo::sTerminalInfo",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch1": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch1",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 1",
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch2": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch2",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 2",
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch3": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch3",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 3",
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch4": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch4",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 4",
+                        "propertyOrder": 5
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch5": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch5",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 5",
+                        "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch6": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch6",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 6",
+                        "propertyOrder": 7
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch7": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch7",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 7",
+                        "propertyOrder": 8
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch8": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::iEL1918_Ch8",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1918 channel 8",
+                        "propertyOrder": 9
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.sTerminalInfo": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::stTerminalInfo::sTerminalInfo",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.StatusHMI": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6520,6 +6824,22 @@
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.1": 3,
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.2": 3,
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.3": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.bTerminalOperational": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.sTerminalInfo": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.bTerminalOperational": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.sTerminalInfo": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.bTerminalOperational": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.sTerminalInfo": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch1": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch2": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch3": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch4": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch5": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch6": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch7": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch8": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.bTerminalOperational": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_HMI.StatusHMI": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.0.rForce": 3,
                 "ADS.PLC1.GVL_HMI.aKistlerNestResult.1.eResult": 3,

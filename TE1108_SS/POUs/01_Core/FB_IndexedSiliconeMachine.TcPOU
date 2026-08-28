@@ -257,7 +257,7 @@ END_IF
 // Memorise the Stop command until the machine has
 // completed the required stopping sequence.
 IF stCommand.bStop THEN
-    bStopRequested := TRUE;
+   bStopRequested := TRUE;
 END_IF
 
 

@@ -372,7 +372,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T14_EL3058"
+              "value": "T14_EL6652"
             },
             "actions": [
               {
@@ -382,7 +382,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T14_EL3058.content"
+                  "value": "Contents/Hardware/T14_EL6652.content"
                 },
                 "asyncWait": true
               }
