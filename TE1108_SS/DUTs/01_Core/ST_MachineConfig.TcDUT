@@ -20,6 +20,10 @@ STRUCT
 
 	tAssemblyProcessSimulation  : TIME := T#2S;
 	tSiliconeProcessSimulation  : TIME := T#2S;
+
+    // Flipping station commissioning values. Reduce action delay after validation.
+    tAssemblyActionDelay       : TIME := T#10MS;
+    tAssemblyMovementTimeout   : TIME := T#5S;
 	
     eOperatorPosition : E_TablePosition := E_TablePosition.Position1;
 	eSiliconePosition : E_TablePosition := E_TablePosition.Position3;

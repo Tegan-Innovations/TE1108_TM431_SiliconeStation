@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <POU Name="PRG_Events" Id="{e737e082-d667-460d-b7e6-01e02be943ba}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PRG_Events
@@ -353,6 +353,77 @@ GVL_MASTER.stStationEvents[1].aEvents[21].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[21].bEventFlag := GVL_MASTER.stStatus.bAssemblySupportFaulted;
 GVL_MASTER.stStationEvents[1].aEvents[21].bEventText := 'Assembly Support Cylinder fault';
 GVL_MASTER.stStationEvents[1].aEvents[21].sSolution := 'Check Assembly Support Cylinder air supply, valve and position sensors';
+
+// =========================================================
+// ASSEMBLY / FLIPPING STATION FAULTS
+// =========================================================
+// Each timeout names the exact feedback that failed to reach the commanded
+// position. EPLAN Rev 1.0: Term 8 Ch5..Ch10 inputs, Term 10 Ch9..Ch14 outputs.
+
+GVL_MASTER.stStationEvents[1].aEvents[40].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[40].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SlideRetractedSensorTimeout;
+GVL_MASTER.stStationEvents[1].aEvents[40].bEventText := 'Transfer Vertical Mini Slide retracted sensor timeout';
+GVL_MASTER.stStationEvents[1].aEvents[40].sSolution := 'Check slide retract valve/output Term 10 Ch10 and retracted feedback Term 8 Ch5';
+
+GVL_MASTER.stStationEvents[1].aEvents[41].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[41].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SlideExtendedSensorTimeout;
+GVL_MASTER.stStationEvents[1].aEvents[41].bEventText := 'Transfer Vertical Mini Slide extended sensor timeout';
+GVL_MASTER.stStationEvents[1].aEvents[41].sSolution := 'Check slide extend valve/output Term 10 Ch9 and extended feedback Term 8 Ch6';
+
+GVL_MASTER.stStationEvents[1].aEvents[42].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[42].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SlideSensorMismatch;
+GVL_MASTER.stStationEvents[1].aEvents[42].bEventText := 'Transfer Vertical Mini Slide sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[42].sSolution := 'Both slide position sensors are active; check Term 8 Ch5 and Ch6, sensor mounting and wiring';
+
+GVL_MASTER.stStationEvents[1].aEvents[43].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[43].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.GripperOpenSensorTimeout;
+GVL_MASTER.stStationEvents[1].aEvents[43].bEventText := 'Rotary Gripper opened-position sensor timeout';
+GVL_MASTER.stStationEvents[1].aEvents[43].sSolution := 'Check gripper open output Term 10 Ch11 and opened feedback Term 8 Ch7';
+
+GVL_MASTER.stStationEvents[1].aEvents[44].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[44].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.GripperClosedSensorTimeout;
+GVL_MASTER.stStationEvents[1].aEvents[44].bEventText := 'Rotary Gripper closed-position sensor timeout';
+GVL_MASTER.stStationEvents[1].aEvents[44].sSolution := 'Check gripper close output Term 10 Ch12 and closed feedback Term 8 Ch8';
+
+GVL_MASTER.stStationEvents[1].aEvents[45].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[45].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.GripperSensorMismatch;
+GVL_MASTER.stStationEvents[1].aEvents[45].bEventText := 'Rotary Gripper position sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[45].sSolution := 'Both gripper position sensors are active; check Term 8 Ch7 and Ch8, sensor mounting and wiring';
+
+GVL_MASTER.stStationEvents[1].aEvents[46].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[46].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.RotationPickSensorTimeout;
+GVL_MASTER.stStationEvents[1].aEvents[46].bEventText := 'Rotary Gripper Rotation 0 degree sensor timeout';
+GVL_MASTER.stStationEvents[1].aEvents[46].sSolution := 'Check rotation-to-pick output Term 10 Ch13 and 0 degree feedback Term 8 Ch9';
+
+GVL_MASTER.stStationEvents[1].aEvents[47].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[47].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.RotationPlaceSensorTimeout;
+GVL_MASTER.stStationEvents[1].aEvents[47].bEventText := 'Rotary Gripper Rotation 180 degree sensor timeout';
+GVL_MASTER.stStationEvents[1].aEvents[47].sSolution := 'Check rotation-to-place output Term 10 Ch14 and 180 degree feedback Term 8 Ch10';
+
+GVL_MASTER.stStationEvents[1].aEvents[48].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[48].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.RotationSensorMismatch;
+GVL_MASTER.stStationEvents[1].aEvents[48].bEventText := 'Rotary Gripper Rotation sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[48].sSolution := 'Both rotation sensors are active; check Term 8 Ch9 and Ch10, sensor mounting and wiring';
+
+GVL_MASTER.stStationEvents[1].aEvents[49].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[49].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.IndexNotSafe;
+GVL_MASTER.stStationEvents[1].aEvents[49].bEventText := 'Assembly station lost index ready/locked condition';
+GVL_MASTER.stStationEvents[1].aEvents[49].sSolution := 'Check index Ready and Locked feedback; the index must remain stationary during flipping';
+
+GVL_MASTER.stStationEvents[1].aEvents[50].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[50].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.AssemblySupportNotExtended;
+GVL_MASTER.stStationEvents[1].aEvents[50].bEventText := 'Assembly Support Cylinder not extended during flipping';
+GVL_MASTER.stStationEvents[1].aEvents[50].sSolution := 'Check Assembly Support extended feedback before and during the flipping sequence';
+
+GVL_MASTER.stStationEvents[1].aEvents[51].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[51].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.AirSupplyLost;
+GVL_MASTER.stStationEvents[1].aEvents[51].bEventText := 'Assembly station pneumatic supply lost';
+GVL_MASTER.stStationEvents[1].aEvents[51].sSolution := 'Check MS6 air supply feedback and pneumatic pressure';
+
+GVL_MASTER.stStationEvents[1].aEvents[52].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[52].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SafetyLost;
+GVL_MASTER.stStationEvents[1].aEvents[52].bEventText := 'Assembly station safety permissive lost';
+GVL_MASTER.stStationEvents[1].aEvents[52].sSolution := 'Check TwinSAFE status, safety flaps, E-stop and main door';
 
 // Operator station diagnostics. These are visual messages only; the active
 // operator instruction itself remains reserved for DataGrid row 0.

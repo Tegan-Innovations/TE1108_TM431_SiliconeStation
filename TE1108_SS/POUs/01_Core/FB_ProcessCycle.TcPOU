@@ -22,6 +22,10 @@ VAR
 	tonAutoCycleIdleTimeout 	: TON;
 	
 	bStopPending 				: BOOL;
+	
+	bSiliconeProcessCompleteLatched : BOOL;
+    bAssemblyProcessCompleteLatched : BOOL;
+	
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -32,6 +36,7 @@ VAR_INPUT
     bEnable          : BOOL;
     bResetRequest    : BOOL;
     bStopRequest     : BOOL;
+    tSequenceTimeout : TIME;
 
     stInputs         : ST_ProcessCycleInputs;
 
@@ -99,7 +104,7 @@ tonProcessCycleTimeout(
         AND eState <> E_CycleState.ControlledStop
 		AND eState <> E_CycleState.WaitingForOperatorExchange
         AND eState <> E_CycleState.Fault,
-    PT := T#10S
+    PT := tSequenceTimeout
 );
 
 IF tonProcessCycleTimeout.Q THEN
@@ -427,8 +432,11 @@ CASE eState OF
 
 	E_CycleState.StartingProcesses:
 	
-		stStatusInternal.eMessage :=
-			E_ProcessCycleMessage.StartingProcessEquipment;
+		stStatusInternal.eMessage := E_ProcessCycleMessage.StartingProcessEquipment;
+			
+		// Reset completion memory for the new process cycle.
+		bSiliconeProcessCompleteLatched := FALSE;
+		bAssemblyProcessCompleteLatched := FALSE;
 	
 		// Start only the processes required at the current
 		// table positions.
@@ -448,6 +456,18 @@ CASE eState OF
 	
 	E_CycleState.WaitingForProcessesRunning:
 	
+		IF stInputs.bSiliconeProcessRequired
+			AND stInputs.bSiliconeProcessComplete
+		THEN
+			bSiliconeProcessCompleteLatched := TRUE;
+		END_IF
+		
+		IF stInputs.bAssemblyProcessRequired
+			AND stInputs.bAssemblyProcessComplete
+		THEN
+			bAssemblyProcessCompleteLatched := TRUE;
+		END_IF
+	
 		stStatusInternal.eMessage :=
 			E_ProcessCycleMessage.StartingProcessEquipment;
 	
@@ -466,11 +486,11 @@ CASE eState OF
 		ELSIF
 			(NOT stInputs.bSiliconeProcessRequired
 				OR stInputs.bSiliconeProcessBusy
-				OR stInputs.bSiliconeProcessComplete)
+				OR bSiliconeProcessCompleteLatched)
 			AND
 			(NOT stInputs.bAssemblyProcessRequired
 				OR stInputs.bAssemblyProcessBusy
-				OR stInputs.bAssemblyProcessComplete)
+				OR bAssemblyProcessCompleteLatched)
 		THEN
 	
 			eState :=
@@ -487,6 +507,17 @@ CASE eState OF
 	
 		stStatusInternal.eMessage :=
 			E_ProcessCycleMessage.WaitingForProcessesComplete;
+			
+		// Latch process completion.
+		// Each process may complete at a different time and may be
+		// reset by the machine coordinator after its result is stored.
+		IF stInputs.bSiliconeProcessRequired AND stInputs.bSiliconeProcessComplete THEN
+			bSiliconeProcessCompleteLatched := TRUE;
+		END_IF
+	
+		IF stInputs.bAssemblyProcessRequired AND stInputs.bAssemblyProcessComplete THEN
+			bAssemblyProcessCompleteLatched := TRUE;
+		END_IF
 	
 		// Process fault
 		IF (stInputs.bSiliconeProcessRequired
@@ -502,10 +533,10 @@ CASE eState OF
 		// All required processes completed
 		ELSIF
 			(NOT stInputs.bSiliconeProcessRequired
-				OR stInputs.bSiliconeProcessComplete)
+				OR bSiliconeProcessCompleteLatched)
 			AND
 			(NOT stInputs.bAssemblyProcessRequired
-				OR stInputs.bAssemblyProcessComplete)
+				OR bAssemblyProcessCompleteLatched)
 		THEN
 	
 			eState :=
@@ -583,7 +614,9 @@ CASE eState OF
 	
 		// Retract both supports.
 		stRequestsInternal.bSiliconeSupportRetract := TRUE;
-		stRequestsInternal.bAssemblySupportRetract := TRUE;
+        // Keep the Assembly Support in position until the flipping station has
+        // completed its controlled return to home.
+		stRequestsInternal.bAssemblySupportRetract := NOT stInputs.bAssemblyProcessBusy;
 	
 		stStatusInternal.eMessage :=
 			E_ProcessCycleMessage.ControlledStopping;
@@ -732,7 +765,24 @@ CASE stStatusInternal.eMessage OF
         stStatusInternal.sMessage := 'Starting Assembly and Silicone processes';
 
     E_ProcessCycleMessage.WaitingForProcessesComplete:
-        stStatusInternal.sMessage := 'Assembly and Silicone processes in progress';
+        //stStatusInternal.sMessage := 'Assembly and Silicone processes in progress';
+		IF stInputs.bSiliconeProcessRequired AND stInputs.bAssemblyProcessRequired THEN
+			
+			stStatusInternal.sMessage := 'Assembly and Silicone processes in progress';
+	
+		ELSIF stInputs.bSiliconeProcessRequired THEN
+	
+			stStatusInternal.sMessage := 'Silicone in progress';
+	
+		ELSIF stInputs.bAssemblyProcessRequired THEN
+	
+			stStatusInternal.sMessage := 'Assembly in progress';
+	
+		ELSE
+	
+			stStatusInternal.sMessage := 'Processes in progress';
+	
+		END_IF
 
     E_ProcessCycleMessage.RequestingSupportsRetract:
         stStatusInternal.sMessage := 'Requesting support retraction';

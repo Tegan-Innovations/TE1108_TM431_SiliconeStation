@@ -41,8 +41,8 @@
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{F139683B-A9A7-AE8F-B0D5-5E46169197D3}" AutoDeleteType="true">ST_PhysicalInputs</Name>
-			<BitSize>432</BitSize>
+			<Name GUID="{5A5A2237-133B-6422-6454-94287F917DF3}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<BitSize>480</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
@@ -324,30 +324,67 @@
 				<BitOffs>360</BitOffs>
 			</SubItem>
 			<SubItem>
+				<Name>bTransferVerticalMiniSlideRetracted</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Flipping / assembly station - EPLAN Term 8 Ch5..Ch10]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>368</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bTransferVerticalMiniSlideExtended</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>376</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bRotaryGripperOpened</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>384</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bRotaryGripperClosed</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>392</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bRotaryGripperRotationPick0</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>400</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bRotaryGripperRotationPlace180</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>408</BitOffs>
+			</SubItem>
+			<SubItem>
 				<Name>uiMainAirPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<Comment><![CDATA[ Analog raw values. Engineering-unit scaling is intentionally kept
  outside the terminal mapping until the sensor ranges are confirmed.]]></Comment>
 				<BitSize>16</BitSize>
-				<BitOffs>368</BitOffs>
+				<BitOffs>416</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiSiliconePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>384</BitOffs>
+				<BitOffs>432</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiNozzlePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>400</BitOffs>
+				<BitOffs>448</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiVacuumPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>416</BitOffs>
+				<BitOffs>464</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -467,8 +504,8 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{B4F36A2B-2B83-FE10-B836-F85585CE0E92}" AutoDeleteType="true">ST_PhysicalOutputs</Name>
-			<BitSize>176</BitSize>
+			<Name GUID="{5C6E250F-DB3D-4A8E-34EC-B526CA9C0274}" AutoDeleteType="true">ST_PhysicalOutputs</Name>
+			<BitSize>224</BitSize>
 			<SubItem>
 				<Name>bSafetyRunRequest</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
@@ -538,72 +575,109 @@
 				<BitOffs>80</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bLedStart</Name>
+				<Name>bTransferVerticalMiniSlideExtend</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Flipping / assembly station - EPLAN Term 10 Ch9..Ch14]]></Comment>
 				<BitSize>8</BitSize>
 				<BitOffs>88</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bLedReset</Name>
+				<Name>bTransferVerticalMiniSlideRetract</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>96</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bLedPass</Name>
+				<Name>bRotaryGripperOpen</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>104</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bLedFail</Name>
+				<Name>bRotaryGripperClose</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>112</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bInternalLight</Name>
+				<Name>bRotaryGripperRotationPick0</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>120</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>bNestLight</Name>
+				<Name>bRotaryGripperRotationPlace180</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
 				<BitOffs>128</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bLedStart</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>136</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bLedReset</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>144</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bLedPass</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>152</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bLedFail</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>160</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bInternalLight</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>168</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>bNestLight</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>176</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bExternalLight</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Compatibility alias; mapped to nest light.]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>136</BitOffs>
+				<BitOffs>184</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bVacuumPumpEnable</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>144</BitOffs>
+				<BitOffs>192</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bVacuumAirSolenoid1</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>152</BitOffs>
+				<BitOffs>200</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bVacuumAirSolenoid2</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>160</BitOffs>
+				<BitOffs>208</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bPuckLockerPinUp</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Not present in EPLAN Rev 1.0. Kept for optional future variant.]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>168</BitOffs>
+				<BitOffs>216</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -645,8 +719,8 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{B4B31B11-AEB4-79F4-6B56-D54E4209FD6A}" AutoDeleteType="true">ST_MachineConfig</Name>
-			<BitSize>608</BitSize>
+			<Name GUID="{EE885D76-B8F6-40F5-4132-02211B048089}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<BitSize>672</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
@@ -783,10 +857,29 @@
 				</Default>
 			</SubItem>
 			<SubItem>
+				<Name>tAssemblyActionDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<Comment><![CDATA[ Flipping station commissioning values. Reduce action delay after validation.]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>480</BitOffs>
+				<Default>
+					<DateTime>T#1S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tAssemblyMovementTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>512</BitOffs>
+				<Default>
+					<DateTime>T#5S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
 				<Name>eOperatorPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>480</BitOffs>
+				<BitOffs>544</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
@@ -795,7 +888,7 @@
 				<Name>eSiliconePosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>496</BitOffs>
+				<BitOffs>560</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position3</EnumText>
 				</Default>
@@ -804,7 +897,7 @@
 				<Name>eAssemblyPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>512</BitOffs>
+				<BitOffs>576</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position4</EnumText>
 				</Default>
@@ -813,7 +906,7 @@
 				<Name>eRejectPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>528</BitOffs>
+				<BitOffs>592</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
@@ -822,7 +915,7 @@
 				<Name>bRequireTwoHandsForIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>544</BitOffs>
+				<BitOffs>608</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -831,7 +924,7 @@
 				<Name>bAllowEmptyNestIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>552</BitOffs>
+				<BitOffs>616</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -840,7 +933,7 @@
 				<Name>bRequireRejectConfirm</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>560</BitOffs>
+				<BitOffs>624</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -849,7 +942,7 @@
 				<Name>bUseProcessSimulation</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>568</BitOffs>
+				<BitOffs>632</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -862,7 +955,7 @@
 					<Elements>4</Elements>
 				</ArrayInfo>
 				<BitSize>32</BitSize>
-				<BitOffs>576</BitOffs>
+				<BitOffs>640</BitOffs>
 				<Default>
 					<SubItem>
 						<Name>[1]</Name>
@@ -1292,7 +1385,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{8D25E24D-E09F-FFF7-BA04-9F76BA31D60C}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{51A155D1-105B-F864-ABA2-66D77E1E0830}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1310,7 +1403,7 @@
 						<Var>
 							<Name>GVL_Config.stMachine</Name>
 							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{B4B31B11-AEB4-79F4-6B56-D54E4209FD6A}">ST_MachineConfig</Type>
+							<Type GUID="{EE885D76-B8F6-40F5-4132-02211B048089}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1348,7 +1441,7 @@
 						<Name>PlcTask Outputs</Name>
 						<Var>
 							<Name>GVL_IO.stOutputs</Name>
-							<Type GUID="{B4F36A2B-2B83-FE10-B836-F85585CE0E92}">ST_PhysicalOutputs</Type>
+							<Type GUID="{5C6E250F-DB3D-4A8E-34EC-B526CA9C0274}">ST_PhysicalOutputs</Type>
 						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1</Name>
@@ -1509,7 +1602,7 @@
 							<Name>GVL_IO.stInputs</Name>
 							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
  Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{F139683B-A9A7-AE8F-B0D5-5E46169197D3}">ST_PhysicalInputs</Type>
+							<Type GUID="{5A5A2237-133B-6422-6454-94287F917DF3}">ST_PhysicalInputs</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
@@ -1522,6 +1615,22 @@
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bEmergencyStopOk</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bMainDoorUnSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bLeftFlapSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bRightFlapSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bFlapsSafe</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -1893,22 +2002,6 @@
 							<Name>GVL_EtherCAT.stTerm14_EL6652.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
 							<Type>UINT</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bMainDoorUnSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bLeftFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bRightFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bFlapsSafe</Name>
-							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bTwoHandSafe</Name>
@@ -3609,12 +3702,21 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 		<OwnerA Name="TIPC^TE1108_SS^TE1108_SS Instance">
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 10 (EL2809-0015)">
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1" VarB="Channel 1^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10" VarB="Channel 10^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11" VarB="Channel 11^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch12" VarB="Channel 12^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch13" VarB="Channel 13^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch14" VarB="Channel 14^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch15" VarB="Channel 15^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch16" VarB="Channel 16^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch2" VarB="Channel 2^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch3" VarB="Channel 3^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch4" VarB="Channel 4^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch5" VarB="Channel 5^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch6" VarB="Channel 6^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch7" VarB="Channel 7^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch8" VarB="Channel 8^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch9" VarB="Channel 9^Output"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 11 (EL3058)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch1" VarB="AI Standard Channel 1^Value"/>
@@ -3681,15 +3783,31 @@ Bit1: Value bigger/equal Limit2]]></Comment>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 8 (EL1809)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1" VarB="Channel 1^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch10" VarB="Channel 10^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch11" VarB="Channel 11^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch12" VarB="Channel 12^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch13" VarB="Channel 13^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch14" VarB="Channel 14^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch15" VarB="Channel 15^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch16" VarB="Channel 16^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch2" VarB="Channel 2^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3" VarB="Channel 3^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4" VarB="Channel 4^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch5" VarB="Channel 5^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch6" VarB="Channel 6^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch7" VarB="Channel 7^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch8" VarB="Channel 8^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch9" VarB="Channel 9^Input"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 9 (EL2809-0015)">
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1" VarB="Channel 1^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch10" VarB="Channel 10^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch11" VarB="Channel 11^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch12" VarB="Channel 12^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch13" VarB="Channel 13^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch14" VarB="Channel 14^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch15" VarB="Channel 15^Output"/>
+				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch16" VarB="Channel 16^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch2" VarB="Channel 2^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch3" VarB="Channel 3^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch4" VarB="Channel 4^Output"/>

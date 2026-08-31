@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_PhysicalOutputs" Id="{5be9d8d5-b1c5-4f48-835f-66078c4a0779}">
     <Declaration><![CDATA[TYPE ST_PhysicalOutputs :
@@ -17,6 +17,14 @@ STRUCT
 	bAssemblySupportRetract		  : BOOL;
 	bSiliconeSupportExtend		  : BOOL;
 	bSiliconeSupportRetract		  : BOOL;
+
+    // Flipping / assembly station - EPLAN Term 10 Ch9..Ch14
+    bTransferVerticalMiniSlideExtend : BOOL;
+    bTransferVerticalMiniSlideRetract: BOOL;
+    bRotaryGripperOpen               : BOOL;
+    bRotaryGripperClose              : BOOL;
+    bRotaryGripperRotationPick0      : BOOL;
+    bRotaryGripperRotationPlace180   : BOOL;
 
     bLedStart                     : BOOL;
     bLedReset                     : BOOL;

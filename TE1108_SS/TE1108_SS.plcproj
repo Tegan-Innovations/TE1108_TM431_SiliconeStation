@@ -21,6 +21,12 @@
     <Compile Include="DUTs\01_Core\E_CycleState.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\01_Core\E_AssemblyStationFault.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\E_AssemblyStationState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\01_Core\E_IndexFault.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -91,6 +97,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\01_Core\ST_MachinePermissives.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\ST_AssemblyStationStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DUTs\01_Core\ST_MachineStatus.TcDUT">
@@ -282,6 +291,9 @@
     <Compile Include="POUs\00_Application\PRG_WriteOutputs.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\03_Stations\FB_AssemblyStation.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\01_Core\FB_IndexedSiliconeMachine.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -316,9 +328,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\03_Stations\FB_SiliconeProcess.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="POUs\03_Stations\FB_AssemblyProcess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\04_IVEK\FB_IvekDigiSpense4000.TcPOU">

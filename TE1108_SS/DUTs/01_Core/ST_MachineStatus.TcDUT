@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_MachineStatus" Id="{f4291e0c-7f34-4828-9807-36e2caee1fcf}">
     <Declaration><![CDATA[TYPE ST_MachineStatus :
@@ -6,6 +6,7 @@ STRUCT
     eMachineState           : E_MachineState;
     eCycleState             : E_CycleState;
     stProcessStation        : ST_ProcessStationStatus;
+    stAssemblyStation       : ST_AssemblyStationStatus;
     stMainDoorLock          : ST_MainDoorLockStatus;
     eInitialisingWaitReason : E_InitialisingWaitReason;
     eStoppingWaitReason     : E_StoppingWaitReason;
@@ -34,6 +35,7 @@ STRUCT
 	bEnableSetting		   			: BOOL;
 	bSiliconeSupportFaulted 		: BOOL;
 	bAssemblySupportFaulted 		: BOOL;
+    bAssemblyStationFaulted       : BOOL;
 	
     stPermissives           : ST_MachinePermissives;
     stLastResult            : ST_ProcessResult;

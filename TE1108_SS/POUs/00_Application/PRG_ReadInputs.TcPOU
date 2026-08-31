@@ -117,12 +117,22 @@ GVL_MASTER.stInputs.bSiliconeSupportRetracted          := GVL_IO.stInputs.bSilic
 GVL_MASTER.stInputs.bAssemblySupportExtended           := GVL_IO.stInputs.bAssemblySupportExtended;
 GVL_MASTER.stInputs.bAssemblySupportRetracted          := GVL_IO.stInputs.bAssemblySupportRetracted;
 
+// Flipping / assembly station
+GVL_MASTER.stInputs.bTransferVerticalMiniSlideRetracted := GVL_IO.stInputs.bTransferVerticalMiniSlideRetracted;
+GVL_MASTER.stInputs.bTransferVerticalMiniSlideExtended  := GVL_IO.stInputs.bTransferVerticalMiniSlideExtended;
+GVL_MASTER.stInputs.bRotaryGripperOpened                := GVL_IO.stInputs.bRotaryGripperOpened;
+GVL_MASTER.stInputs.bRotaryGripperClosed                := GVL_IO.stInputs.bRotaryGripperClosed;
+GVL_MASTER.stInputs.bRotaryGripperRotationPick0         := GVL_IO.stInputs.bRotaryGripperRotationPick0;
+GVL_MASTER.stInputs.bRotaryGripperRotationPlace180      := GVL_IO.stInputs.bRotaryGripperRotationPlace180;
+
 
 // -----------------------------------------------------------------------------
 // IVEK ETHERNET/IP INTERFACE
 // -----------------------------------------------------------------------------
 GVL_MASTER.stIvekInput                                 := GVL_IVEK_EIP.stInput;
-GVL_MASTER.bIvekCommsOk                                := GVL_IVEK_EIP.bCommunicationOk;]]></ST>
+GVL_MASTER.bIvekCommsOk                                := GVL_IVEK_EIP.bCommunicationOk;
+
+]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

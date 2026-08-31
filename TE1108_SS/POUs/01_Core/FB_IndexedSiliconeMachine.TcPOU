@@ -20,7 +20,7 @@ VAR
     fbProcessCycle              : FB_ProcessCycle;
 
     fbSiliconeProcess           : FB_SiliconeProcess;
-    fbAssemblyProcess           : FB_AssemblyProcess;
+    fbAssemblyStation           : FB_AssemblyStation;
 
     fbIvek                      : FB_IvekDigiSpense4000;
     fbIvekSettingsLauncher      : FB_IvekSettingsLauncher;
@@ -71,6 +71,7 @@ VAR
     stOperatorStatus            : ST_OperatorStationStatus;
     stIndexStatus               : ST_IndexStatus;
     stProcessStationStatus      : ST_ProcessStationStatus;
+    stAssemblyStationStatus     : ST_AssemblyStationStatus;
     stMainDoorLockStatus        : ST_MainDoorLockStatus;
 	uiResetStatisticsNestIdOld 	: UINT;
 	
@@ -203,6 +204,7 @@ IF fbMainDoorLock.IsFaulted()
     OR fbIndex.IsFaulted()
 	OR fbSiliconeSupportCylinder.IsFaulted()
 	OR fbAssemblySupportCylinder.IsFaulted()
+    OR fbAssemblyStation.IsFaulted()
     OR fbProcessStation.IsFaulted()
 
     // Enable after equipment commissioning.
@@ -257,7 +259,7 @@ END_IF
 // Memorise the Stop command until the machine has
 // completed the required stopping sequence.
 IF stCommand.bStop THEN
-   bStopRequested := TRUE;
+    bStopRequested := TRUE;
 END_IF
 
 
@@ -298,12 +300,12 @@ fbResetTrigger(
 
 IF fbResetTrigger.Q THEN
     fbSiliconeProcess.RequestReset();
-    fbAssemblyProcess.RequestReset();
+    fbAssemblyStation.RequestReset();
 END_IF
 
-// Execute process FBs once per PLC scan
+// Execute Silicone process once per PLC scan.
 fbSiliconeProcess.Cyclic();
-fbAssemblyProcess.Cyclic();
+// The Assembly Station is executed with its physical I/O in the component section below.
 
 bProcessStartPulse := FALSE;
 
@@ -547,21 +549,21 @@ END_IF
 // =========================================================
 
 // Explicit permissive aggregation.
-stPermissives.bSafetyIndexPermissive := stInputs.stSafety.bMotionSafetyPermitted;
-stPermissives.bOperatorIndexPermissive := fbOperatorStation.IndexPermissive();
-stPermissives.bProcessIndexPermissive := fbProcessStation.IndexPermissive();
+stPermissives.bSafetyIndexPermissive 	:= 	stInputs.stSafety.bMotionSafetyPermitted;
+stPermissives.bOperatorIndexPermissive 	:= 	fbOperatorStation.IndexPermissive();
+stPermissives.bProcessIndexPermissive 	:= 	NOT fbSiliconeProcess.IsBusy()
+											AND NOT fbSiliconeProcess.IsFaulted()
+											AND fbAssemblyStation.IndexPermissive();
 
-stPermissives.bIndexMoveAllowed :=
-    stPermissives.bSafetyIndexPermissive
-    //AND stPermissives.bOperatorIndexPermissive
-    AND stPermissives.bProcessIndexPermissive;
+stPermissives.bIndexMoveAllowed 		:=	stPermissives.bSafetyIndexPermissive
+											//AND stPermissives.bOperatorIndexPermissive
+											AND stPermissives.bProcessIndexPermissive;
 
 
-stPermissives.bProcessStartAllowed :=
-    stInputs.stSafety.bProcessSafetyPermitted
-    AND stInputs.bIndexReady
-    AND stInputs.bIndexLocked
-    AND stInputs.bReservoirPartPresent;
+stPermissives.bProcessStartAllowed 		:= 	stInputs.stSafety.bProcessSafetyPermitted
+											AND stInputs.bIndexReady
+											AND stInputs.bIndexLocked
+											AND stInputs.bReservoirPartPresent;
 
 
 // =========================================================
@@ -581,6 +583,8 @@ stPermissives.bSupportsHome :=
     stPermissives.bSiliconeSupportHome
     AND stPermissives.bAssemblySupportHome;
 
+stPermissives.bAssemblyStationHome := fbAssemblyStation.IsHome();
+
 stPermissives.bIndexInitialisationReady :=
     NOT stIndexStatus.bBusy
     AND NOT fbIndex.IsFaulted();
@@ -594,6 +598,8 @@ stPermissives.bInitialisationAllowed :=
     AND stPermissives.bAirSupplyReady
     AND stPermissives.bIndexInitialisationReady
     AND stPermissives.bSupportsHome
+    AND stPermissives.bAssemblyStationHome
+    AND NOT fbAssemblyStation.IsFaulted()
     AND stPermissives.bDoorInitialisationReady;
 	
 
@@ -766,6 +772,7 @@ CASE eMachineState OF
 			fbIndex.Reset();
 			fbSiliconeSupportCylinder.Reset();
 			fbAssemblySupportCylinder.Reset();
+            fbAssemblyStation.Reset();
 	
 			ipEquipment.RequestReset();
 	
@@ -785,6 +792,7 @@ CASE eMachineState OF
         AND NOT fbIndex.IsFaulted()
         AND NOT fbSiliconeSupportCylinder.IsFaulted()
         AND NOT fbAssemblySupportCylinder.IsFaulted()
+        AND NOT fbAssemblyStation.IsFaulted()
         AND NOT fbProcessStation.IsFaulted()
     THEN
 
@@ -935,6 +943,7 @@ CASE eMachineState OF
 	
 		stIndexStatus := fbIndex.GetStatus();
 		stProcessStationStatus := fbProcessStation.GetStatus();
+        stAssemblyStationStatus := fbAssemblyStation.GetStatus();
 		stMainDoorLockStatus := fbMainDoorLock.GetStatus();
 		
 		
@@ -1007,6 +1016,20 @@ CASE eMachineState OF
 				E_InitialisingWaitReason.AssemblySupportNotRetracted;
 		
 		
+        // ---------------------------------------------------------
+        // ASSEMBLY / FLIPPING STATION MUST BE HOME
+        // ---------------------------------------------------------
+        ELSIF fbAssemblyStation.IsFaulted() THEN
+
+            eInitialisingWaitReason :=
+                E_InitialisingWaitReason.AssemblyStationFaulted;
+
+        ELSIF NOT stPermissives.bAssemblyStationHome THEN
+
+            eInitialisingWaitReason :=
+                E_InitialisingWaitReason.AssemblyStationNotHome;
+
+
 		// ---------------------------------------------------------
 		// MAIN DOOR MUST NOT BE FAULTED
 		// ---------------------------------------------------------
@@ -1180,10 +1203,10 @@ CASE eMachineState OF
 		// ASSEMBLY PROCESS STATUS
 		// =========================================================
 		
-		stProcessCycleInputs.bAssemblyProcessReady 		:=fbAssemblyProcess.IsReady();
-		stProcessCycleInputs.bAssemblyProcessBusy 		:=fbAssemblyProcess.IsBusy();
-		stProcessCycleInputs.bAssemblyProcessComplete 	:=fbAssemblyProcess.IsDone();
-		stProcessCycleInputs.bAssemblyProcessFaulted 	:=fbAssemblyProcess.IsFaulted();
+		stProcessCycleInputs.bAssemblyProcessReady 		:=fbAssemblyStation.IsReady();
+		stProcessCycleInputs.bAssemblyProcessBusy 		:=fbAssemblyStation.IsBusy();
+		stProcessCycleInputs.bAssemblyProcessComplete 	:=fbAssemblyStation.IsDone();
+		stProcessCycleInputs.bAssemblyProcessFaulted 	:=fbAssemblyStation.IsFaulted();
 	
 	
 		// PROCESS CYCLE EXECUTION
@@ -1191,6 +1214,7 @@ CASE eMachineState OF
 			bEnable := TRUE,
 			bStopRequest := bStopRequested,
 			bResetRequest := stCommand.bReset,
+            tSequenceTimeout := stConfig.tProcessTimeout,
 			stInputs := stProcessCycleInputs,
 			stRequests => stProcessCycleRequests,
 			stStatus => stProcessCycleStatus
@@ -1215,13 +1239,13 @@ CASE eMachineState OF
 		// ASSEMBLY PROCESS RESULT HANDLING
 		// =========================================================
 		
-		IF fbAssemblyProcess.IsDone() THEN
+		IF fbAssemblyStation.IsDone() THEN
 		
 			// -----------------------------------------------------
 			// STORE ASSEMBLY RESULT
 			// -----------------------------------------------------
 		
-			stLastResult := fbAssemblyProcess.GetResult();
+			stLastResult := fbAssemblyStation.GetResult();
 		
 			bResultStoredFeedback := fbNestManager.StoreAssemblyResultAtPosition( ePosition := stConfig.eAssemblyPosition, stResult := stLastResult );
 		
@@ -1252,7 +1276,7 @@ CASE eMachineState OF
 				// -------------------------------------------------
 		
 				IF bResultStoredFeedback THEN
-					fbAssemblyProcess.RequestReset();
+					fbAssemblyStation.RequestReset();
 				END_IF
 		
 			END_IF
@@ -1275,11 +1299,11 @@ CASE eMachineState OF
 		
 		// Assembly Process
 		IF stProcessCycleRequests.bStartAssemblyProcess THEN
-			fbAssemblyProcess.RequestStart();
+			fbAssemblyStation.RequestStart();
 		END_IF
 		
 		IF stProcessCycleRequests.bStopAssemblyProcess THEN
-			fbAssemblyProcess.RequestStop();
+			fbAssemblyStation.RequestStop();
 		END_IF
 		
 		
@@ -1435,6 +1459,7 @@ IF eMachineState <> E_MachineState.AutoCycle THEN
         bEnable := FALSE,
         bResetRequest := stCommand.bReset,
         bStopRequest := TRUE,
+        tSequenceTimeout := stConfig.tProcessTimeout,
         stInputs := stProcessCycleInputs,
         stRequests =>stProcessCycleRequests,
         stStatus =>stProcessCycleStatus);
@@ -1502,6 +1527,45 @@ ELSIF eMachineState = E_MachineState.AutoCycle THEN
 END_IF
 
 
+
+// =========================================================
+// ASSEMBLY / FLIPPING STATION CONTROL
+// =========================================================
+// Physical mapping from EPLAN Rev 1.0:
+//   Term 8 Ch5..10  = slide, gripper and rotation feedback
+//   Term 10 Ch9..14 = slide, gripper and rotation valve commands
+//
+// During Initialising the object automatically returns to:
+//   slide retracted + gripper open + rotation 0 degrees.
+// During AutoCycle it executes the complete barrel pick/flip/place sequence.
+// =========================================================
+
+fbAssemblyStation.Cyclic(
+    bEnable := (eMachineState = E_MachineState.AutoCycle),
+    bInitialising := (eMachineState = E_MachineState.Initialising),
+    bSafetyPermitted := stInputs.stSafety.bProcessSafetyPermitted,
+    bAirSupplySafe := stPermissives.bAirSupplyReady,
+    bIndexReady := stInputs.bIndexReady,
+    bIndexLocked := stInputs.bIndexLocked,
+    bIndexBusy := stIndexStatus.bBusy,
+    bAssemblySupportExtended := stInputs.bAssemblySupportExtended,
+    bSlideExtended := stInputs.bTransferVerticalMiniSlideExtended,
+    bSlideRetracted := stInputs.bTransferVerticalMiniSlideRetracted,
+    bGripperOpen := stInputs.bRotaryGripperOpened,
+    bGripperClosed := stInputs.bRotaryGripperClosed,
+    bRotationPick := stInputs.bRotaryGripperRotationPick0,
+    bRotationPlace := stInputs.bRotaryGripperRotationPlace180,
+    tActionDelay := stConfig.tAssemblyActionDelay,
+    tMovementTimeout := stConfig.tAssemblyMovementTimeout,
+    bSlideExtendOutput => stOutputsInternal.bTransferVerticalMiniSlideExtend,
+    bSlideRetractOutput => stOutputsInternal.bTransferVerticalMiniSlideRetract,
+    bGripperOpenOutput => stOutputsInternal.bRotaryGripperOpen,
+    bGripperCloseOutput => stOutputsInternal.bRotaryGripperClose,
+    bRotationPickOutput => stOutputsInternal.bRotaryGripperRotationPick0,
+    bRotationPlaceOutput => stOutputsInternal.bRotaryGripperRotationPlace180
+);
+
+stAssemblyStationStatus := fbAssemblyStation.GetStatus();
 
 // =========================================================
 // SILICONE SUPPORT CONTROL
@@ -1592,7 +1656,7 @@ fbMainDoorLock.Cyclic(
 	bDoorUnsafe := stInputs.bMainDoorUnsafe,
 
     bIndexBusy := stIndexStatus.bBusy,
-    bProcessSafePosition := fbProcessStation.IsSafePosition(),
+    bProcessSafePosition := fbProcessStation.IsSafePosition() AND fbAssemblyStation.IsHome(),
 
     tLockTimeout := GVL_config.stMachine.tDoorLockTimeout,
     tUnlockTimeout := GVL_config.stMachine.tDoorUnlockTimeout
@@ -1621,6 +1685,7 @@ fbIndex.Cyclic(
         (eMachineState = E_MachineState.AutoCycle)
         AND stInputs.bSiliconeSupportRetracted
         AND stInputs.bAssemblySupportRetracted
+        AND fbAssemblyStation.IndexPermissive()
         AND
         (
             stPermissives.bIndexMoveAllowed
@@ -1638,8 +1703,12 @@ fbIndex.Cyclic(
     ),
     bSafetyMotionPermitted := stInputs.stSafety.bMotionSafetyPermitted,
     bTwoHandsSafe := stInputs.bTwoHandsSafe,
-    bStationsHome := stInputs.bSiliconeSupportRetracted,
-    bProcessToolingRetracted := stInputs.bSiliconeSupportRetracted,
+    bStationsHome := stInputs.bSiliconeSupportRetracted
+        AND stInputs.bAssemblySupportRetracted
+        AND fbAssemblyStation.IsHome(),
+    bProcessToolingRetracted := stInputs.bSiliconeSupportRetracted
+        AND stInputs.bAssemblySupportRetracted
+        AND fbAssemblyStation.IsHome(),
     bTableReady := stInputs.bIndexReady,
     bTableLocked := stInputs.bIndexLocked,
     bCompletedSensor := stInputs.bIndexCompletedSensor,
@@ -1762,6 +1831,7 @@ stStatus.eMachineState 			:= eMachineState;
 stStatus.eCycleState 			:= stProcessCycleStatus.eState;
 stStatus.stProcessCycle 		:= stProcessCycleStatus;
 stStatus.stProcessStation 		:= stProcessStationStatus;
+stStatus.stAssemblyStation      := stAssemblyStationStatus;
 stStatus.stMainDoorLock 		:= stMainDoorLockStatus;
 stStatus.eInitialisingWaitReason := eInitialisingWaitReason;
 stStatus.eStoppingWaitReason 	:= eStoppingWaitReason;
@@ -1793,6 +1863,7 @@ stStatus.bEnableSetting 		:= eMachineState = E_MachineState.Stopped;
 GVL_Persistent.stStatistics.aNest := fbNestManager.GetAllNestStatistics();
 stStatus.bSiliconeSupportFaulted := fbSiliconeSupportCylinder.IsFaulted();
 stStatus.bAssemblySupportFaulted := fbAssemblySupportCylinder.IsFaulted();
+stStatus.bAssemblyStationFaulted := fbAssemblyStation.IsFaulted();
 
 // 
 // 
@@ -1848,6 +1919,10 @@ IF eMachineState = E_MachineState.Fault THEN
 	IF fbAssemblySupportCylinder.IsFaulted() THEN
 		stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
 	END_IF
+
+    IF fbAssemblyStation.IsFaulted() THEN
+        stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
+    END_IF
     IF fbMainDoorLock.IsFaulted() THEN
         stStatus.stAlarms.uiActiveCount := stStatus.stAlarms.uiActiveCount + 1;
     END_IF
@@ -1883,13 +1958,18 @@ stStatus.aNest 								:= fbNestManager.GetAllNests();
 stStatus.aNestStatistics 					:= fbNestManager.GetAllNestStatistics();
 stStatus.udiAlarmCode 						:= 0;
 stStatus.sOperatorMessage 					:= fbOperatorStation.GetMessage();
+
 // =========================================================
 // MACHINE MESSAGE SELECTION
 // =========================================================
 
 // Row 0 of the event DataGrid is exclusively the current automatic-cycle instruction.
 IF eMachineState = E_MachineState.AutoCycle THEN
-    IF fbOperatorStation.GetInstruction() <> E_OperatorInstruction.None THEN
+    // During active process execution, the machine-level
+    // process message has priority over operator instructions.
+    IF stProcessCycleStatus.eState = E_CycleState.WaitingForProcessesComplete THEN
+        stStatus.sMachineMessage := stProcessCycleStatus.sMessage;
+    ELSIF fbOperatorStation.GetInstruction() <> E_OperatorInstruction.None THEN
         stStatus.sMachineMessage := fbOperatorStation.GetMessage();
     ELSE
         stStatus.sMachineMessage := stProcessCycleStatus.sMessage;
@@ -1909,6 +1989,8 @@ ELSIF eMachineState = E_MachineState.Initialising THEN
 		E_InitialisingWaitReason.AssemblySupportNotRetracted:stStatus.sMachineMessage := 'System initialising - waiting for Assembly Support Cylinder retract';
 		E_InitialisingWaitReason.SiliconeSupportFaulted:stStatus.sMachineMessage 	:= 'System initialising - Silicone Support Cylinder fault';
 		E_InitialisingWaitReason.AssemblySupportFaulted: stStatus.sMachineMessage 	:= 'System initialising - Assembly Support Cylinder fault';
+        E_InitialisingWaitReason.AssemblyStationNotHome: stStatus.sMachineMessage := stAssemblyStationStatus.sMessage;
+        E_InitialisingWaitReason.AssemblyStationFaulted: stStatus.sMachineMessage := 'System initialising - assembly station fault';
         E_InitialisingWaitReason.ProcessStationFaulted: stStatus.sMachineMessage 	:= 'System initialising - process station fault';
         E_InitialisingWaitReason.MainDoorFaulted: stStatus.sMachineMessage 			:= 'System initialising - main door lock fault';
         E_InitialisingWaitReason.ProcessEquipmentNotReady: stStatus.sMachineMessage := 'System initialising - waiting for process equipment';
@@ -1971,6 +2053,16 @@ ELSIF eMachineState = E_MachineState.Fault THEN
 
 
     // ---------------------------------------------------------
+    // ASSEMBLY / FLIPPING STATION FAULT
+    // ---------------------------------------------------------
+
+    ELSIF fbAssemblyStation.IsFaulted() THEN
+
+        stStatus.sMachineMessage :=
+            'Machine fault - assembly/flipping station fault';
+
+
+    // ---------------------------------------------------------
     // INITIALISATION TIMEOUT
     // ---------------------------------------------------------
 
@@ -1995,6 +2087,12 @@ ELSIF eMachineState = E_MachineState.Fault THEN
 
             E_InitialisingWaitReason.AssemblySupportFaulted:
                 stStatus.sMachineMessage := 'Initialisation timeout - Assembly Support Cylinder fault';
+
+            E_InitialisingWaitReason.AssemblyStationNotHome:
+                stStatus.sMachineMessage := 'Initialisation timeout - assembly station did not reach home position';
+
+            E_InitialisingWaitReason.AssemblyStationFaulted:
+                stStatus.sMachineMessage := 'Initialisation timeout - assembly station fault';
 
             E_InitialisingWaitReason.MainDoorFaulted:
                 stStatus.sMachineMessage := 'Initialisation timeout - main door lock fault';
@@ -2082,6 +2180,12 @@ stOutputsInternal.bAssemblySupportExtend := FALSE;
 stOutputsInternal.bAssemblySupportRetract := TRUE;
 stOutputsInternal.bSiliconeSupportExtend := FALSE;
 stOutputsInternal.bSiliconeSupportRetract := TRUE;
+stOutputsInternal.bTransferVerticalMiniSlideExtend := FALSE;
+stOutputsInternal.bTransferVerticalMiniSlideRetract := FALSE;
+stOutputsInternal.bRotaryGripperOpen := FALSE;
+stOutputsInternal.bRotaryGripperClose := FALSE;
+stOutputsInternal.bRotaryGripperRotationPick0 := FALSE;
+stOutputsInternal.bRotaryGripperRotationPlace180 := FALSE;
 stOutputsInternal.bMainDoorLockRequest := FALSE;
 stOutputsInternal.bLedStart := FALSE;
 stOutputsInternal.bLedReset := FALSE;

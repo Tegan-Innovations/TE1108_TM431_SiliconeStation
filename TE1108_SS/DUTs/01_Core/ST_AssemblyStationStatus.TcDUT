@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_AssemblyStationStatus" Id="{856db3b4-c450-4507-ad30-8695ef054a22}">
+    <Declaration><![CDATA[TYPE ST_AssemblyStationStatus :
+STRUCT
+    eState                  : E_AssemblyStationState;
+    eFault                  : E_AssemblyStationFault;
+    bReady                  : BOOL;
+    bBusy                   : BOOL;
+    bDone                   : BOOL;
+    bFaulted                : BOOL;
+    bHome                   : BOOL;
+    bIndexPermissive        : BOOL;
+    bSlideRetracted         : BOOL;
+    bSlideExtended          : BOOL;
+    bGripperOpen            : BOOL;
+    bGripperClosed          : BOOL;
+    bRotationPick           : BOOL;
+    bRotationPlace          : BOOL;
+    sMessage                : STRING(160);
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -105,6 +105,14 @@ GVL_IO.stInputs.bSiliconeSupportExtended 					:= 	GVL_EtherCAT.stTerm8_EL1809.iE
 GVL_IO.stInputs.bAssemblySupportRetracted 					:=	GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch3;
 GVL_IO.stInputs.bAssemblySupportExtended 					:=	GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch4;
 
+// Flipping station feedback - EPLAN page 15
+GVL_IO.stInputs.bTransferVerticalMiniSlideRetracted     := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch5;
+GVL_IO.stInputs.bTransferVerticalMiniSlideExtended      := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch6;
+GVL_IO.stInputs.bRotaryGripperOpened                    := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch7;
+GVL_IO.stInputs.bRotaryGripperClosed                    := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch8;
+GVL_IO.stInputs.bRotaryGripperRotationPick0             := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch9;
+GVL_IO.stInputs.bRotaryGripperRotationPlace180          := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch10;
+
 // ---------------------------------------------------------------------------
 // / Term 11 -Analog inputs - raw process values (EPLAN pages 21 and 22)
 // ---------------------------------------------------------------------------
@@ -192,14 +200,16 @@ GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch5 		:= GVL_IO.stOutputs.bAssemblySupportE
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch6 		:= GVL_IO.stOutputs.bAssemblySupportRetract;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch7 		:= FALSE;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch8 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch9 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch12 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch13 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch14 		:= FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch9         := GVL_IO.stOutputs.bTransferVerticalMiniSlideRetract; //GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10        := GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend; //GVL_IO.stOutputs.bTransferVerticalMiniSlideRetract;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11        := GVL_IO.stOutputs.bRotaryGripperRotationPlace180; //GVL_IO.stOutputs.bRotaryGripperRotationPick0; //GVL_IO.stOutputs.bRotaryGripperOpen;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch12        := GVL_IO.stOutputs.bRotaryGripperRotationPick0; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180; //GVL_IO.stOutputs.bRotaryGripperClose;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch13        := GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperRotationPick0;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch14        := GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch15 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch16 		:= FALSE;]]></ST>
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch16 		:= FALSE;
+
+]]></ST>
       </Implementation>
     </Method>
   </POU>
