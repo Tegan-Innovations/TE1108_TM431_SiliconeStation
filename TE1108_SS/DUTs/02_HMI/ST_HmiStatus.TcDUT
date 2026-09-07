@@ -62,9 +62,44 @@ STRUCT
     stManualMode                    : ST_ManualModeStatus;
     aNest                           : ARRAY[1..4] OF ST_Nest;
     stAlarms                        : ST_AlarmManagerStatus;
+
+    stSiliconeSupply                  : ST_SiliconeSupplyStatus;
+    bReservoirDegassingPopup          : BOOL;
+    usiReservoirDegassingPopup        : USINT;
+
+    // Manual Assembly / Flipping Station
+    uiAssemblyStationNestId               : UINT;
+    bAssemblyStationPartPresent           : BOOL;
+    bAssemblyStationPartSiliconized       : BOOL;
+    bAssemblyStationManualEnabled         : BOOL;
+    bAssemblyStationManualStartPermissive : BOOL;
+
     sMachineMessage                 : STRING(160);
     sOperatorMessage                : STRING(255);
 	
+
+    // Manual Silicone Station
+    uiSiliconeStationNestId                 : UINT;
+    bSiliconeStationPartPresent             : BOOL;
+    bSiliconeStationReady                   : BOOL;
+    bSiliconeStationManualEnabled           : BOOL;
+    bSiliconeStationManualStartPermissive   : BOOL;
+
+    // IVEK Manual HMI status
+    bIvekReady                              : BOOL;
+    bIvekProductionReady                    : BOOL;
+    bIvekBusy                               : BOOL;
+    bIvekHealthy                            : BOOL;
+    bIvekFaulted                            : BOOL;
+    bIvekMotionEnabled                      : BOOL;
+    bIvekReferenceRequired                   : BOOL;
+    bIvekReferenceReady                      : BOOL;
+    bIvekReferenceActive                     : BOOL;
+    bIvekFluidicReady                        : BOOL;
+    bIvekFluidicActive                       : BOOL;
+    bIvekPrimePermissive                     : BOOL;
+    bIvekReferencePermissive                 : BOOL;
+
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

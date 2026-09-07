@@ -16,6 +16,16 @@ STRUCT
 	bAssemblySupportExtend  	: BOOL;
 	bAssemblySupportRetract 	: BOOL;
 	
+
+    // Manual Assembly / Flipping Station
+    bAssemblyStationStart              : BOOL;
+    bAssemblyStationStop               : BOOL;
+
+
+    // Manual Silicone Station
+    bSiliconeProcessStart               : BOOL;
+    bSiliconeProcessStop                : BOOL;
+
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

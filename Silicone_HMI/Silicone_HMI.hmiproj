@@ -280,13 +280,16 @@
     <Content Include="Contents\Screens\popups\Content_Popup_Pneumatics.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\popups\Content_Popup_Degassing.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_Puck.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_Reject_Part.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Screens\Settings\settings_Assembly.content">
+    <Content Include="Contents\Screens\Settings\settings_Puck.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\Settings\settings_IVEK.content">

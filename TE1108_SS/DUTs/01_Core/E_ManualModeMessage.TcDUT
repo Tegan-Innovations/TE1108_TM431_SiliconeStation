@@ -24,7 +24,11 @@ TYPE E_ManualModeMessage :
 
     PneumaticActuatorMoving := 120,
     PneumaticActuatorCommandConflict := 130,
-    PneumaticActuatorCommandNotPermitted := 140
+    PneumaticActuatorCommandNotPermitted := 140,
+
+    AssemblyStationStarting := 150,
+    AssemblyStationStopping := 160,
+    AssemblyStationCommandNotPermitted := 170
 );
 END_TYPE]]></Declaration>
   </DUT>

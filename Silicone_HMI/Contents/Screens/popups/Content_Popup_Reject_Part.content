@@ -1,5 +1,5 @@
 <div id="Content_Popup_ManualMode_1" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="480" data-tchmi-height="350" data-tchmi-zindex="2">
-<div id="TcHmiTextblock_1261" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="70" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-text="THE PART FAILED" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="200" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
+<div id="TcHmiTextblock_1261" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="70" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-text="PART FAILED" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="200" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
 
 
 
@@ -80,7 +80,7 @@
 
 
 </div>
-<div id="TcHmiTextblock_1337" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="149" data-tchmi-height-unit="px" data-tchmi-left="40" data-tchmi-left-unit="px" data-tchmi-text="Remove the part and place it in the REJECT container so we can continue the process!" data-tchmi-top="108" data-tchmi-top-unit="px" data-tchmi-width="400" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="250" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
+<div id="TcHmiTextblock_1337" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="149" data-tchmi-height-unit="px" data-tchmi-left="40" data-tchmi-left-unit="px" data-tchmi-text="Remove the part and place it in the REJECT container so we can continue the process!" data-tchmi-top="107" data-tchmi-top-unit="px" data-tchmi-width="400" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="250" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
   "color": "rgba(0, 0, 0, 1)"

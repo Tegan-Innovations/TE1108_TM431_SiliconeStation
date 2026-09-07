@@ -389,6 +389,24 @@ IF bPulse THEN
 
                 END_IF
 
+                // Live message: shown in Active Events while the condition is
+                // TRUE and cannot be acknowledged/reset by the operator.
+                IF stStationEvents[k[0]].aEvents[k[1]].bPersistentMessage
+                    AND stStationEvents[k[0]].aEvents[k[1]].bEventFlag
+                THEN
+
+                    IF l < 50 THEN
+                        l := l + 1;
+                        astActiveEvents[l].sEventTex :=
+                            stStationEvents[k[0]].aEvents[k[1]].bEventTextHMI;
+                        astActiveEvents[l].sType := 'Message';
+                        astActiveEvents[l].abType := 3;
+                        astActiveEvents[l].sSolution :=
+                            stStationEvents[k[0]].aEvents[k[1]].sSolution;
+                    END_IF
+
+                END_IF
+
 
             END_IF
 

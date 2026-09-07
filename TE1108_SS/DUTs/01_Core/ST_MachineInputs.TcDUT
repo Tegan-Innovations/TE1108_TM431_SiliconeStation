@@ -15,8 +15,6 @@ STRUCT
     bUp24VPowerSupplyOk              : BOOL;
     bUs24VPowerSupplyOk              : BOOL;
     bIvekHeaterControllerAlarm       : BOOL;
-    bSiliconeMinimumLevelSensor1     : BOOL;
-    bSiliconeMinimumLevelSensor2     : BOOL;
     bMainDoorDiagnosticOk            : BOOL;
     bMs6FeedbackOk                   : BOOL;
     bAirExhausted                    : BOOL;
@@ -51,6 +49,16 @@ STRUCT
 	bAssemblySupportExtended  		 : BOOL;
 	bAssemblySupportRetracted 		 : BOOL;
 	
+	
+
+    // Flipping / assembly station feedback
+    bTransferVerticalMiniSlideRetracted : BOOL;
+    bTransferVerticalMiniSlideExtended  : BOOL;
+    bRotaryGripperOpened                : BOOL;
+    bRotaryGripperClosed                : BOOL;
+    bRotaryGripperRotationPick0         : BOOL;
+    bRotaryGripperRotationPlace180      : BOOL;
+	
 	// Physical safety diagnostics used for root-cause alarm identification.
 	bEmergencyStopChannel1 			 : BOOL;
 	bEmergencyStopChannel2 			 : BOOL;
@@ -64,6 +72,21 @@ STRUCT
 	bLeftFlapChannel2             	 : BOOL;
 	bRightFlapChannel1            	 : BOOL;
 	bRightFlapChannel2            	 : BOOL;
+	
+	// =========================================================
+	// SILICONE SUPPLY INPUTS
+	// =========================================================
+	
+	// Reservoir level sensors
+	// TRUE = silicone present / level OK
+	// FALSE = minimum level reached
+	bSiliconeMinimumLevel1      : BOOL;
+	bSiliconeMinimumLevel2      : BOOL;
+	
+	// Analog values converted to engineering units
+	rSiliconePressureBar        : REAL;
+	rNozzlePressureBar          : REAL;
+	rVacuumEngineering   		: REAL;
 	
 END_STRUCT
 END_TYPE]]></Declaration>

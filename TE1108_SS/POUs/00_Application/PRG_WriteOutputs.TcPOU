@@ -20,6 +20,14 @@ GVL_IO.stOutputs.bAssemblySupportRetract 				:= GVL_MASTER.stOutputs.bAssemblySu
 GVL_IO.stOutputs.bSiliconeSupportExtend   				:= GVL_MASTER.stOutputs.bSiliconeSupportExtend;
 GVL_IO.stOutputs.bSiliconeSupportRetract 				:= GVL_MASTER.stOutputs.bSiliconeSupportRetract;
 
+// Flipping / assembly station
+GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend       := GVL_MASTER.stOutputs.bTransferVerticalMiniSlideExtend;
+GVL_IO.stOutputs.bTransferVerticalMiniSlideRetract      := GVL_MASTER.stOutputs.bTransferVerticalMiniSlideRetract;
+GVL_IO.stOutputs.bRotaryGripperOpen                     := GVL_MASTER.stOutputs.bRotaryGripperOpen;
+GVL_IO.stOutputs.bRotaryGripperClose                    := GVL_MASTER.stOutputs.bRotaryGripperClose;
+GVL_IO.stOutputs.bRotaryGripperRotationPick0            := GVL_MASTER.stOutputs.bRotaryGripperRotationPick0;
+GVL_IO.stOutputs.bRotaryGripperRotationPlace180         := GVL_MASTER.stOutputs.bRotaryGripperRotationPlace180;
+
 GVL_IO.stOutputs.bMainDoorLockRequest   				:= GVL_MASTER.stOutputs.bMainDoorLockRequest;
 GVL_IO.stOutputs.bLedStart              				:= GVL_MASTER.stOutputs.bLedStart;
 GVL_IO.stOutputs.bLedReset             	 				:= GVL_MASTER.stOutputs.bLedReset;
@@ -28,10 +36,13 @@ GVL_IO.stOutputs.bLedFail               				:= GVL_MASTER.stOutputs.bLedFail;
 GVL_IO.stOutputs.bInternalLight         				:= GVL_MASTER.stOutputs.bInternalLight;
 GVL_IO.stOutputs.bExternalLight         				:= GVL_MASTER.stOutputs.bExternalLight ;
 GVL_IO.stOutputs.bNestLight             				:= GVL_MASTER.stOutputs.bExternalLight;
-// Vacuum outputs are reserved for the future process implementation.
-GVL_IO.stOutputs.bVacuumPumpEnable      				:= FALSE;
-GVL_IO.stOutputs.bVacuumAirSolenoid1    				:= FALSE;
-GVL_IO.stOutputs.bVacuumAirSolenoid2    				:= FALSE;
+
+// Vacuum outputs 
+GVL_IO.stOutputs.bVacuumPumpEnable 						:= GVL_MASTER.stOutputs.bVacuumPumpEnable;
+GVL_IO.stOutputs.bVacuumAirSolenoid1 					:= GVL_MASTER.stOutputs.bVacuumAirSolenoid1;
+GVL_IO.stOutputs.bVacuumAirSolenoid2 					:= GVL_MASTER.stOutputs.bVacuumAirSolenoid2;
+GVL_IO.stOutputs.bSiliconePinchValve1 					:= GVL_MASTER.stOutputs.bSiliconePinchValve1;
+GVL_IO.stOutputs.bSiliconePinchValve2 					:= GVL_MASTER.stOutputs.bSiliconePinchValve2;
 
 GVL_IVEK_EIP.stOutput 									:= GVL_MASTER.stIvekOutput;
 

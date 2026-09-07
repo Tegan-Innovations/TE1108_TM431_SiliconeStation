@@ -30,10 +30,38 @@ STRUCT
     bIvekStartManual                : BOOL;
     bIvekStopManual                 : BOOL;
     bIvekReset                      : BOOL;
+    // Engineer Settings - IVEK maintenance
+    bIvekPrime                      : BOOL;
+    bIvekReference                  : BOOL;
+    bIvekMaintenanceStop            : BOOL;
 	bIndexerManualEnable            : BOOL;
     usiRecipeRequest                : USINT;
 	
 	
+    // Silicone reservoir Settings toggles
+    bReservoir1Select                  : BOOL;
+    bReservoir2Select                  : BOOL;
+    bReservoir1Degass                 : BOOL;
+    bReservoir2Degass                 : BOOL;
+    bCancelReservoirDegassing         : BOOL;
+
+    // Degassing action popup commands
+    bReservoirDegassingPopupStart     : BOOL;
+    bReservoirDegassingPopupClose     : BOOL;
+
+
+    // Manual Assembly / Flipping Station
+    bAssemblyStationManualEnable       : BOOL;
+    bAssemblyStationStart              : BOOL;
+
+    // Manual enable for Silicone/Assembly nest support cylinders
+    bNestCylindersManualEnable          : BOOL;
+
+
+    // Manual Silicone Station
+    bSiliconeStationManualEnable        : BOOL;
+    bSiliconeStationStart               : BOOL;
+
 END_STRUCT
 END_TYPE
 ]]></Declaration>

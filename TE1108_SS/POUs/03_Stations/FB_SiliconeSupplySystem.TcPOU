@@ -1,0 +1,594 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="FB_SiliconeSupplySystem" Id="{68928b47-e1f7-4f54-b84f-619ae4c81bfe}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SiliconeSupplySystem
+VAR
+    stStatusInternal            : ST_SiliconeSupplyStatus;
+
+    rtLevel1Refill              : R_TRIG;
+    rtLevel2Refill              : R_TRIG;
+    rtStartDegas1               : R_TRIG;
+    rtStartDegas2               : R_TRIG;
+    rtSelect1                   : R_TRIG;
+    rtSelect2                   : R_TRIG;
+    rtCancelDegas               : R_TRIG;
+
+    tonSilPressureBad           : TON;
+    tonSilPressureGood          : TON;
+    tonNozzlePressureBad        : TON;
+    tonNozzlePressureGood       : TON;
+    tonVacuumAcquire            : TON;
+    tonVacuumTimeout            : TON;
+    tonDegassing                : TON;
+
+    bSiliconePressureOkLatched  : BOOL;
+    bNozzlePressureOkLatched    : BOOL;
+    bDegasFault1                : BOOL;
+    bDegasFault2                : BOOL;
+    usiDegassingReservoir       : USINT;
+    usiDispensingReservoir      : USINT;
+    bAutoChangeoverFrom1         : BOOL;
+    bAutoChangeoverFrom2         : BOOL;
+    eDegassingState             : E_SiliconeDegassingState := E_SiliconeDegassingState.Idle;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Intentionally empty. All runtime behaviour is contained in Cyclic().]]></ST>
+    </Implementation>
+    <Method Name="Cyclic" Id="{58013121-8040-4573-9dec-bcc7dd951994}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
+VAR_INPUT
+    bLevel1Ok                  : BOOL;
+    bLevel2Ok                  : BOOL;
+    rSiliconePressureBar       : REAL;
+    rNozzlePressureBar         : REAL;
+    rVacuumEngineering         : REAL;
+
+    stConfig                   : ST_SiliconeSupplyConfig;
+
+    bCmdSelectReservoir1       : BOOL;
+    bCmdSelectReservoir2       : BOOL;
+    bCmdStartDegassing1        : BOOL;
+    bCmdStartDegassing2        : BOOL;
+    bCmdCancelDegassing        : BOOL;
+    bManualSelectionAllowed      : BOOL;
+
+    bDispenseActive            : BOOL;
+    bDispenseValveRequest      : BOOL;
+    bImmediateFault            : BOOL;
+END_VAR
+VAR_IN_OUT
+    stPersistent               : ST_SiliconeSupplyPersistent;
+END_VAR
+VAR_OUTPUT
+    bVacuumPump                : BOOL;
+    bVacuumToAir1              : BOOL;
+    bVacuumToAir2              : BOOL;
+    bPinchValve1               : BOOL;
+    bPinchValve2               : BOOL;
+    bStopRequest               : BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// ============================================================================
+// SILICONE SUPPLY SYSTEM
+// Reservoir management, pressure supervision, degassing and changeover.
+// FALSE/TRUE polarity for Vacuum-to-Air is part of the functional specification:
+// FALSE = Vacuum, TRUE = Air.
+// ============================================================================
+
+// Safe/default outputs every scan.
+bVacuumPump  := FALSE;
+bVacuumToAir1 := TRUE;
+bVacuumToAir2 := TRUE;
+bPinchValve1 := FALSE;
+bPinchValve2 := FALSE;
+bStopRequest := FALSE;
+
+// Input/status copy.
+stStatusInternal.rSiliconePressureBar := rSiliconePressureBar;
+stStatusInternal.rNozzlePressureBar := rNozzlePressureBar;
+stStatusInternal.rVacuumEngineering := rVacuumEngineering;
+stStatusInternal.aReservoir[1].bLevelOk := bLevel1Ok;
+stStatusInternal.aReservoir[2].bLevelOk := bLevel2Ok;
+stStatusInternal.aReservoir[1].bLevelLow := NOT bLevel1Ok;
+stStatusInternal.aReservoir[2].bLevelLow := NOT bLevel2Ok;
+
+// 0 is a valid state: no reservoir selected.
+IF stPersistent.usiSelectedReservoir > 2 THEN
+    stPersistent.usiSelectedReservoir := 0;
+END_IF
+
+// Edge detection.
+rtLevel1Refill(CLK := bLevel1Ok);
+rtLevel2Refill(CLK := bLevel2Ok);
+rtStartDegas1(CLK := bCmdStartDegassing1);
+rtStartDegas2(CLK := bCmdStartDegassing2);
+rtSelect1(CLK := bCmdSelectReservoir1);
+rtSelect2(CLK := bCmdSelectReservoir2);
+rtCancelDegas(CLK := bCmdCancelDegassing);
+
+// A low level immediately invalidates previous degassing qualification.
+IF NOT bLevel1Ok THEN
+    stPersistent.aReservoirDegassed[1] := FALSE;
+END_IF
+IF NOT bLevel2Ok THEN
+    stPersistent.aReservoirDegassed[2] := FALSE;
+END_IF
+
+// Refill edges do NOT make a reservoir ready. They only create the
+// "requires degassing" condition and advisory warning for the HMI.
+stStatusInternal.aReservoir[1].bRefillDetected := rtLevel1Refill.Q AND NOT stPersistent.aReservoirDegassed[1];
+stStatusInternal.aReservoir[2].bRefillDetected := rtLevel2Refill.Q AND NOT stPersistent.aReservoirDegassed[2];
+
+IF rtLevel1Refill.Q THEN
+    bAutoChangeoverFrom1 := FALSE;
+END_IF
+IF rtLevel2Refill.Q THEN
+    bAutoChangeoverFrom2 := FALSE;
+END_IF
+
+// --------------------------------------------------------------------------
+// PRESSURE SUPERVISION WITH DELAY / RECOVERY FILTER
+// --------------------------------------------------------------------------
+tonSilPressureBad(
+    IN := (rSiliconePressureBar < stConfig.rSiliconePressureMin)
+       OR (rSiliconePressureBar > stConfig.rSiliconePressureMax),
+    PT := stConfig.tPressureFaultDelay);
+
+tonSilPressureGood(
+    IN := (rSiliconePressureBar >= stConfig.rSiliconePressureMin)
+       AND (rSiliconePressureBar <= stConfig.rSiliconePressureMax),
+    PT := stConfig.tPressureRecoverDelay);
+
+IF tonSilPressureBad.Q THEN
+    bSiliconePressureOkLatched := FALSE;
+ELSIF tonSilPressureGood.Q THEN
+    bSiliconePressureOkLatched := TRUE;
+END_IF
+
+tonNozzlePressureBad(
+    IN := (rNozzlePressureBar < stConfig.rNozzlePressureMin)
+       OR (rNozzlePressureBar > stConfig.rNozzlePressureMax),
+    PT := stConfig.tPressureFaultDelay);
+
+tonNozzlePressureGood(
+    IN := (rNozzlePressureBar >= stConfig.rNozzlePressureMin)
+       AND (rNozzlePressureBar <= stConfig.rNozzlePressureMax),
+    PT := stConfig.tPressureRecoverDelay);
+
+IF tonNozzlePressureBad.Q THEN
+    bNozzlePressureOkLatched := FALSE;
+ELSIF tonNozzlePressureGood.Q THEN
+    bNozzlePressureOkLatched := TRUE;
+END_IF
+
+stStatusInternal.bSiliconePressureOk := bSiliconePressureOkLatched;
+stStatusInternal.bNozzlePressureOk := bNozzlePressureOkLatched;
+stStatusInternal.bSiliconePressureLow := tonSilPressureBad.Q AND (rSiliconePressureBar < stConfig.rSiliconePressureMin);
+stStatusInternal.bSiliconePressureHigh := tonSilPressureBad.Q AND (rSiliconePressureBar > stConfig.rSiliconePressureMax);
+stStatusInternal.bNozzlePressureLow := tonNozzlePressureBad.Q AND (rNozzlePressureBar < stConfig.rNozzlePressureMin);
+stStatusInternal.bNozzlePressureHigh := tonNozzlePressureBad.Q AND (rNozzlePressureBar > stConfig.rNozzlePressureMax);
+
+// --------------------------------------------------------------------------
+// MANUAL RESERVOIR SELECTION
+// HMI is already restricted to Stopped, but the FB also rejects switching
+// while a dispense is active.
+// --------------------------------------------------------------------------
+IF bManualSelectionAllowed AND NOT bDispenseActive THEN
+    IF rtSelect1.Q
+       AND bLevel1Ok
+       AND stPersistent.aReservoirDegassed[1]
+       AND (usiDegassingReservoir <> 1)
+    THEN
+        stPersistent.usiSelectedReservoir := 1;
+    ELSIF rtSelect2.Q
+       AND bLevel2Ok
+       AND stPersistent.aReservoirDegassed[2]
+       AND (usiDegassingReservoir <> 2)
+    THEN
+        stPersistent.usiSelectedReservoir := 2;
+    END_IF
+END_IF
+
+// --------------------------------------------------------------------------
+// AUTOMATIC CHANGEOVER / SELECTION INVALIDATION
+// Never change in the middle of a dispense.
+// --------------------------------------------------------------------------
+IF NOT bDispenseActive THEN
+
+    IF stPersistent.usiSelectedReservoir = 1 THEN
+
+        IF NOT (bLevel1Ok AND stPersistent.aReservoirDegassed[1]) THEN
+
+            IF bLevel2Ok
+               AND stPersistent.aReservoirDegassed[2]
+               AND (usiDegassingReservoir <> 2)
+            THEN
+                stPersistent.usiSelectedReservoir := 2;
+
+                IF NOT bLevel1Ok THEN
+                    bAutoChangeoverFrom1 := TRUE;
+                END_IF
+            ELSE
+                stPersistent.usiSelectedReservoir := 0;
+            END_IF
+
+        END_IF
+
+    ELSIF stPersistent.usiSelectedReservoir = 2 THEN
+
+        IF NOT (bLevel2Ok AND stPersistent.aReservoirDegassed[2]) THEN
+
+            IF bLevel1Ok
+               AND stPersistent.aReservoirDegassed[1]
+               AND (usiDegassingReservoir <> 1)
+            THEN
+                stPersistent.usiSelectedReservoir := 1;
+
+                IF NOT bLevel2Ok THEN
+                    bAutoChangeoverFrom2 := TRUE;
+                END_IF
+            ELSE
+                stPersistent.usiSelectedReservoir := 0;
+            END_IF
+
+        END_IF
+
+    END_IF
+
+END_IF
+
+// --------------------------------------------------------------------------
+// DEGASSING REQUESTS - only one reservoir at a time.
+// Reservoir must contain silicone and must not be the one actively dispensing.
+// --------------------------------------------------------------------------
+IF eDegassingState = E_SiliconeDegassingState.Idle THEN
+    IF rtStartDegas1.Q
+       AND bLevel1Ok
+       AND NOT stPersistent.aReservoirDegassed[1]
+       AND (stPersistent.usiSelectedReservoir <> 1)
+    THEN
+        usiDegassingReservoir := 1;
+        bDegasFault1 := FALSE;
+        eDegassingState := E_SiliconeDegassingState.ApplyingVacuum;
+    ELSIF rtStartDegas2.Q
+       AND bLevel2Ok
+       AND NOT stPersistent.aReservoirDegassed[2]
+       AND (stPersistent.usiSelectedReservoir <> 2)
+    THEN
+        usiDegassingReservoir := 2;
+        bDegasFault2 := FALSE;
+        eDegassingState := E_SiliconeDegassingState.ApplyingVacuum;
+    END_IF
+END_IF
+
+// Immediate fault or explicit cancel aborts degassing and leaves reservoir
+// NOT qualified. Outputs remain safe AIR / pump OFF due defaults above.
+IF bImmediateFault OR rtCancelDegas.Q THEN
+    IF usiDegassingReservoir = 1 THEN
+        stPersistent.aReservoirDegassed[1] := FALSE;
+    ELSIF usiDegassingReservoir = 2 THEN
+        stPersistent.aReservoirDegassed[2] := FALSE;
+    END_IF
+    usiDegassingReservoir := 0;
+    eDegassingState := E_SiliconeDegassingState.Idle;
+END_IF
+
+// --------------------------------------------------------------------------
+// DEGASSING STATE MACHINE
+// --------------------------------------------------------------------------
+CASE eDegassingState OF
+
+    E_SiliconeDegassingState.Idle:
+        tonVacuumAcquire(IN := FALSE);
+        tonVacuumTimeout(IN := FALSE);
+        tonDegassing(IN := FALSE);
+
+    E_SiliconeDegassingState.ApplyingVacuum:
+        bVacuumPump := TRUE;
+
+        // Degassing-duration timing must always start from zero only after
+        // the requested vacuum has actually been acquired.
+        tonDegassing(IN := FALSE);
+
+        IF usiDegassingReservoir = 1 THEN
+            bVacuumToAir1 := FALSE;
+        ELSIF usiDegassingReservoir = 2 THEN
+            bVacuumToAir2 := FALSE;
+        ELSE
+            eDegassingState := E_SiliconeDegassingState.Idle;
+        END_IF
+
+        // If vacuum supervision is disabled for commissioning, go straight
+        // into the timed degassing phase.
+        IF NOT stConfig.bVacuumSupervisionEnabled THEN
+            tonVacuumAcquire(IN := FALSE);
+            tonVacuumTimeout(IN := FALSE);
+            eDegassingState := E_SiliconeDegassingState.Degassing;
+        ELSE
+            tonVacuumAcquire(
+                IN := rVacuumEngineering >= stConfig.rDegassingVacuumThreshold,
+                PT := T#100MS);
+
+            tonVacuumTimeout(
+                IN := NOT tonVacuumAcquire.Q,
+                PT := stConfig.tDegassingVacuumTimeout);
+
+            IF tonVacuumAcquire.Q THEN
+                tonVacuumTimeout(IN := FALSE);
+                eDegassingState := E_SiliconeDegassingState.Degassing;
+
+            ELSIF tonVacuumTimeout.Q THEN
+                IF usiDegassingReservoir = 1 THEN
+                    bDegasFault1 := TRUE;
+                END_IF
+
+                IF usiDegassingReservoir = 2 THEN
+                    bDegasFault2 := TRUE;
+                END_IF
+
+                eDegassingState := E_SiliconeDegassingState.Fault;
+            END_IF
+        END_IF
+
+    E_SiliconeDegassingState.Degassing:
+        bVacuumPump := TRUE;
+
+        tonVacuumAcquire(IN := FALSE);
+        tonVacuumTimeout(IN := FALSE);
+
+        IF usiDegassingReservoir = 1 THEN
+            bVacuumToAir1 := FALSE;
+        ELSIF usiDegassingReservoir = 2 THEN
+            bVacuumToAir2 := FALSE;
+        END_IF
+
+        tonDegassing(IN := TRUE, PT := stConfig.tDegassingDuration);
+        IF tonDegassing.Q THEN
+            eDegassingState := E_SiliconeDegassingState.Completing;
+        END_IF
+
+    E_SiliconeDegassingState.Completing:
+        // Default outputs already return both valves to AIR and pump OFF.
+        IF usiDegassingReservoir = 1 THEN
+            stPersistent.aReservoirDegassed[1] := bLevel1Ok;
+        ELSIF usiDegassingReservoir = 2 THEN
+            stPersistent.aReservoirDegassed[2] := bLevel2Ok;
+        END_IF
+        usiDegassingReservoir := 0;
+        eDegassingState := E_SiliconeDegassingState.Idle;
+
+    E_SiliconeDegassingState.Fault:
+        // AIR + pump OFF. Reservoir remains unavailable until operator
+        // requests a new degassing cycle.
+        tonVacuumAcquire(IN := FALSE);
+        tonVacuumTimeout(IN := FALSE);
+        tonDegassing(IN := FALSE);
+        usiDegassingReservoir := 0;
+        eDegassingState := E_SiliconeDegassingState.Idle;
+
+END_CASE
+
+// --------------------------------------------------------------------------
+// RESERVOIR STATUS / READINESS
+// --------------------------------------------------------------------------
+stStatusInternal.aReservoir[1].bDegassed := stPersistent.aReservoirDegassed[1];
+stStatusInternal.aReservoir[2].bDegassed := stPersistent.aReservoirDegassed[2];
+stStatusInternal.aReservoir[1].bDegassing := usiDegassingReservoir = 1;
+stStatusInternal.aReservoir[2].bDegassing := usiDegassingReservoir = 2;
+stStatusInternal.aReservoir[1].bVacuumFault := bDegasFault1;
+stStatusInternal.aReservoir[2].bVacuumFault := bDegasFault2;
+
+stStatusInternal.aReservoir[1].bReady := bLevel1Ok
+    AND stPersistent.aReservoirDegassed[1]
+    AND (usiDegassingReservoir <> 1);
+stStatusInternal.aReservoir[2].bReady := bLevel2Ok
+    AND stPersistent.aReservoirDegassed[2]
+    AND (usiDegassingReservoir <> 2);
+
+stStatusInternal.aReservoir[1].bNeedsDegassing := bLevel1Ok AND NOT stPersistent.aReservoirDegassed[1];
+stStatusInternal.aReservoir[2].bNeedsDegassing := bLevel2Ok AND NOT stPersistent.aReservoirDegassed[2];
+stStatusInternal.aReservoir[1].bSelected := stPersistent.usiSelectedReservoir = 1;
+stStatusInternal.aReservoir[2].bSelected := stPersistent.usiSelectedReservoir = 2;
+
+stStatusInternal.aReservoir[1].bTopUpRequired := NOT bLevel1Ok;
+stStatusInternal.aReservoir[2].bTopUpRequired := NOT bLevel2Ok;
+
+stStatusInternal.aReservoir[1].bDegassingActionRequired :=
+    stStatusInternal.aReservoir[1].bNeedsDegassing
+    AND NOT stStatusInternal.aReservoir[1].bDegassing;
+
+stStatusInternal.aReservoir[2].bDegassingActionRequired :=
+    stStatusInternal.aReservoir[2].bNeedsDegassing
+    AND NOT stStatusInternal.aReservoir[2].bDegassing;
+
+stStatusInternal.aReservoir[1].bAutomaticChangeoverOccurred := bAutoChangeoverFrom1;
+stStatusInternal.aReservoir[2].bAutomaticChangeoverOccurred := bAutoChangeoverFrom2;
+
+stStatusInternal.aReservoir[1].tDegassingElapsed := T#0S;
+stStatusInternal.aReservoir[2].tDegassingElapsed := T#0S;
+stStatusInternal.aReservoir[1].tDegassingRemaining := T#0S;
+stStatusInternal.aReservoir[2].tDegassingRemaining := T#0S;
+
+IF usiDegassingReservoir = 1 THEN
+    stStatusInternal.aReservoir[1].tDegassingElapsed := tonDegassing.ET;
+
+    IF tonDegassing.ET < stConfig.tDegassingDuration THEN
+        stStatusInternal.aReservoir[1].tDegassingRemaining :=
+            stConfig.tDegassingDuration - tonDegassing.ET;
+    END_IF
+
+ELSIF usiDegassingReservoir = 2 THEN
+    stStatusInternal.aReservoir[2].tDegassingElapsed := tonDegassing.ET;
+
+    IF tonDegassing.ET < stConfig.tDegassingDuration THEN
+        stStatusInternal.aReservoir[2].tDegassingRemaining :=
+            stConfig.tDegassingDuration - tonDegassing.ET;
+    END_IF
+END_IF
+
+IF NOT bLevel1Ok THEN
+    stStatusInternal.aReservoir[1].eState := E_SiliconeReservoirState.Empty;
+ELSIF bDegasFault1 THEN
+    stStatusInternal.aReservoir[1].eState := E_SiliconeReservoirState.VacuumFault;
+ELSIF usiDegassingReservoir = 1 THEN
+    stStatusInternal.aReservoir[1].eState := E_SiliconeReservoirState.Degassing;
+ELSIF stPersistent.aReservoirDegassed[1] THEN
+    stStatusInternal.aReservoir[1].eState := E_SiliconeReservoirState.Ready;
+ELSE
+    stStatusInternal.aReservoir[1].eState := E_SiliconeReservoirState.NeedsDegassing;
+END_IF
+
+IF NOT bLevel2Ok THEN
+    stStatusInternal.aReservoir[2].eState := E_SiliconeReservoirState.Empty;
+ELSIF bDegasFault2 THEN
+    stStatusInternal.aReservoir[2].eState := E_SiliconeReservoirState.VacuumFault;
+ELSIF usiDegassingReservoir = 2 THEN
+    stStatusInternal.aReservoir[2].eState := E_SiliconeReservoirState.Degassing;
+ELSIF stPersistent.aReservoirDegassed[2] THEN
+    stStatusInternal.aReservoir[2].eState := E_SiliconeReservoirState.Ready;
+ELSE
+    stStatusInternal.aReservoir[2].eState := E_SiliconeReservoirState.NeedsDegassing;
+END_IF
+
+stStatusInternal.usiSelectedReservoir := stPersistent.usiSelectedReservoir;
+stStatusInternal.usiDegassingReservoir := usiDegassingReservoir;
+stStatusInternal.eDegassingState := eDegassingState;
+stStatusInternal.bDegassingActive := usiDegassingReservoir <> 0;
+stStatusInternal.bAnyReservoirReady := stStatusInternal.aReservoir[1].bReady OR stStatusInternal.aReservoir[2].bReady;
+
+IF stPersistent.usiSelectedReservoir = 1 THEN
+    stStatusInternal.bSelectedReservoirReady := stStatusInternal.aReservoir[1].bReady;
+ELSIF stPersistent.usiSelectedReservoir = 2 THEN
+    stStatusInternal.bSelectedReservoirReady := stStatusInternal.aReservoir[2].bReady;
+ELSE
+    stStatusInternal.bSelectedReservoirReady := FALSE;
+END_IF
+
+stStatusInternal.bReservoirSelectionRequired := stPersistent.usiSelectedReservoir = 0;
+
+stStatusInternal.bNoReservoirAvailable := NOT stStatusInternal.bAnyReservoirReady;
+stStatusInternal.bSupplyReadyForDispense :=
+    stStatusInternal.bSelectedReservoirReady
+    AND stStatusInternal.bSiliconePressureOk
+    AND stStatusInternal.bNozzlePressureOk;
+
+// Controlled-stop policy.
+//
+// IMPORTANT:
+// "No reservoir available" is a process-readiness condition, not a machine
+// stop condition. During commissioning, start-up, reservoir changeover or
+// degassing it is perfectly valid for neither reservoir to be ready. Raising
+// bStopRequest in that condition caused the machine to:
+//     Initialising -> ReadyToStart -> Stopping
+// immediately after the air supply became available.
+//
+// Lack of a ready reservoir therefore only removes
+// bSupplyReadyForDispense and prevents FB_SiliconeProcess from starting.
+//
+// During an ACTIVE dispense, pressure supervision remains a controlled-stop
+// condition because loss of silicone/nozzle pressure can invalidate the
+// operation currently in progress.
+bStopRequest :=
+    bDispenseActive
+    AND (
+           NOT stStatusInternal.bSiliconePressureOk
+        OR NOT stStatusInternal.bNozzlePressureOk
+    );
+
+stStatusInternal.bStopRequest := bStopRequest;
+
+// --------------------------------------------------------------------------
+// PINCH VALVES
+//
+// Latch the selected reservoir when the dispense path is first requested.
+// Once a dispense has begun, a minimum-level transition must not switch or
+// close the active flow path in the middle of the IVEK operation.
+//
+// A pressure supervision failure or Immediate Fault closes the pinch path;
+// the pressure failure also raises bStopRequest above.
+// --------------------------------------------------------------------------
+
+// Capture ownership of a new dispense only while the selected reservoir is
+// fully qualified.
+IF bDispenseValveRequest
+AND (usiDispensingReservoir = 0)
+AND stStatusInternal.bSupplyReadyForDispense THEN
+
+    usiDispensingReservoir := stPersistent.usiSelectedReservoir;
+
+END_IF
+
+// Release ownership only after FB_SiliconeProcess releases its valve request.
+IF NOT bDispenseValveRequest THEN
+    usiDispensingReservoir := 0;
+END_IF
+
+IF bDispenseValveRequest
+AND NOT bImmediateFault
+AND stStatusInternal.bSiliconePressureOk
+AND stStatusInternal.bNozzlePressureOk THEN
+
+    IF usiDispensingReservoir = 1 THEN
+        bPinchValve1 := TRUE;
+
+    ELSIF usiDispensingReservoir = 2 THEN
+        bPinchValve2 := TRUE;
+    END_IF
+
+END_IF
+
+stStatusInternal.bVacuumPumpCommand := bVacuumPump;
+stStatusInternal.bVacuumToAir1Command := bVacuumToAir1;
+stStatusInternal.bVacuumToAir2Command := bVacuumToAir2;
+stStatusInternal.bPinchValve1Command := bPinchValve1;
+stStatusInternal.bPinchValve2Command := bPinchValve2;
+
+// HMI summary message.
+IF stStatusInternal.bReservoirSelectionRequired THEN
+    stStatusInternal.sMessage := 'No silicone reservoir selected';
+ELSIF stStatusInternal.bNoReservoirAvailable THEN
+    stStatusInternal.sMessage := 'No silicone reservoir available';
+ELSIF stStatusInternal.bDegassingActive THEN
+    IF usiDegassingReservoir = 1 THEN
+        stStatusInternal.sMessage := 'Reservoir 1 degassing in progress';
+    ELSE
+        stStatusInternal.sMessage := 'Reservoir 2 degassing in progress';
+    END_IF
+ELSIF NOT stStatusInternal.bSiliconePressureOk THEN
+    stStatusInternal.sMessage := 'Silicone pressure outside operating range';
+ELSIF NOT stStatusInternal.bNozzlePressureOk THEN
+    stStatusInternal.sMessage := 'Nozzle pressure outside operating range';
+ELSIF stPersistent.usiSelectedReservoir = 1 THEN
+    stStatusInternal.sMessage := 'Silicone supply ready - Reservoir 1 selected';
+ELSE
+    stStatusInternal.sMessage := 'Silicone supply ready - Reservoir 2 selected';
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetStatus" Id="{93440013-12bc-4908-9151-961a2b5d2497}">
+      <Declaration><![CDATA[METHOD PUBLIC GetStatus : ST_SiliconeSupplyStatus
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetStatus := stStatusInternal;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HasStopRequest" Id="{1074425e-5bd3-404d-b449-af71a4ec009e}">
+      <Declaration><![CDATA[METHOD PUBLIC HasStopRequest : BOOL
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[HasStopRequest := stStatusInternal.bStopRequest;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsReadyForDispense" Id="{c1846ef0-a38f-4d20-8f89-6e537ce427cd}">
+      <Declaration><![CDATA[METHOD PUBLIC IsReadyForDispense : BOOL
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsReadyForDispense := stStatusInternal.bSupplyReadyForDispense;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

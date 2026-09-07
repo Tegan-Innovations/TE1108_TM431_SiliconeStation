@@ -25,7 +25,23 @@ STRUCT
     bEquipmentBusy                 : BOOL;
     bEquipmentFaulted              : BOOL;
 
+    // Assembly / flipping station
+    bAssemblyStationReady          : BOOL;
+    bAssemblyStationBusy           : BOOL;
+    bAssemblyStationFaulted        : BOOL;
+    bAssemblyNestPartPresent       : BOOL;
+    bAssemblyNestSiliconized       : BOOL;
+    bAssemblyNestAlreadyAssembled   : BOOL;
+
     bReservoirPartPresent          : BOOL;
+
+    // Manual Silicone Station
+    bSiliconeProcessReady               : BOOL;
+    bSiliconeProcessBusy                : BOOL;
+    bSiliconeProcessFaulted             : BOOL;
+    bSiliconeNestPartPresent            : BOOL;
+    bSiliconeNestAlreadyProcessed       : BOOL;
+
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

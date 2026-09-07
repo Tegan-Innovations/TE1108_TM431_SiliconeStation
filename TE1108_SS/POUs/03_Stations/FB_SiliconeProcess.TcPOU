@@ -1,263 +1,321 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
-  <POU Name="FB_SiliconeProcess" Id="{8d52d051-1501-48a4-b370-9e9cf5a388a6}" SpecialFunc="None">
+  <POU Name="FB_SiliconeProcess" Id="{212587cd-c257-43af-acfd-e45649e0374c}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_SiliconeProcess
 VAR
-    // COMMAND REQUESTS
-    bStartRequest       : BOOL;
-    bStopRequest        : BOOL;
-    bResetRequest       : BOOL;
-
-    // PROCESS STATUS
-    bReady              : BOOL := TRUE;
-    bBusy               : BOOL;
-    bDone               : BOOL;
-    bFaulted            : BOOL;
-
-    // PROCESS RESULT
-    stResult            : ST_ProcessResult;
-
-    // SIMULATION
-    bSimulatePass       : BOOL := TRUE;
-    bSimulateFail       : BOOL;
-
-    // SIMULATED PROCESS TIME
-    tonProcess          : TON;
+    eState                  : E_SiliconeProcessState := E_SiliconeProcessState.Idle;
+    bStartRequest           : BOOL;
+    bStopRequest            : BOOL;
+    bResetRequest           : BOOL;
+    bReady                  : BOOL;
+    bBusy                   : BOOL;
+    bDone                   : BOOL;
+    bFaulted                : BOOL;
+    bPinchValveRequest      : BOOL;
+    bEquipmentStartRequest  : BOOL;
+    bEquipmentStopRequest   : BOOL;
+    bEquipmentResetRequest  : BOOL;
+    stResult                : ST_ProcessResult;
+    tonStep                 : TON;
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[// ---------------------------------------------------------
-// RESET
-// ---------------------------------------------------------
-IF bResetRequest THEN
-    bStartRequest := FALSE;
-    bResetRequest := FALSE;
-
-    bBusy := FALSE;
-    bDone := FALSE;
-    bFaulted := FALSE;
-
-    stResult.bValid := FALSE;
-    stResult.bPassed := FALSE;
-END_IF]]></ST>
+      <ST><![CDATA[// Runtime behaviour is implemented in Cyclic().]]></ST>
     </Implementation>
-    <Method Name="Cyclic" Id="{c0071b53-5b34-452b-94b8-fe3d661bdca6}">
-      <Declaration><![CDATA[METHOD PUBLIC Cyclic 
+    <Method Name="Cyclic" Id="{b7a0fddb-671e-4115-a6a8-86f8d3cd3549}">
+      <Declaration><![CDATA[METHOD PUBLIC Cyclic
 VAR_INPUT
-END_VAR
-]]></Declaration>
+    bSupplyReady            : BOOL;
+    bEquipmentReady         : BOOL;
+    bEquipmentBusy          : BOOL;
+    bEquipmentDone          : BOOL;
+    bEquipmentFaulted       : BOOL;
+    stEquipmentResult       : ST_ProcessResult;
+    tPinchSettlingDelay     : TIME;
+    tEquipmentStartTimeout  : TIME;
+    tEquipmentCompleteTimeout : TIME;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[// ---------------------------------------------------------
-// PROCESS TIMER
-// ---------------------------------------------------------
+        <ST><![CDATA[// Default one-scan handshake outputs.
+bEquipmentStartRequest := FALSE;
+bEquipmentStopRequest := FALSE;
+bEquipmentResetRequest := FALSE;
 
-tonProcess(
-    IN := bBusy,
-    PT := T#2S
-);
-
-
-// ---------------------------------------------------------
-// RESET REQUEST
-// ---------------------------------------------------------
-
+// Stop/reset are handled before state logic.
 IF bResetRequest THEN
-
+    bResetRequest := FALSE;
     bStartRequest := FALSE;
     bStopRequest := FALSE;
-    bResetRequest := FALSE;
-
+    bPinchValveRequest := FALSE;
+    bReady := bSupplyReady AND bEquipmentReady AND NOT bEquipmentFaulted;
     bBusy := FALSE;
     bDone := FALSE;
     bFaulted := FALSE;
-    bReady := TRUE;
-
     stResult.bValid := FALSE;
     stResult.bPassed := FALSE;
-
+    stResult.eCode := E_ProcessResultCode.None;
+    stResult.udiFaultCode := 0;
+    stResult.udiAlertCode := 0;
+    stResult.usiRecipe := 0;
+    bEquipmentResetRequest := TRUE;
+    eState := E_SiliconeProcessState.Idle;
+    tonStep(IN := FALSE);
     RETURN;
-
 END_IF
-
-
-// ---------------------------------------------------------
-// STOP REQUEST
-// ---------------------------------------------------------
 
 IF bStopRequest THEN
-
     bStopRequest := FALSE;
     bStartRequest := FALSE;
-
+    bPinchValveRequest := FALSE;
     bBusy := FALSE;
     bDone := FALSE;
-    bReady := TRUE;
-
-    stResult.bValid := FALSE;
-    stResult.bPassed := FALSE;
-
+    bEquipmentStopRequest := TRUE;
+    eState := E_SiliconeProcessState.Idle;
+    tonStep(IN := FALSE);
     RETURN;
-
 END_IF
 
-
-// ---------------------------------------------------------
-// FAULT - INVALID SIMULATION SELECTION
-// ---------------------------------------------------------
-
-IF bSimulatePass AND bSimulateFail THEN
-
+// Any equipment fault while processing closes the flow path immediately.
+IF bEquipmentFaulted AND (eState <> E_SiliconeProcessState.Idle) THEN
+    bPinchValveRequest := FALSE;
     bBusy := FALSE;
     bDone := FALSE;
     bReady := FALSE;
     bFaulted := TRUE;
-
-    stResult.bValid := FALSE;
+    stResult := stEquipmentResult;
     stResult.bPassed := FALSE;
-
-    RETURN;
-
-END_IF
-
-
-// ---------------------------------------------------------
-// START PROCESS
-// ---------------------------------------------------------
-
-IF bStartRequest AND bReady AND NOT bFaulted THEN
-
-    bStartRequest := FALSE;
-
-    bReady := FALSE;
-    bBusy := TRUE;
-    bDone := FALSE;
-
-    // Clear previous result
-    stResult.bValid := FALSE;
-    stResult.bPassed := FALSE;
-
-END_IF
-
-
-// ---------------------------------------------------------
-// PROCESS COMPLETE
-// ---------------------------------------------------------
-
-IF bBusy AND tonProcess.Q THEN
-
-    bBusy := FALSE;
-    bDone := TRUE;
-    bReady := FALSE;
-
-    stResult.bValid := TRUE;
-
-    IF bSimulatePass AND NOT bSimulateFail THEN
-        stResult.bPassed := TRUE;
-
-    ELSIF bSimulateFail AND NOT bSimulatePass THEN
-        stResult.bPassed := FALSE;
-
-    ELSE
-        stResult.bValid := FALSE;
-        stResult.bPassed := FALSE;
+    IF NOT stResult.bValid THEN
+        stResult.bValid := TRUE;
+        stResult.eCode := E_ProcessResultCode.EquipmentFault;
     END_IF
+    eState := E_SiliconeProcessState.Fault;
+END_IF
 
-END_IF]]></ST>
+CASE eState OF
+
+    E_SiliconeProcessState.Idle:
+        tonStep(IN := FALSE);
+        bPinchValveRequest := FALSE;
+        bBusy := FALSE;
+        bDone := FALSE;
+        bReady := bSupplyReady AND bEquipmentReady AND NOT bEquipmentFaulted;
+
+        IF bStartRequest AND bReady THEN
+            bStartRequest := FALSE;
+            bReady := FALSE;
+            bBusy := TRUE;
+            stResult.bValid := FALSE;
+            stResult.bPassed := FALSE;
+            eState := E_SiliconeProcessState.OpeningPinchValve;
+        END_IF
+
+    E_SiliconeProcessState.OpeningPinchValve:
+        bPinchValveRequest := TRUE;
+        tonStep(IN := FALSE);
+        eState := E_SiliconeProcessState.WaitingPinchSettling;
+
+    E_SiliconeProcessState.WaitingPinchSettling:
+        bPinchValveRequest := TRUE;
+        tonStep(IN := TRUE, PT := tPinchSettlingDelay);
+        IF tonStep.Q THEN
+            tonStep(IN := FALSE);
+            eState := E_SiliconeProcessState.StartingEquipment;
+        END_IF
+
+    E_SiliconeProcessState.StartingEquipment:
+        bPinchValveRequest := TRUE;
+        IF bEquipmentReady THEN
+            bEquipmentStartRequest := TRUE;
+            tonStep(IN := FALSE);
+            eState := E_SiliconeProcessState.WaitingEquipmentBusy;
+        ELSE
+            tonStep(IN := TRUE, PT := tEquipmentStartTimeout);
+            IF tonStep.Q THEN
+                bPinchValveRequest := FALSE;
+                bFaulted := TRUE;
+                bBusy := FALSE;
+                eState := E_SiliconeProcessState.Fault;
+            END_IF
+        END_IF
+
+    E_SiliconeProcessState.WaitingEquipmentBusy:
+	
+        bPinchValveRequest := TRUE;
+
+		// Keep Start asserted until the equipment acknowledges
+		// the command by becoming Busy or Done.
+		bEquipmentStartRequest := TRUE;
+	
+		tonStep(
+			IN := TRUE,
+			PT := tEquipmentStartTimeout
+		);
+	
+		IF bEquipmentBusy OR bEquipmentDone THEN
+	
+			bEquipmentStartRequest := FALSE;
+	
+			tonStep(IN := FALSE);
+	
+			eState :=
+				E_SiliconeProcessState.WaitingEquipmentComplete;
+	
+		ELSIF tonStep.Q THEN
+	
+			bEquipmentStartRequest := FALSE;
+			bPinchValveRequest := FALSE;
+			bEquipmentStopRequest := TRUE;
+	
+			bFaulted := TRUE;
+			bBusy := FALSE;
+	
+			eState := E_SiliconeProcessState.Fault;
+	
+		END_IF
+
+    E_SiliconeProcessState.WaitingEquipmentComplete:
+        bPinchValveRequest := TRUE;
+        tonStep(IN := TRUE, PT := tEquipmentCompleteTimeout);
+        IF bEquipmentDone THEN
+            stResult := stEquipmentResult;
+            tonStep(IN := FALSE);
+            eState := E_SiliconeProcessState.ClosingPinchValve;
+        ELSIF tonStep.Q THEN
+            bPinchValveRequest := FALSE;
+            bEquipmentStopRequest := TRUE;
+            bFaulted := TRUE;
+            bBusy := FALSE;
+            stResult.bValid := FALSE;
+            stResult.bPassed := FALSE;
+            eState := E_SiliconeProcessState.Fault;
+        END_IF
+
+    E_SiliconeProcessState.ClosingPinchValve:
+        bPinchValveRequest := FALSE;
+        bBusy := FALSE;
+        bDone := TRUE;
+        bReady := FALSE;
+        eState := E_SiliconeProcessState.Complete;
+
+    E_SiliconeProcessState.Complete:
+        bPinchValveRequest := FALSE;
+        bBusy := FALSE;
+        bDone := TRUE;
+
+    E_SiliconeProcessState.Fault:
+        bPinchValveRequest := FALSE;
+        bReady := FALSE;
+        bBusy := FALSE;
+        bDone := FALSE;
+        bFaulted := TRUE;
+
+END_CASE
+]]></ST>
       </Implementation>
     </Method>
-    <Method Name="GetResult" Id="{f9b684d3-b599-4f20-991c-3700a7e95332}">
+    <Method Name="GetEquipmentResetRequest" Id="{a5f7e317-f2a4-4c10-a4f0-228b42f92744}">
+      <Declaration><![CDATA[METHOD PUBLIC GetEquipmentResetRequest : BOOL
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetEquipmentResetRequest := bEquipmentResetRequest;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetEquipmentStartRequest" Id="{f6206d4d-f63c-425f-8808-7b0f6882fb28}">
+      <Declaration><![CDATA[METHOD PUBLIC GetEquipmentStartRequest : BOOL
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetEquipmentStartRequest := bEquipmentStartRequest;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetEquipmentStopRequest" Id="{c791fe21-9a54-4591-a1b8-c9ae5c5aabfa}">
+      <Declaration><![CDATA[METHOD PUBLIC GetEquipmentStopRequest : BOOL
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetEquipmentStopRequest := bEquipmentStopRequest;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetPinchValveRequest" Id="{e17faf55-b9a5-4402-8a52-3a087ef238a4}">
+      <Declaration><![CDATA[METHOD PUBLIC GetPinchValveRequest : BOOL
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetPinchValveRequest := bPinchValveRequest;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetResult" Id="{dc3638f4-5d08-4915-846a-68e0ad743f8b}">
       <Declaration><![CDATA[METHOD PUBLIC GetResult : ST_ProcessResult
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GetResult := stResult;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="IsBusy" Id="{274c82ea-06d5-4736-8a89-ba63f91a019f}">
+    <Method Name="GetState" Id="{956ede30-ee9e-419c-9d1a-203ca3c81d00}">
+      <Declaration><![CDATA[METHOD PUBLIC GetState : E_SiliconeProcessState
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetState := eState;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsBusy" Id="{53fabbf5-919e-4dda-bce6-0e4c0320d6c9}">
       <Declaration><![CDATA[METHOD PUBLIC IsBusy : BOOL
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IsBusy := bBusy;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="IsDone" Id="{b02ac5a2-233d-4bf2-a13f-12fbfecc6eb8}">
+    <Method Name="IsDone" Id="{f3c14b96-6269-44c5-9fea-1ca2d74f6607}">
       <Declaration><![CDATA[METHOD PUBLIC IsDone : BOOL
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IsDone := bDone;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="IsFaulted" Id="{db8183da-9e88-49aa-8e41-23450332a92b}">
+    <Method Name="IsFaulted" Id="{75a6bcfc-9761-4be2-89c3-5116a3c844a3}">
       <Declaration><![CDATA[METHOD PUBLIC IsFaulted : BOOL
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IsFaulted := bFaulted;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="IsReady" Id="{06a5dceb-e769-4b5d-92ac-03b93de03eff}">
+    <Method Name="IsReady" Id="{fd56d7a3-a92b-4c53-8050-aead90e2b776}">
       <Declaration><![CDATA[METHOD PUBLIC IsReady : BOOL
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IsReady := bReady;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="RequestReset" Id="{b4b41a0d-2f09-4085-bf7e-c31c07f83c5d}">
-      <Declaration><![CDATA[METHOD PUBLIC RequestReset 
+    <Method Name="RequestReset" Id="{c43f36b0-54e5-4f97-a3a9-f14919e999a3}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestReset
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[bResetRequest := TRUE;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="RequestStart" Id="{aa7d3781-f15e-4e2d-8289-bc237c37ef5a}">
-      <Declaration><![CDATA[METHOD PUBLIC RequestStart 
+    <Method Name="RequestStart" Id="{86b9333a-e110-4fa8-8e2e-b5391f88a843}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestStart
 VAR_INPUT
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF bReady AND NOT bBusy AND NOT bFaulted THEN
-
-    bDone := FALSE;
-
-    stResult.bValid := FALSE;
-    stResult.bPassed := FALSE;
-
     bStartRequest := TRUE;
-
-END_IF
-
-]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="RequestStop" Id="{4d79928f-90de-4fda-8e6a-824819bb14cb}">
-      <Declaration><![CDATA[METHOD PUBLIC RequestStop 
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF bBusy THEN
-    bStopRequest := TRUE;
 END_IF]]></ST>
       </Implementation>
     </Method>
-    <Method Name="SetSimulationResult" Id="{a88a696c-32bf-47b3-b256-1a785e4e13a8}">
-      <Declaration><![CDATA[METHOD PUBLIC SetSimulationResult
+    <Method Name="RequestStop" Id="{ff71cc52-5b6d-498f-93e3-65eeb616ec15}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestStop
 VAR_INPUT
-    bPass : BOOL;
-    bFail : BOOL;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[bSimulatePass := bPass;
-bSimulateFail := bFail;]]></ST>
+        <ST><![CDATA[IF bBusy THEN bStopRequest := TRUE; END_IF]]></ST>
       </Implementation>
     </Method>
   </POU>

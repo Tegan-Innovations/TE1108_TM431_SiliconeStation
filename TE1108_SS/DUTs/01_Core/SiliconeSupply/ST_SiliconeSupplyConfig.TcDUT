@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_SiliconeSupplyConfig" Id="{72ba053d-accf-4b77-9133-ffa212cfbf54}">
+    <Declaration><![CDATA[TYPE ST_SiliconeSupplyConfig :
+STRUCT
+    // Process supervision limits - these must be validated against the
+    // final pneumatic/process settings during commissioning.
+    rSiliconePressureMin        : REAL := 1.5;
+    rSiliconePressureMax        : REAL := 1.7;
+    rNozzlePressureMin          : REAL := 1.8;
+    rNozzlePressureMax          : REAL := 2.0;
+    tPressureFaultDelay         : TIME := T#2S;
+    tPressureRecoverDelay       : TIME := T#1S;
+
+    tDegassingDuration          : TIME := T#3M;
+    tDegassingVacuumTimeout     : TIME := T#60S;
+    bVacuumSupervisionEnabled   : BOOL := FALSE;
+    rDegassingVacuumThreshold   : REAL := 0.0;
+
+    tPinchValveSettlingDelay    : TIME := T#300MS;
+    tIvekStartTimeout           : TIME := T#5S;
+    tIvekCompleteTimeout        : TIME := T#60S;
+
+	// =========================================================
+	// ANALOG SCALING
+	// =========================================================
+    bPressureScalingEnabled      : BOOL := FALSE;
+	
+    // EL3058 pressure input raw range
+	rPressureRawLow              : REAL := 3325.0;
+	rPressureRawHigh             : REAL := 16384.0;
+	
+    // Silicone pressure engineering range
+	rSiliconePressureEngLow      : REAL := 0.0;
+	rSiliconePressureEngHigh     : REAL := 10.0;
+	
+    // Nozzle pressure engineering range
+	rNozzlePressureEngLow        : REAL := 0.0;
+	rNozzlePressureEngHigh       : REAL := 10.0;
+
+    bVacuumScalingEnabled        : BOOL := FALSE;
+    rVacuumRawLow                : REAL := 0.0;
+    rVacuumRawHigh               : REAL := 32767.0;
+    rVacuumEngLow                : REAL := 0.0;
+    rVacuumEngHigh               : REAL := 1.0;
+	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

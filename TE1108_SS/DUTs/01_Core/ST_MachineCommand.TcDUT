@@ -35,6 +35,24 @@ STRUCT
 	
 	uiResetStatisticsNestId 		: UINT;
 	
+
+    // Manual Assembly / Flipping Station
+    bAssemblyStationManualEnable       : BOOL;
+    bManualAssemblyStart               : BOOL;
+
+    // Manual enable for Silicone/Assembly nest support cylinders
+    bNestCylindersManualEnable          : BOOL;
+
+
+    // Manual Silicone Station
+    bSiliconeStationManualEnable        : BOOL;
+    bManualSiliconeStart                : BOOL;
+
+    // Engineer Settings - IVEK maintenance commands
+    bIvekPrime                             : BOOL;
+    bIvekReference                         : BOOL;
+    bIvekMaintenanceStop                   : BOOL;
+
 END_STRUCT
 END_TYPE
 ]]></Declaration>

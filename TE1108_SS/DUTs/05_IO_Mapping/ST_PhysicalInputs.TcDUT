@@ -68,12 +68,22 @@ STRUCT
 	bAssemblySupportExtended  		: BOOL;
 	bAssemblySupportRetracted 		: BOOL;
 
+    // Flipping / assembly station - EPLAN Term 8 Ch5..Ch10
+    bTransferVerticalMiniSlideRetracted : BOOL;
+    bTransferVerticalMiniSlideExtended  : BOOL;
+    bRotaryGripperOpened                : BOOL;
+    bRotaryGripperClosed                : BOOL;
+    bRotaryGripperRotationPick0         : BOOL;
+    bRotaryGripperRotationPlace180      : BOOL;
+
     // Analog raw values. Engineering-unit scaling is intentionally kept
     // outside the terminal mapping until the sensor ranges are confirmed.
     uiMainAirPressureRaw          : UINT;
     uiSiliconePressureRaw         : UINT;
     uiNozzlePressureRaw           : UINT;
     uiVacuumPressureRaw           : UINT;
+	uiExtractionAVacuumPressureRaw: UINT;
+	uiExtractionBVacuumPressureRaw: UINT;
 
 
 END_STRUCT

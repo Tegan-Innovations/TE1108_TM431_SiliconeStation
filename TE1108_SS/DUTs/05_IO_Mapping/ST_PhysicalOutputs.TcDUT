@@ -17,6 +17,16 @@ STRUCT
 	bAssemblySupportRetract		  : BOOL;
 	bSiliconeSupportExtend		  : BOOL;
 	bSiliconeSupportRetract		  : BOOL;
+	bSiliconePinchValve1 		  : BOOL;
+	bSiliconePinchValve2 		  : BOOL;
+
+    // Flipping / assembly station - EPLAN Term 10 Ch9..Ch14
+    bTransferVerticalMiniSlideExtend : BOOL;
+    bTransferVerticalMiniSlideRetract: BOOL;
+    bRotaryGripperOpen               : BOOL;
+    bRotaryGripperClose              : BOOL;
+    bRotaryGripperRotationPick0      : BOOL;
+    bRotaryGripperRotationPlace180   : BOOL;
 
     bLedStart                     : BOOL;
     bLedReset                     : BOOL;
@@ -29,6 +39,7 @@ STRUCT
     bVacuumPumpEnable             : BOOL;
     bVacuumAirSolenoid1           : BOOL;
     bVacuumAirSolenoid2           : BOOL;
+	
 
     // Not present in EPLAN Rev 1.0. Kept for optional future variant.
     bPuckLockerPinUp              : BOOL;

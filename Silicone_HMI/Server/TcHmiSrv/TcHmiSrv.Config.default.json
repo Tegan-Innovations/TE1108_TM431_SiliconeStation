@@ -319,6 +319,41 @@
                 ],
                 "type": "integer"
             },
+            "ADS-PLC1.E_SiliconeReservoirState": {
+                "attributes": {
+                    "generate_implicit_init_function": ""
+                },
+                "enum": [
+                    0,
+                    10,
+                    20,
+                    30,
+                    40
+                ],
+                "options": [
+                    {
+                        "label": "Empty",
+                        "value": 0
+                    },
+                    {
+                        "label": "NeedsDegassing",
+                        "value": 10
+                    },
+                    {
+                        "label": "Ready",
+                        "value": 20
+                    },
+                    {
+                        "label": "Degassing",
+                        "value": 30
+                    },
+                    {
+                        "label": "VacuumFault",
+                        "value": 40
+                    }
+                ],
+                "type": "integer"
+            },
             "ADS-PLC1.STRING-120": {
                 "allOf": [
                     {
@@ -699,6 +734,179 @@
                     "udiGoodParts",
                     "udiBadParts",
                     "lrEfficiency"
+                ],
+                "type": "object"
+            },
+            "ADS-PLC1.ST_SiliconeReservoirStatus": {
+                "additionalProperties": false,
+                "properties": {
+                    "bAutomaticChangeoverOccurred": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 13
+                            }
+                        ]
+                    },
+                    "bDegassed": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 3
+                            }
+                        ]
+                    },
+                    "bDegassing": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 6
+                            }
+                        ]
+                    },
+                    "bDegassingActionRequired": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 12
+                            }
+                        ]
+                    },
+                    "bLevelLow": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 8
+                            }
+                        ]
+                    },
+                    "bLevelOk": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 2
+                            }
+                        ]
+                    },
+                    "bNeedsDegassing": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 7
+                            }
+                        ]
+                    },
+                    "bReady": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 4
+                            }
+                        ]
+                    },
+                    "bRefillDetected": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 9
+                            }
+                        ]
+                    },
+                    "bSelected": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 5
+                            }
+                        ]
+                    },
+                    "bTopUpRequired": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 11
+                            }
+                        ]
+                    },
+                    "bVacuumFault": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/BOOL"
+                            },
+                            {
+                                "propertyOrder": 10
+                            }
+                        ]
+                    },
+                    "eState": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:server#/definitions/ADS-PLC1.E_SiliconeReservoirState"
+                            },
+                            {
+                                "propertyOrder": 1
+                            }
+                        ]
+                    },
+                    "tDegassingElapsed": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/TIME"
+                            },
+                            {
+                                "propertyOrder": 14
+                            }
+                        ]
+                    },
+                    "tDegassingRemaining": {
+                        "allOf": [
+                            {
+                                "$ref": "tchmi:general#/definitions/TIME"
+                            },
+                            {
+                                "propertyOrder": 15
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "eState",
+                    "bLevelOk",
+                    "bDegassed",
+                    "bReady",
+                    "bSelected",
+                    "bDegassing",
+                    "bNeedsDegassing",
+                    "bLevelLow",
+                    "bRefillDetected",
+                    "bVacuumFault",
+                    "bTopUpRequired",
+                    "bDegassingActionRequired",
+                    "bAutomaticChangeoverOccurred",
+                    "tDegassingElapsed",
+                    "tDegassingRemaining"
                 ],
                 "type": "object"
             },
@@ -4293,6 +4501,41 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.bAssemblyStationManualEnable": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bAssemblyStationManualEnable",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Manual Assembly / Flipping Station",
+                        "propertyOrder": 31
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bAssemblyStationStart": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bAssemblyStationStart",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 32
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportExtend": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4362,6 +4605,58 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.bIvekMaintenanceStop": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bIvekMaintenanceStop",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 24
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bIvekPrime": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bIvekPrime",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Engineer Settings - IVEK maintenance",
+                        "propertyOrder": 22
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bIvekReference": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bIvekReference",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 23
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stCommands.bManualModeEnable": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4392,6 +4687,163 @@
                     {
                         "comment": "Legacy compatibility",
                         "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bNestCylindersManualEnable": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bNestCylindersManualEnable",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Manual enable for Silicone/Assembly nest support cylinders",
+                        "propertyOrder": 33
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoir1Degass": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoir1Degass",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 26
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoir1Select": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoir1Select",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Silicone reservoir Settings toggles",
+                        "propertyOrder": 24
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoir2Degass": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoir2Degass",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 27
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoir2Select": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoir2Select",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 25
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupClose": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoirDegassingPopupClose",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 30
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupStart": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoirDegassingPopupStart",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Degassing action popup commands",
+                        "propertyOrder": 29
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationManualEnable": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bSiliconeStationManualEnable",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Manual Silicone Station",
+                        "propertyOrder": 34
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationStart": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bSiliconeStationStart",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 35
                     }
                 ]
             },
@@ -5316,6 +5768,57 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationManualStartPermissive": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bAssemblyStationManualStartPermissive",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 64
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationPartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bAssemblyStationPartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 61
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationPartSiliconized": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bAssemblyStationPartSiliconized",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 62
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.bEnableSettings": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -5328,6 +5831,177 @@
                     },
                     {
                         "propertyOrder": 34
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekBusy": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekBusy",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 73
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekCommunicationOk": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekCommunicationOk",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 45
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekFaulted",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 76
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekHealthy": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekHealthy",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 74
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekMotionEnabled": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekMotionEnabled",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 75
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekPrimePermissive": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekPrimePermissive",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 83
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekProductionReady": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekProductionReady",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 73
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekReady": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekReady",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "IVEK Manual HMI status",
+                        "propertyOrder": 72
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekReferencePermissive": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekReferencePermissive",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 84
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekReferenceRequired",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 78
                     }
                 ]
             },
@@ -5350,6 +6024,74 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.bReservoirDegassingPopup": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bReservoirDegassingPopup",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 58
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationManualStartPermissive": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bSiliconeStationManualStartPermissive",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 71
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationPartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bSiliconeStationPartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 68
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationReady": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bSiliconeStationReady",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 69
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -5362,6 +6104,79 @@
                     },
                     {
                         "propertyOrder": 16
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stSiliconeSupply::aReservoir[0]",
+            "SCHEMA": {
+                "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_SiliconeReservoirStatus"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stSiliconeSupply::aReservoir[1]",
+            "SCHEMA": {
+                "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_SiliconeReservoirStatus"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.uiAssemblyStationNestId": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::uiAssemblyStationNestId",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "comment": "Manual Assembly / Flipping Station",
+                        "propertyOrder": 60
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.uiSiliconeStationNestId": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::uiSiliconeStationNestId",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "comment": "Manual Silicone Station",
+                        "propertyOrder": 67
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.usiReservoirDegassingPopup": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::usiReservoirDegassingPopup",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/USINT"
+                    },
+                    {
+                        "propertyOrder": 59
                     }
                 ]
             },
@@ -8972,12 +9787,26 @@
                 "ADS.PLC1.GVL_HMI.sSystemName": 3,
                 "ADS.PLC1.GVL_HMI.sTwincat": 3,
                 "ADS.PLC1.GVL_HMI.sTwincatHMI": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bAssemblyStationManualEnable": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bAssemblyStationStart": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bExternalLight": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bIndexerManualEnable": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bIvekMaintenanceStop": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bIvekPrime": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bIvekReference": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bManualModeEnable": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bNestCylindersManualEnable": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoir1Degass": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoir1Select": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoir2Degass": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoir2Select": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupClose": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupStart": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationManualEnable": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationStart": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.uiResetStatisticsNestId": 3,
@@ -9033,9 +9862,31 @@
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.3.stResult.bPassed": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.3.stSiliconeResult.bPassed": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.aNest.3.stSiliconeResult.bValid": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationManualStartPermissive": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationPartPresent": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationPartSiliconized": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bEnableSettings": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekBusy": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekCommunicationOk": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekHealthy": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekMotionEnabled": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekPrimePermissive": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekProductionReady": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekReady": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekReferencePermissive": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bReservoirDegassingPopup": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationManualStartPermissive": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationPartPresent": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.uiAssemblyStationNestId": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.uiSiliconeStationNestId": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.usiReservoirDegassingPopup": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent": 3,

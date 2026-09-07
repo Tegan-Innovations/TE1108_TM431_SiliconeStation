@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_AssemblyStationFault" Id="{681c7199-8b5a-4ed6-ac90-47b6bf2390b0}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+{attribute 'to_string'}
+TYPE E_AssemblyStationFault :
+(
+    None                         := 0,
+    SlideRetractedSensorTimeout  := 10,
+    SlideExtendedSensorTimeout   := 20,
+    SlideSensorMismatch          := 30,
+    GripperOpenSensorTimeout     := 40,
+    GripperClosedSensorTimeout   := 50,
+    GripperSensorMismatch        := 60,
+    RotationPickSensorTimeout    := 70,
+    RotationPlaceSensorTimeout   := 80,
+    RotationSensorMismatch       := 90,
+    IndexNotSafe                 := 100,
+    AssemblySupportNotExtended   := 110,
+    AirSupplyLost                := 120,
+    SafetyLost                   := 130,
+    CommandConflict              := 140
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

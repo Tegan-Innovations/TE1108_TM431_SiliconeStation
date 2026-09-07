@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_SiliconeSupplyStatus" Id="{d2e0e930-9bff-4036-9896-87cabb3bf824}">
+    <Declaration><![CDATA[TYPE ST_SiliconeSupplyStatus :
+STRUCT
+    aReservoir              : ARRAY[1..2] OF ST_SiliconeReservoirStatus;
+    eDegassingState         : E_SiliconeDegassingState;
+    usiSelectedReservoir    : USINT;
+    usiDegassingReservoir   : USINT;
+
+    rSiliconePressureBar    : REAL;
+    rNozzlePressureBar      : REAL;
+    rVacuumEngineering      : REAL;
+
+    bSiliconePressureOk     : BOOL;
+    bNozzlePressureOk       : BOOL;
+    bSiliconePressureLow    : BOOL;
+    bSiliconePressureHigh   : BOOL;
+    bNozzlePressureLow      : BOOL;
+    bNozzlePressureHigh     : BOOL;
+
+    bAnyReservoirReady          : BOOL;
+    bSelectedReservoirReady     : BOOL;
+    bReservoirSelectionRequired : BOOL;
+    bSupplyReadyForDispense     : BOOL;
+    bDegassingActive        : BOOL;
+    bNoReservoirAvailable   : BOOL;
+    bStopRequest            : BOOL;
+    bVacuumPumpCommand      : BOOL;
+    bVacuumToAir1Command    : BOOL;
+    bVacuumToAir2Command    : BOOL;
+    bPinchValve1Command     : BOOL;
+    bPinchValve2Command     : BOOL;
+    sMessage                : STRING(160);
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

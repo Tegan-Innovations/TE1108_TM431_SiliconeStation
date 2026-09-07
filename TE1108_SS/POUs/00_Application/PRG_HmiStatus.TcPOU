@@ -104,8 +104,8 @@ GVL_HMI.stStatus.bStartButtonLamp 			:= GVL_MASTER.stOutputs.bLedStart;
 GVL_HMI.stStatus.bUp24VPowerSupplyOk 		:= GVL_MASTER.stInputs.bUp24VPowerSupplyOk;
 GVL_HMI.stStatus.bUs24VPowerSupplyOk 		:= GVL_MASTER.stInputs.bUs24VPowerSupplyOk;
 GVL_HMI.stStatus.bIvekHeaterControllerAlarm := GVL_MASTER.stInputs.bIvekHeaterControllerAlarm;
-GVL_HMI.stStatus.bSiliconeMinimumLevelSensor1 := GVL_MASTER.stInputs.bSiliconeMinimumLevelSensor1;
-GVL_HMI.stStatus.bSiliconeMinimumLevelSensor2 := GVL_MASTER.stInputs.bSiliconeMinimumLevelSensor2;
+GVL_HMI.stStatus.bSiliconeMinimumLevelSensor1 := GVL_MASTER.stInputs.bSiliconeMinimumLevel1;
+GVL_HMI.stStatus.bSiliconeMinimumLevelSensor2 := GVL_MASTER.stInputs.bSiliconeMinimumLevel2;
 GVL_HMI.stStatus.bMainDoorDiagnosticOk 		:= GVL_MASTER.stInputs.bMainDoorDiagnosticOk;
 GVL_HMI.stStatus.bMs6FeedbackOk	 			:= GVL_MASTER.stInputs.bMs6FeedbackOk;
 GVL_HMI.stStatus.bAirExhausted 				:= GVL_MASTER.stInputs.bAirExhausted;
@@ -118,7 +118,7 @@ GVL_HMI.stStatus.bSiliconeSupportRetracted 	:= GVL_MASTER.stInputs.bSiliconeSupp
 GVL_HMI.stStatus.bLeftFlapSafe 				:= GVL_MASTER.stInputs.stSafety.bLeftFlapSafe;
 GVL_HMI.stStatus.bRightFlapSafe 			:= GVL_MASTER.stInputs.stSafety.bRightFlapSafe;
 GVL_HMI.stStatus.bIvekCommunicationOk 		:= GVL_MASTER.bIvekCommsOk;
-GVL_HMI.stStatus.eIvekStatusState 			:= GVL_MASTER.stIvekInput.eStatusState;
+GVL_HMI.stStatus.eIvekStatusState 			:= GVL_MASTER.stStatus.eIvekStatusState;
 GVL_HMI.stStatus.udiIvekStatusFlags 		:= GVL_MASTER.stIvekInput.udiStatusFlags;
 GVL_HMI.stStatus.udiIvekStatusFlagsExt 		:= GVL_MASTER.stIvekInput.udiStatusFlagsExt;
 GVL_HMI.stStatus.udiIvekFaultCode 			:= GVL_MASTER.stIvekInput.udiFaultCode;
@@ -128,7 +128,60 @@ GVL_HMI.stStatus.eOperatorInstruction 		:= GVL_MASTER.stStatus.eOperatorInstruct
 GVL_HMI.stStatus.stOperatorStation 			:= GVL_MASTER.stStatus.stOperatorStation;
 GVL_HMI.stStatus.stManualMode 				:= GVL_MASTER.stStatus.stManualMode;
 GVL_HMI.stStatus.aNest 						:= GVL_MASTER.stStatus.aNest;
+
+// Manual Assembly / Flipping Station
+GVL_HMI.stStatus.uiAssemblyStationNestId :=
+    GVL_MASTER.stStatus.uiAssemblyStationNestId;
+GVL_HMI.stStatus.bAssemblyStationPartPresent :=
+    GVL_MASTER.stStatus.bAssemblyStationPartPresent;
+GVL_HMI.stStatus.bAssemblyStationPartSiliconized :=
+    GVL_MASTER.stStatus.bAssemblyStationPartSiliconized;
+GVL_HMI.stStatus.bAssemblyStationManualEnabled :=
+    GVL_MASTER.stStatus.bAssemblyStationManualEnabled;
+GVL_HMI.stStatus.bAssemblyStationManualStartPermissive :=
+    GVL_MASTER.stStatus.bAssemblyStationManualStartPermissive;
+
+// Manual Silicone Station
+GVL_HMI.stStatus.uiSiliconeStationNestId :=
+    GVL_MASTER.stStatus.uiSiliconeStationNestId;
+GVL_HMI.stStatus.bSiliconeStationPartPresent :=
+    GVL_MASTER.stStatus.bSiliconeStationPartPresent;
+GVL_HMI.stStatus.bSiliconeStationReady :=
+    GVL_MASTER.stStatus.bSiliconeStationReady;
+GVL_HMI.stStatus.bSiliconeStationManualEnabled :=
+    GVL_MASTER.stStatus.bSiliconeStationManualEnabled;
+GVL_HMI.stStatus.bSiliconeStationManualStartPermissive :=
+    GVL_MASTER.stStatus.bSiliconeStationManualStartPermissive;
+
+// IVEK
+GVL_HMI.stStatus.bIvekReady := GVL_MASTER.stStatus.bIvekReady;
+GVL_HMI.stStatus.bIvekProductionReady := GVL_MASTER.stStatus.bIvekProductionReady;
+GVL_HMI.stStatus.bIvekBusy := GVL_MASTER.stStatus.bIvekBusy;
+GVL_HMI.stStatus.bIvekHealthy := GVL_MASTER.stStatus.bIvekHealthy;
+GVL_HMI.stStatus.bIvekFaulted := GVL_MASTER.stStatus.bIvekFaulted;
+GVL_HMI.stStatus.bIvekMotionEnabled := GVL_MASTER.stStatus.bIvekMotionEnabled;
+GVL_HMI.stStatus.bIvekReferenceRequired := GVL_MASTER.stStatus.bIvekReferenceRequired;
+GVL_HMI.stStatus.bIvekReferenceReady := GVL_MASTER.stStatus.bIvekReferenceReady;
+GVL_HMI.stStatus.bIvekReferenceActive := GVL_MASTER.stStatus.bIvekReferenceActive;
+GVL_HMI.stStatus.bIvekFluidicReady := GVL_MASTER.stStatus.bIvekFluidicReady;
+GVL_HMI.stStatus.bIvekFluidicActive := GVL_MASTER.stStatus.bIvekFluidicActive;
+GVL_HMI.stStatus.bIvekPrimePermissive := GVL_MASTER.stStatus.bIvekPrimePermissive;
+GVL_HMI.stStatus.bIvekReferencePermissive := GVL_MASTER.stStatus.bIvekReferencePermissive;
 GVL_HMI.stStatus.stAlarms 					:= GVL_MASTER.stStatus.stAlarms;
+
+GVL_HMI.stStatus.stSiliconeSupply := GVL_MASTER.stStatus.stSiliconeSupply;
+
+// Toggle controls are command inputs but visually mirror accepted PLC status.
+GVL_HMI.stCommands.bReservoir1Select :=
+    GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bSelected;
+GVL_HMI.stCommands.bReservoir2Select :=
+    GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bSelected;
+GVL_HMI.stCommands.bReservoir1Degass :=
+    GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassing;
+GVL_HMI.stCommands.bReservoir2Degass :=
+    GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassing;
+GVL_HMI.stCommands.bCancelReservoirDegassing := FALSE;
+
 GVL_HMI.stStatus.sMachineMessage 			:= GVL_MASTER.stStatus.sMachineMessage;
 GVL_HMI.stStatus.sOperatorMessage 			:= GVL_MASTER.stStatus.sOperatorMessage;
 GVL_HMI.stStatus.bEnableSettings 			:= GVL_MASTER.stStatus.bEnableSetting;
