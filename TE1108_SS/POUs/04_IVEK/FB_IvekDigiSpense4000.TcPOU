@@ -3,21 +3,106 @@
   <POU Name="FB_IvekDigiSpense4000" Id="{0298a882-1014-4595-8d70-84acebf38c05}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK FB_IvekDigiSpense4000 IMPLEMENTS I_ProcessEquipment
 VAR_INPUT
-    stCyclicIn       : ST_IvekCyclicInput;
-    bCommunicationOk: BOOL;
+    stCyclicIn          : ST_IvekCyclicInput;
+    bCommunicationOk     : BOOL;
+    bOperationPermissive   : BOOL;
+    // TRUE only while the machine itself is in System Initialising.
+    // Used for automatic Load recovery when the IVEK reports Load Required.
+    bSystemInitialising     : BOOL;
+    // Maintenance motion is used only for Engineer Settings operations
+    // (Prime / Reference) while the machine is Stopped.
+    bMaintenancePermissive : BOOL;
 END_VAR
 VAR_OUTPUT
     stCyclicOut      : ST_IvekCyclicOutput;
 END_VAR
 VAR
     eState           	: E_ProcessEquipmentState := E_ProcessEquipmentState.Offline;
+	eStatusState 		: E_IvekStatusState;
     stResult         	: ST_ProcessResult;
     stBits           	: ST_IvekCommandBits;
+	
+	tonProductionStartTimeout 		: TON;
+	tProductionStartTimeout 		: TIME := T#2S;
+    tonProductionStartPulse       : TON;
+    tProductionStartPulse         : TIME := T#100MS;
+    bProductionStartPulseActive   : BOOL;
+	tonProductionCompleteTimeout 	: TON;
+	tProductionCompleteTimeout 	: TIME := T#10S;
+
+    // Automatic reference supervision
+    tonReferenceStartTimeout       : TON;
+    tReferenceStartTimeout         : TIME := T#5S;
+    tonReferenceCompleteTimeout    : TON;
+    tReferenceCompleteTimeout      : TIME := T#30S;
+	
     usiRequestedRecipe 	: USINT;
     bStartPending    	: BOOL;
     bStopPending     	: BOOL;
     bResetPending    	: BOOL;
     bWasBusy         	: BOOL;
+	bMotionEnableCommand : BOOL;
+	bProductionRequestActive : BOOL;
+	bProductionStarted       : BOOL;
+    bProductionSuccessSeen   : BOOL;
+    bProductionLeftReady     : BOOL;
+    bStartCommandWasIssued  : BOOL;
+    bProductionAckWasSeen    : BOOL;
+
+    bReferenceStartPending  : BOOL;
+    bReferenceRequestActive : BOOL;
+    bReferenceStarted       : BOOL;
+    bReferenceTimeoutFault  : BOOL;
+    tonReferenceStartPulse  : TON;
+    tReferenceStartPulse    : TIME := T#100MS;
+    bReferenceStartPulseActive : BOOL;
+
+    bFluidicStartPending    : BOOL;
+    bFluidicRequestActive   : BOOL;
+    bFluidicStarted         : BOOL;
+    tonFluidicStartPulse    : TON;
+    tFluidicStartPulse      : TIME := T#100MS;
+    bFluidicStartPulseActive : BOOL;
+    tonFluidicStartTimeout  : TON;
+    tFluidicStartTimeout    : TIME := T#2S;
+
+    // Post-Prime Load recovery
+    bLoadStartPending       : BOOL;
+    bLoadRequestActive      : BOOL;
+    bLoadStarted            : BOOL;
+    tonLoadStartPulse       : TON;
+    tLoadStartPulse         : TIME := T#100MS;
+    bLoadStartPulseActive   : BOOL;
+    tonLoadStartTimeout     : TON;
+    tLoadStartTimeout       : TIME := T#2S;
+    tonLoadCompleteTimeout  : TON;
+    tLoadCompleteTimeout    : TIME := T#30S;
+	
+	// P012 Status Flags
+	bInitialized        : BOOL;
+	bConfigured         : BOOL;
+	bFaulted            : BOOL;
+	bAlerted            : BOOL;
+	bMotionDisabled     : BOOL;
+	bReferenceRequired  : BOOL;
+	bLoadRequired       : BOOL;
+	
+	bReadyIdle          : BOOL;
+	bReadyProduction    : BOOL;
+    bReadyFluidic       : BOOL;
+    bReadyReference     : BOOL;
+    bReadyLoad          : BOOL;
+	
+	bBusyRequired       : BOOL;
+	bBusyAnyOperation   : BOOL;
+	bBusyProduction     : BOOL;
+    bBusyFluidic        : BOOL;
+    bBusyReference      : BOOL;
+    bBusyLoad           : BOOL;
+	
+	bChamberFull        : BOOL;
+	bSuccessPulse       : BOOL;
+	bSuccessLast        : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -26,71 +111,980 @@ END_VAR
     <Method Name="Cyclic" Id="{c32afd88-dc64-4fdd-9954-5e3239145fb1}">
       <Declaration><![CDATA[{warning 'Add method implementation '}
 METHOD PUBLIC Cyclic
-VAR 
-	bBusyNow : BOOL; 
+VAR
+    bBusyNow            : BOOL;
+    bStopIssuedThisScan : BOOL;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[stCyclicOut.udiCommands := 0;
-stCyclicOut.udiCommandsExt := 0;
-stCyclicOut.usiRecipeGet := 0;
-stCyclicOut.usiRecipeSave := 0;
+        <ST><![CDATA[
+// =========================================================
+// Reset cyclic outputs
+// =========================================================
+stCyclicOut.udiCommands      := 0;
+stCyclicOut.udiCommandsExt   := 0;
+stCyclicOut.usiRecipeGet     := 0;
+stCyclicOut.diDispenseVolume := 0;
+stCyclicOut.diRateOrSetpoint := 0;
 
-IF NOT bCommunicationOk THEN
-    eState := E_ProcessEquipmentState.Offline;
-    stResult.bValid := FALSE;
-    RETURN;
+bStopIssuedThisScan := FALSE;
+
+
+// =========================================================
+// Decode IVEK cyclic input
+// =========================================================
+DecodeStatusState();
+DecodeStatusFlags();
+
+bBusyNow := bBusyProduction;
+
+// Deterministic 100 ms command pulses. The IVEK commands are rising-edge
+// triggered; the pulse duration is independent of the acknowledgement.
+tonProductionStartPulse(IN := bProductionStartPulseActive, PT := tProductionStartPulse);
+tonReferenceStartPulse(IN := bReferenceStartPulseActive, PT := tReferenceStartPulse);
+tonFluidicStartPulse(IN := bFluidicStartPulseActive, PT := tFluidicStartPulse);
+tonLoadStartPulse(IN := bLoadStartPulseActive, PT := tLoadStartPulse);
+
+IF tonProductionStartPulse.Q THEN bProductionStartPulseActive := FALSE; END_IF
+IF tonReferenceStartPulse.Q THEN bReferenceStartPulseActive := FALSE; END_IF
+IF tonFluidicStartPulse.Q THEN bFluidicStartPulseActive := FALSE; END_IF
+IF tonLoadStartPulse.Q THEN bLoadStartPulseActive := FALSE; END_IF
+
+
+// =========================================================
+// Detect acknowledgement that Production has started
+// =========================================================
+IF bProductionRequestActive
+AND (bBusyProduction OR NOT bReadyProduction) THEN
+
+    bProductionStarted := TRUE;
+    bProductionAckWasSeen := TRUE;
+
 END_IF
 
-IF stCyclicIn.udiFaultCode <> 0 OR stCyclicIn.eStatusState = E_IvekStatusState.Faulted THEN
-    eState := E_ProcessEquipmentState.Fault;
-    stResult.bValid := TRUE;
-    stResult.bPassed := FALSE;
-    stResult.eCode := E_ProcessResultCode.EquipmentFault;
-    stResult.udiFaultCode := stCyclicIn.udiFaultCode;
-    stResult.udiAlertCode := stCyclicIn.udiAlertCode;
+IF bProductionRequestActive
+AND (bBusyProduction OR NOT bReadyProduction) THEN
+
+    bProductionLeftReady := TRUE;
+    bProductionAckWasSeen := TRUE;
+
+    // Only a physical acknowledgement moves the driver to Busy.
+    IF eState = E_ProcessEquipmentState.Starting THEN
+        eState := E_ProcessEquipmentState.Busy;
+    END_IF
+
 END_IF
 
-IF usiRequestedRecipe <> 0 AND stCyclicIn.usiCurrentRecipe <> usiRequestedRecipe THEN
-    stCyclicOut.usiRecipeGet := usiRequestedRecipe;
+IF bProductionRequestActive
+AND bSuccessPulse THEN
+
+    bProductionSuccessSeen := TRUE;
+
 END_IF
 
-IF bResetPending THEN
-    stCyclicOut.udiCommands := stCyclicOut.udiCommands OR SHL(UDINT#1, stBits.nClearFaultBit);
-    bResetPending := FALSE;
+IF bReferenceRequestActive
+AND (bBusyReference OR (eStatusState = E_IvekStatusState.Referencing)) THEN
+
+    bReferenceStarted := TRUE;
+
 END_IF
 
-IF bStopPending THEN
-    stCyclicOut.udiCommands := stCyclicOut.udiCommands OR SHL(UDINT#1, stBits.nStopBit);
-    bStopPending := FALSE;
+IF bFluidicRequestActive
+AND (bBusyFluidic OR (eStatusState = E_IvekStatusState.Priming)) THEN
+
+    bFluidicStarted := TRUE;
+
 END_IF
 
-IF bStartPending AND stCyclicIn.eStatusState = E_IvekStatusState.Idle AND stCyclicIn.udiFaultCode = 0 THEN
-    stResult.bValid := FALSE;
-    stCyclicOut.udiCommands := stCyclicOut.udiCommands OR SHL(UDINT#1, stBits.nDispenseBit);
+// Load may complete too quickly to observe BusyLoad. Clearing LoadRequired
+// is also accepted as acknowledgement.
+IF bLoadRequestActive
+AND (bBusyLoad OR NOT bLoadRequired) THEN
+
+    bLoadStarted := TRUE;
+
+END_IF
+
+
+// =========================================================
+// Operation supervision timers
+// =========================================================
+
+// Start timeout:
+// Start command was issued, but IVEK never indicated Production active.
+tonProductionStartTimeout(
+    IN := bCommunicationOk
+          AND bProductionRequestActive
+          AND NOT bProductionStarted
+          AND NOT bSuccessPulse,
+    PT := tProductionStartTimeout
+);
+
+// Completion timeout:
+// Production has been observed active, but does not finish.
+tonProductionCompleteTimeout(
+    IN := bCommunicationOk
+          AND bProductionRequestActive
+          AND bProductionStarted,
+    PT := tProductionCompleteTimeout
+);
+
+// Reference start timeout:
+// StartReference was issued but the IVEK never reported Reference Busy.
+tonReferenceStartTimeout(
+    IN := bCommunicationOk
+          AND bReferenceRequestActive
+          AND NOT bReferenceStarted
+          AND bReferenceRequired,
+    PT := tReferenceStartTimeout
+);
+
+// Reference completion timeout:
+// Reference started but did not return to a non-required/ready condition.
+tonReferenceCompleteTimeout(
+    IN := bCommunicationOk
+          AND bReferenceRequestActive
+          AND bReferenceStarted,
+    PT := tReferenceCompleteTimeout
+);
+
+tonFluidicStartTimeout(
+    IN := bCommunicationOk
+          AND bFluidicRequestActive
+          AND NOT bFluidicStarted
+          AND NOT bLoadRequestActive,
+    PT := tFluidicStartTimeout
+);
+
+tonLoadStartTimeout(
+    IN := bCommunicationOk
+          AND bLoadRequestActive
+          AND NOT bLoadStarted,
+    PT := tLoadStartTimeout
+);
+
+tonLoadCompleteTimeout(
+    IN := bCommunicationOk
+          AND bLoadRequestActive
+          AND bLoadStarted
+          AND bLoadRequired,
+    PT := tLoadCompleteTimeout
+);
+
+
+// =========================================================
+// Maintained command - P010 Bit 0
+// =========================================================
+//
+// If the machine permissive disappears while Production is active,
+// request a controlled Stop first and keep MotionEnable present until
+// the IVEK is no longer reporting Production Busy.
+//
+// This avoids intentionally dropping MotionEnable while the pump is
+// still moving, which would force an interrupted operation/reference
+// recovery according to the IVEK protocol.
+// =========================================================
+
+// Production follows the normal machine permissive. Engineer maintenance
+// operations use the separate maintenance permissive while Stopped.
+IF NOT bOperationPermissive
+AND (bProductionRequestActive OR bBusyProduction) THEN
+    bStopPending := TRUE;
+END_IF
+
+IF NOT bMaintenancePermissive
+AND (
+    bReferenceRequestActive OR bBusyReference
+    OR bFluidicRequestActive OR bBusyFluidic
+    // Load is a System Initialising recovery operation, not an Engineer
+    // maintenance operation. Do not cancel it just because the machine has
+    // left Stopped and therefore bMaintenancePermissive is FALSE.
+    OR ((bLoadRequestActive OR bBusyLoad) AND NOT bSystemInitialising)
+) THEN
+    bStopPending := TRUE;
+END_IF
+
+IF NOT bOperationPermissive
+AND NOT bProductionRequestActive THEN
     bStartPending := FALSE;
+END_IF
+
+bMotionEnableCommand :=
+    bCommunicationOk
+    AND (
+        bOperationPermissive
+        OR bMaintenancePermissive
+        OR bProductionRequestActive
+        OR bBusyProduction
+        OR bReferenceRequestActive
+        OR bBusyReference
+        OR bFluidicRequestActive
+        OR bBusyFluidic
+        OR bLoadRequestActive
+        OR bBusyLoad
+    );
+
+IF bMotionEnableCommand THEN
+
+    stCyclicOut.udiCommands :=
+        stCyclicOut.udiCommands
+        OR SHL(UDINT#1, stBits.nMotionEnableBit);
+
+END_IF
+
+
+// =========================================================
+// Communication supervision
+// =========================================================
+IF NOT bCommunicationOk THEN
+
+    bStartPending := FALSE;
+    bStopPending := FALSE;
+
+    bProductionRequestActive := FALSE;
+    bProductionStartPulseActive := FALSE;
+    bProductionStarted := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionSuccessSeen := FALSE;
+    bReferenceStartPending := FALSE;
+    bReferenceStartPulseActive := FALSE;
+    bReferenceRequestActive := FALSE;
+    bReferenceStarted := FALSE;
+    bFluidicStartPending := FALSE;
+    bFluidicStartPulseActive := FALSE;
+    bFluidicRequestActive := FALSE;
+    bFluidicStarted := FALSE;
+    bLoadStartPending := FALSE;
+    bLoadStartPulseActive := FALSE;
+    bLoadRequestActive := FALSE;
+    bLoadStarted := FALSE;
+
+    eState := E_ProcessEquipmentState.Offline;
+
+    stResult.bValid := FALSE;
+
+    RETURN;
+
+END_IF
+
+
+// =========================================================
+// Communication recovery from Offline
+// =========================================================
+// Once cyclic communication is healthy again, rebuild the equipment state
+// directly from the live IVEK status instead of leaving Offline latched until
+// another state transition happens.
+IF eState = E_ProcessEquipmentState.Offline THEN
+
+    IF bFaulted OR stCyclicIn.udiFaultCode <> 0 THEN
+        eState := E_ProcessEquipmentState.Fault;
+
+    ELSIF bReferenceRequired THEN
+        eState := E_ProcessEquipmentState.Initialising;
+
+    ELSIF bBusyAnyOperation THEN
+        eState := E_ProcessEquipmentState.Busy;
+
+    ELSIF bReadyProduction THEN
+        eState := E_ProcessEquipmentState.Ready;
+
+    ELSE
+        // Communication is back, but the IVEK has not yet reached a usable
+        // Production state. Keep the object recoverable rather than Faulted.
+        eState := E_ProcessEquipmentState.Initialising;
+
+    END_IF
+
+END_IF
+
+
+// =========================================================
+// Recipe request
+// =========================================================
+IF usiRequestedRecipe <> 0
+AND stCyclicIn.usiCurrentRecipe <> usiRequestedRecipe THEN
+
+    stCyclicOut.usiRecipeGet := usiRequestedRecipe;
+
+END_IF
+
+
+// =========================================================
+// Recovery command - Clear Fault
+// =========================================================
+IF bResetPending THEN
+
+    stCyclicOut.udiCommands :=
+        stCyclicOut.udiCommands
+        OR SHL(UDINT#1, stBits.nClearFaultBit);
+
+    bResetPending := FALSE;
+
+END_IF
+
+
+// =========================================================
+// Stop command
+// Highest operational command priority
+// =========================================================
+IF bStopPending THEN
+
+    stCyclicOut.udiCommands :=
+        stCyclicOut.udiCommands
+        OR SHL(UDINT#1, stBits.nStopAllBit);
+
+    bStopIssuedThisScan := TRUE;
+    bStopPending := FALSE;
+
+    // Cancel any queued or active Production request.
+    bStartPending := FALSE;
+    bProductionRequestActive := FALSE;
+    bProductionStartPulseActive := FALSE;
+    bProductionStarted := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionSuccessSeen := FALSE;
+    bReferenceStartPending := FALSE;
+    bReferenceStartPulseActive := FALSE;
+    bReferenceRequestActive := FALSE;
+    bReferenceStarted := FALSE;
+    bFluidicStartPending := FALSE;
+    bFluidicStartPulseActive := FALSE;
+    bFluidicRequestActive := FALSE;
+    bFluidicStarted := FALSE;
+    bLoadStartPending := FALSE;
+    bLoadStartPulseActive := FALSE;
+    bLoadRequestActive := FALSE;
+    bLoadStarted := FALSE;
+
+END_IF
+
+
+// =========================================================
+// Engineer Reference command - P010 Bit 4
+// =========================================================
+// Reference is intentionally NOT automatic. ReferenceRequired is exposed
+// to the machine/HMI and blocks AutoCycle. An Engineer starts recovery from
+// Settings while the machine is Stopped.
+IF bReferenceStartPending
+AND bReferenceRequired
+AND bReadyReference
+AND bMaintenancePermissive
+AND NOT bStopIssuedThisScan
+AND NOT bReferenceRequestActive
+AND NOT bProductionRequestActive
+AND NOT bFluidicRequestActive
+AND NOT bBusyAnyOperation
+AND NOT bFaulted
+AND stCyclicIn.udiFaultCode = 0 THEN
+
+    bReferenceStartPending := FALSE;
+    bReferenceRequestActive := TRUE;
+    bReferenceStarted := FALSE;
+    bReferenceStartPulseActive := TRUE;
+    eState := E_ProcessEquipmentState.Starting;
+
+END_IF
+
+IF bReferenceRequestActive
+AND bReferenceStartPulseActive
+AND NOT tonReferenceStartPulse.Q THEN
+    stCyclicOut.udiCommands :=
+        stCyclicOut.udiCommands
+        OR SHL(UDINT#1, stBits.nStartReferenceBit);
+END_IF
+
+
+// =========================================================
+// Engineer Fluidic / Prime command - P010 Bit 3
+// =========================================================
+// Executes the Fluidic Mode configured in the IVEK (currently Prime Reverse
+// during commissioning). The PLC does not alter the IVEK recipe/configuration.
+IF bFluidicStartPending
+AND bReadyFluidic
+AND bMaintenancePermissive
+AND NOT bStopIssuedThisScan
+AND NOT bReferenceRequestActive
+AND NOT bProductionRequestActive
+AND NOT bFluidicRequestActive
+AND NOT bBusyAnyOperation
+AND NOT bFaulted
+AND stCyclicIn.udiFaultCode = 0 THEN
+
+    bFluidicStartPending := FALSE;
+    bFluidicRequestActive := TRUE;
+    bFluidicStarted := FALSE;
+    bFluidicStartPulseActive := TRUE;
+    eState := E_ProcessEquipmentState.Starting;
+
+END_IF
+
+IF bFluidicRequestActive
+AND bFluidicStartPulseActive
+AND NOT tonFluidicStartPulse.Q THEN
+    stCyclicOut.udiCommands :=
+        stCyclicOut.udiCommands
+        OR SHL(UDINT#1, stBits.nStartFluidicBit);
+END_IF
+
+
+// =========================================================
+// Automatic Load recovery during System Initialising - P010 Bit 7
+// =========================================================
+// LoadRequired is a recovery condition. Do not try to hide it while the
+// machine is Stopped after Prime. The operator can press Reset; once the
+// machine enters System Initialising, the driver performs Load automatically.
+//
+// This deliberately uses the normal operation permissive (air/safety/comms)
+// rather than the Engineer maintenance permissive, because System
+// Initialising is a machine recovery state, not an Engineer command.
+IF bSystemInitialising
+AND bOperationPermissive
+AND bLoadRequired
+AND bReadyLoad
+AND NOT bReferenceRequired
+AND NOT bStopIssuedThisScan
+AND NOT bLoadStartPending
+AND NOT bLoadRequestActive
+AND NOT bBusyAnyOperation
+AND NOT bFaulted
+AND stCyclicIn.udiFaultCode = 0 THEN
+    bLoadStartPending := TRUE;
+END_IF
+
+IF bLoadStartPending
+AND bSystemInitialising
+AND bOperationPermissive
+AND bLoadRequired
+AND bReadyLoad
+AND NOT bReferenceRequired
+AND NOT bStopIssuedThisScan
+AND NOT bLoadRequestActive
+AND NOT bBusyAnyOperation THEN
+    bLoadStartPending := FALSE;
+    bLoadRequestActive := TRUE;
+    bLoadStarted := FALSE;
+    bLoadStartPulseActive := TRUE;
     eState := E_ProcessEquipmentState.Starting;
 END_IF
 
-bBusyNow := stCyclicIn.eStatusState = E_IvekStatusState.Dispensing
-          OR stCyclicIn.eStatusState = E_IvekStatusState.Metering
-          OR stCyclicIn.eStatusState = E_IvekStatusState.DrawbackDwell
-          OR stCyclicIn.eStatusState = E_IvekStatusState.Drawback
-          OR stCyclicIn.eStatusState = E_IvekStatusState.PreOpDwell
-          OR stCyclicIn.eStatusState = E_IvekStatusState.PostOpDwell;
+IF bLoadRequestActive
+AND bLoadStartPulseActive
+AND NOT tonLoadStartPulse.Q
+AND NOT bStopIssuedThisScan THEN
+    stCyclicOut.udiCommands :=
+        stCyclicOut.udiCommands
+        OR SHL(UDINT#1, stBits.nStartLoadBit);
+END_IF
 
-IF bBusyNow THEN
+
+// =========================================================
+// Start Production command
+// =========================================================
+
+// Accept a new Production request.
+// Do not allow Start in the same scan as Stop.
+IF bStartPending
+AND NOT bStopIssuedThisScan
+AND NOT bProductionRequestActive
+AND NOT bReferenceRequestActive
+AND NOT bReferenceRequired
+AND bOperationPermissive
+AND bReadyProduction
+AND NOT bFaulted
+AND stCyclicIn.udiFaultCode = 0 THEN
+
+    // Clear result from previous Production operation.
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+    stResult.eCode := E_ProcessResultCode.None;
+
+    stResult.udiFaultCode := 0;
+    stResult.udiAlertCode := 0;
+    stResult.usiRecipe := 0;
+
+    bStartPending := FALSE;
+
+    bProductionStarted := FALSE;
+    bProductionSuccessSeen := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionRequestActive := TRUE;
+    bProductionStartPulseActive := TRUE;
+
+    eState := E_ProcessEquipmentState.Starting;
+
+END_IF
+
+
+// Start Production is a deterministic 100 ms rising-edge pulse.
+// Bench tests on the real DigiSpense showed that a 1.1 uL cycle can return
+// to Ready in about 100 ms, while 11.1 uL remains Busy for ~700 ms.
+IF bProductionRequestActive
+AND bProductionStartPulseActive
+AND NOT bStopIssuedThisScan
+AND bOperationPermissive
+AND NOT bReferenceRequired
+AND NOT bFaulted
+AND stCyclicIn.udiFaultCode = 0
+AND NOT tonProductionStartPulse.Q
+AND NOT tonProductionStartTimeout.Q THEN
+
+    stCyclicOut.udiCommands :=
+        stCyclicOut.udiCommands
+        OR SHL(UDINT#1, stBits.nStartProductionBit);
+
+    bStartCommandWasIssued := TRUE;
+
+END_IF
+
+
+// =========================================================
+// Process equipment state / Production result
+// =========================================================
+
+// ---------------------------------------------------------
+// IVEK fault
+// ---------------------------------------------------------
+IF bFaulted
+OR stCyclicIn.udiFaultCode <> 0 THEN
+
+    bProductionRequestActive := FALSE;
+    bProductionStartPulseActive := FALSE;
+    bProductionStarted := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionSuccessSeen := FALSE;
+    bReferenceStartPending := FALSE;
+    bReferenceStartPulseActive := FALSE;
+    bReferenceRequestActive := FALSE;
+    bReferenceStarted := FALSE;
+    bFluidicStartPending := FALSE;
+    bFluidicStartPulseActive := FALSE;
+    bFluidicRequestActive := FALSE;
+    bFluidicStarted := FALSE;
+    bLoadStartPending := FALSE;
+    bLoadStartPulseActive := FALSE;
+    bLoadRequestActive := FALSE;
+    bLoadStarted := FALSE;
+
+    eState := E_ProcessEquipmentState.Fault;
+
+    stResult.bValid := TRUE;
+    stResult.bPassed := FALSE;
+    stResult.eCode := E_ProcessResultCode.EquipmentFault;
+
+    stResult.udiFaultCode := stCyclicIn.udiFaultCode;
+    stResult.udiAlertCode := stCyclicIn.udiAlertCode;
+    stResult.usiRecipe := stCyclicIn.usiCurrentRecipe;
+
+
+// ---------------------------------------------------------
+// Fluidic / Prime completed
+// ---------------------------------------------------------
+ELSIF bFluidicRequestActive
+AND bFluidicStarted
+AND NOT bBusyFluidic
+AND bReadyFluidic THEN
+
+    // Prime itself is complete. Release the Engineer maintenance sequence so
+    // the machine can accept Reset and enter System Initialising.
+    bFluidicRequestActive := FALSE;
+    bFluidicStartPulseActive := FALSE;
+    bFluidicStarted := FALSE;
+
+    IF bLoadRequired THEN
+        // Expected recovery condition after Prime. System Initialising will
+        // monitor LoadRequired and issue Start Load automatically.
+        eState := E_ProcessEquipmentState.Initialising;
+
+    ELSIF bReadyProduction AND NOT stResult.bValid THEN
+        eState := E_ProcessEquipmentState.Ready;
+
+    ELSE
+        eState := E_ProcessEquipmentState.Initialising;
+    END_IF
+
+
+// ---------------------------------------------------------
+// Post-Prime Load completed
+// ---------------------------------------------------------
+ELSIF bLoadRequestActive
+AND bLoadStarted
+AND NOT bBusyLoad
+AND NOT bLoadRequired
+AND bReadyProduction THEN
+
+    bLoadRequestActive := FALSE;
+    bLoadStartPulseActive := FALSE;
+    bLoadStarted := FALSE;
+
+    IF NOT stResult.bValid THEN
+        eState := E_ProcessEquipmentState.Ready;
+    END_IF
+
+
+// ---------------------------------------------------------
+// Post-Prime Load failed to start / complete
+// ---------------------------------------------------------
+ELSIF tonLoadStartTimeout.Q
+OR tonLoadCompleteTimeout.Q THEN
+
+    bLoadStartPending := FALSE;
+    bLoadRequestActive := FALSE;
+    bLoadStartPulseActive := FALSE;
+    bLoadStarted := FALSE;
+
+    eState := E_ProcessEquipmentState.Fault;
+    stResult.bValid := FALSE;
+
+
+// ---------------------------------------------------------
+// Post-Prime Load active
+// ---------------------------------------------------------
+ELSIF bLoadRequestActive
+AND bBusyLoad THEN
+
     eState := E_ProcessEquipmentState.Busy;
-ELSIF bWasBusy AND stCyclicIn.eStatusState = E_IvekStatusState.Idle AND stCyclicIn.udiFaultCode = 0 THEN
+
+
+// ---------------------------------------------------------
+// Fluidic / Prime failed to start
+// ---------------------------------------------------------
+ELSIF tonFluidicStartTimeout.Q THEN
+
+    bFluidicRequestActive := FALSE;
+    bFluidicStartPulseActive := FALSE;
+    bFluidicStarted := FALSE;
+    eState := E_ProcessEquipmentState.Fault;
+    stResult.bValid := FALSE;
+
+
+// ---------------------------------------------------------
+// Fluidic / Prime active
+// ---------------------------------------------------------
+ELSIF bFluidicRequestActive
+AND bBusyFluidic THEN
+
+    eState := E_ProcessEquipmentState.Busy;
+
+
+// ---------------------------------------------------------
+// Reference completed
+//
+// This path also covers a very fast reference where the PLC may not
+// observe BusyReference: ReferenceRequired clears and Production becomes
+// ready.
+// ---------------------------------------------------------
+ELSIF bReferenceRequestActive
+AND NOT bReferenceRequired
+AND bReadyProduction THEN
+
+    bReferenceRequestActive := FALSE;
+    bReferenceStartPulseActive := FALSE;
+    bReferenceStarted := FALSE;
+
+    IF NOT stResult.bValid THEN
+        eState := E_ProcessEquipmentState.Ready;
+    END_IF
+
+
+// ---------------------------------------------------------
+// Reference failed to start / failed to complete
+// ---------------------------------------------------------
+ELSIF tonReferenceStartTimeout.Q
+OR tonReferenceCompleteTimeout.Q THEN
+
+    bReferenceRequestActive := FALSE;
+    bReferenceStartPulseActive := FALSE;
+    bReferenceStarted := FALSE;
+    bReferenceTimeoutFault := TRUE;
+
+    eState := E_ProcessEquipmentState.Fault;
+
+    // This is an equipment recovery fault, not a production result.
+    stResult.bValid := FALSE;
+
+
+// ---------------------------------------------------------
+// Reference operation active
+// ---------------------------------------------------------
+ELSIF bReferenceRequestActive
+AND bBusyReference THEN
+
+    eState := E_ProcessEquipmentState.Busy;
+
+
+// ---------------------------------------------------------
+// Reference required / waiting for Engineer recovery
+// ---------------------------------------------------------
+ELSIF bReferenceRequired
+AND NOT bReferenceRequestActive THEN
+
+    // Communication is healthy, therefore Reference Required is not an
+    // equipment fault/offline condition. Keep the object recoverable and
+    // let the machine block AutoCycle / remain Stopped.
+    eState := E_ProcessEquipmentState.Initialising;
+
+
+// ---------------------------------------------------------
+// Initialising / communication recovery completed
+// ---------------------------------------------------------
+// Offline recovery may place the driver in Initialising before the IVEK has
+// reached ReadyProduction. Recover automatically as soon as the live device
+// becomes production-ready.
+ELSIF eState = E_ProcessEquipmentState.Initialising
+AND bReadyProduction
+AND NOT bReferenceRequired
+AND NOT bBusyAnyOperation
+AND NOT bProductionRequestActive
+AND NOT bReferenceRequestActive
+AND NOT bFluidicRequestActive
+AND NOT bLoadRequestActive
+AND NOT bLoadStartPending
+AND NOT bReferenceStartPending
+AND NOT bFluidicStartPending
+AND NOT bReferenceTimeoutFault THEN
+
+    stResult.bValid := FALSE;
+    eState := E_ProcessEquipmentState.Ready;
+
+
+// ---------------------------------------------------------
+// Production failed to start
+// ---------------------------------------------------------
+ELSIF tonProductionStartTimeout.Q THEN
+
+    bProductionRequestActive := FALSE;
+    bProductionStartPulseActive := FALSE;
+    bProductionStarted := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionSuccessSeen := FALSE;
+
+    eState := E_ProcessEquipmentState.Fault;
+
+    stResult.bValid := TRUE;
+    stResult.bPassed := FALSE;
+    stResult.eCode := E_ProcessResultCode.Fail;
+
+    stResult.udiFaultCode := stCyclicIn.udiFaultCode;
+    stResult.udiAlertCode := stCyclicIn.udiAlertCode;
+    stResult.usiRecipe := stCyclicIn.usiCurrentRecipe;
+
+
+// ---------------------------------------------------------
+// Production started but did not complete
+// ---------------------------------------------------------
+ELSIF tonProductionCompleteTimeout.Q THEN
+
+    bProductionRequestActive := FALSE;
+    bProductionStartPulseActive := FALSE;
+    bProductionStarted := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionSuccessSeen := FALSE;
+
+    eState := E_ProcessEquipmentState.Fault;
+
+    stResult.bValid := TRUE;
+    stResult.bPassed := FALSE;
+    stResult.eCode := E_ProcessResultCode.Fail;
+
+    stResult.udiFaultCode := stCyclicIn.udiFaultCode;
+    stResult.udiAlertCode := stCyclicIn.udiAlertCode;
+    stResult.usiRecipe := stCyclicIn.usiCurrentRecipe;
+
+
+// ---------------------------------------------------------
+// Successful Production completion
+//
+// SuccessPulse allows completion to be detected even if the
+// Production Busy state was too short to be observed.
+// ---------------------------------------------------------
+ELSIF bProductionRequestActive
+AND bProductionAckWasSeen
+AND NOT bBusyProduction
+AND bReadyProduction
+AND bSuccessLast THEN
+
+    bProductionRequestActive := FALSE;
+    bProductionStartPulseActive := FALSE;
+    bProductionStarted := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionSuccessSeen := FALSE;
+    bProductionAckWasSeen := FALSE;
+
     eState := E_ProcessEquipmentState.Completed;
+
     stResult.bValid := TRUE;
     stResult.bPassed := TRUE;
     stResult.eCode := E_ProcessResultCode.Pass;
+
+    stResult.udiFaultCode := 0;
     stResult.udiAlertCode := stCyclicIn.udiAlertCode;
     stResult.usiRecipe := stCyclicIn.usiCurrentRecipe;
-ELSIF stCyclicIn.eStatusState = E_IvekStatusState.Idle AND eState <> E_ProcessEquipmentState.Completed THEN
+
+
+// ---------------------------------------------------------
+// Production active
+// ---------------------------------------------------------
+ELSIF bBusyNow THEN
+
+    eState := E_ProcessEquipmentState.Busy;
+
+
+// ---------------------------------------------------------
+// Ready for next Production operation
+// ---------------------------------------------------------
+ELSIF bReadyProduction
+AND NOT bReferenceRequired
+AND NOT bReferenceRequestActive
+AND NOT bReferenceStartPending
+AND NOT bFluidicRequestActive
+AND NOT bFluidicStartPending
+AND NOT bReferenceTimeoutFault
+AND NOT bProductionRequestActive
+AND NOT stResult.bValid THEN
+
     eState := E_ProcessEquipmentState.Ready;
+
 END_IF
+
+
+// =========================================================
+// Diagnostic memory
+// =========================================================
 bWasBusy := bBusyNow;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DecodeStatusFlags" Id="{37161d9b-ec53-4dc8-85e5-9f5829e1d83e}">
+      <Declaration><![CDATA[METHOD PRIVATE DecodeStatusFlags
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bInitialized :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 0)) <> 0;
+
+bConfigured :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 1)) <> 0;
+
+bFaulted :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 2)) <> 0;
+
+bAlerted :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 3)) <> 0;
+
+bMotionDisabled :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 4)) <> 0;
+
+bReferenceRequired :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 5)) <> 0;
+
+bLoadRequired :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 6)) <> 0;
+
+bReadyIdle :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 8)) <> 0;
+
+bReadyProduction :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 9)) <> 0;
+
+bReadyFluidic :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 10)) <> 0;
+
+bReadyReference :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 11)) <> 0;
+
+bReadyLoad :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 12)) <> 0;
+
+bBusyRequired :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 15)) <> 0;
+
+bBusyAnyOperation :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 16)) <> 0;
+
+bBusyProduction :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 17)) <> 0;
+
+bBusyFluidic :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 18)) <> 0;
+
+bBusyReference :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 19)) <> 0;
+
+bBusyLoad :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 20)) <> 0;
+
+bChamberFull :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 25)) <> 0;
+
+bSuccessPulse :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 26)) <> 0;
+
+bSuccessLast :=
+    (stCyclicIn.udiStatusFlags AND SHL(UDINT#1, 27)) <> 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DecodeStatusFlagsExtended" Id="{545bdb0c-9545-479f-8b12-8447d5e4aff6}">
+      <Declaration><![CDATA[METHOD PRIVATE DecodeStatusFlagsExtended
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="DecodeStatusState" Id="{46fa6a08-418c-4831-9ae0-b9262ad78327}">
+      <Declaration><![CDATA[METHOD PRIVATE DecodeStatusState
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE stCyclicIn.usiStatusState OF
+
+    0:
+        eStatusState := E_IvekStatusState.Idle;
+
+    1:
+        eStatusState := E_IvekStatusState.Priming;
+
+    2:
+        eStatusState := E_IvekStatusState.Dispensing;
+
+    3:
+        eStatusState := E_IvekStatusState.Metering;
+
+    4:
+        eStatusState := E_IvekStatusState.DrawbackDwell;
+
+    5:
+        eStatusState := E_IvekStatusState.Drawback;
+
+    6:
+        eStatusState := E_IvekStatusState.Faulted;
+
+    7:
+        eStatusState := E_IvekStatusState.Referencing;
+
+    8:
+        eStatusState := E_IvekStatusState.Initialising;
+
+    9:
+        eStatusState := E_IvekStatusState.PreOpDwell;
+
+    10:
+        eStatusState := E_IvekStatusState.PostOpDwell;
+
+    22:
+        eStatusState := E_IvekStatusState.MotionLocked;
+
+    23:
+        eStatusState := E_IvekStatusState.NotConfigured;
+
+    26:
+        eStatusState := E_IvekStatusState.ClearingFault;
+
+    ELSE
+        eStatusState := E_IvekStatusState.NotConfigured;
+
+END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetResult" Id="{6c617372-4319-4105-8089-1c8db87cd044}">
@@ -109,12 +1103,21 @@ METHOD GetState : E_ProcessEquipmentState
         <ST><![CDATA[GetState := eState;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="GetStatusState" Id="{ab378d0d-66e2-414c-a9d3-e9651ac028fa}">
+      <Declaration><![CDATA[METHOD PUBLIC GetStatusState : E_IvekStatusState
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetStatusState := eStatusState;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="IsBusy" Id="{8a4a06a1-5909-44b1-857c-bfbe9bd61b7b}">
       <Declaration><![CDATA[{warning 'Add method implementation '}
 METHOD IsBusy : BOOL
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IsBusy := eState = E_ProcessEquipmentState.Busy OR eState = E_ProcessEquipmentState.Starting;]]></ST>
+        <ST><![CDATA[IsBusy := eState = E_ProcessEquipmentState.Busy;]]></ST>
       </Implementation>
     </Method>
     <Method Name="IsDone" Id="{22422bc0-0d5f-4507-9fc6-120c8b2058cc}">
@@ -130,7 +1133,32 @@ METHOD IsDone : BOOL
 METHOD IsFaulted : BOOL
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IsFaulted := eState = E_ProcessEquipmentState.Fault OR eState = E_ProcessEquipmentState.Offline;]]></ST>
+        <ST><![CDATA[// Communication loss is represented by Offline and is supervised separately
+// by bCommunicationOk / the machine communication event.
+// Only a real IVEK/internal driver fault shall be reported as equipment Fault.
+IsFaulted := eState = E_ProcessEquipmentState.Fault;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsFluidicActive" Id="{898446cf-3ecf-42cf-8ddc-8a8067b5c90d}">
+      <Declaration><![CDATA[METHOD PUBLIC IsFluidicActive : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// Post-Prime Load is part of the same maintenance fluid-path sequence.
+// Keeping this TRUE also keeps the selected reservoir pinch path open.
+IsFluidicActive :=
+    bFluidicStartPending
+    OR bFluidicRequestActive
+    OR bBusyFluidic
+    OR bLoadStartPending
+    OR bLoadRequestActive
+    OR bBusyLoad;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsFluidicReady" Id="{db2868b8-05f9-46e4-b3a7-f7746a937a84}">
+      <Declaration><![CDATA[METHOD PUBLIC IsFluidicReady : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsFluidicReady := bReadyFluidic AND NOT bBusyFluidic;]]></ST>
       </Implementation>
     </Method>
     <Method Name="IsReady" Id="{8da797f5-6f28-43ff-9f90-32f041bcee29}">
@@ -141,13 +1169,109 @@ METHOD IsReady : BOOL
         <ST><![CDATA[IsReady := eState = E_ProcessEquipmentState.Ready;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="IsReferenceActive" Id="{aaf85972-0866-45ef-a646-b21230000982}">
+      <Declaration><![CDATA[METHOD PUBLIC IsReferenceActive : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsReferenceActive := bReferenceRequestActive OR bBusyReference;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsReferenceRequired" Id="{7e2a7924-b26c-4d57-b3a4-d2522b9fd0d6}">
+      <Declaration><![CDATA[METHOD PUBLIC IsReferenceRequired : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsReferenceRequired := bReferenceRequired;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestPrime" Id="{84f64d43-2eca-4c12-8c95-e4d91b07fb11}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestPrime : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bCommunicationOk
+AND bMaintenancePermissive
+AND bReadyFluidic
+AND NOT bBusyAnyOperation
+AND NOT bReferenceRequired
+AND NOT bFluidicRequestActive
+AND NOT bFluidicStartPending THEN
+    bFluidicStartPending := TRUE;
+    RequestPrime := TRUE;
+ELSE
+    RequestPrime := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RequestReference" Id="{bd0ecbd4-bd63-4b81-8d18-a217978f8f4c}">
+      <Declaration><![CDATA[METHOD PUBLIC RequestReference : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF bCommunicationOk
+AND bMaintenancePermissive
+AND bReferenceRequired
+AND bReadyReference
+AND NOT bBusyAnyOperation
+AND NOT bReferenceRequestActive
+AND NOT bReferenceStartPending THEN
+    bReferenceStartPending := TRUE;
+    RequestReference := TRUE;
+ELSE
+    RequestReference := FALSE;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="RequestReset" Id="{29e8b202-0a45-4daf-99bc-b1cd932e589a}">
       <Declaration><![CDATA[{warning 'Add method implementation '}
 METHOD RequestReset
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[bResetPending := TRUE;
-stResult.bValid := FALSE;]]></ST>
+        <ST><![CDATA[// A reset after a normal completed cycle is an acknowledgement of
+// the consumed result, not a ClearFault command.
+IF eState = E_ProcessEquipmentState.Completed THEN
+
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+    stResult.eCode := E_ProcessResultCode.None;
+    stResult.udiFaultCode := 0;
+    stResult.udiAlertCode := 0;
+    stResult.usiRecipe := 0;
+
+    bProductionRequestActive := FALSE;
+    bProductionStartPulseActive := FALSE;
+    bProductionStarted := FALSE;
+    bProductionLeftReady := FALSE;
+    bProductionSuccessSeen := FALSE;
+
+    // Cyclic() will move the equipment back to Ready as soon as
+    // ReadyProduction is reported again.
+
+ELSE
+
+    // Clear an internal reference supervision timeout so Engineer
+    // reference recovery may be requested again.
+    bReferenceTimeoutFault := FALSE;
+    bReferenceStartPending := FALSE;
+    bReferenceStartPulseActive := FALSE;
+    bReferenceRequestActive := FALSE;
+    bReferenceStarted := FALSE;
+    bFluidicStartPending := FALSE;
+    bFluidicStartPulseActive := FALSE;
+    bFluidicRequestActive := FALSE;
+    bFluidicStarted := FALSE;
+
+    // Only issue the real IVEK ClearFault command when the device
+    // actually reports a fault/fault code.
+    IF bFaulted OR stCyclicIn.udiFaultCode <> 0 THEN
+        bResetPending := TRUE;
+    END_IF
+
+    stResult.bValid := FALSE;
+
+END_IF
+
+    // Diagnostic latches are intentionally cleared only on explicit Reset.
+    bStartCommandWasIssued := FALSE;
+    bProductionAckWasSeen := FALSE;
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="RequestStart" Id="{8cd77aa2-fac1-4034-8e11-0c1b95070903}">
@@ -168,7 +1292,11 @@ END_IF]]></ST>
 METHOD RequestStop
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[bStopPending := TRUE;]]></ST>
+        <ST><![CDATA[bStopPending := TRUE;
+    bProductionLeftReady := FALSE;
+    bReferenceStartPending := FALSE;
+    bFluidicStartPending := FALSE;
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetRecipe" Id="{e92ce7bd-5044-43bd-bc81-d09af2d49c4b}">

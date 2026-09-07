@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_PhysicalInputs" Id="{d4e9038a-638b-4b93-a8ec-1f818bc84700}">
     <Declaration><![CDATA[TYPE ST_PhysicalInputs :
@@ -82,6 +82,8 @@ STRUCT
     uiSiliconePressureRaw         : UINT;
     uiNozzlePressureRaw           : UINT;
     uiVacuumPressureRaw           : UINT;
+	uiExtractionAVacuumPressureRaw: UINT;
+	uiExtractionBVacuumPressureRaw: UINT;
 
 
 END_STRUCT

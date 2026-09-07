@@ -169,7 +169,7 @@
 ]
 </script>
 </div>
-<div id="IO_Region_18" data-tchmi-type="TcHmi.Controls.System.TcHmiRegion" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="260" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="1100" data-tchmi-width-unit="px" data-tchmi-target-content="%i%Settings_Screen%/i%">
+<div id="IO_Region_18" data-tchmi-type="TcHmi.Controls.System.TcHmiRegion" data-tchmi-height="480" data-tchmi-height-unit="px" data-tchmi-left="260" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="1080" data-tchmi-width-unit="px" data-tchmi-target-content="%i%Settings_Screen%/i%">
 
 
 

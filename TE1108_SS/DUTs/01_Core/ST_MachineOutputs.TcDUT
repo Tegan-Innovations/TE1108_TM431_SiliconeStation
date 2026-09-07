@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_MachineOutputs" Id="{56e2037d-140e-4d4a-a0fb-f9a26bcc4c64}">
     <Declaration><![CDATA[TYPE ST_MachineOutputs :
@@ -33,6 +33,13 @@ STRUCT
     bRotaryGripperClose                    : BOOL;
     bRotaryGripperRotationPick0            : BOOL;
     bRotaryGripperRotationPlace180         : BOOL;
+	
+	// Silicone supply
+	bVacuumPumpEnable      				   : BOOL;
+	bVacuumAirSolenoid1    				   : BOOL; // TRUE = AIR, FALSE = VACUUM
+	bVacuumAirSolenoid2    				   : BOOL; // TRUE = AIR, FALSE = VACUUM
+	bSiliconePinchValve1   				   : BOOL;
+	bSiliconePinchValve2   				   : BOOL;
 
     bMainDoorLockRequest                   : BOOL;
     bPuckLockerPinUp                       : BOOL;

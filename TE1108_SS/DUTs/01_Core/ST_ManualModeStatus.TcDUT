@@ -12,9 +12,17 @@ STRUCT
     bSiliconeSupportPermissive : BOOL;
     bDoorUnlockPermissive      : BOOL;
     bEquipmentStartPermissive  : BOOL;
+
+    // Manual Assembly / Flipping Station
+    bAssemblyStationStartPermissive : BOOL;
+
     bCommandRejected           : BOOL;
     sMessage                   : STRING(255);
 	
+
+    // Manual Silicone Station
+    bSiliconeStationStartPermissive     : BOOL;
+
 END_STRUCT
 END_TYPE]]></Declaration>
   </DUT>

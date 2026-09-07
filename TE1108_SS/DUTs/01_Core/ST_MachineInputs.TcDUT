@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_MachineInputs" Id="{2ac5c147-5176-4b29-b405-f833d8595045}">
     <Declaration><![CDATA[TYPE ST_MachineInputs :
@@ -15,8 +15,6 @@ STRUCT
     bUp24VPowerSupplyOk              : BOOL;
     bUs24VPowerSupplyOk              : BOOL;
     bIvekHeaterControllerAlarm       : BOOL;
-    bSiliconeMinimumLevelSensor1     : BOOL;
-    bSiliconeMinimumLevelSensor2     : BOOL;
     bMainDoorDiagnosticOk            : BOOL;
     bMs6FeedbackOk                   : BOOL;
     bAirExhausted                    : BOOL;
@@ -50,6 +48,8 @@ STRUCT
     bSiliconeSupportRetracted        : BOOL;
 	bAssemblySupportExtended  		 : BOOL;
 	bAssemblySupportRetracted 		 : BOOL;
+	
+	
 
     // Flipping / assembly station feedback
     bTransferVerticalMiniSlideRetracted : BOOL;
@@ -72,6 +72,21 @@ STRUCT
 	bLeftFlapChannel2             	 : BOOL;
 	bRightFlapChannel1            	 : BOOL;
 	bRightFlapChannel2            	 : BOOL;
+	
+	// =========================================================
+	// SILICONE SUPPLY INPUTS
+	// =========================================================
+	
+	// Reservoir level sensors
+	// TRUE = silicone present / level OK
+	// FALSE = minimum level reached
+	bSiliconeMinimumLevel1      : BOOL;
+	bSiliconeMinimumLevel2      : BOOL;
+	
+	// Analog values converted to engineering units
+	rSiliconePressureBar        : REAL;
+	rNozzlePressureBar          : REAL;
+	rVacuumEngineering   		: REAL;
 	
 END_STRUCT
 END_TYPE]]></Declaration>

@@ -15,6 +15,8 @@ VAR
     rtEquipmentStop         : R_TRIG;
     rtEquipmentReset        : R_TRIG;
     rtDoorUnlock            : R_TRIG;
+    rtAssemblyStationStart  : R_TRIG;
+    rtSiliconeStationStart   : R_TRIG;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -65,6 +67,14 @@ rtDoorUnlock(
     CLK := stCommand.bManualMainDoorUnlock
 );
 
+rtAssemblyStationStart(
+    CLK := stCommand.bManualAssemblyStart
+);
+
+rtSiliconeStationStart(
+    CLK := stCommand.bManualSiliconeStart
+);
+
 
 // =========================================================
 // CYCLIC DEFAULTS
@@ -111,9 +121,11 @@ stStatusInternal.bIndexPermissive :=
 
 stStatusInternal.bSiliconeSupportPermissive :=
     bEnable
+    AND stCommand.bNestCylindersManualEnable
     AND stInputs.bSafetyOk
     AND NOT stInputs.bIndexBusy
-    AND NOT stInputs.bEquipmentBusy;
+    AND NOT stInputs.bEquipmentBusy
+    AND NOT stInputs.bSiliconeProcessBusy;
 
 
 // =========================================================
@@ -122,9 +134,51 @@ stStatusInternal.bSiliconeSupportPermissive :=
 
 stStatusInternal.bAssemblySupportPermissive :=
     bEnable
+    AND stCommand.bNestCylindersManualEnable
     AND stInputs.bSafetyOk
     AND NOT stInputs.bIndexBusy
     AND NOT stInputs.bEquipmentBusy;
+
+// =========================================================
+// MANUAL SILICONE STATION PERMISSIVE
+// =========================================================
+stStatusInternal.bSiliconeStationStartPermissive :=
+    bEnable
+    AND stCommand.bSiliconeStationManualEnable
+    AND stInputs.bSafetyOk
+    AND stInputs.bProcessSafetyPermitted
+    AND stInputs.bIndexReady
+    AND stInputs.bIndexLocked
+    AND NOT stInputs.bIndexBusy
+    AND stInputs.bSiliconeSupportExtended
+    AND stInputs.bSiliconeNestPartPresent
+    AND NOT stInputs.bSiliconeNestAlreadyProcessed
+    AND stInputs.bSiliconeProcessReady
+    AND NOT stInputs.bSiliconeProcessBusy
+    AND NOT stInputs.bSiliconeProcessFaulted;
+
+// =========================================================
+// ASSEMBLY / FLIPPING STATION PERMISSIVE
+// =========================================================
+// Manual assembly requires a complete part pair at the physical Assembly
+// Station and the Assembly Support already confirmed Extended.
+// Siliconized status is published to the operator but is deliberately not
+// used as a hard manual interlock here.
+stStatusInternal.bAssemblyStationStartPermissive :=
+    bEnable
+    AND stCommand.bAssemblyStationManualEnable
+    AND stInputs.bSafetyOk
+    AND stInputs.bProcessSafetyPermitted
+    AND stInputs.bIndexReady
+    AND stInputs.bIndexLocked
+    AND NOT stInputs.bIndexBusy
+    AND stInputs.bAssemblySupportExtended
+    AND stInputs.bAssemblyNestPartPresent
+    AND NOT stInputs.bAssemblyNestAlreadyAssembled
+    AND stInputs.bAssemblyStationReady
+    AND NOT stInputs.bAssemblyStationBusy
+    AND NOT stInputs.bAssemblyStationFaulted;
+
 // =========================================================
 // MAIN DOOR PERMISSIVE
 // =========================================================
@@ -191,18 +245,29 @@ IF bStopRequest THEN
     stRequestsInternal.bEquipmentReset 				:= FALSE;
     stRequestsInternal.bSiliconeSupportExtend 		:= FALSE;
     stRequestsInternal.bAssemblySupportExtend 		:= FALSE;
+    stRequestsInternal.bAssemblyStationStart         := FALSE;
+    stRequestsInternal.bSiliconeProcessStart          := FALSE;
     // -------------------------------------------------
     // Stop process equipment
     // -------------------------------------------------
     stRequestsInternal.bEquipmentStop :=stInputs.bEquipmentBusy;
+    stRequestsInternal.bAssemblyStationStop := stInputs.bAssemblyStationBusy;
+    stRequestsInternal.bSiliconeProcessStop := stInputs.bSiliconeProcessBusy;
     // -------------------------------------------------
     // Return Silicone Support to standard position
     // -------------------------------------------------
-    stRequestsInternal.bSiliconeSupportRetract :=NOT stInputs.bSiliconeSupportRetracted;
+    stRequestsInternal.bSiliconeSupportRetract :=
+        NOT stInputs.bSiliconeSupportRetracted
+        AND NOT stInputs.bSiliconeProcessBusy;
     // -------------------------------------------------
     // Return Assembly Support to standard position
     // -------------------------------------------------
-    stRequestsInternal.bAssemblySupportRetract :=NOT stInputs.bAssemblySupportRetracted;
+    // Never retract the Assembly Support underneath an active flipping
+    // sequence. FB_AssemblyStation also supervises this condition internally.
+    stRequestsInternal.bAssemblySupportRetract :=
+        NOT stInputs.bAssemblySupportRetracted
+        AND NOT stInputs.bAssemblyStationBusy;
+
     // -----------------------------------------------------
     // Safety unavailable
     // -----------------------------------------------------
@@ -347,9 +412,41 @@ IF bStopRequest THEN
 
 
         END_IF
+        // =================================================
+        // MANUAL SILICONE STATION
+        // =================================================
+        IF rtSiliconeStationStart.Q THEN
+
+            IF stStatusInternal.bSiliconeStationStartPermissive THEN
+                stRequestsInternal.bSiliconeProcessStart := TRUE;
+                eMessage := E_ManualModeMessage.EquipmentStarting;
+            ELSE
+                stStatusInternal.bCommandRejected := TRUE;
+                eMessage := E_ManualModeMessage.EquipmentCommandNotPermitted;
+            END_IF
+
+        END_IF
+
+
+
+        // =================================================
+        // ASSEMBLY / FLIPPING STATION
+        // =================================================
+        IF rtAssemblyStationStart.Q THEN
+
+            IF stStatusInternal.bAssemblyStationStartPermissive THEN
+                stRequestsInternal.bAssemblyStationStart := TRUE;
+                eMessage := E_ManualModeMessage.AssemblyStationStarting;
+            ELSE
+                stStatusInternal.bCommandRejected := TRUE;
+                eMessage := E_ManualModeMessage.AssemblyStationCommandNotPermitted;
+            END_IF
+
+        END_IF
 
         // =================================================
         // PROCESS EQUIPMENT START
+        // =================================================
         // =================================================
 
         IF rtEquipmentStart.Q THEN
@@ -414,6 +511,10 @@ IF bStopRequest THEN
             OR stRequestsInternal.bSiliconeSupportRetract
             OR stRequestsInternal.bAssemblySupportExtend
             OR stRequestsInternal.bAssemblySupportRetract
+            OR stRequestsInternal.bAssemblyStationStart
+            OR stRequestsInternal.bAssemblyStationStop
+            OR stRequestsInternal.bSiliconeProcessStart
+            OR stRequestsInternal.bSiliconeProcessStop
         THEN
 
             eState := E_ManualModeState.CommandActive;
@@ -447,6 +548,8 @@ stStatusInternal.bActive :=
 
 stStatusInternal.bSafeToExit := NOT stInputs.bIndexBusy
     AND NOT stInputs.bEquipmentBusy
+    AND NOT stInputs.bSiliconeProcessBusy
+    AND NOT stInputs.bAssemblyStationBusy
     AND stInputs.bSiliconeSupportRetracted
     AND stInputs.bAssemblySupportRetracted;
 
@@ -486,6 +589,12 @@ stRequestsInternal.bSiliconeSupportExtend 		:= FALSE;
 stRequestsInternal.bSiliconeSupportRetract 		:= FALSE;
 stRequestsInternal.bAssemblySupportExtend 		:= FALSE;
 stRequestsInternal.bAssemblySupportRetract 		:= FALSE;
+
+stRequestsInternal.bAssemblyStationStart        := FALSE;
+stRequestsInternal.bAssemblyStationStop         := FALSE;
+
+stRequestsInternal.bSiliconeProcessStart        := FALSE;
+stRequestsInternal.bSiliconeProcessStop         := FALSE;
 
 stRequestsInternal.bEquipmentStart 				:= FALSE;
 stRequestsInternal.bEquipmentStop 				:= FALSE;

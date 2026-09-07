@@ -28,6 +28,13 @@ VAR
     fbSimulatedEquipment        : FB_SimulatedProcessEquipment;
     ipEquipment                 : I_ProcessEquipment;
 
+	// =====================================================
+    // SILICONE SUPPLY 
+    // =====================================================
+	fbSiliconeSupply       : FB_SiliconeSupplySystem;
+	stSiliconeSupplyStatus : ST_SiliconeSupplyStatus;
+	stSiliconeSupplyConfig : ST_SiliconeSupplyConfig;
+	
     // =====================================================
     // SUPPORT COMPONENTS
     // =====================================================
@@ -109,6 +116,8 @@ VAR
     // INDEX COMMAND / FEEDBACK
     // =====================================================
     bManualIndexRequestAccepted             : BOOL;
+    bManualAssemblyCycleActive                : BOOL;
+    bManualSiliconeCycleActive                 : BOOL;
     bIndexRequestAcceptedFeedback           : BOOL;
     bIndexRecoveryRequestAcceptedFeedback   : BOOL;
 
@@ -121,6 +130,16 @@ VAR
     bProcessStartPulse            : BOOL;
     bProcessReady                 : BOOL;
     bResultStoredFeedback         : BOOL;
+    bIvekOperationPermissive      : BOOL;
+    bIvekMaintenancePermissive    : BOOL;
+    bIvekOperationalHealthy       : BOOL;
+    bIvekAutoCycleReady           : BOOL;
+    bIvekUnexpectedNotReady       : BOOL;
+    tonIvekInitialisingRecovery   : TON;
+    tonIvekReferenceStable        : TON;
+    tonIvekUnexpectedNotReady     : TON;
+    tonIvekCommunicationStop      : TON;
+    tonIvekReferenceStop          : TON;
 
     bProcExtend                   : BOOL;
     bProcRetract                  : BOOL;
@@ -303,8 +322,55 @@ IF fbResetTrigger.Q THEN
     fbAssemblyStation.RequestReset();
 END_IF
 
-// Execute Silicone process once per PLC scan.
-fbSiliconeProcess.Cyclic();
+fbSiliconeSupply.Cyclic(
+    bLevel1Ok := stInputs.bSiliconeMinimumLevel1,
+    bLevel2Ok := stInputs.bSiliconeMinimumLevel2,
+    rSiliconePressureBar := stInputs.rSiliconePressureBar,
+    rNozzlePressureBar := stInputs.rNozzlePressureBar,
+    rVacuumEngineering := stInputs.rVacuumEngineering,
+
+    stConfig := GVL_Config.stMachine.stSiliconeSupply,
+
+    bCmdSelectReservoir1 := GVL_SiliconeSupply_Interface.bCmdSelectReservoir1,
+    bCmdSelectReservoir2 := GVL_SiliconeSupply_Interface.bCmdSelectReservoir2,
+    bCmdStartDegassing1 := GVL_SiliconeSupply_Interface.bCmdStartDegassing1,
+    bCmdStartDegassing2 := GVL_SiliconeSupply_Interface.bCmdStartDegassing2,
+    bCmdCancelDegassing := GVL_SiliconeSupply_Interface.bCmdCancelDegassing,
+    bManualSelectionAllowed := eMachineState = E_MachineState.Stopped,
+
+    bDispenseActive := fbSiliconeProcess.IsBusy() OR fbIvek.IsFluidicActive(),
+    bDispenseValveRequest := fbSiliconeProcess.GetPinchValveRequest() OR fbIvek.IsFluidicActive(),
+    bImmediateFault := eMachineState = E_MachineState.Fault,
+
+    stPersistent := GVL_Persistent.stSiliconeSupply,
+
+    bVacuumPump => stOutputsInternal.bVacuumPumpEnable,
+    bVacuumToAir1 => stOutputsInternal.bVacuumAirSolenoid1,
+    bVacuumToAir2 => stOutputsInternal.bVacuumAirSolenoid2,
+    bPinchValve1 => stOutputsInternal.bSiliconePinchValve1,
+    bPinchValve2 => stOutputsInternal.bSiliconePinchValve2
+);
+
+stSiliconeSupplyStatus := fbSiliconeSupply.GetStatus();
+GVL_SiliconeSupply_Interface.stStatus := stSiliconeSupplyStatus;
+stStatus.stSiliconeSupply := stSiliconeSupplyStatus;
+
+IF fbSiliconeSupply.HasStopRequest() THEN
+    bStopRequested := TRUE;
+END_IF
+
+IF eMachineState = E_MachineState.AutoCycle
+AND stSiliconeSupplyStatus.bReservoirSelectionRequired THEN
+    bStopRequested := TRUE;
+END_IF
+
+// Loss of IVEK reference is a recoverable stop condition, not an Immediate
+// Fault. Stop the active machine and require Engineer Reference in Settings.
+IF fbIvek.IsReferenceRequired()
+AND (eMachineState = E_MachineState.AutoCycle OR eMachineState = E_MachineState.Manual) THEN
+    bStopRequested := TRUE;
+END_IF
+
 // The Assembly Station is executed with its physical I/O in the component section below.
 
 bProcessStartPulse := FALSE;
@@ -346,25 +412,186 @@ END_IF
 
 
 // =========================================================
-// PROCESS EQUIPMENT CONFIGURATION
+// PROCESS EQUIPMENT CONFIGURATION / CYCLIC EXECUTION
 // =========================================================
 
-// Configure process equipment once. Simulation is the default until the IVEK is available.
+// Configure the real IVEK process equipment once.
 IF NOT bConfigured THEN
-    IF stConfig.bUseProcessSimulation THEN ipEquipment := fbSimulatedEquipment; ELSE ipEquipment := fbIvek; END_IF
-    fbProcessStation.Configure(ipNewEquipment := ipEquipment);
+
+    ipEquipment := fbIvek;
+
+    fbProcessStation.Configure(
+        ipNewEquipment := ipEquipment
+    );
+
     bConfigured := TRUE;
+
 END_IF
 
+
+// ---------------------------------------------------------
+// IVEK machine-level operation permissive
+// ---------------------------------------------------------
+// Runtime motion is allowed only while:
+// - EtherNet/IP communication is healthy;
+// - process safety is permitted;
+// - machine air is validated;
+// - the machine is in AutoCycle or Manual;
+// - the machine is not in Fault.
+//
+// FB_IvekDigiSpense4000 performs the controlled Stop-before-
+// MotionDisable behaviour if this permissive is removed while
+// Production is active.
+bIvekOperationPermissive :=
+    bIvekCommsOk
+    AND stInputs.stSafety.bProcessSafetyPermitted
+    AND GVL_Safety.bAirSupplySafe
+    AND eMachineState <> E_MachineState.Fault
+    AND (
+        eMachineState = E_MachineState.Initialising
+        OR eMachineState = E_MachineState.ReadyToStart
+        OR eMachineState = E_MachineState.AutoCycle
+        OR eMachineState = E_MachineState.Manual
+    );
+
+// Engineer Settings operations are only permitted while Stopped with the
+// process safety circuit and pneumatic supply healthy.
+bIvekMaintenancePermissive :=
+    bIvekCommsOk
+    AND (eMachineState = E_MachineState.Stopped)
+    AND stInputs.stSafety.bProcessSafetyPermitted
+    AND GVL_Safety.bAirSupplySafe
+    AND stInputs.bMainDoorClosed;
+
+
+// Always execute the real IVEK object for communication diagnostics,
+// even while process simulation is selected.
 fbIvek.stCyclicIn := stIvekInput;
 fbIvek.bCommunicationOk := bIvekCommsOk;
-IF stCommand.usiRecipeRequest <> 0 THEN ipEquipment.SetRecipe(stCommand.usiRecipeRequest); END_IF
-IF stConfig.bUseProcessSimulation THEN
-    IF stCommand.bSimulateProcessFault THEN fbSimulatedEquipment.SetSimulationResult(bPass := FALSE, bFault := TRUE);
-    ELSIF stCommand.bSimulateProcessFail THEN fbSimulatedEquipment.SetSimulationResult(bPass := FALSE, bFault := FALSE);
-    ELSIF stCommand.bSimulateProcessPass THEN fbSimulatedEquipment.SetSimulationResult(bPass := TRUE, bFault := FALSE);
-    END_IF
+fbIvek.bOperationPermissive := bIvekOperationPermissive;
+fbIvek.bSystemInitialising := (eMachineState = E_MachineState.Initialising);
+fbIvek.bMaintenancePermissive := bIvekMaintenancePermissive;
+fbIvek.Cyclic();
+
+// =========================================================
+// IVEK OPERATIONAL INTERLOCK
+// =========================================================
+// ReadyProduction is expected to drop during a valid dispense, therefore
+// permanent health is evaluated separately from start readiness.
+bIvekOperationalHealthy :=
+    bIvekCommsOk
+    AND NOT fbIvek.IsFaulted()
+    AND NOT fbIvek.IsReferenceRequired();
+
+bIvekAutoCycleReady :=
+    bIvekOperationalHealthy
+    AND fbIvek.bReadyProduction
+    AND NOT fbIvek.IsFluidicActive()
+    AND NOT fbIvek.IsReferenceActive();
+
+// ReadyProduction=FALSE is abnormal only while the process is idle.
+// This avoids treating a normal dispense as "not ready".
+bIvekUnexpectedNotReady :=
+    bIvekOperationalHealthy
+    AND (eMachineState <> E_MachineState.Initialising)
+    AND NOT fbIvek.bReadyProduction
+    AND NOT fbIvek.IsBusy()
+    AND NOT fbSiliconeProcess.IsBusy()
+    AND NOT fbIvek.IsFluidicActive()
+    AND NOT fbIvek.IsReferenceActive();
+
+// ReadyProduction can briefly drop around a legitimate Production transition.
+// Do not stop the whole machine on a one-scan / short transient.
+// Communication loss, IVEK Fault and Reference Required remain immediate
+// operational-stop conditions through bIvekOperationalHealthy.
+// Transient IVEK conditions must not stop the machine immediately.
+// Actual IVEK faults remain immediate; communication, reference-required
+// and generic not-ready are debounced to tolerate short status gaps.
+tonIvekUnexpectedNotReady(
+    IN := bIvekUnexpectedNotReady,
+    PT := T#3S
+);
+
+tonIvekCommunicationStop(
+    IN := NOT bIvekCommsOk
+        AND (
+            eMachineState = E_MachineState.ReadyToStart
+            OR eMachineState = E_MachineState.AutoCycle
+            OR eMachineState = E_MachineState.Manual
+        ),
+    PT := T#2S
+);
+
+tonIvekReferenceStop(
+    IN := bIvekCommsOk
+        AND fbIvek.IsReferenceRequired()
+        AND (
+            eMachineState = E_MachineState.ReadyToStart
+            OR eMachineState = E_MachineState.AutoCycle
+            OR eMachineState = E_MachineState.Manual
+        ),
+    PT := T#2S
+);
+
+// Engineer Settings commands. HMI page access is Engineer-only; PLC also
+// enforces Stopped + safety/air conditions before the FB accepts motion.
+IF stCommand.bIvekMaintenanceStop THEN
+    fbIvek.RequestStop();
 END_IF
+
+IF stCommand.bIvekReference THEN
+    fbIvek.RequestReference();
+END_IF
+
+IF stCommand.bIvekPrime
+AND stSiliconeSupplyStatus.bSelectedReservoirReady THEN
+    fbIvek.RequestPrime();
+END_IF
+
+
+// Process simulation removed from runtime path. The real IVEK is always used.
+
+
+IF stCommand.usiRecipeRequest <> 0 THEN
+    ipEquipment.SetRecipe(stCommand.usiRecipeRequest);
+END_IF
+
+
+// =========================================================
+// SILICONE PROCESS COORDINATOR
+// =========================================================
+// Execute exactly once per PLC scan, after the selected process
+// equipment has updated its status for this scan.
+fbSiliconeProcess.Cyclic(
+    bSupplyReady := fbSiliconeSupply.IsReadyForDispense(),
+    bEquipmentReady := fbIvek.IsReady(),
+    bEquipmentBusy := fbIvek.IsBusy(),
+    bEquipmentDone := fbIvek.IsDone(),
+    bEquipmentFaulted := fbIvek.IsFaulted(),
+    stEquipmentResult := fbIvek.GetResult(),
+    tPinchSettlingDelay := GVL_Config.stMachine.stSiliconeSupply.tPinchValveSettlingDelay,
+    tEquipmentStartTimeout := GVL_Config.stMachine.stSiliconeSupply.tIvekStartTimeout,
+    tEquipmentCompleteTimeout := GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout
+);
+
+
+// The coordinator generates one-scan equipment requests.
+// The equipment object latches these requests and executes them
+// on its next Cyclic() call.
+IF fbSiliconeProcess.GetEquipmentStopRequest() THEN
+    fbIvek.RequestStop();
+END_IF
+
+IF fbSiliconeProcess.GetEquipmentResetRequest() THEN
+    fbIvek.RequestReset();
+END_IF
+
+IF fbSiliconeProcess.GetEquipmentStartRequest() THEN
+    fbIvek.RequestStart();
+END_IF
+
+
+stStatus.eIvekStatusState := fbIvek.GetStatusState();
 
 // =========================================================
 // NEST MANAGEMENT
@@ -386,6 +613,27 @@ fbNestManager.Cyclic(
 stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
 stSiliconeNest := fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
 stAssemblyNest := fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
+
+// =========================================================
+// MANUAL MODE - NEW PART / NEST RESULT RESET
+// =========================================================
+// A newly loaded part in Manual mode starts a new process history for
+// the physical nest. Clear Silicone / Assembly / final results left by
+// the previous part.
+//
+// AutoCycle keeps its existing PASS/FAIL disposition-based clear logic.
+IF (eMachineState = E_MachineState.Manual)
+AND stOperatorNest.bPartLoadedPulse THEN
+
+    fbNestManager.ClearOperatorNest(
+        ePosition := stConfig.eOperatorPosition
+    );
+
+    // Refresh the local snapshot after clearing the internal nest data.
+    stOperatorNest :=
+        fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
+
+END_IF
 
 // =========================================================
 // RESET CURRENT NEST STATISTICS
@@ -653,10 +901,27 @@ stManualModeInputs.bAssemblySupportRetracted 		:=stInputs.bAssemblySupportRetrac
 
 
 stManualModeInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
-stManualModeInputs.bEquipmentReady := ipEquipment.IsReady();
-stManualModeInputs.bEquipmentBusy := ipEquipment.IsBusy();
-stManualModeInputs.bEquipmentFaulted := ipEquipment.IsFaulted();
+stManualModeInputs.bEquipmentReady := fbIvek.IsReady();
+stManualModeInputs.bEquipmentBusy := fbIvek.IsBusy();
+stManualModeInputs.bEquipmentFaulted := fbIvek.IsFaulted();
+
+stManualModeInputs.bSiliconeProcessReady := fbSiliconeProcess.IsReady();
+stManualModeInputs.bSiliconeProcessBusy := fbSiliconeProcess.IsBusy();
+stManualModeInputs.bSiliconeProcessFaulted := fbSiliconeProcess.IsFaulted();
+stManualModeInputs.bSiliconeNestPartPresent := stSiliconeNest.bPartComplete;
+stManualModeInputs.bSiliconeNestAlreadyProcessed :=
+    stSiliconeNest.stSiliconeResult.bValid;
+
 stManualModeInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
+stManualModeInputs.bAssemblyStationReady := fbAssemblyStation.IsReady();
+stManualModeInputs.bAssemblyStationBusy := fbAssemblyStation.IsBusy();
+stManualModeInputs.bAssemblyStationFaulted := fbAssemblyStation.IsFaulted();
+stManualModeInputs.bAssemblyNestPartPresent := stAssemblyNest.bPartComplete;
+stManualModeInputs.bAssemblyNestSiliconized :=
+    stAssemblyNest.stSiliconeResult.bValid
+    AND stAssemblyNest.stSiliconeResult.bPassed;
+stManualModeInputs.bAssemblyNestAlreadyAssembled :=
+    stAssemblyNest.stAssemblyResult.bValid;
 
 fbManualMode.Cyclic(
     bEnable := eMachineState = E_MachineState.Manual,
@@ -758,7 +1023,7 @@ CASE eMachineState OF
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 	
-		ipEquipment.RequestStop();
+		fbIvek.RequestStop();
 	
 		// -----------------------------------------------------
 		// LATCH RESET REQUEST
@@ -774,7 +1039,7 @@ CASE eMachineState OF
 			fbAssemblySupportCylinder.Reset();
             fbAssemblyStation.Reset();
 	
-			ipEquipment.RequestReset();
+			fbIvek.RequestReset();
 	
 			bInitialisationTimeoutFault := FALSE;
 			bStoppingTimeoutFault := FALSE;
@@ -810,7 +1075,7 @@ CASE eMachineState OF
 			PT := stConfig.tStoppingTimeout
 		);
 	
-		ipEquipment.RequestStop();
+		fbIvek.RequestStop();
 	
 		stIndexStatus := fbIndex.GetStatus();
 	
@@ -873,7 +1138,7 @@ CASE eMachineState OF
 		IF blogoutHMI THEN
 				bStopRequested := TRUE;
 		ELSE
-		//ipEquipment.RequestStop();
+		//fbIvek.RequestStop();
 
 			// Air may remain enabled after returning from an active machine state,
 			// provided that the main door remains closed. Opening the door removes
@@ -884,7 +1149,11 @@ CASE eMachineState OF
 		
 			IF NOT GVL_HMI.bIvekSettingsInterlock THEN
 		
-				IF stCommand.bReset AND stInputs.stSafety.bSafetyOk THEN
+				IF stCommand.bReset
+                    AND stInputs.stSafety.bSafetyOk
+                    AND NOT fbIvek.IsFluidicActive()
+                    AND NOT fbIvek.IsReferenceActive()
+                THEN
 					eMachineState := E_MachineState.Initialising;
 				END_IF
 				
@@ -1057,24 +1326,90 @@ CASE eMachineState OF
 		// INITIALISATION COMPLETE
 		// =========================================================
 	
-		bInitialisationComplete 	:=stPermissives.bInitialisationAllowed;
-	
-		IF bInitialisationComplete THEN
-	
-			tonInitialising(IN := FALSE);
-			eCycleState := E_CycleState.Disabled;
-			eMachineState := E_MachineState.ReadyToStart;
-	
-		ELSIF tonInitialising.Q THEN
-	
-			bInitialisationTimeoutFault := TRUE;
-			eMachineState := E_MachineState.Fault;
-	
-		END_IF
-	
- 	
-	E_MachineState.ReadyToStart:
+		bInitialisationComplete := stPermissives.bInitialisationAllowed;
+
+// =========================================================
+// IVEK RECOVERY DURING INITIALISING
+// =========================================================
+// After an Immediate Fault the IVEK communication/status can take a short
+// time to recover. Do not bounce immediately back to Stopped just because
+// communication / fault / ReadyProduction are still transient.
+//
+// Reference Required is treated separately: it must be stable for 500 ms
+// before Initialising is aborted to Stopped, because the bit can briefly
+// appear while the IVEK is recovering.
+//
+// Communication / IVEK fault / Production Ready are allowed to recover for
+// up to 5 seconds. If they recover, Initialising proceeds directly to
+// ReadyToStart. If not, the machine returns to Stopped with the corresponding
+// persistent IVEK diagnostic remaining active.
+// =========================================================
+
+tonIvekReferenceStable(
+    IN := fbIvek.IsReferenceRequired(),
+    PT := T#500MS
+);
+
+tonIvekInitialisingRecovery(
+    IN := bInitialisationComplete
+        AND NOT bIvekAutoCycleReady
+        AND NOT tonIvekReferenceStable.Q
+        // LoadRequired is actively recoverable during System Initialising.
+        // Do not abort after 5 s while the Load recovery is pending/running;
+        // the normal machine Initialising timeout remains the final safeguard.
+        AND NOT fbIvek.bLoadRequired
+        AND NOT fbIvek.bLoadStartPending
+        AND NOT fbIvek.bLoadRequestActive
+        AND NOT fbIvek.bBusyLoad,
+    PT := T#5S
+);
+
+IF bInitialisationComplete
+    AND bIvekAutoCycleReady
+THEN
+    tonIvekInitialisingRecovery(IN := FALSE);
+    tonIvekReferenceStable(IN := FALSE);
+    tonInitialising(IN := FALSE);
+    eCycleState := E_CycleState.Disabled;
+    eMachineState := E_MachineState.ReadyToStart;
+
+ELSIF bInitialisationComplete
+    AND tonIvekReferenceStable.Q
+THEN
+    // Reference Required needs Engineer action.
+    tonIvekInitialisingRecovery(IN := FALSE);
+    tonInitialising(IN := FALSE);
+    eCycleState := E_CycleState.Disabled;
+    eMachineState := E_MachineState.Stopped;
+
+ELSIF bInitialisationComplete
+    AND tonIvekInitialisingRecovery.Q
+THEN
+    // Communication / IVEK fault / Not Ready did not recover in time.
+    tonInitialising(IN := FALSE);
+    eCycleState := E_CycleState.Disabled;
+    eMachineState := E_MachineState.Stopped;
+
+ELSIF tonInitialising.Q THEN
+    bInitialisationTimeoutFault := TRUE;
+    eMachineState := E_MachineState.Fault;
+END_IF
+
+E_MachineState.ReadyToStart:
 		
+
+        // ReadyToStart is only valid while the IVEK can accept Production.
+        // Permanent IVEK health problems return immediately to Stopped.
+        // A short ReadyProduction transient is debounced by the same timer
+        // used in Manual/AutoCycle.
+        IF fbIvek.IsFaulted()
+            OR tonIvekCommunicationStop.Q
+            OR tonIvekReferenceStop.Q
+            OR tonIvekUnexpectedNotReady.Q
+        THEN
+            eMachineState := E_MachineState.Stopped;
+        END_IF
+
 		eMode_LED_Start := E_LEDs_Mode.FLASHING;
 		eMode_LED_Reset := E_LEDs_Mode.OFF;
 		eMode_LED_PASS  := E_LEDs_Mode.OFF;
@@ -1100,8 +1435,10 @@ CASE eMachineState OF
 			eMachineState := E_MachineState.Manual;
 	
 		ELSIF stCommand.bStart
-			AND fbMainDoorLock.IsReadyForAutomatic()
-		THEN
+            AND fbMainDoorLock.IsReadyForAutomatic()
+            AND stSiliconeSupplyStatus.bSelectedReservoirReady
+            AND bIvekAutoCycleReady
+        THEN
 	
 			eCycleState := E_CycleState.Disabled;
 			eMachineState := E_MachineState.AutoCycle;
@@ -1110,6 +1447,16 @@ CASE eMachineState OF
 // 	
 	E_MachineState.AutoCycle:
 	
+
+        // Any IVEK health loss requires a controlled stop.
+        IF fbIvek.IsFaulted()
+            OR tonIvekCommunicationStop.Q
+            OR tonIvekReferenceStop.Q
+            OR tonIvekUnexpectedNotReady.Q
+        THEN
+            bStopRequested := TRUE;
+        END_IF
+
 		eMode_LED_Start := E_LEDs_Mode.OFF;
 		eMode_LED_Reset := E_LEDs_Mode.OFF;
 
@@ -1329,11 +1676,11 @@ CASE eMachineState OF
 	
 		// FUTURE PROCESS REQUEST EXECUTION
 		// IF stProcessCycleRequests.bStartProcessStation THEN
-		//     ipEquipment.RequestStart();
+		//     fbIvek.RequestStart();
 		// END_IF
 	
 		// IF stProcessCycleRequests.bStopProcessStation THEN
-		//     ipEquipment.RequestStop();
+		//     fbIvek.RequestStop();
 		// END_IF
 	
 		// IF stProcessCycleRequests.bCaptureProcessResult THEN
@@ -1379,6 +1726,16 @@ CASE eMachineState OF
 // 	
 	E_MachineState.Manual:
 
+
+        // Manual follows the same IVEK health interlock.
+        IF fbIvek.IsFaulted()
+            OR tonIvekCommunicationStop.Q
+            OR tonIvekReferenceStop.Q
+            OR tonIvekUnexpectedNotReady.Q
+        THEN
+            bStopRequested := TRUE;
+        END_IF
+
 		eMode_LED_Start := E_LEDs_Mode.OFF;
 		eMode_LED_Reset := E_LEDs_Mode.OFF;
 		eMode_LED_PASS  := E_LEDs_Mode.OFF;
@@ -1410,24 +1767,58 @@ CASE eMachineState OF
 	
 	
 		// ---------------------------------------------------------
+		// MANUAL SILICONE PROCESS
+		// ---------------------------------------------------------
+		IF stManualModeRequests.bSiliconeProcessStart THEN
+			fbSiliconeProcess.RequestStart();
+			bManualSiliconeCycleActive := TRUE;
+		END_IF
+
+		IF stManualModeRequests.bSiliconeProcessStop THEN
+			fbSiliconeProcess.RequestStop();
+		END_IF
+
+		IF bManualSiliconeCycleActive AND fbSiliconeProcess.IsDone() THEN
+
+			stLastResult := fbSiliconeProcess.GetResult();
+
+			bResultStoredFeedback :=
+				fbNestManager.StoreSiliconeResultAtPosition(
+					ePosition := stConfig.eSiliconePosition,
+					stResult := stLastResult
+				);
+
+			IF bResultStoredFeedback THEN
+				stSiliconeNest :=
+					fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
+				fbSiliconeProcess.RequestReset();
+				bManualSiliconeCycleActive := FALSE;
+			END_IF
+
+		END_IF
+
+		// ---------------------------------------------------------
 		// PROCESS EQUIPMENT MANUAL COMMANDS
 		// ---------------------------------------------------------
-		IF stManualModeRequests.bEquipmentStart THEN
-	
-			ipEquipment.RequestStart();
-	
+		IF stManualModeRequests.bEquipmentStart
+		AND NOT bManualSiliconeCycleActive THEN
+
+			fbIvek.RequestStart();
+
 		END_IF
 	
-		IF stManualModeRequests.bEquipmentStop THEN
-	
-			ipEquipment.RequestStop();
-	
+		IF stManualModeRequests.bEquipmentStop
+		AND NOT bManualSiliconeCycleActive THEN
+
+			fbIvek.RequestStop();
+
 		END_IF
 	
-		IF stManualModeRequests.bEquipmentReset THEN
-	
-			ipEquipment.RequestReset();
-	
+		IF stManualModeRequests.bEquipmentReset
+		AND NOT bManualSiliconeCycleActive THEN
+
+			fbIvek.RequestReset();
+
 		END_IF
 	
 		// ---------------------------------------------------------
@@ -1511,6 +1902,64 @@ ELSIF eMachineState = E_MachineState.Manual THEN
     bAssemblySupportRaiseRequest := stManualModeRequests.bAssemblySupportExtend;
     bAssemblySupportLowerRequest := stManualModeRequests.bAssemblySupportRetract;
 
+    // Manual assembly/flipping request execution.
+    IF stManualModeRequests.bAssemblyStationStart THEN
+        IF fbAssemblyStation.RequestStart() THEN
+            bManualAssemblyCycleActive := TRUE;
+        END_IF
+    END_IF
+
+    IF stManualModeRequests.bAssemblyStationStop THEN
+        fbAssemblyStation.RequestStop();
+    END_IF
+
+
+
+
+    // ---------------------------------------------------------
+    // MANUAL ASSEMBLY RESULT HANDLING
+    // ---------------------------------------------------------
+    // A manual "Assemble Parts" action is a real process operation. Store its
+    // assembly result at the nest currently mapped to the Assembly Station so
+    // the same part will not be flipped again after returning to AutoCycle.
+    IF bManualAssemblyCycleActive AND fbAssemblyStation.IsDone() THEN
+
+        stLastResult := fbAssemblyStation.GetResult();
+
+        bResultStoredFeedback :=
+            fbNestManager.StoreAssemblyResultAtPosition(
+                ePosition := stConfig.eAssemblyPosition,
+                stResult := stLastResult
+            );
+
+        IF bResultStoredFeedback THEN
+
+            stAssemblyNest :=
+                fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
+
+            stLastResult.bValid :=
+                stAssemblyNest.stSiliconeResult.bValid
+                AND stAssemblyNest.stAssemblyResult.bValid;
+
+            stLastResult.bPassed :=
+                stLastResult.bValid
+                AND stAssemblyNest.stSiliconeResult.bPassed
+                AND stAssemblyNest.stAssemblyResult.bPassed;
+
+            bResultStoredFeedback :=
+                fbNestManager.StoreResultAtPosition(
+                    ePosition := stConfig.eAssemblyPosition,
+                    stResult := stLastResult
+                );
+
+            IF bResultStoredFeedback THEN
+                fbAssemblyStation.RequestReset();
+                bManualAssemblyCycleActive := FALSE;
+            END_IF
+
+        END_IF
+
+    END_IF
 
 // ---------------------------------------------------------
 // AUTOMATIC CYCLE
@@ -1541,7 +1990,13 @@ END_IF
 // =========================================================
 
 fbAssemblyStation.Cyclic(
-    bEnable := (eMachineState = E_MachineState.AutoCycle),
+    bEnable :=
+        (eMachineState = E_MachineState.AutoCycle)
+        OR
+        (
+            (eMachineState = E_MachineState.Manual)
+            AND stCommand.bAssemblyStationManualEnable
+        ),
     bInitialising := (eMachineState = E_MachineState.Initialising),
     bSafetyPermitted := stInputs.stSafety.bProcessSafetyPermitted,
     bAirSupplySafe := stPermissives.bAirSupplyReady,
@@ -1606,6 +2061,12 @@ fbAssemblySupportCylinder.Cyclic(
 );
 
 // Cyclic component execution
+// LEGACY PROCESS STATION:
+// Do not execute FB_ProcessStation in Manual mode. Its legacy Manual branch
+// calls ipEquipment.RequestStop() continuously, which conflicts with the
+// new FB_SiliconeProcess -> FB_IvekDigiSpense4000 manual runtime path.
+IF eMachineState <> E_MachineState.Manual THEN
+
 fbProcessStation.Cyclic(
     bEnable :=
     (eMachineState = E_MachineState.Initialising)
@@ -1632,6 +2093,9 @@ fbProcessStation.Cyclic(
     bCylinderExtendOutput 			=> bProcExtend,
     bCylinderRetractOutput 			=> bProcRetract
 );
+
+END_IF
+
 
 // =========================================================
 // MAIN DOOR LOCK CONTROL
@@ -1832,6 +2296,51 @@ stStatus.eCycleState 			:= stProcessCycleStatus.eState;
 stStatus.stProcessCycle 		:= stProcessCycleStatus;
 stStatus.stProcessStation 		:= stProcessStationStatus;
 stStatus.stAssemblyStation      := stAssemblyStationStatus;
+
+// Manual HMI projection for the physical Silicone Station.
+stStatus.uiSiliconeStationNestId := stSiliconeNest.nId;
+stStatus.bSiliconeStationPartPresent := stSiliconeNest.bPartComplete;
+stStatus.bSiliconeStationReady :=
+    stManualModeStatus.bSiliconeStationStartPermissive;
+stStatus.bSiliconeStationManualEnabled :=
+    (eMachineState = E_MachineState.Manual)
+    AND stCommand.bSiliconeStationManualEnable;
+stStatus.bSiliconeStationManualStartPermissive :=
+    stManualModeStatus.bSiliconeStationStartPermissive;
+
+// Positive IVEK status booleans for TRUE=green / FALSE=red HMI convention.
+stStatus.bIvekReady := fbIvek.IsReady();
+stStatus.bIvekProductionReady := fbIvek.bReadyProduction;
+stStatus.bIvekBusy := fbIvek.IsBusy();
+stStatus.bIvekHealthy := bIvekCommsOk AND NOT fbIvek.IsFaulted();
+stStatus.bIvekFaulted := fbIvek.IsFaulted();
+stStatus.bIvekMotionEnabled := bIvekCommsOk AND NOT fbIvek.bMotionDisabled;
+stStatus.bIvekReferenceRequired := fbIvek.IsReferenceRequired();
+stStatus.bIvekReferenceReady := fbIvek.bReadyReference;
+stStatus.bIvekReferenceActive := fbIvek.IsReferenceActive();
+stStatus.bIvekFluidicReady := fbIvek.IsFluidicReady();
+stStatus.bIvekFluidicActive := fbIvek.IsFluidicActive();
+stStatus.bIvekPrimePermissive :=
+    bIvekMaintenancePermissive
+    AND stSiliconeSupplyStatus.bSelectedReservoirReady
+    AND fbIvek.IsFluidicReady()
+    AND NOT fbIvek.IsReferenceRequired();
+stStatus.bIvekReferencePermissive :=
+    bIvekMaintenancePermissive
+    AND fbIvek.IsReferenceRequired()
+    AND fbIvek.bReadyReference;
+
+// Manual HMI projection for the physical Assembly Station.
+stStatus.uiAssemblyStationNestId := stAssemblyNest.nId;
+stStatus.bAssemblyStationPartPresent := stAssemblyNest.bPartComplete;
+stStatus.bAssemblyStationPartSiliconized :=
+    stAssemblyNest.stSiliconeResult.bValid
+    AND stAssemblyNest.stSiliconeResult.bPassed;
+stStatus.bAssemblyStationManualEnabled :=
+    (eMachineState = E_MachineState.Manual)
+    AND stCommand.bAssemblyStationManualEnable;
+stStatus.bAssemblyStationManualStartPermissive :=
+    stManualModeStatus.bAssemblyStationStartPermissive;
 stStatus.stMainDoorLock 		:= stMainDoorLockStatus;
 stStatus.eInitialisingWaitReason := eInitialisingWaitReason;
 stStatus.eStoppingWaitReason 	:= eStoppingWaitReason;
@@ -2158,6 +2667,16 @@ END_IF
 // =========================================================
 // END-OF-CYCLE STATE AND OUTPUT PUBLICATION
 // =========================================================
+
+IF eMachineState <> E_MachineState.Manual
+AND NOT fbSiliconeProcess.IsBusy() THEN
+    bManualSiliconeCycleActive := FALSE;
+END_IF
+
+IF eMachineState <> E_MachineState.Manual
+AND NOT fbAssemblyStation.IsBusy() THEN
+    bManualAssemblyCycleActive := FALSE;
+END_IF
 
 ePreviousMachineState := eMachineState;
 stOutputs := stOutputsInternal;

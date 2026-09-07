@@ -81,6 +81,27 @@
     <Compile Include="DUTs\01_Core\E_TablePosition.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\01_Core\SiliconeSupply\E_SiliconeDegassingState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\SiliconeSupply\E_SiliconeProcessState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\SiliconeSupply\E_SiliconeReservoirState.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\SiliconeSupply\ST_SiliconeReservoirStatus.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\SiliconeSupply\ST_SiliconeSupplyConfig.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\SiliconeSupply\ST_SiliconeSupplyPersistent.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\01_Core\SiliconeSupply\ST_SiliconeSupplyStatus.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\01_Core\ST_IndexStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -273,6 +294,9 @@
     <Compile Include="GVLs\GVL_Safety.TcGVL">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GVLs\GVL_SiliconeSupply_Interface.TcGVL">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
@@ -291,9 +315,6 @@
     <Compile Include="POUs\00_Application\PRG_WriteOutputs.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="POUs\03_Stations\FB_AssemblyStation.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="POUs\01_Core\FB_IndexedSiliconeMachine.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -301,6 +322,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\01_Core\FB_ProcessCycle.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\03_Stations\FB_AssemblyStation.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\01_Core\I_ProcessEquipment.TcIO">
@@ -330,6 +354,9 @@
     <Compile Include="POUs\03_Stations\FB_SiliconeProcess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\03_Stations\FB_SiliconeSupplySystem.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\04_IVEK\FB_IvekDigiSpense4000.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -348,6 +375,9 @@
     <Compile Include="POUs\06_Utilities\FB_TerminalInfo.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\06_Utilities\F_ScaleLinear.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\06_Utilities\PRG_Events.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -358,6 +388,7 @@
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="DUTs\01_Core" />
+    <Folder Include="DUTs\01_Core\SiliconeSupply" />
     <Folder Include="DUTs\02_HMI" />
     <Folder Include="DUTs\04_IVEK" />
     <Folder Include="DUTs\05_IO_Mapping" />

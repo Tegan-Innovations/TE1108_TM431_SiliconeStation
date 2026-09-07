@@ -117,13 +117,19 @@ GVL_IO.stInputs.bRotaryGripperRotationPlace180          := GVL_EtherCAT.stTerm8_
 // / Term 11 -Analog inputs - raw process values (EPLAN pages 21 and 22)
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.uiMainAirPressureRaw 						:= GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch1;
-GVL_IO.stInputs.uiSiliconePressureRaw 						:= GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch2;
-GVL_IO.stInputs.uiNozzlePressureRaw 						:= GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch3;
 
 // ---------------------------------------------------------------------------
-// / Term 12 -Analog inputs
+// / Term 12 -Analog inputs Voltage
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.uiVacuumPressureRaw 						:= GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch1;
+GVL_IO.stInputs.uiExtractionAVacuumPressureRaw				:= GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch2;
+GVL_IO.stInputs.uiExtractionBVacuumPressureRaw 				:= GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch3;
+
+// ---------------------------------------------------------------------------
+// / Term 14 -Analog inputs Voltage
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.uiSiliconePressureRaw 						:= GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch2;
+GVL_IO.stInputs.uiNozzlePressureRaw 						:= GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch1;
 
 // ---------------------------------------------------------------------------
 // TwinSAFE -> PLC validated aliases
@@ -198,14 +204,14 @@ GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch3 		:= GVL_IO.stOutputs.bSiliconeSupportE
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch4 		:= GVL_IO.stOutputs.bSiliconeSupportRetract;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch5 		:= GVL_IO.stOutputs.bAssemblySupportExtend;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch6 		:= GVL_IO.stOutputs.bAssemblySupportRetract;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch7 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch8 		:= FALSE;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch9         := GVL_IO.stOutputs.bTransferVerticalMiniSlideRetract; //GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10        := GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend; //GVL_IO.stOutputs.bTransferVerticalMiniSlideRetract;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11        := GVL_IO.stOutputs.bRotaryGripperRotationPlace180; //GVL_IO.stOutputs.bRotaryGripperRotationPick0; //GVL_IO.stOutputs.bRotaryGripperOpen;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch12        := GVL_IO.stOutputs.bRotaryGripperRotationPick0; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180; //GVL_IO.stOutputs.bRotaryGripperClose;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch13        := GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperRotationPick0;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch14        := GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch7 		:= GVL_IO.stOutputs.bSiliconePinchValve1;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch8 		:= GVL_IO.stOutputs.bSiliconePinchValve2;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch9        := GVL_IO.stOutputs.bTransferVerticalMiniSlideRetract; //GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10       := GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend; //GVL_IO.stOutputs.bTransferVerticalMiniSlideRetract;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11       := GVL_IO.stOutputs.bRotaryGripperRotationPlace180; //GVL_IO.stOutputs.bRotaryGripperRotationPick0; //GVL_IO.stOutputs.bRotaryGripperOpen;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch12       := GVL_IO.stOutputs.bRotaryGripperRotationPick0; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180; //GVL_IO.stOutputs.bRotaryGripperClose;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch13       := GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperRotationPick0;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch14       := GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch15 		:= FALSE;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch16 		:= FALSE;
 

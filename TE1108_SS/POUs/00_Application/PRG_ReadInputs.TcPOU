@@ -29,8 +29,8 @@ GVL_MASTER.stInputs.bEmergencyStopChannel2             := GVL_IO.stInputs.bEmerg
 GVL_MASTER.stInputs.bUp24VPowerSupplyOk                 := GVL_IO.stInputs.bUp24VPowerSupplyOk;
 GVL_MASTER.stInputs.bUs24VPowerSupplyOk                 := GVL_IO.stInputs.bUs24VPowerSupplyOk;
 GVL_MASTER.stInputs.bIvekHeaterControllerAlarm          := GVL_IO.stInputs.bIvekHeaterControllerAlarm;
-GVL_MASTER.stInputs.bSiliconeMinimumLevelSensor1        := GVL_IO.stInputs.bSiliconeMinimumLevelSensor1;
-GVL_MASTER.stInputs.bSiliconeMinimumLevelSensor2        := GVL_IO.stInputs.bSiliconeMinimumLevelSensor2;
+GVL_MASTER.stInputs.bSiliconeMinimumLevel1         		:= GVL_IO.stInputs.bSiliconeMinimumLevelSensor1;
+GVL_MASTER.stInputs.bSiliconeMinimumLevel2         		:= GVL_IO.stInputs.bSiliconeMinimumLevelSensor2;
 
 
 // -----------------------------------------------------------------------------
@@ -55,12 +55,51 @@ GVL_MASTER.stInputs.bRightFlapChannel2 					:= GVL_IO.stInputs.bRightFlapChannel
 // -----------------------------------------------------------------------------
 // ANALOG PROCESS VALUES
 // -----------------------------------------------------------------------------
-// Raw terminal values are forwarded unchanged. Engineering-unit scaling is
-// intentionally handled outside this I/O mapping layer.
+// Raw terminal values are forwarded unchanged for diagnostics.
+//
+// Silicone and nozzle pressure sensors are connected to EL3064 voltage inputs.
+// Commissioning measurements established a common zero around raw 3325 counts.
+// The configured working scale is:
+//     raw 3325  -> 0.00 bar
+//     raw 16384 -> 10.00 bar
+//
+// This gives approximately:
+//     Nozzle  raw 3910 -> 0.45 bar  (sensor display ~0.44 bar)
+//     Silicone raw 5744 -> 1.85 bar (sensor display ~1.85 bar)
+//
+// Keep the raw values visible during commissioning so the scale can be refined
+// later if a certified pressure reference is used.
 GVL_MASTER.stInputs.uiMainAirPressureRaw               := GVL_IO.stInputs.uiMainAirPressureRaw;
 GVL_MASTER.stInputs.uiSiliconePressureRaw              := GVL_IO.stInputs.uiSiliconePressureRaw;
 GVL_MASTER.stInputs.uiNozzlePressureRaw                := GVL_IO.stInputs.uiNozzlePressureRaw;
 GVL_MASTER.stInputs.uiVacuumPressureRaw                := GVL_IO.stInputs.uiVacuumPressureRaw;
+
+GVL_MASTER.stInputs.rSiliconePressureBar :=
+    F_ScaleLinear(
+        rRawValue := TO_REAL(GVL_IO.stInputs.uiSiliconePressureRaw),
+        rRawMin   := GVL_Config.stMachine.stSiliconeSupply.rPressureRawLow,
+        rRawMax   := GVL_Config.stMachine.stSiliconeSupply.rPressureRawHigh,
+        rEngMin   := GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureEngLow,
+        rEngMax   := GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureEngHigh
+    );
+
+GVL_MASTER.stInputs.rNozzlePressureBar :=
+    F_ScaleLinear(
+        rRawValue := TO_REAL(GVL_IO.stInputs.uiNozzlePressureRaw),
+        rRawMin   := GVL_Config.stMachine.stSiliconeSupply.rPressureRawLow,
+        rRawMax   := GVL_Config.stMachine.stSiliconeSupply.rPressureRawHigh,
+        rEngMin   := GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureEngLow,
+        rEngMax   := GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureEngHigh
+    );
+
+GVL_MASTER.stInputs.rVacuumEngineering :=
+    F_ScaleLinear(
+        rRawValue := TO_REAL(GVL_IO.stInputs.uiVacuumPressureRaw),
+        rRawMin   := GVL_Config.stMachine.stSiliconeSupply.rVacuumRawLow,
+        rRawMax   := GVL_Config.stMachine.stSiliconeSupply.rVacuumRawHigh,
+        rEngMin   := GVL_Config.stMachine.stSiliconeSupply.rVacuumEngLow,
+        rEngMax   := GVL_Config.stMachine.stSiliconeSupply.rVacuumEngHigh
+    );
 
 // -----------------------------------------------------------------------------
 // EVENT SYSTEM AGGREGATES
@@ -129,6 +168,7 @@ GVL_MASTER.stInputs.bRotaryGripperRotationPlace180      := GVL_IO.stInputs.bRota
 // -----------------------------------------------------------------------------
 // IVEK ETHERNET/IP INTERFACE
 // -----------------------------------------------------------------------------
+GVL_IVEK_EIP.bCommunicationOk 						   := (GVL_IVEK_EIP.stInput.usiIvekConnectionState = 0);
 GVL_MASTER.stIvekInput                                 := GVL_IVEK_EIP.stInput;
 GVL_MASTER.bIvekCommsOk                                := GVL_IVEK_EIP.bCommunicationOk;
 

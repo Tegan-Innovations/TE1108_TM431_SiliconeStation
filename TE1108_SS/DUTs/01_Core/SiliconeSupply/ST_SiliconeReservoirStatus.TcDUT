@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="ST_SiliconeReservoirStatus" Id="{50e4e4ef-9634-4bd4-9124-3ba293797a91}">
+    <Declaration><![CDATA[TYPE ST_SiliconeReservoirStatus :
+STRUCT
+    eState              : E_SiliconeReservoirState;
+    bLevelOk            : BOOL;
+    bDegassed           : BOOL;
+    bReady              : BOOL;
+    bSelected           : BOOL;
+    bDegassing          : BOOL;
+    bNeedsDegassing     : BOOL;
+    bLevelLow                    : BOOL;
+    bRefillDetected              : BOOL;
+    bVacuumFault                 : BOOL;
+
+    bTopUpRequired               : BOOL;
+    bDegassingActionRequired     : BOOL;
+    bAutomaticChangeoverOccurred : BOOL;
+
+    tDegassingElapsed            : TIME;
+    tDegassingRemaining          : TIME;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

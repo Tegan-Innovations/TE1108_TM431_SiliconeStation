@@ -1,13 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_IvekCommandBits" Id="{f78fb8cb-ad64-4e90-bf6e-f4552c1d9bc4}">
     <Declaration><![CDATA[TYPE ST_IvekCommandBits :
 STRUCT
-	// TODO: Confirm bit positions against the EDS/manual matching installed firmware.
-    nDispenseBit         : USINT := 0;
-    nStopBit             : USINT := 1;
-    nClearFaultBit       : USINT := 2;
-    nReferenceBit        : USINT := 3;
+    // P010 Commands
+
+    // Maintained command
+    nMotionEnableBit      : USINT := 0;
+
+    // Pulse commands
+    nStopAllBit           : USINT := 1;
+    nStartProductionBit   : USINT := 2;
+    nStartFluidicBit      : USINT := 3;
+    nStartReferenceBit    : USINT := 4;
+    nClearFaultBit        : USINT := 5;
+    nClearAlertBit        : USINT := 6;
+    nStartLoadBit         : USINT := 7;
+
 END_STRUCT
 END_TYPE
 ]]></Declaration>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <GVL Name="GVL_SiliconeSupply_Interface" Id="{5e57670c-c249-42ee-9fe7-e55f3af86630}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+    // HMI command interface. HMI should pulse these BOOLs.
+    bCmdSelectReservoir1    : BOOL;
+    bCmdSelectReservoir2    : BOOL;
+    bCmdStartDegassing1     : BOOL;
+    bCmdStartDegassing2     : BOOL;
+    bCmdCancelDegassing     : BOOL;
+
+    // Read-only status for HMI.
+    stStatus                : ST_SiliconeSupplyStatus;
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

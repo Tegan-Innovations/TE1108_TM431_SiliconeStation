@@ -1,15 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_IvekCyclicInput" Id="{602d1742-6dd6-43e3-a59a-0b71eeaef8a2}">
-    <Declaration><![CDATA[TYPE ST_IvekCyclicInput :
+    <Declaration><![CDATA[{attribute 'pack_mode' := '1'}
+TYPE ST_IvekCyclicInput :
 STRUCT
-	// Controller -> PLC. Link these members to EDS-generated input tags.
-    udiStatusFlags       : UDINT;
-    udiStatusFlagsExt    : UDINT;
-    eStatusState         : E_IvekStatusState;
-    udiFaultCode         : UDINT;
-    udiAlertCode         : UDINT;
-    usiCurrentRecipe     : USINT;
+	//Box 16 (DS4000BT)
+	usiIvekConnectionState : UINT;	
+
+    // EtherNet/IP Assembly 100 - IVEK -> PLC
+    // Total size: 32 bytes
+
+    udiStatusFlags        : UDINT;                // P012 - bytes 0..3
+    udiStatusFlagsExt     : UDINT;                // P013 - bytes 4..7
+
+    usiStatusState        : USINT;                // P014 - byte 8
+    aReserved1            : ARRAY[0..2] OF BYTE; // bytes 9..11
+
+    usiCurrentRecipe      : USINT;                // P017 - byte 12
+    aReserved2            : ARRAY[0..2] OF BYTE; // bytes 13..15
+
+    udiFaultCode          : UDINT;                // P015 - bytes 16..19
+    udiAlertCode          : UDINT;                // P016 - bytes 20..23
+
+    diLastProductionVolume : DINT;                // P091 - bytes 24..27
+    diActualRate           : DINT;                // P075 - bytes 28..31
 END_STRUCT
 END_TYPE
 ]]></Declaration>

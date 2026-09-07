@@ -36,7 +36,10 @@ STRUCT
     bUseProcessSimulation       : BOOL := TRUE;
     aNestEnabled                : ARRAY[1..4] OF BOOL := [TRUE, TRUE, TRUE, TRUE];
 	
-	
+	// =========================================================
+	// SILICONE SUPPLY STRUCTURE
+	// =========================================================
+	stSiliconeSupply : ST_SiliconeSupplyConfig;
 	
 END_STRUCT
 END_TYPE

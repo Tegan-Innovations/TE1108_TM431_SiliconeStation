@@ -1,7 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <GVL Name="GVL_EtherCAT" Id="{0c762596-e7cb-44aa-8f7d-0709ef4bd060}">
-    <Declaration>{attribute 'qualified_only'}
+    <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL
     stTerm1_EK1100     : ST_EK1100;
     stTerm2_EL6070     : ST_EL6070;
@@ -16,8 +16,9 @@ VAR_GLOBAL
     stTerm11_EL3058    : ST_EL3058;
     stTerm12_EL3064    : ST_EL3064;
     stTerm13_EL9410    : ST_EL9410;
-    stTerm14_EL6652    : ST_EL6652;
+	stTerm14_EL3064	   : ST_EL3064;
+    stTerm15_EL6652    : ST_EL6652;
 END_VAR
-</Declaration>
+]]></Declaration>
   </GVL>
 </TcPlcObject>

@@ -120,6 +120,8 @@ END_IF
 IF bResetRequest THEN
     // A reset starts a new process-cycle context.
     bStopPending := FALSE;
+    bSiliconeProcessCompleteLatched := FALSE;
+    bAssemblyProcessCompleteLatched := FALSE;
     stStatusInternal.bTimeoutFault := FALSE;
     eState := E_CycleState.Initialising;
 
@@ -612,8 +614,11 @@ CASE eState OF
 		stRequestsInternal.bStopSiliconeProcess := TRUE;
 		stRequestsInternal.bStopAssemblyProcess := TRUE;
 	
-		// Retract both supports.
-		stRequestsInternal.bSiliconeSupportRetract := TRUE;
+		// Retract supports only after their respective process has stopped.
+        // This prevents the Silicone Support from moving away while the IVEK
+        // dispense sequence is still active.
+		stRequestsInternal.bSiliconeSupportRetract := NOT stInputs.bSiliconeProcessBusy;
+
         // Keep the Assembly Support in position until the flipping station has
         // completed its controlled return to home.
 		stRequestsInternal.bAssemblySupportRetract := NOT stInputs.bAssemblyProcessBusy;
@@ -822,10 +827,11 @@ stStatus :=
       <Declaration><![CDATA[METHOD PUBLIC Initialise]]></Declaration>
       <Implementation>
         <ST><![CDATA[eState := E_CycleState.Disabled;
-// stRequestsInternal.bStartProcessStation := FALSE;
-// stRequestsInternal.bStopProcessStation := FALSE;
-// stRequestsInternal.bCaptureProcessResult := FALSE;
-// stRequestsInternal.bStoreProcessResult := FALSE;
+
+bStopPending := FALSE;
+bSiliconeProcessCompleteLatched := FALSE;
+bAssemblyProcessCompleteLatched := FALSE;
+
 stRequestsInternal.bPrepareOperatorExchange := FALSE;
 stRequestsInternal.bConfirmOperatorExchange := FALSE;
 stRequestsInternal.bRequestIndex := FALSE;
@@ -833,6 +839,7 @@ stRequestsInternal.bRequestIndexRecovery := FALSE;
 stRequestsInternal.bUpdateNestPositions := FALSE;
 stStatusInternal.bCompletePulse := FALSE;
 stStatusInternal.bFaulted := FALSE;
+stStatusInternal.bTimeoutFault := FALSE;
 stStatusInternal.eMessage := E_ProcessCycleMessage.None;]]></ST>
       </Implementation>
     </Method>

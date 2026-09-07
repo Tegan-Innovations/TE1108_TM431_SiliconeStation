@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <POU Name="PRG_WriteOutputs" Id="{e140ea05-fb86-4755-85a5-95bda9589e4d}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PRG_WriteOutputs
@@ -36,10 +36,13 @@ GVL_IO.stOutputs.bLedFail               				:= GVL_MASTER.stOutputs.bLedFail;
 GVL_IO.stOutputs.bInternalLight         				:= GVL_MASTER.stOutputs.bInternalLight;
 GVL_IO.stOutputs.bExternalLight         				:= GVL_MASTER.stOutputs.bExternalLight ;
 GVL_IO.stOutputs.bNestLight             				:= GVL_MASTER.stOutputs.bExternalLight;
-// Vacuum outputs are reserved for the future process implementation.
-GVL_IO.stOutputs.bVacuumPumpEnable      				:= FALSE;
-GVL_IO.stOutputs.bVacuumAirSolenoid1    				:= FALSE;
-GVL_IO.stOutputs.bVacuumAirSolenoid2    				:= FALSE;
+
+// Vacuum outputs 
+GVL_IO.stOutputs.bVacuumPumpEnable 						:= GVL_MASTER.stOutputs.bVacuumPumpEnable;
+GVL_IO.stOutputs.bVacuumAirSolenoid1 					:= GVL_MASTER.stOutputs.bVacuumAirSolenoid1;
+GVL_IO.stOutputs.bVacuumAirSolenoid2 					:= GVL_MASTER.stOutputs.bVacuumAirSolenoid2;
+GVL_IO.stOutputs.bSiliconePinchValve1 					:= GVL_MASTER.stOutputs.bSiliconePinchValve1;
+GVL_IO.stOutputs.bSiliconePinchValve2 					:= GVL_MASTER.stOutputs.bSiliconePinchValve2;
 
 GVL_IVEK_EIP.stOutput 									:= GVL_MASTER.stIvekOutput;
 

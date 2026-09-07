@@ -10,6 +10,11 @@ VAR_GLOBAL PERSISTENT RETAIN
 	uiTestHistoryWriteIndex 	: UINT := 0;
 	uiTestHistoryCount      	: UINT := 0;
 	
+	stSiliconeSupply : ST_SiliconeSupplyPersistent := (
+		aReservoirDegassed := [FALSE, FALSE],
+		usiSelectedReservoir := 1
+	);
+	
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

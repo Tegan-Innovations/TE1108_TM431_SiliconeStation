@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_MachineStatus" Id="{f4291e0c-7f34-4828-9807-36e2caee1fcf}">
     <Declaration><![CDATA[TYPE ST_MachineStatus :
@@ -14,11 +14,14 @@ STRUCT
     eIndexState             : E_IndexState;
     stIndexStatus           : ST_IndexStatus;
     eEquipmentState         : E_ProcessEquipmentState;
+	eIvekStatusState 		: E_IvekStatusState;
     eOperatorExchangeState  : E_OperatorExchangeState;
     eOperatorInstruction    : E_OperatorInstruction;
     stOperatorStation       : ST_OperatorStationStatus;
     eManualModeState        : E_ManualModeState;
     stManualMode            : ST_ManualModeStatus;
+	stSiliconeSupply 		: ST_SiliconeSupplyStatus;
+	
     bReady                 			: BOOL;
     bBusy                  			: BOOL;
     bFaulted               			: BOOL;
@@ -35,7 +38,7 @@ STRUCT
 	bEnableSetting		   			: BOOL;
 	bSiliconeSupportFaulted 		: BOOL;
 	bAssemblySupportFaulted 		: BOOL;
-    bAssemblyStationFaulted       : BOOL;
+    bAssemblyStationFaulted         : BOOL;
 	
     stPermissives           : ST_MachinePermissives;
     stLastResult            : ST_ProcessResult;
@@ -47,6 +50,37 @@ STRUCT
     sOperatorMessage        : STRING(255);
 	
 	
+
+    // Current nest and manual Assembly / Flipping Station status
+    uiAssemblyStationNestId               : UINT;
+    bAssemblyStationPartPresent           : BOOL;
+    bAssemblyStationPartSiliconized       : BOOL;
+    bAssemblyStationManualEnabled         : BOOL;
+    bAssemblyStationManualStartPermissive : BOOL;
+
+
+    // Current nest and manual Silicone Station status
+    uiSiliconeStationNestId                 : UINT;
+    bSiliconeStationPartPresent             : BOOL;
+    bSiliconeStationReady                   : BOOL;
+    bSiliconeStationManualEnabled           : BOOL;
+    bSiliconeStationManualStartPermissive   : BOOL;
+
+    // IVEK Manual HMI status
+    bIvekReady                              : BOOL;
+    bIvekProductionReady                    : BOOL;
+    bIvekBusy                               : BOOL;
+    bIvekHealthy                            : BOOL;
+    bIvekFaulted                            : BOOL;
+    bIvekMotionEnabled                      : BOOL;
+    bIvekReferenceRequired                   : BOOL;
+    bIvekReferenceReady                      : BOOL;
+    bIvekReferenceActive                     : BOOL;
+    bIvekFluidicReady                        : BOOL;
+    bIvekFluidicActive                       : BOOL;
+    bIvekPrimePermissive                     : BOOL;
+    bIvekReferencePermissive                 : BOOL;
+
 END_STRUCT
 END_TYPE
 

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_SiliconeProcessState" Id="{2b708f69-adec-48e2-8ddf-18866f066cbd}">
+    <Declaration><![CDATA[TYPE E_SiliconeProcessState :
+(
+    Idle                    := 0,
+    OpeningPinchValve       := 10,
+    WaitingPinchSettling    := 20,
+    StartingEquipment       := 30,
+    WaitingEquipmentBusy    := 40,
+    WaitingEquipmentComplete:= 50,
+    ClosingPinchValve       := 60,
+    Complete                := 70,
+    Fault                   := 80
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

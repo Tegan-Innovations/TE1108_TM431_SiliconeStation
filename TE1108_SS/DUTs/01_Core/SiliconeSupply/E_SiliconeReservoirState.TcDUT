@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_SiliconeReservoirState" Id="{c98e298d-0f8a-48a0-8b9a-d7f3dac48cce}">
+    <Declaration><![CDATA[TYPE E_SiliconeReservoirState :
+(
+    Empty           := 0,
+    NeedsDegassing  := 10,
+    Ready           := 20,
+    Degassing       := 30,
+    VacuumFault     := 40
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>
