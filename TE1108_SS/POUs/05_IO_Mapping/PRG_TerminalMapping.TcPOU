@@ -123,7 +123,7 @@ GVL_IO.stInputs.uiMainAirPressureRaw 						:= GVL_EtherCAT.stTerm11_EL3058.iEL30
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.uiVacuumPressureRaw 						:= GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch1;
 GVL_IO.stInputs.uiExtractionAVacuumPressureRaw				:= GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch2;
-GVL_IO.stInputs.uiExtractionBVacuumPressureRaw 				:= GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch3;
+GVL_IO.stInputs.iPartVacuumPressureRaw 						:= GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch3;
 
 // ---------------------------------------------------------------------------
 // / Term 14 -Analog inputs Voltage
@@ -212,7 +212,7 @@ GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11       := GVL_IO.stOutputs.bRotaryGripp
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch12       := GVL_IO.stOutputs.bRotaryGripperRotationPick0; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180; //GVL_IO.stOutputs.bRotaryGripperClose;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch13       := GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperRotationPick0;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch14       := GVL_IO.stOutputs.bRotaryGripperOpen; //GVL_IO.stOutputs.bRotaryGripperClose; //GVL_IO.stOutputs.bRotaryGripperRotationPlace180;
-GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch15 		:= FALSE;
+GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch15 		:= GVL_IO.stOutputs.bPartVacuumEnable;
 GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch16 		:= FALSE;
 
 ]]></ST>

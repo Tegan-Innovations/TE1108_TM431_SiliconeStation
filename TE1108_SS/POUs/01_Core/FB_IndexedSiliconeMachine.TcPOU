@@ -570,11 +570,17 @@ fbSiliconeProcess.Cyclic(
     bEquipmentDone := fbIvek.IsDone(),
     bEquipmentFaulted := fbIvek.IsFaulted(),
     stEquipmentResult := fbIvek.GetResult(),
+
+    bSiliconeSupportExtended := stInputs.bSiliconeSupportExtended,
+    bExtractorReady := stPermissives.bExtractorReady,
+    bPartVacuumOk := stInputs.bPartVacuumOk,
+
     tPinchSettlingDelay := GVL_Config.stMachine.stSiliconeSupply.tPinchValveSettlingDelay,
     tEquipmentStartTimeout := GVL_Config.stMachine.stSiliconeSupply.tIvekStartTimeout,
-    tEquipmentCompleteTimeout := GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout
-);
+    tEquipmentCompleteTimeout := GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout,
 
+    bPartVacuumEnable => stOutputsInternal.bPartVacuumEnable
+);
 
 // The coordinator generates one-scan equipment requests.
 // The equipment object latches these requests and executes them

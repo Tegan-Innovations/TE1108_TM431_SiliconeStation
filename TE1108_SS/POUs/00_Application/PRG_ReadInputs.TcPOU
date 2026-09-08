@@ -73,14 +73,15 @@ GVL_MASTER.stInputs.uiMainAirPressureRaw               := GVL_IO.stInputs.uiMain
 GVL_MASTER.stInputs.uiSiliconePressureRaw              := GVL_IO.stInputs.uiSiliconePressureRaw;
 GVL_MASTER.stInputs.uiNozzlePressureRaw                := GVL_IO.stInputs.uiNozzlePressureRaw;
 GVL_MASTER.stInputs.uiVacuumPressureRaw                := GVL_IO.stInputs.uiVacuumPressureRaw;
-
+GVL_MASTER.stInputs.uiExtractorFeedbackRaw 			   :=GVL_IO.stInputs.uiExtractionAVacuumPressureRaw;
+GVL_MASTER.stInputs.iPartVacuumPressureRaw 				:= GVL_IO.stInputs.iPartVacuumPressureRaw;
 // -----------------------------------------------------------------------------
 // VACUUM EXTRACTOR FEEDBACK
 // -----------------------------------------------------------------------------
 // EL3064 Ch2.
 // Approx. 250 = extractor OFF
 // Approx. 700 = extractor ON
-GVL_MASTER.stInputs.uiExtractorFeedbackRaw 			   :=GVL_IO.stInputs.uiExtractionAVacuumPressureRaw;
+
 
 GVL_MASTER.stInputs.rSiliconePressureBar :=
     F_ScaleLinear(
@@ -124,6 +125,22 @@ ELSE
     END_IF
 
 END_IF
+
+// Part holding vacuum feedback
+IF NOT GVL_MASTER.stInputs.bPartVacuumOk THEN
+
+    IF GVL_MASTER.stInputs.iPartVacuumPressureRaw >= 500 THEN
+        GVL_MASTER.stInputs.bPartVacuumOk := TRUE;
+    END_IF
+
+ELSE
+
+    IF GVL_MASTER.stInputs.iPartVacuumPressureRaw <= 400 THEN
+        GVL_MASTER.stInputs.bPartVacuumOk := FALSE;
+    END_IF
+
+END_IF
+
 // -----------------------------------------------------------------------------
 // EVENT SYSTEM AGGREGATES
 // -----------------------------------------------------------------------------

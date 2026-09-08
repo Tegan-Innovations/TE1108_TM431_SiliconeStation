@@ -19,6 +19,7 @@ STRUCT
 	bSiliconeSupportRetract		  : BOOL;
 	bSiliconePinchValve1 		  : BOOL;
 	bSiliconePinchValve2 		  : BOOL;
+	bPartVacuumEnable 				: BOOL;
 
     // Flipping / assembly station - EPLAN Term 10 Ch9..Ch14
     bTransferVerticalMiniSlideExtend : BOOL;

@@ -24,21 +24,31 @@ END_VAR]]></Declaration>
     <Method Name="Cyclic" Id="{b7a0fddb-671e-4115-a6a8-86f8d3cd3549}">
       <Declaration><![CDATA[METHOD PUBLIC Cyclic
 VAR_INPUT
-    bSupplyReady            : BOOL;
-    bEquipmentReady         : BOOL;
-    bEquipmentBusy          : BOOL;
-    bEquipmentDone          : BOOL;
-    bEquipmentFaulted       : BOOL;
-    stEquipmentResult       : ST_ProcessResult;
-    tPinchSettlingDelay     : TIME;
-    tEquipmentStartTimeout  : TIME;
-    tEquipmentCompleteTimeout : TIME;
+    bSupplyReady               : BOOL;
+    bEquipmentReady            : BOOL;
+    bEquipmentBusy             : BOOL;
+    bEquipmentDone             : BOOL;
+    bEquipmentFaulted          : BOOL;
+    stEquipmentResult          : ST_ProcessResult;
+
+    bSiliconeSupportExtended   : BOOL;
+    bExtractorReady            : BOOL;
+    bPartVacuumOk              : BOOL;
+
+    tPinchSettlingDelay        : TIME;
+    tEquipmentStartTimeout     : TIME;
+    tEquipmentCompleteTimeout  : TIME;
+END_VAR
+
+VAR_OUTPUT
+    bPartVacuumEnable          : BOOL;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Default one-scan handshake outputs.
 bEquipmentStartRequest := FALSE;
 bEquipmentStopRequest := FALSE;
 bEquipmentResetRequest := FALSE;
+bPartVacuumEnable := FALSE;
 
 // Stop/reset are handled before state logic.
 IF bResetRequest THEN
@@ -46,6 +56,7 @@ IF bResetRequest THEN
     bStartRequest := FALSE;
     bStopRequest := FALSE;
     bPinchValveRequest := FALSE;
+    bPartVacuumEnable := FALSE;
     bReady := bSupplyReady AND bEquipmentReady AND NOT bEquipmentFaulted;
     bBusy := FALSE;
     bDone := FALSE;
@@ -66,6 +77,7 @@ IF bStopRequest THEN
     bStopRequest := FALSE;
     bStartRequest := FALSE;
     bPinchValveRequest := FALSE;
+    bPartVacuumEnable := FALSE;
     bBusy := FALSE;
     bDone := FALSE;
     bEquipmentStopRequest := TRUE;
@@ -77,139 +89,258 @@ END_IF
 // Any equipment fault while processing closes the flow path immediately.
 IF bEquipmentFaulted AND (eState <> E_SiliconeProcessState.Idle) THEN
     bPinchValveRequest := FALSE;
+    bPartVacuumEnable := FALSE;
     bBusy := FALSE;
     bDone := FALSE;
     bReady := FALSE;
     bFaulted := TRUE;
     stResult := stEquipmentResult;
     stResult.bPassed := FALSE;
+
     IF NOT stResult.bValid THEN
         stResult.bValid := TRUE;
         stResult.eCode := E_ProcessResultCode.EquipmentFault;
     END_IF
+
     eState := E_SiliconeProcessState.Fault;
 END_IF
 
 CASE eState OF
 
     E_SiliconeProcessState.Idle:
+
         tonStep(IN := FALSE);
+
         bPinchValveRequest := FALSE;
+        bPartVacuumEnable := FALSE;
         bBusy := FALSE;
         bDone := FALSE;
-        bReady := bSupplyReady AND bEquipmentReady AND NOT bEquipmentFaulted;
+
+        bReady :=
+            bSupplyReady
+            AND bEquipmentReady
+            AND bSiliconeSupportExtended
+            AND bExtractorReady
+            AND NOT bEquipmentFaulted;
 
         IF bStartRequest AND bReady THEN
             bStartRequest := FALSE;
             bReady := FALSE;
             bBusy := TRUE;
+
             stResult.bValid := FALSE;
             stResult.bPassed := FALSE;
+
+            eState := E_SiliconeProcessState.StartingVacuum;
+        END_IF
+
+
+    E_SiliconeProcessState.StartingVacuum:
+
+        bPartVacuumEnable := TRUE;
+        bPinchValveRequest := FALSE;
+
+        tonStep(IN := FALSE);
+
+        eState := E_SiliconeProcessState.WaitingVacuumReady;
+
+
+    E_SiliconeProcessState.WaitingVacuumReady:
+
+        bPartVacuumEnable := TRUE;
+        bPinchValveRequest := FALSE;
+
+        tonStep(IN := FALSE);
+
+        IF bPartVacuumOk THEN
             eState := E_SiliconeProcessState.OpeningPinchValve;
         END_IF
 
+
     E_SiliconeProcessState.OpeningPinchValve:
+
+        bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
+
         tonStep(IN := FALSE);
+
         eState := E_SiliconeProcessState.WaitingPinchSettling;
 
+
     E_SiliconeProcessState.WaitingPinchSettling:
+
+        bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
-        tonStep(IN := TRUE, PT := tPinchSettlingDelay);
+
+        tonStep(
+            IN := TRUE,
+            PT := tPinchSettlingDelay
+        );
+
         IF tonStep.Q THEN
             tonStep(IN := FALSE);
             eState := E_SiliconeProcessState.StartingEquipment;
         END_IF
 
+
     E_SiliconeProcessState.StartingEquipment:
+
+        bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
+
         IF bEquipmentReady THEN
             bEquipmentStartRequest := TRUE;
+
             tonStep(IN := FALSE);
+
             eState := E_SiliconeProcessState.WaitingEquipmentBusy;
+
         ELSE
-            tonStep(IN := TRUE, PT := tEquipmentStartTimeout);
+
+            tonStep(
+                IN := TRUE,
+                PT := tEquipmentStartTimeout
+            );
+
             IF tonStep.Q THEN
                 bPinchValveRequest := FALSE;
+                bPartVacuumEnable := FALSE;
                 bFaulted := TRUE;
                 bBusy := FALSE;
+
                 eState := E_SiliconeProcessState.Fault;
             END_IF
+
         END_IF
+
 
     E_SiliconeProcessState.WaitingEquipmentBusy:
-	
+
+        bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
 
-		// Keep Start asserted until the equipment acknowledges
-		// the command by becoming Busy or Done.
-		bEquipmentStartRequest := TRUE;
-	
-		tonStep(
-			IN := TRUE,
-			PT := tEquipmentStartTimeout
-		);
-	
-		IF bEquipmentBusy OR bEquipmentDone THEN
-	
-			bEquipmentStartRequest := FALSE;
-	
-			tonStep(IN := FALSE);
-	
-			eState :=
-				E_SiliconeProcessState.WaitingEquipmentComplete;
-	
-		ELSIF tonStep.Q THEN
-	
-			bEquipmentStartRequest := FALSE;
-			bPinchValveRequest := FALSE;
-			bEquipmentStopRequest := TRUE;
-	
-			bFaulted := TRUE;
-			bBusy := FALSE;
-	
-			eState := E_SiliconeProcessState.Fault;
-	
-		END_IF
+        // Keep Start asserted until the equipment acknowledges
+        // the command by becoming Busy or Done.
+        bEquipmentStartRequest := TRUE;
 
-    E_SiliconeProcessState.WaitingEquipmentComplete:
-        bPinchValveRequest := TRUE;
-        tonStep(IN := TRUE, PT := tEquipmentCompleteTimeout);
-        IF bEquipmentDone THEN
-            stResult := stEquipmentResult;
+        tonStep(
+            IN := TRUE,
+            PT := tEquipmentStartTimeout
+        );
+
+        IF bEquipmentBusy OR bEquipmentDone THEN
+
+            bEquipmentStartRequest := FALSE;
+
             tonStep(IN := FALSE);
-            eState := E_SiliconeProcessState.ClosingPinchValve;
+
+            eState :=
+                E_SiliconeProcessState.WaitingEquipmentComplete;
+
         ELSIF tonStep.Q THEN
+
+            bEquipmentStartRequest := FALSE;
             bPinchValveRequest := FALSE;
+            bPartVacuumEnable := FALSE;
             bEquipmentStopRequest := TRUE;
+
             bFaulted := TRUE;
             bBusy := FALSE;
-            stResult.bValid := FALSE;
-            stResult.bPassed := FALSE;
+
             eState := E_SiliconeProcessState.Fault;
+
         END_IF
 
+
+    E_SiliconeProcessState.WaitingEquipmentComplete:
+
+        bPartVacuumEnable := TRUE;
+        bPinchValveRequest := TRUE;
+
+        tonStep(
+            IN := TRUE,
+            PT := tEquipmentCompleteTimeout
+        );
+
+        IF bEquipmentDone THEN
+
+            stResult := stEquipmentResult;
+
+            tonStep(IN := FALSE);
+
+            eState := E_SiliconeProcessState.ClosingPinchValve;
+
+        ELSIF tonStep.Q THEN
+
+            bPinchValveRequest := FALSE;
+            bPartVacuumEnable := FALSE;
+            bEquipmentStopRequest := TRUE;
+
+            bFaulted := TRUE;
+            bBusy := FALSE;
+
+            stResult.bValid := FALSE;
+            stResult.bPassed := FALSE;
+
+            eState := E_SiliconeProcessState.Fault;
+
+        END_IF
+
+
     E_SiliconeProcessState.ClosingPinchValve:
+
+        bPartVacuumEnable := TRUE;
         bPinchValveRequest := FALSE;
-        bBusy := FALSE;
-        bDone := TRUE;
-        bReady := FALSE;
-        eState := E_SiliconeProcessState.Complete;
+
+        tonStep(IN := FALSE);
+
+        eState := E_SiliconeProcessState.StoppingVacuum;
+
+
+    E_SiliconeProcessState.StoppingVacuum:
+
+        bPartVacuumEnable := FALSE;
+        bPinchValveRequest := FALSE;
+
+        tonStep(IN := FALSE);
+
+        eState := E_SiliconeProcessState.WaitingVacuumReleased;
+
+
+    E_SiliconeProcessState.WaitingVacuumReleased:
+
+        bPartVacuumEnable := FALSE;
+        bPinchValveRequest := FALSE;
+
+        tonStep(IN := FALSE);
+
+        IF NOT bPartVacuumOk THEN
+            bBusy := FALSE;
+            bDone := TRUE;
+            bReady := FALSE;
+
+            eState := E_SiliconeProcessState.Complete;
+        END_IF
+
 
     E_SiliconeProcessState.Complete:
+
+        bPartVacuumEnable := FALSE;
         bPinchValveRequest := FALSE;
         bBusy := FALSE;
         bDone := TRUE;
 
+
     E_SiliconeProcessState.Fault:
+
+        bPartVacuumEnable := FALSE;
         bPinchValveRequest := FALSE;
         bReady := FALSE;
         bBusy := FALSE;
         bDone := FALSE;
         bFaulted := TRUE;
 
-END_CASE
-]]></ST>
+END_CASE]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetEquipmentResetRequest" Id="{a5f7e317-f2a4-4c10-a4f0-228b42f92744}">

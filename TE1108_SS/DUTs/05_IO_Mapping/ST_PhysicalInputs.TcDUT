@@ -84,7 +84,7 @@ STRUCT
     uiVacuumPressureRaw           : UINT;
 	uiExtractionAVacuumPressureRaw: UINT;
 	uiExtractionBVacuumPressureRaw: UINT;
-
+	iPartVacuumPressureRaw 			: INT;
 
 END_STRUCT
 END_TYPE

@@ -3,17 +3,24 @@
   <DUT Name="E_SiliconeProcessState" Id="{2b708f69-adec-48e2-8ddf-18866f066cbd}">
     <Declaration><![CDATA[TYPE E_SiliconeProcessState :
 (
-    Idle                    := 0,
-    OpeningPinchValve       := 10,
-    WaitingPinchSettling    := 20,
-    StartingEquipment       := 30,
-    WaitingEquipmentBusy    := 40,
-    WaitingEquipmentComplete:= 50,
-    ClosingPinchValve       := 60,
-    Complete                := 70,
-    Fault                   := 80
+    Idle                     := 0,
+
+    StartingVacuum           := 10,
+    WaitingVacuumReady       := 20,
+
+    OpeningPinchValve        := 30,
+    WaitingPinchSettling     := 40,
+    StartingEquipment        := 50,
+    WaitingEquipmentBusy     := 60,
+    WaitingEquipmentComplete := 70,
+    ClosingPinchValve        := 80,
+
+    StoppingVacuum           := 90,
+    WaitingVacuumReleased    := 100,
+
+    Complete                 := 110,
+    Fault                    := 120
 );
-END_TYPE
-]]></Declaration>
+END_TYPE]]></Declaration>
   </DUT>
 </TcPlcObject>

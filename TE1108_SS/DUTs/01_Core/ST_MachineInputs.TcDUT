@@ -25,6 +25,8 @@ STRUCT
     uiVacuumPressureRaw              : UINT;
 		// Vacuum extractor
 	uiExtractorFeedbackRaw 			 : UINT;
+	iPartVacuumPressureRaw 			 : INT;
+	bPartVacuumOk          			 : BOOL;
 	bExtractorRunning      			 : BOOL;
 
     bTwoHandsSafe                    : BOOL;
