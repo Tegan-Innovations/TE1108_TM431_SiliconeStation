@@ -2026,6 +2026,7 @@ fbAssemblyStation.Cyclic(
     bRotationPlace := stInputs.bRotaryGripperRotationPlace180,
     tActionDelay := stConfig.tAssemblyActionDelay,
     tMovementTimeout := stConfig.tAssemblyMovementTimeout,
+	tReleaseDelay := stConfig.tAssemblyReleaseDelay,
     bSlideExtendOutput => stOutputsInternal.bTransferVerticalMiniSlideExtend,
     bSlideRetractOutput => stOutputsInternal.bTransferVerticalMiniSlideRetract,
     bGripperOpenOutput => stOutputsInternal.bRotaryGripperOpen,
@@ -2073,6 +2074,28 @@ fbAssemblySupportCylinder.Cyclic(
     bExtendOutput => stOutputsInternal.bAssemblySupportExtend,
     bRetractOutput => stOutputsInternal.bAssemblySupportRetract
 );
+
+
+// ---------------------------------------------------------
+// INITIALISING - FORCE SUPPORTS RETRACT PRESSURE
+// ---------------------------------------------------------
+// Keep both retract valves energised during Initialising,
+// regardless of the retracted feedback. This pre-pressurises
+// the retract side before the first automatic extension.
+// ---------------------------------------------------------
+
+IF (eMachineState = E_MachineState.Initialising)
+    AND stPermissives.bAirSupplyReady
+THEN
+
+    stOutputsInternal.bSiliconeSupportExtend := FALSE;
+    stOutputsInternal.bSiliconeSupportRetract := TRUE;
+
+    stOutputsInternal.bAssemblySupportExtend := FALSE;
+    stOutputsInternal.bAssemblySupportRetract := TRUE;
+
+END_IF
+
 
 // Cyclic component execution
 // LEGACY PROCESS STATION:

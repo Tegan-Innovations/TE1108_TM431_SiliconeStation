@@ -43,6 +43,7 @@ VAR_INPUT
     tActionDelay             : TIME;
     tMovementTimeout         : TIME;
 	tGripperMismatchDelay 	 : TIME := T#300MS;
+	tReleaseDelay 			 : TIME;
 	
 END_VAR
 VAR_OUTPUT
@@ -495,7 +496,7 @@ CASE eState OF
         bSlideExtendOutput := TRUE;
         bGripperCloseOutput := TRUE;
         bRotationPickOutput := TRUE;
-        tonActionDelay(IN := TRUE, PT := tActionDelay);
+        tonActionDelay(IN := TRUE, PT := tReleaseDelay);
 
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);

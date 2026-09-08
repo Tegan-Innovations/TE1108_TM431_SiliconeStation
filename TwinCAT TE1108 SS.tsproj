@@ -755,504 +755,6 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{5E77FC20-F718-695B-0D6E-6DFF92E2609B}" AutoDeleteType="true">ST_SiliconeSupplyConfig</Name>
-			<BitSize>800</BitSize>
-			<SubItem>
-				<Name>rSiliconePressureMin</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>0</BitOffs>
-				<Default>
-					<Value>1.5</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rSiliconePressureMax</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>32</BitOffs>
-				<Default>
-					<Value>1.7</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rNozzlePressureMin</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>64</BitOffs>
-				<Default>
-					<Value>1.8</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rNozzlePressureMax</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>96</BitOffs>
-				<Default>
-					<Value>2</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tPressureFaultDelay</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>128</BitOffs>
-				<Default>
-					<DateTime>T#2S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tPressureRecoverDelay</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>160</BitOffs>
-				<Default>
-					<DateTime>T#1S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tDegassingDuration</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>192</BitOffs>
-				<Default>
-					<DateTime>T#30M</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tDegassingVacuumTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>224</BitOffs>
-				<Default>
-					<DateTime>T#60S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bVacuumSupervisionEnabled</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>256</BitOffs>
-				<Default>
-					<Bool>false</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rDegassingVacuumThreshold</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>288</BitOffs>
-				<Default>
-					<Value>0</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tPinchValveSettlingDelay</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>320</BitOffs>
-				<Default>
-					<DateTime>T#300MS</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tIvekStartTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>352</BitOffs>
-				<Default>
-					<DateTime>T#5S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tIvekCompleteTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>384</BitOffs>
-				<Default>
-					<DateTime>T#60S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bPressureScalingEnabled</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<Comment><![CDATA[ Analogue scaling is intentionally configurable because the exact
- transmitter engineering range must be confirmed during commissioning.]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>416</BitOffs>
-				<Default>
-					<Bool>false</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rPressureRawLow</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>448</BitOffs>
-				<Default>
-					<Value>0</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rPressureRawHigh</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>480</BitOffs>
-				<Default>
-					<Value>32767</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rSiliconePressureEngLow</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>512</BitOffs>
-				<Default>
-					<Value>0</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rSiliconePressureEngHigh</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>544</BitOffs>
-				<Default>
-					<Value>10</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rNozzlePressureEngLow</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>576</BitOffs>
-				<Default>
-					<Value>0</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rNozzlePressureEngHigh</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>608</BitOffs>
-				<Default>
-					<Value>10</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bVacuumScalingEnabled</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>640</BitOffs>
-				<Default>
-					<Bool>false</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rVacuumRawLow</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>672</BitOffs>
-				<Default>
-					<Value>0</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rVacuumRawHigh</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>704</BitOffs>
-				<Default>
-					<Value>32767</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rVacuumEngLow</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>736</BitOffs>
-				<Default>
-					<Value>0</Value>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>rVacuumEngHigh</Name>
-				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>768</BitOffs>
-				<Default>
-					<Value>1</Value>
-				</Default>
-			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{11C62573-9255-12A4-B2BB-02675A66E48D}" AutoDeleteType="true">ST_MachineConfig</Name>
-			<BitSize>1472</BitSize>
-			<SubItem>
-				<Name>tInitialiseTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>0</BitOffs>
-				<Default>
-					<DateTime>T#15S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tStoppingTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>32</BitOffs>
-				<Default>
-					<DateTime>T#15S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tIndexTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>64</BitOffs>
-				<Default>
-					<DateTime>T#10S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tIndexRotateDelay</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>96</BitOffs>
-				<Default>
-					<DateTime>T#500MS</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tIndexStopDelay</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>128</BitOffs>
-				<Default>
-					<DateTime>T#1S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tIndexSupportTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>160</BitOffs>
-				<Default>
-					<DateTime>T#5S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tTwoHandHold</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>192</BitOffs>
-				<Default>
-					<DateTime>T#500MS</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tTwoHandRecoveryTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>224</BitOffs>
-				<Default>
-					<DateTime>T#10S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tDoorLockTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>256</BitOffs>
-				<Default>
-					<DateTime>T#10S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tDoorUnlockTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>288</BitOffs>
-				<Default>
-					<DateTime>T#10S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tCylinderTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>320</BitOffs>
-				<Default>
-					<DateTime>T#30S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tProcessTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>352</BitOffs>
-				<Default>
-					<DateTime>T#60S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tOperatorIdleTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>384</BitOffs>
-				<Default>
-					<DateTime>T#30S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tAssemblyProcessSimulation</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>416</BitOffs>
-				<Default>
-					<DateTime>T#2S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tSiliconeProcessSimulation</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>448</BitOffs>
-				<Default>
-					<DateTime>T#2S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tAssemblyActionDelay</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<Comment><![CDATA[ Flipping station commissioning values. Reduce action delay after validation.]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>480</BitOffs>
-				<Default>
-					<DateTime>T#10MS</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tAssemblyMovementTimeout</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>512</BitOffs>
-				<Default>
-					<DateTime>T#5S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>eOperatorPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>544</BitOffs>
-				<Default>
-					<EnumText>E_TablePosition.Position1</EnumText>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>eSiliconePosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>560</BitOffs>
-				<Default>
-					<EnumText>E_TablePosition.Position3</EnumText>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>eAssemblyPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>576</BitOffs>
-				<Default>
-					<EnumText>E_TablePosition.Position4</EnumText>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>eRejectPosition</Name>
-				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
-				<BitSize>16</BitSize>
-				<BitOffs>592</BitOffs>
-				<Default>
-					<EnumText>E_TablePosition.Position1</EnumText>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bRequireTwoHandsForIndex</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>608</BitOffs>
-				<Default>
-					<Bool>true</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bAllowEmptyNestIndex</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>616</BitOffs>
-				<Default>
-					<Bool>true</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bRequireRejectConfirm</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>624</BitOffs>
-				<Default>
-					<Bool>true</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bUseProcessSimulation</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>632</BitOffs>
-				<Default>
-					<Bool>true</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>aNestEnabled</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<ArrayInfo>
-					<LBound>1</LBound>
-					<Elements>4</Elements>
-				</ArrayInfo>
-				<BitSize>32</BitSize>
-				<BitOffs>640</BitOffs>
-				<Default>
-					<SubItem>
-						<Name>[1]</Name>
-						<Bool>true</Bool>
-					</SubItem>
-					<SubItem>
-						<Name>[2]</Name>
-						<Bool>true</Bool>
-					</SubItem>
-					<SubItem>
-						<Name>[3]</Name>
-						<Bool>true</Bool>
-					</SubItem>
-					<SubItem>
-						<Name>[4]</Name>
-						<Bool>true</Bool>
-					</SubItem>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>stSiliconeSupply</Name>
-				<Type GUID="{5E77FC20-F718-695B-0D6E-6DFF92E2609B}">ST_SiliconeSupplyConfig</Type>
-				<Comment><![CDATA[ =========================================================
- SILICONE SUPPLY STRUCTURE
- =========================================================]]></Comment>
-				<BitSize>800</BitSize>
-				<BitOffs>672</BitOffs>
-			</SubItem>
-		</DataType>
-		<DataType>
 			<Name GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF BOOL</Name>
 			<BitSize>32</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
@@ -1544,6 +1046,513 @@
 			</SubItem>
 		</DataType>
 		<DataType>
+			<Name GUID="{5E77FC20-F718-695B-0D6E-6DFF92E2609B}" AutoDeleteType="true">ST_SiliconeSupplyConfig</Name>
+			<BitSize>800</BitSize>
+			<SubItem>
+				<Name>rSiliconePressureMin</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+				<Default>
+					<Value>1.5</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rSiliconePressureMax</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+				<Default>
+					<Value>1.7</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rNozzlePressureMin</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>64</BitOffs>
+				<Default>
+					<Value>1.8</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rNozzlePressureMax</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+				<Default>
+					<Value>2</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tPressureFaultDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>128</BitOffs>
+				<Default>
+					<DateTime>T#2S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tPressureRecoverDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>160</BitOffs>
+				<Default>
+					<DateTime>T#1S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tDegassingDuration</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>192</BitOffs>
+				<Default>
+					<DateTime>T#30M</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tDegassingVacuumTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>224</BitOffs>
+				<Default>
+					<DateTime>T#60S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>bVacuumSupervisionEnabled</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>256</BitOffs>
+				<Default>
+					<Bool>false</Bool>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rDegassingVacuumThreshold</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>288</BitOffs>
+				<Default>
+					<Value>0</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tPinchValveSettlingDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>320</BitOffs>
+				<Default>
+					<DateTime>T#300MS</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tIvekStartTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>352</BitOffs>
+				<Default>
+					<DateTime>T#5S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tIvekCompleteTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>384</BitOffs>
+				<Default>
+					<DateTime>T#60S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>bPressureScalingEnabled</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<Comment><![CDATA[ Analogue scaling is intentionally configurable because the exact
+ transmitter engineering range must be confirmed during commissioning.]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>416</BitOffs>
+				<Default>
+					<Bool>false</Bool>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rPressureRawLow</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>448</BitOffs>
+				<Default>
+					<Value>0</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rPressureRawHigh</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>480</BitOffs>
+				<Default>
+					<Value>32767</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rSiliconePressureEngLow</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>512</BitOffs>
+				<Default>
+					<Value>0</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rSiliconePressureEngHigh</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>544</BitOffs>
+				<Default>
+					<Value>10</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rNozzlePressureEngLow</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>576</BitOffs>
+				<Default>
+					<Value>0</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rNozzlePressureEngHigh</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>608</BitOffs>
+				<Default>
+					<Value>10</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>bVacuumScalingEnabled</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>640</BitOffs>
+				<Default>
+					<Bool>false</Bool>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rVacuumRawLow</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>672</BitOffs>
+				<Default>
+					<Value>0</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rVacuumRawHigh</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>704</BitOffs>
+				<Default>
+					<Value>32767</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rVacuumEngLow</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>736</BitOffs>
+				<Default>
+					<Value>0</Value>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>rVacuumEngHigh</Name>
+				<Type GUID="{18071995-0000-0000-0000-00000000000D}">REAL</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>768</BitOffs>
+				<Default>
+					<Value>1</Value>
+				</Default>
+			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{58500C32-0BDB-53B4-AF2E-A9F69526C5BC}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<BitSize>1504</BitSize>
+			<SubItem>
+				<Name>tInitialiseTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+				<Default>
+					<DateTime>T#15S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tStoppingTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+				<Default>
+					<DateTime>T#15S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tIndexTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>64</BitOffs>
+				<Default>
+					<DateTime>T#10S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tIndexRotateDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+				<Default>
+					<DateTime>T#500MS</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tIndexStopDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>128</BitOffs>
+				<Default>
+					<DateTime>T#1S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tIndexSupportTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>160</BitOffs>
+				<Default>
+					<DateTime>T#5S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tTwoHandHold</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>192</BitOffs>
+				<Default>
+					<DateTime>T#500MS</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tTwoHandRecoveryTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>224</BitOffs>
+				<Default>
+					<DateTime>T#10S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tDoorLockTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>256</BitOffs>
+				<Default>
+					<DateTime>T#10S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tDoorUnlockTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>288</BitOffs>
+				<Default>
+					<DateTime>T#10S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tCylinderTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>320</BitOffs>
+				<Default>
+					<DateTime>T#30S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tProcessTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>352</BitOffs>
+				<Default>
+					<DateTime>T#60S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tOperatorIdleTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>384</BitOffs>
+				<Default>
+					<DateTime>T#30S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tAssemblyProcessSimulation</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>416</BitOffs>
+				<Default>
+					<DateTime>T#2S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tSiliconeProcessSimulation</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>448</BitOffs>
+				<Default>
+					<DateTime>T#2S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tAssemblyActionDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<Comment><![CDATA[ Flipping station commissioning values. Reduce action delay after validation.]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>480</BitOffs>
+				<Default>
+					<DateTime>T#10MS</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tAssemblyMovementTimeout</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>512</BitOffs>
+				<Default>
+					<DateTime>T#7S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tAssemblyReleaseDelay</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>544</BitOffs>
+				<Default>
+					<DateTime>T#500MS</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>eOperatorPosition</Name>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>576</BitOffs>
+				<Default>
+					<EnumText>E_TablePosition.Position1</EnumText>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>eSiliconePosition</Name>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>592</BitOffs>
+				<Default>
+					<EnumText>E_TablePosition.Position3</EnumText>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>eAssemblyPosition</Name>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>608</BitOffs>
+				<Default>
+					<EnumText>E_TablePosition.Position4</EnumText>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>eRejectPosition</Name>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
+				<BitSize>16</BitSize>
+				<BitOffs>624</BitOffs>
+				<Default>
+					<EnumText>E_TablePosition.Position1</EnumText>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>bRequireTwoHandsForIndex</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>640</BitOffs>
+				<Default>
+					<Bool>true</Bool>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>bAllowEmptyNestIndex</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>648</BitOffs>
+				<Default>
+					<Bool>true</Bool>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>bRequireRejectConfirm</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>656</BitOffs>
+				<Default>
+					<Bool>true</Bool>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>bUseProcessSimulation</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>664</BitOffs>
+				<Default>
+					<Bool>true</Bool>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>aNestEnabled</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<ArrayInfo>
+					<LBound>1</LBound>
+					<Elements>4</Elements>
+				</ArrayInfo>
+				<BitSize>32</BitSize>
+				<BitOffs>672</BitOffs>
+				<Default>
+					<SubItem>
+						<Name>[1]</Name>
+						<Bool>true</Bool>
+					</SubItem>
+					<SubItem>
+						<Name>[2]</Name>
+						<Bool>true</Bool>
+					</SubItem>
+					<SubItem>
+						<Name>[3]</Name>
+						<Bool>true</Bool>
+					</SubItem>
+					<SubItem>
+						<Name>[4]</Name>
+						<Bool>true</Bool>
+					</SubItem>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>stSiliconeSupply</Name>
+				<Type GUID="{5E77FC20-F718-695B-0D6E-6DFF92E2609B}">ST_SiliconeSupplyConfig</Type>
+				<Comment><![CDATA[ =========================================================
+ SILICONE SUPPLY STRUCTURE
+ =========================================================]]></Comment>
+				<BitSize>800</BitSize>
+				<BitOffs>704</BitOffs>
+			</SubItem>
+		</DataType>
+		<DataType>
 			<Name GUID="{2438F91B-E188-4ED7-8594-54354F9ED6A4}" Namespace="Safety" TcBaseType="true">FSOE_6</Name>
 			<BitSize>48</BitSize>
 			<SubItem>
@@ -1723,7 +1732,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{E0113281-90F8-4C7D-A3A5-F6626AF45C90}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{971A74CD-6A43-C1A3-9691-9C66C7E50302}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1736,12 +1745,6 @@
 						<Var>
 							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
 							<Type>USINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{11C62573-9255-12A4-B2BB-02675A66E48D}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1777,6 +1780,12 @@
 						<Var>
 							<Name>GVL_Persistent.stSiliconeSupply</Name>
 							<Type GUID="{EDD38FAB-5BAA-9388-2D7D-5173435AF951}">ST_SiliconeSupplyPersistent</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{58500C32-0BDB-53B4-AF2E-A9F69526C5BC}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 					</Vars>
