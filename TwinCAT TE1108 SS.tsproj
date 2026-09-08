@@ -1723,7 +1723,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{C488D5EF-EA33-287B-C70D-1691CCF714AC}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{E0113281-90F8-4C7D-A3A5-F6626AF45C90}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">

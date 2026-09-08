@@ -312,9 +312,8 @@ ResetCyclicOutputs();
 // This request is generated for one PLC scan by an internal machine fault.
 // The TP converts the one-scan request into the required TwinSAFE run-drop time.
 bSafetyDropRequest := FALSE;
-
 bMachineStateEntry := eMachineState <> ePreviousMachineState;
-
+ePreviousMachineState := eMachineState;
 fbResetTrigger(
     CLK := stCommand.bReset
 );
@@ -2668,7 +2667,7 @@ AND NOT fbAssemblyStation.IsBusy() THEN
     bManualAssemblyCycleActive := FALSE;
 END_IF
 
-ePreviousMachineState := eMachineState;
+//ePreviousMachineState := eMachineState;
 stOutputs := stOutputsInternal;
 
 
