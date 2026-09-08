@@ -145,6 +145,7 @@ GVL_MASTER.stStationEvents[0].aEvents[6].bEventFlag := GVL_MASTER.stCommand.bSto
 GVL_MASTER.stStationEvents[0].aEvents[6].bEventText := 'Cycle stop requested';
 GVL_MASTER.stStationEvents[0].aEvents[6].sSolution := 'Wait for the current operation to stop safely';
 
+
 GVL_MASTER.stStationEvents[0].aEvents[7].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[7].bEventFlag := GVL_MASTER.stStatus.bInitialisationTimeoutFault;
 GVL_MASTER.stStationEvents[0].aEvents[7].bEventText := 'System initialisation timeout';
@@ -154,6 +155,17 @@ GVL_MASTER.stStationEvents[0].aEvents[8].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[8].bEventFlag := GVL_MASTER.stStatus.bStoppingTimeoutFault;
 GVL_MASTER.stStationEvents[0].aEvents[8].bEventText := 'System stopping timeout';
 GVL_MASTER.stStationEvents[0].aEvents[8].sSolution := 'Check process equipment stop, Silicone Support Cylinder retraction and index table status';
+
+// -----------------------------------------------------------------------------
+// VACUUM EXTRACTOR INITIALISATION TIMEOUT
+// -----------------------------------------------------------------------------
+GVL_MASTER.stStationEvents[0].aEvents[9].bFault     := TRUE;
+GVL_MASTER.stStationEvents[0].aEvents[9].bEventFlag := GVL_MASTER.stStatus.bInitialisationTimeoutFault
+    AND GVL_MASTER.stStatus.eInitialisingWaitReason  =  E_InitialisingWaitReason.ExtractorNotReady;
+GVL_MASTER.stStationEvents[0].aEvents[9].bEventText := 'Vacuum extractor failed to start';
+GVL_MASTER.stStationEvents[0].aEvents[9].sSolution  :='Check vacuum extractor power and feedback signal';
+
+
 
 // EPLAN power and pneumatic diagnostics (Term 7 / TwinSAFE aliases)
 tonUpSupplyLost(IN := NOT GVL_MASTER.stInputs.bUp24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);

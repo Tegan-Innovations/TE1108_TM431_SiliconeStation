@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="E_InitialisingWaitReason" Id="{d3443bc3-2d1f-439b-add9-6301e0fb30a4}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
@@ -23,8 +23,9 @@ TYPE E_InitialisingWaitReason :
     SiliconeSupportFaulted 		:= 100,
     AssemblySupportFaulted 		:= 110,
 	AirSupplyNotReady 			:= 115,
-    AssemblyStationNotHome       := 116,
-    AssemblyStationFaulted       := 117,
+    AssemblyStationNotHome      := 116,
+    AssemblyStationFaulted      := 117,
+	ExtractorNotReady 			:= 118,
 
     MainDoorNotReady 			:= 120
 );

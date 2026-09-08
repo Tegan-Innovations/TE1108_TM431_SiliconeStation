@@ -14,6 +14,7 @@ VAR
 
     tonMovementTimeout      : TON;
     tonActionDelay          : TON;
+	tonGripperMismatch 		: TON;
     bSequenceActive         : BOOL;
 END_VAR]]></Declaration>
     <Implementation>
@@ -41,6 +42,8 @@ VAR_INPUT
 
     tActionDelay             : TIME;
     tMovementTimeout         : TIME;
+	tGripperMismatchDelay 	 : TIME := T#300MS;
+	
 END_VAR
 VAR_OUTPUT
     bSlideExtendOutput       : BOOL;
@@ -52,6 +55,17 @@ VAR_OUTPUT
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// =========================================================
+// PHYSICAL ROTATION MAPPING
+// =========================================================
+// On this machine:
+//   bRotationPick  / bRotationPickOutput  = physical 180 deg
+//   bRotationPlace / bRotationPlaceOutput = physical 0 deg
+//
+// Required sequence:
+// HOME 180 -> rotate 0 -> down -> close -> up ->
+// rotate 180 -> down -> open -> up -> remain at 180.
+
+// =========================================================
 // OUTPUT DEFAULTS
 // =========================================================
 bSlideExtendOutput := FALSE;
@@ -61,18 +75,30 @@ bGripperCloseOutput := FALSE;
 bRotationPickOutput := FALSE;
 bRotationPlaceOutput := FALSE;
 
-// Home means the complete flipping tooling is in its index-safe position.
-stStatusInternal.bHome := bSlideRetracted AND bGripperOpen AND bRotationPick;
+// =========================================================
+// HOME STATUS
+// =========================================================
+stStatusInternal.bHome :=
+    bSlideRetracted
+    AND bGripperOpen
+    AND bRotationPick;
 
 // =========================================================
-// SENSOR COHERENCE - IMMEDIATE COMPONENT FAULTS
+// SENSOR COHERENCE
 // =========================================================
+tonGripperMismatch(
+    IN := bGripperOpen AND bGripperClosed,
+    PT := tGripperMismatchDelay
+);
+
 IF bSlideExtended AND bSlideRetracted THEN
     eFault := E_AssemblyStationFault.SlideSensorMismatch;
     eState := E_AssemblyStationState.Fault;
-ELSIF bGripperOpen AND bGripperClosed THEN
+
+ELSIF tonGripperMismatch.Q THEN
     eFault := E_AssemblyStationFault.GripperSensorMismatch;
     eState := E_AssemblyStationState.Fault;
+
 ELSIF bRotationPick AND bRotationPlace THEN
     eFault := E_AssemblyStationFault.RotationSensorMismatch;
     eState := E_AssemblyStationState.Fault;
@@ -81,8 +107,6 @@ END_IF
 // =========================================================
 // RESET
 // =========================================================
-// Reset clears the latch only. Pneumatic recovery is intentionally performed
-// in System Initialising, after the validated air supply is available.
 IF bResetRequest THEN
     bResetRequest := FALSE;
     bStartRequest := FALSE;
@@ -109,21 +133,17 @@ END_IF
 // =========================================================
 IF eState <> E_AssemblyStationState.Fault THEN
     IF bInitialising THEN
-        // Recovery order deliberately keeps rotation inhibited until the slide
-        // is fully retracted. This is the lowest-collision recovery path.
         IF NOT bSlideRetracted THEN
             eState := E_AssemblyStationState.RecoveringSlideRetracted;
         ELSIF NOT bGripperOpen THEN
             eState := E_AssemblyStationState.RecoveringGripperOpen;
         ELSIF NOT bRotationPick THEN
-            eState := E_AssemblyStationState.RecoveringRotationPick;
+            eState := E_AssemblyStationState.RecoveringRotationPlace;
         ELSE
             eState := E_AssemblyStationState.Idle;
         END_IF
 
     ELSIF bEnable AND eState = E_AssemblyStationState.Disabled THEN
-        // AutoCycle may be entered after ReadyToStart has disabled the station.
-        // Re-arm the object only from the verified home position.
         IF stStatusInternal.bHome THEN
             eState := E_AssemblyStationState.Idle;
         ELSE
@@ -132,12 +152,11 @@ IF eState <> E_AssemblyStationState.Fault THEN
             ELSIF NOT bGripperOpen THEN
                 eState := E_AssemblyStationState.RecoveringGripperOpen;
             ELSE
-                eState := E_AssemblyStationState.RecoveringRotationPick;
+                eState := E_AssemblyStationState.RecoveringRotationPlace;
             END_IF
         END_IF
 
     ELSIF NOT bEnable THEN
-        // Outside Initialising/AutoCycle the station does not create motion.
         IF stStatusInternal.bHome THEN
             eState := E_AssemblyStationState.Disabled;
         END_IF
@@ -147,8 +166,6 @@ END_IF
 // =========================================================
 // STOP REQUEST
 // =========================================================
-// A controlled stop returns the flipping tooling home. The Process Cycle keeps
-// the Assembly Support extended until this object reports not busy.
 IF bStopRequest AND eState <> E_AssemblyStationState.Fault THEN
     bStopRequest := FALSE;
     bStartRequest := FALSE;
@@ -158,7 +175,7 @@ IF bStopRequest AND eState <> E_AssemblyStationState.Fault THEN
     ELSIF NOT bGripperOpen THEN
         eState := E_AssemblyStationState.RecoveringGripperOpen;
     ELSIF NOT bRotationPick THEN
-        eState := E_AssemblyStationState.RecoveringRotationPick;
+        eState := E_AssemblyStationState.RecoveringRotationPlace;
     ELSE
         eState := E_AssemblyStationState.Idle;
     END_IF
@@ -176,7 +193,7 @@ bSequenceActive :=
     (eState <> E_AssemblyStationState.Disabled)
     AND (eState <> E_AssemblyStationState.RecoveringSlideRetracted)
     AND (eState <> E_AssemblyStationState.RecoveringGripperOpen)
-    AND (eState <> E_AssemblyStationState.RecoveringRotationPick)
+    AND (eState <> E_AssemblyStationState.RecoveringRotationPlace)
     AND (eState <> E_AssemblyStationState.Idle)
     AND (eState <> E_AssemblyStationState.Complete)
     AND (eState <> E_AssemblyStationState.Fault);
@@ -191,9 +208,6 @@ IF bSequenceActive THEN
     ELSIF NOT bIndexReady OR NOT bIndexLocked OR bIndexBusy THEN
         eFault := E_AssemblyStationFault.IndexNotSafe;
         eState := E_AssemblyStationState.Fault;
-    ELSIF NOT bAssemblySupportExtended THEN
-        eFault := E_AssemblyStationFault.AssemblySupportNotExtended;
-        eState := E_AssemblyStationState.Fault;
     END_IF
 END_IF
 
@@ -207,7 +221,7 @@ CASE eState OF
         tonActionDelay(IN := FALSE);
 
     // -----------------------------------------------------
-    // SYSTEM INITIALISING / CONTROLLED-STOP RECOVERY
+    // RECOVERY TO HOME = 180 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.RecoveringSlideRetracted:
         tonActionDelay(IN := FALSE);
@@ -218,13 +232,15 @@ CASE eState OF
 
             IF bSlideRetracted THEN
                 tonMovementTimeout(IN := FALSE);
+
                 IF NOT bGripperOpen THEN
                     eState := E_AssemblyStationState.RecoveringGripperOpen;
                 ELSIF NOT bRotationPick THEN
-                    eState := E_AssemblyStationState.RecoveringRotationPick;
+                    eState := E_AssemblyStationState.RecoveringRotationPlace;
                 ELSE
                     eState := E_AssemblyStationState.Idle;
                 END_IF
+
             ELSIF tonMovementTimeout.Q THEN
                 eFault := E_AssemblyStationFault.SlideRetractedSensorTimeout;
                 eState := E_AssemblyStationState.Fault;
@@ -241,11 +257,13 @@ CASE eState OF
 
             IF bGripperOpen THEN
                 tonMovementTimeout(IN := FALSE);
+
                 IF NOT bRotationPick THEN
-                    eState := E_AssemblyStationState.RecoveringRotationPick;
+                    eState := E_AssemblyStationState.RecoveringRotationPlace;
                 ELSE
                     eState := E_AssemblyStationState.Idle;
                 END_IF
+
             ELSIF tonMovementTimeout.Q THEN
                 eFault := E_AssemblyStationFault.GripperOpenSensorTimeout;
                 eState := E_AssemblyStationState.Fault;
@@ -254,7 +272,7 @@ CASE eState OF
             tonMovementTimeout(IN := FALSE);
         END_IF
 
-    E_AssemblyStationState.RecoveringRotationPick:
+    E_AssemblyStationState.RecoveringRotationPlace:
         IF bAirSupplySafe AND bSafetyPermitted THEN
             tonMovementTimeout(IN := NOT bRotationPick, PT := tMovementTimeout);
             bSlideRetractOutput := TRUE;
@@ -273,7 +291,7 @@ CASE eState OF
         END_IF
 
     // -----------------------------------------------------
-    // READY / START
+    // READY / HOME = 180 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.Idle:
         tonMovementTimeout(IN := FALSE);
@@ -289,40 +307,68 @@ CASE eState OF
             stResult.eCode := E_ProcessResultCode.None;
             stResult.udiFaultCode := 0;
             stResult.sDetail := '';
-
-            IF NOT bSafetyPermitted THEN
-                eFault := E_AssemblyStationFault.SafetyLost;
-                eState := E_AssemblyStationState.Fault;
-            ELSIF NOT bAirSupplySafe THEN
-                eFault := E_AssemblyStationFault.AirSupplyLost;
-                eState := E_AssemblyStationState.Fault;
-            ELSIF NOT bIndexReady OR NOT bIndexLocked OR bIndexBusy THEN
-                eFault := E_AssemblyStationFault.IndexNotSafe;
-                eState := E_AssemblyStationState.Fault;
-            ELSIF NOT bAssemblySupportExtended THEN
-                eFault := E_AssemblyStationFault.AssemblySupportNotExtended;
-                eState := E_AssemblyStationState.Fault;
-            ELSIF NOT stStatusInternal.bHome THEN
-                // Do not start an automatic pick unless all three devices are home.
-                IF NOT bSlideRetracted THEN
-                    eState := E_AssemblyStationState.RecoveringSlideRetracted;
-                ELSIF NOT bGripperOpen THEN
-                    eState := E_AssemblyStationState.RecoveringGripperOpen;
-                ELSE
-                    eState := E_AssemblyStationState.RecoveringRotationPick;
-                END_IF
-            ELSE
-                eState := E_AssemblyStationState.ExtendingSlideToPick;
-            END_IF
+			
+			IF NOT bSafetyPermitted THEN
+				eFault := E_AssemblyStationFault.SafetyLost;
+				eState := E_AssemblyStationState.Fault;
+			ELSIF NOT bAirSupplySafe THEN
+				eFault := E_AssemblyStationFault.AirSupplyLost;
+				eState := E_AssemblyStationState.Fault;
+			ELSIF NOT bIndexReady OR NOT bIndexLocked OR bIndexBusy THEN
+				eFault := E_AssemblyStationFault.IndexNotSafe;
+				eState := E_AssemblyStationState.Fault;
+			ELSIF NOT stStatusInternal.bHome THEN
+				IF NOT bSlideRetracted THEN
+					eState := E_AssemblyStationState.RecoveringSlideRetracted;
+				ELSIF NOT bGripperOpen THEN
+					eState := E_AssemblyStationState.RecoveringGripperOpen;
+				ELSE
+					eState := E_AssemblyStationState.RecoveringRotationPlace;
+				END_IF
+			ELSE
+				eState := E_AssemblyStationState.RotatingToPick;
+			END_IF
+  
         END_IF
 
     // -----------------------------------------------------
-    // 1. SLIDE DOWN - GRIPPER OPEN - ROTATION 0 DEG
+    // 1. ROTATE FROM HOME 180 DEG TO PHYSICAL 0 DEG
+    // -----------------------------------------------------
+    E_AssemblyStationState.RotatingToPick:
+        bSlideRetractOutput := TRUE;
+        bGripperOpenOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
+        tonMovementTimeout(IN := NOT bRotationPlace, PT := tMovementTimeout);
+
+        IF bRotationPlace THEN
+            tonMovementTimeout(IN := FALSE);
+            eState := E_AssemblyStationState.DelayAfterRotateToPick;
+        ELSIF tonMovementTimeout.Q THEN
+            eFault := E_AssemblyStationFault.RotationPlaceSensorTimeout;
+            eState := E_AssemblyStationState.Fault;
+        END_IF
+
+    E_AssemblyStationState.DelayAfterRotateToPick:
+        bSlideRetractOutput := TRUE;
+        bGripperOpenOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
+        tonActionDelay(IN := TRUE, PT := tActionDelay);
+
+        IF tonActionDelay.Q THEN
+			tonActionDelay(IN := FALSE);
+	
+			IF bAssemblySupportExtended THEN
+				eState := E_AssemblyStationState.ExtendingSlideToPick;
+			END_IF
+		END_IF
+
+    // -----------------------------------------------------
+    // 2. SLIDE DOWN AT PHYSICAL 0 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.ExtendingSlideToPick:
         bSlideExtendOutput := TRUE;
         bGripperOpenOutput := TRUE;
-        bRotationPickOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
         tonMovementTimeout(IN := NOT bSlideExtended, PT := tMovementTimeout);
 
         IF bSlideExtended THEN
@@ -336,20 +382,21 @@ CASE eState OF
     E_AssemblyStationState.DelayAfterPickExtend:
         bSlideExtendOutput := TRUE;
         bGripperOpenOutput := TRUE;
-        bRotationPickOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
         tonActionDelay(IN := TRUE, PT := tActionDelay);
+
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);
             eState := E_AssemblyStationState.ClosingGripper;
         END_IF
 
     // -----------------------------------------------------
-    // 2. CLOSE GRIPPER
+    // 3. CLOSE GRIPPER AT PHYSICAL 0 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.ClosingGripper:
         bSlideExtendOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPickOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
         tonMovementTimeout(IN := NOT bGripperClosed, PT := tMovementTimeout);
 
         IF bGripperClosed THEN
@@ -363,20 +410,21 @@ CASE eState OF
     E_AssemblyStationState.DelayAfterGripperClose:
         bSlideExtendOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPickOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
         tonActionDelay(IN := TRUE, PT := tActionDelay);
+
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);
             eState := E_AssemblyStationState.RetractingSlideWithPart;
         END_IF
 
     // -----------------------------------------------------
-    // 3. SLIDE UP WITH BARREL
+    // 4. SLIDE UP WITH PART AT PHYSICAL 0 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.RetractingSlideWithPart:
         bSlideRetractOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPickOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
         tonMovementTimeout(IN := NOT bSlideRetracted, PT := tMovementTimeout);
 
         IF bSlideRetracted THEN
@@ -390,47 +438,49 @@ CASE eState OF
     E_AssemblyStationState.DelayAfterPickRetract:
         bSlideRetractOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPickOutput := TRUE;
+        bRotationPlaceOutput := TRUE;
         tonActionDelay(IN := TRUE, PT := tActionDelay);
+
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);
             eState := E_AssemblyStationState.RotatingToPlace;
         END_IF
 
     // -----------------------------------------------------
-    // 4. ROTATE TO 180 DEG
+    // 5. ROTATE WITH PART TO PHYSICAL 180 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.RotatingToPlace:
         bSlideRetractOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
-        tonMovementTimeout(IN := NOT bRotationPlace, PT := tMovementTimeout);
+        bRotationPickOutput := TRUE;
+        tonMovementTimeout(IN := NOT bRotationPick, PT := tMovementTimeout);
 
-        IF bRotationPlace THEN
+        IF bRotationPick THEN
             tonMovementTimeout(IN := FALSE);
             eState := E_AssemblyStationState.DelayAfterRotateToPlace;
         ELSIF tonMovementTimeout.Q THEN
-            eFault := E_AssemblyStationFault.RotationPlaceSensorTimeout;
+            eFault := E_AssemblyStationFault.RotationPickSensorTimeout;
             eState := E_AssemblyStationState.Fault;
         END_IF
 
     E_AssemblyStationState.DelayAfterRotateToPlace:
         bSlideRetractOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
+        bRotationPickOutput := TRUE;
         tonActionDelay(IN := TRUE, PT := tActionDelay);
+
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);
             eState := E_AssemblyStationState.ExtendingSlideToPlace;
         END_IF
 
     // -----------------------------------------------------
-    // 5. SLIDE DOWN TO ASSEMBLY POSITION
+    // 6. SLIDE DOWN AT PHYSICAL 180 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.ExtendingSlideToPlace:
         bSlideExtendOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
+        bRotationPickOutput := TRUE;
         tonMovementTimeout(IN := NOT bSlideExtended, PT := tMovementTimeout);
 
         IF bSlideExtended THEN
@@ -444,20 +494,21 @@ CASE eState OF
     E_AssemblyStationState.DelayAfterPlaceExtend:
         bSlideExtendOutput := TRUE;
         bGripperCloseOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
+        bRotationPickOutput := TRUE;
         tonActionDelay(IN := TRUE, PT := tActionDelay);
+
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);
             eState := E_AssemblyStationState.OpeningGripper;
         END_IF
 
     // -----------------------------------------------------
-    // 6. RELEASE BARREL
+    // 7. OPEN GRIPPER AT PHYSICAL 180 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.OpeningGripper:
         bSlideExtendOutput := TRUE;
         bGripperOpenOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
+        bRotationPickOutput := TRUE;
         tonMovementTimeout(IN := NOT bGripperOpen, PT := tMovementTimeout);
 
         IF bGripperOpen THEN
@@ -471,20 +522,21 @@ CASE eState OF
     E_AssemblyStationState.DelayAfterGripperOpen:
         bSlideExtendOutput := TRUE;
         bGripperOpenOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
+        bRotationPickOutput := TRUE;
         tonActionDelay(IN := TRUE, PT := tActionDelay);
+
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);
             eState := E_AssemblyStationState.RetractingSlideHome;
         END_IF
 
     // -----------------------------------------------------
-    // 7. SLIDE UP
+    // 8. SLIDE UP AND REMAIN AT PHYSICAL 180 DEG
     // -----------------------------------------------------
     E_AssemblyStationState.RetractingSlideHome:
         bSlideRetractOutput := TRUE;
         bGripperOpenOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
+        bRotationPickOutput := TRUE;
         tonMovementTimeout(IN := NOT bSlideRetracted, PT := tMovementTimeout);
 
         IF bSlideRetracted THEN
@@ -498,44 +550,16 @@ CASE eState OF
     E_AssemblyStationState.DelayAfterHomeRetract:
         bSlideRetractOutput := TRUE;
         bGripperOpenOutput := TRUE;
-        bRotationPlaceOutput := TRUE;
-        tonActionDelay(IN := TRUE, PT := tActionDelay);
-        IF tonActionDelay.Q THEN
-            tonActionDelay(IN := FALSE);
-            eState := E_AssemblyStationState.RotatingToPickHome;
-        END_IF
-
-    // -----------------------------------------------------
-    // 8. ROTATE BACK TO 0 DEG
-    // -----------------------------------------------------
-    E_AssemblyStationState.RotatingToPickHome:
-        bSlideRetractOutput := TRUE;
-        bGripperOpenOutput := TRUE;
-        bRotationPickOutput := TRUE;
-        tonMovementTimeout(IN := NOT bRotationPick, PT := tMovementTimeout);
-
-        IF bRotationPick THEN
-            tonMovementTimeout(IN := FALSE);
-            eState := E_AssemblyStationState.DelayAfterRotateHome;
-        ELSIF tonMovementTimeout.Q THEN
-            eFault := E_AssemblyStationFault.RotationPickSensorTimeout;
-            eState := E_AssemblyStationState.Fault;
-        END_IF
-
-    E_AssemblyStationState.DelayAfterRotateHome:
-        bSlideRetractOutput := TRUE;
-        bGripperOpenOutput := TRUE;
         bRotationPickOutput := TRUE;
         tonActionDelay(IN := TRUE, PT := tActionDelay);
+
         IF tonActionDelay.Q THEN
             tonActionDelay(IN := FALSE);
-
             stResult.bValid := TRUE;
             stResult.bPassed := TRUE;
             stResult.eCode := E_ProcessResultCode.Pass;
             stResult.udiFaultCode := 0;
             stResult.sDetail := 'Barrel flipping and assembly sequence complete';
-
             eState := E_AssemblyStationState.Complete;
         END_IF
 
@@ -547,8 +571,6 @@ CASE eState OF
         tonActionDelay(IN := FALSE);
 
     E_AssemblyStationState.Fault:
-        // Outputs are deliberately de-energised here. The machine fault
-        // aggregation drops the TwinSAFE run request and removes pneumatic motion.
         tonMovementTimeout(IN := FALSE);
         tonActionDelay(IN := FALSE);
 
@@ -562,13 +584,18 @@ stStatusInternal.eFault := eFault;
 stStatusInternal.bReady := eState = E_AssemblyStationState.Idle;
 stStatusInternal.bDone := eState = E_AssemblyStationState.Complete;
 stStatusInternal.bFaulted := eState = E_AssemblyStationState.Fault;
+
 stStatusInternal.bBusy :=
     bSequenceActive
     OR (eState = E_AssemblyStationState.RecoveringSlideRetracted)
     OR (eState = E_AssemblyStationState.RecoveringGripperOpen)
-    OR (eState = E_AssemblyStationState.RecoveringRotationPick);
+    OR (eState = E_AssemblyStationState.RecoveringRotationPlace);
 
-stStatusInternal.bIndexPermissive := stStatusInternal.bHome AND NOT stStatusInternal.bBusy AND NOT stStatusInternal.bFaulted;
+stStatusInternal.bIndexPermissive :=
+    stStatusInternal.bHome
+    AND NOT stStatusInternal.bBusy
+    AND NOT stStatusInternal.bFaulted;
+
 stStatusInternal.bSlideRetracted := bSlideRetracted;
 stStatusInternal.bSlideExtended := bSlideExtended;
 stStatusInternal.bGripperOpen := bGripperOpen;
@@ -576,30 +603,78 @@ stStatusInternal.bGripperClosed := bGripperClosed;
 stStatusInternal.bRotationPick := bRotationPick;
 stStatusInternal.bRotationPlace := bRotationPlace;
 
+// =========================================================
+// STATUS MESSAGE
+// =========================================================
 CASE eState OF
-    E_AssemblyStationState.Disabled: stStatusInternal.sMessage := 'Assembly station disabled';
-    E_AssemblyStationState.RecoveringSlideRetracted: stStatusInternal.sMessage := 'Assembly station homing - retracting transfer slide';
-    E_AssemblyStationState.RecoveringGripperOpen: stStatusInternal.sMessage := 'Assembly station homing - opening rotary gripper';
-    E_AssemblyStationState.RecoveringRotationPick: stStatusInternal.sMessage := 'Assembly station homing - rotating gripper to 0 degrees';
-    E_AssemblyStationState.Idle: stStatusInternal.sMessage := 'Assembly station ready';
-    E_AssemblyStationState.ExtendingSlideToPick: stStatusInternal.sMessage := 'Assembly station - lowering slide to pick barrel';
-    E_AssemblyStationState.DelayAfterPickExtend: stStatusInternal.sMessage := 'Assembly station - pick position settling';
-    E_AssemblyStationState.ClosingGripper: stStatusInternal.sMessage := 'Assembly station - closing gripper';
-    E_AssemblyStationState.DelayAfterGripperClose: stStatusInternal.sMessage := 'Assembly station - gripper settling';
-    E_AssemblyStationState.RetractingSlideWithPart: stStatusInternal.sMessage := 'Assembly station - lifting barrel';
-    E_AssemblyStationState.DelayAfterPickRetract: stStatusInternal.sMessage := 'Assembly station - lift position settling';
-    E_AssemblyStationState.RotatingToPlace: stStatusInternal.sMessage := 'Assembly station - rotating barrel to 180 degrees';
-    E_AssemblyStationState.DelayAfterRotateToPlace: stStatusInternal.sMessage := 'Assembly station - 180 degree position settling';
-    E_AssemblyStationState.ExtendingSlideToPlace: stStatusInternal.sMessage := 'Assembly station - lowering barrel to assembly position';
-    E_AssemblyStationState.DelayAfterPlaceExtend: stStatusInternal.sMessage := 'Assembly station - assembly position settling';
-    E_AssemblyStationState.OpeningGripper: stStatusInternal.sMessage := 'Assembly station - releasing barrel';
-    E_AssemblyStationState.DelayAfterGripperOpen: stStatusInternal.sMessage := 'Assembly station - release settling';
-    E_AssemblyStationState.RetractingSlideHome: stStatusInternal.sMessage := 'Assembly station - retracting transfer slide';
-    E_AssemblyStationState.DelayAfterHomeRetract: stStatusInternal.sMessage := 'Assembly station - home height settling';
-    E_AssemblyStationState.RotatingToPickHome: stStatusInternal.sMessage := 'Assembly station - rotating gripper to 0 degrees';
-    E_AssemblyStationState.DelayAfterRotateHome: stStatusInternal.sMessage := 'Assembly station - final home position settling';
-    E_AssemblyStationState.Complete: stStatusInternal.sMessage := 'Assembly station cycle complete';
-    E_AssemblyStationState.Fault: stStatusInternal.sMessage := 'Assembly station fault';
+    E_AssemblyStationState.Disabled:
+        stStatusInternal.sMessage := 'Assembly station disabled';
+
+    E_AssemblyStationState.RecoveringSlideRetracted:
+        stStatusInternal.sMessage := 'Assembly station homing - retracting transfer slide';
+
+    E_AssemblyStationState.RecoveringGripperOpen:
+        stStatusInternal.sMessage := 'Assembly station homing - opening rotary gripper';
+
+    E_AssemblyStationState.RecoveringRotationPlace:
+        stStatusInternal.sMessage := 'Assembly station homing - rotating gripper to 180 degrees';
+
+    E_AssemblyStationState.Idle:
+        stStatusInternal.sMessage := 'Assembly station ready at 180 degree home position';
+
+    E_AssemblyStationState.RotatingToPick:
+        stStatusInternal.sMessage := 'Assembly station - rotating gripper from 180 to 0 degree pick position';
+
+    E_AssemblyStationState.DelayAfterRotateToPick:
+        stStatusInternal.sMessage := 'Assembly station - 0 degree pick position settling';
+
+    E_AssemblyStationState.ExtendingSlideToPick:
+        stStatusInternal.sMessage := 'Assembly station - lowering slide to pick barrel';
+
+    E_AssemblyStationState.DelayAfterPickExtend:
+        stStatusInternal.sMessage := 'Assembly station - pick position settling';
+
+    E_AssemblyStationState.ClosingGripper:
+        stStatusInternal.sMessage := 'Assembly station - closing gripper';
+
+    E_AssemblyStationState.DelayAfterGripperClose:
+        stStatusInternal.sMessage := 'Assembly station - gripper settling';
+
+    E_AssemblyStationState.RetractingSlideWithPart:
+        stStatusInternal.sMessage := 'Assembly station - lifting barrel';
+
+    E_AssemblyStationState.DelayAfterPickRetract:
+        stStatusInternal.sMessage := 'Assembly station - lift position settling';
+
+    E_AssemblyStationState.RotatingToPlace:
+        stStatusInternal.sMessage := 'Assembly station - rotating barrel to 180 degrees';
+
+    E_AssemblyStationState.DelayAfterRotateToPlace:
+        stStatusInternal.sMessage := 'Assembly station - 180 degree position settling';
+
+    E_AssemblyStationState.ExtendingSlideToPlace:
+        stStatusInternal.sMessage := 'Assembly station - lowering barrel to assembly position';
+
+    E_AssemblyStationState.DelayAfterPlaceExtend:
+        stStatusInternal.sMessage := 'Assembly station - assembly position settling';
+
+    E_AssemblyStationState.OpeningGripper:
+        stStatusInternal.sMessage := 'Assembly station - releasing barrel';
+
+    E_AssemblyStationState.DelayAfterGripperOpen:
+        stStatusInternal.sMessage := 'Assembly station - release settling';
+
+    E_AssemblyStationState.RetractingSlideHome:
+        stStatusInternal.sMessage := 'Assembly station - retracting transfer slide';
+
+    E_AssemblyStationState.DelayAfterHomeRetract:
+        stStatusInternal.sMessage := 'Assembly station - home height settling';
+
+    E_AssemblyStationState.Complete:
+        stStatusInternal.sMessage := 'Assembly station cycle complete';
+
+    E_AssemblyStationState.Fault:
+        stStatusInternal.sMessage := 'Assembly station fault';
 END_CASE]]></ST>
       </Implementation>
     </Method>

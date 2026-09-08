@@ -43,6 +43,7 @@ GVL_IO.stOutputs.bVacuumAirSolenoid1 					:= GVL_MASTER.stOutputs.bVacuumAirSole
 GVL_IO.stOutputs.bVacuumAirSolenoid2 					:= GVL_MASTER.stOutputs.bVacuumAirSolenoid2;
 GVL_IO.stOutputs.bSiliconePinchValve1 					:= GVL_MASTER.stOutputs.bSiliconePinchValve1;
 GVL_IO.stOutputs.bSiliconePinchValve2 					:= GVL_MASTER.stOutputs.bSiliconePinchValve2;
+GVL_IO.stOutputs.bExtractorEnable 						:=GVL_MASTER.stOutputs.bExtractorEnable;
 
 GVL_IVEK_EIP.stOutput 									:= GVL_MASTER.stIvekOutput;
 

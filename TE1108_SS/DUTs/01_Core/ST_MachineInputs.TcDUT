@@ -23,6 +23,9 @@ STRUCT
     uiSiliconePressureRaw            : UINT;
     uiNozzlePressureRaw              : UINT;
     uiVacuumPressureRaw              : UINT;
+		// Vacuum extractor
+	uiExtractorFeedbackRaw 			 : UINT;
+	bExtractorRunning      			 : BOOL;
 
     bTwoHandsSafe                    : BOOL;
 	

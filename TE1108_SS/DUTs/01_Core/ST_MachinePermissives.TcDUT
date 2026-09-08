@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
   <DUT Name="ST_MachinePermissives" Id="{9624589d-386c-44ad-aa47-20e604e8d2c5}">
     <Declaration><![CDATA[TYPE ST_MachinePermissives :
@@ -11,16 +11,17 @@ STRUCT
 
     // Process
     bProcessStartAllowed         : BOOL;
+	bExtractorReady 			 : BOOL;
 
     // Initialisation
-	bSiliconeSupportHome      : BOOL; // Silicone Support retracted sensor TRUE
-	bAssemblySupportHome      : BOOL; // Assembly Support retracted sensor TRUE
-	bSupportsHome             : BOOL; // Both supports retracted
-	bIndexInitialisationReady : BOOL; // Index stopped and fault-free
-	bDoorInitialisationReady  : BOOL; // Door healthy and ready for automatic
-	bInitialisationAllowed    : BOOL; // All initialisation requirements valid
-	bAirSupplyReady 		  : BOOL; // Pneumatic supply feedback confirmed
-    bAssemblyStationHome      : BOOL; // Slide retracted, gripper open, rotation 0 degrees
+	bSiliconeSupportHome         : BOOL; // Silicone Support retracted sensor TRUE
+	bAssemblySupportHome         : BOOL; // Assembly Support retracted sensor TRUE
+	bSupportsHome                : BOOL; // Both supports retracted
+	bIndexInitialisationReady    : BOOL; // Index stopped and fault-free
+	bDoorInitialisationReady     : BOOL; // Door healthy and ready for automatic
+	bInitialisationAllowed       : BOOL; // All initialisation requirements valid
+	bAirSupplyReady 		     : BOOL; // Pneumatic supply feedback confirmed
+    bAssemblyStationHome         : BOOL; // Slide retracted, gripper open, rotation 0 degrees
 	
 END_STRUCT
 END_TYPE]]></Declaration>

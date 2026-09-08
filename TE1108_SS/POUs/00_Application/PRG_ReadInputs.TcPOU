@@ -74,6 +74,14 @@ GVL_MASTER.stInputs.uiSiliconePressureRaw              := GVL_IO.stInputs.uiSili
 GVL_MASTER.stInputs.uiNozzlePressureRaw                := GVL_IO.stInputs.uiNozzlePressureRaw;
 GVL_MASTER.stInputs.uiVacuumPressureRaw                := GVL_IO.stInputs.uiVacuumPressureRaw;
 
+// -----------------------------------------------------------------------------
+// VACUUM EXTRACTOR FEEDBACK
+// -----------------------------------------------------------------------------
+// EL3064 Ch2.
+// Approx. 250 = extractor OFF
+// Approx. 700 = extractor ON
+GVL_MASTER.stInputs.uiExtractorFeedbackRaw 			   :=GVL_IO.stInputs.uiExtractionAVacuumPressureRaw;
+
 GVL_MASTER.stInputs.rSiliconePressureBar :=
     F_ScaleLinear(
         rRawValue := TO_REAL(GVL_IO.stInputs.uiSiliconePressureRaw),
@@ -101,6 +109,21 @@ GVL_MASTER.stInputs.rVacuumEngineering :=
         rEngMax   := GVL_Config.stMachine.stSiliconeSupply.rVacuumEngHigh
     );
 
+
+// Extractor running status with hysteresis.
+IF NOT GVL_MASTER.stInputs.bExtractorRunning THEN
+
+    IF GVL_MASTER.stInputs.uiExtractorFeedbackRaw >= 600 THEN
+        GVL_MASTER.stInputs.bExtractorRunning := TRUE;
+    END_IF
+
+ELSE
+
+    IF GVL_MASTER.stInputs.uiExtractorFeedbackRaw <= 400 THEN
+        GVL_MASTER.stInputs.bExtractorRunning := FALSE;
+    END_IF
+
+END_IF
 // -----------------------------------------------------------------------------
 // EVENT SYSTEM AGGREGATES
 // -----------------------------------------------------------------------------

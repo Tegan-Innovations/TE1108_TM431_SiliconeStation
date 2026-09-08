@@ -379,7 +379,7 @@ CASE eState OF
     E_CycleState.RequestingSupportsExtend:
 
         stRequestsInternal.bSiliconeSupportExtend := stInputs.bSiliconeProcessRequired;
-		stRequestsInternal.bAssemblySupportExtend := stInputs.bAssemblyProcessRequired;
+		stRequestsInternal.bAssemblySupportExtend := FALSE;
 
         stStatusInternal.eMessage :=
             E_ProcessCycleMessage.RequestingSupportsExtend;
@@ -394,24 +394,21 @@ CASE eState OF
 
     E_CycleState.WaitingForSupportsExtended:
 
-        stRequestsInternal.bSiliconeSupportExtend := stInputs.bSiliconeProcessRequired;
-		stRequestsInternal.bAssemblySupportExtend := stInputs.bAssemblyProcessRequired;
-
-        stStatusInternal.eMessage :=
-            E_ProcessCycleMessage.WaitingForSupportsExtended;
-
-        IF (stInputs.bSiliconeProcessRequired AND stInputs.bSiliconeSupportFaulted)
+		stRequestsInternal.bSiliconeSupportExtend := stInputs.bSiliconeProcessRequired;
+		stRequestsInternal.bAssemblySupportExtend := FALSE;
+	
+		stStatusInternal.eMessage :=
+			E_ProcessCycleMessage.WaitingForSupportsExtended;
+	
+		IF (stInputs.bSiliconeProcessRequired AND stInputs.bSiliconeSupportFaulted)
 			OR (stInputs.bAssemblyProcessRequired AND stInputs.bAssemblySupportFaulted)
 		THEN
-		
 			eState := E_CycleState.Fault;
-		
-		ELSIF (NOT stInputs.bSiliconeProcessRequired OR stInputs.bSiliconeSupportExtended)
-			AND (NOT stInputs.bAssemblyProcessRequired OR stInputs.bAssemblySupportExtended)
+	
+		ELSIF NOT stInputs.bSiliconeProcessRequired
+			OR stInputs.bSiliconeSupportExtended
 		THEN
-		
 			eState := E_CycleState.PreparingProcessStations;
-		
 		END_IF
 
 
@@ -458,6 +455,16 @@ CASE eState OF
 	
 	E_CycleState.WaitingForProcessesRunning:
 	
+	    // Raise Assembly Support only after the flipping station
+    	// has reached the physical 0 degree position.
+    	stRequestsInternal.bAssemblySupportExtend :=
+        stInputs.bAssemblyProcessRequired
+        AND
+        (
+            stInputs.bAssemblyAtZeroPosition
+            OR stInputs.bAssemblySupportExtended
+        );
+
 		IF stInputs.bSiliconeProcessRequired
 			AND stInputs.bSiliconeProcessComplete
 		THEN
@@ -506,6 +513,14 @@ CASE eState OF
 	// -----------------------------------------------------
 	
 	E_CycleState.WaitingForProcessesComplete:
+		
+			stRequestsInternal.bAssemblySupportExtend :=
+		stInputs.bAssemblyProcessRequired
+		AND
+		(
+			stInputs.bAssemblyAtZeroPosition
+			OR stInputs.bAssemblySupportExtended
+		);
 	
 		stStatusInternal.eMessage :=
 			E_ProcessCycleMessage.WaitingForProcessesComplete;

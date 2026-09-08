@@ -12,7 +12,7 @@ VAR_GLOBAL PERSISTENT RETAIN
         tProcessTimeout      := T#60S,
         tOperatorIdleTimeout := T#30S,
         tAssemblyActionDelay := T#100MS,
-        tAssemblyMovementTimeout := T#5S,
+        tAssemblyMovementTimeout := T#7S,
 		tDoorLockTimeout     := T#10S,
     	tDoorUnlockTimeout   := T#10S,
 		

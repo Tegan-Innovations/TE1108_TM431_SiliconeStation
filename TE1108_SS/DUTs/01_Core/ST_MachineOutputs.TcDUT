@@ -25,6 +25,7 @@ STRUCT
     // Silicone Support
     bSiliconeSupportExtend                 : BOOL;
     bSiliconeSupportRetract                : BOOL;
+	bExtractorEnable 					   : BOOL;
 
     // Flipping / assembly station
     bTransferVerticalMiniSlideExtend       : BOOL;

@@ -39,7 +39,7 @@ STRUCT
     bVacuumPumpEnable             : BOOL;
     bVacuumAirSolenoid1           : BOOL;
     bVacuumAirSolenoid2           : BOOL;
-	
+	bExtractorEnable 			  : BOOL;
 
     // Not present in EPLAN Rev 1.0. Kept for optional future variant.
     bPuckLockerPinUp              : BOOL;
