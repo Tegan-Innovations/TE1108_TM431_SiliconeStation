@@ -430,9 +430,9 @@ FOR j[0] := 0 TO nArraySize DO
 			
 			m[0]											:= m[0]+1;
 			
-			stStationEvents[j[0]].aEvents[j[1]].bEventTextHMI	:= 		CONCAT( STR1 := 'Fault N ', STR2 := 
+			stStationEvents[j[0]].aEvents[j[1]].bEventTextHMI	:= 		CONCAT( STR1 := 'N ', STR2 := 
 																CONCAT( STR1 := DINT_TO_STRING(m[0]), str2 := 
-																CONCAT( STR1 :=' - Station ' , STR2 := 
+																CONCAT( STR1 :='-Station' , STR2 := 
 																CONCAT( STR1 := DINT_TO_STRING(j[0]), STR2 := 
 																CONCAT( STR1 :=' - ', str2 := stStationEvents[j[0]].aEvents[j[1]].bEventText )))));
 			stStationEvents[j[0]].aEvents[j[1]].bAssignedID	:= 	m[0];				
@@ -445,9 +445,9 @@ FOR j[0] := 0 TO nArraySize DO
 		
 			m[2]											:= m[2]+1;	
 			
-			stStationEvents[j[0]].aEvents[j[1]].bEventTextHMI	:= 		CONCAT( STR1 := 'Cycle Stop Request N ', STR2 := 
+			stStationEvents[j[0]].aEvents[j[1]].bEventTextHMI	:= 		CONCAT( STR1 := 'N ', STR2 := 
 																CONCAT( STR1 := DINT_TO_STRING(m[2]), str2 := 
-																CONCAT( STR1 :=' - Station ' , STR2 := 
+																CONCAT( STR1 :='-Station' , STR2 := 
 																CONCAT( STR1 := DINT_TO_STRING(j[0]), STR2 := 
 																CONCAT( STR1 :=' - ', str2 := stStationEvents[j[0]].aEvents[j[1]].bEventText )))));
 			stStationEvents[j[0]].aEvents[j[1]].bAssignedID	:= 	m[2];													
@@ -460,9 +460,9 @@ FOR j[0] := 0 TO nArraySize DO
 			
 			m[3]											:= m[3]+1;
 			
-			stStationEvents[j[0]].aEvents[j[1]].bEventTextHMI	:= 		CONCAT( STR1 := 'Message N ', STR2 := 
+			stStationEvents[j[0]].aEvents[j[1]].bEventTextHMI	:= 		CONCAT( STR1 := 'N ', STR2 := 
 																CONCAT( STR1 := DINT_TO_STRING(m[3]), str2 := 
-																CONCAT( STR1 :=' - Station ' , STR2 := 
+																CONCAT( STR1 :='-Station' , STR2 := 
 																CONCAT( STR1 := DINT_TO_STRING(j[0]), STR2 := 
 																CONCAT( STR1 :=' - ', str2 := stStationEvents[j[0]].aEvents[j[1]].bEventText )))));
 			stStationEvents[j[0]].aEvents[j[1]].bAssignedID	:= 	m[3];													

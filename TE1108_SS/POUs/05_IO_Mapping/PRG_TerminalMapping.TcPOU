@@ -112,6 +112,7 @@ GVL_IO.stInputs.bRotaryGripperOpened                    := GVL_EtherCAT.stTerm8_
 GVL_IO.stInputs.bRotaryGripperClosed                    := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch8;
 GVL_IO.stInputs.bRotaryGripperRotationPick0             := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch9;
 GVL_IO.stInputs.bRotaryGripperRotationPlace180          := GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch10;
+GVL_IO.stInputs.bSiliconeStationPartPresent 			:=GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch11;
 
 // ---------------------------------------------------------------------------
 // / Term 11 -Analog inputs - raw process values (EPLAN pages 21 and 22)

@@ -26,6 +26,7 @@ TYPE E_InitialisingWaitReason :
     AssemblyStationNotHome      := 116,
     AssemblyStationFaulted      := 117,
 	ExtractorNotReady 			:= 118,
+	IvekHeaterNotReady     		:= 119,
 
     MainDoorNotReady 			:= 120
 );

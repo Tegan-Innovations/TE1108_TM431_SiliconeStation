@@ -54,6 +54,8 @@ STRUCT
 	bAssemblySupportExtended  		 : BOOL;
 	bAssemblySupportRetracted 		 : BOOL;
 	
+	bSiliconeStationPartPresent 	 : BOOL;
+	
 	
 
     // Flipping / assembly station feedback

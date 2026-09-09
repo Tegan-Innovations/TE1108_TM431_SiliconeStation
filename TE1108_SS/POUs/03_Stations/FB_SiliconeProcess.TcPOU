@@ -15,6 +15,7 @@ VAR
 	bVacuumBuildTimeoutFault   : BOOL;
 	bVacuumLostFault           : BOOL;
 	bVacuumReleaseTimeoutFault : BOOL;
+	bEquipmentCompleteTimeoutFault : BOOL;
 	
     bPinchValveRequest      : BOOL;
     bEquipmentStartRequest  : BOOL;
@@ -35,6 +36,7 @@ VAR_INPUT
     bEquipmentDone             : BOOL;
     bEquipmentFaulted          : BOOL;
     stEquipmentResult          : ST_ProcessResult;
+	bSiliconeStationPartPresent : BOOL;
 
     bSiliconeSupportExtended   : BOOL;
     bExtractorReady            : BOOL;
@@ -71,6 +73,7 @@ IF bResetRequest THEN
 	bVacuumBuildTimeoutFault := FALSE;
 	bVacuumLostFault := FALSE;
 	bVacuumReleaseTimeoutFault := FALSE;
+	bEquipmentCompleteTimeoutFault := FALSE;
     stResult.bValid := FALSE;
     stResult.bPassed := FALSE;
     stResult.eCode := E_ProcessResultCode.None;
@@ -97,24 +100,25 @@ IF bStopRequest THEN
 END_IF
 
 // Any equipment fault while processing closes the flow path immediately.
-IF bEquipmentFaulted AND (eState <> E_SiliconeProcessState.Idle) THEN
+IF bEquipmentFaulted
+    AND (eState <> E_SiliconeProcessState.Idle)
+    AND (eState <> E_SiliconeProcessState.Complete)
+    AND (eState <> E_SiliconeProcessState.Fault)
+THEN
+
     bPinchValveRequest := FALSE;
     bPartVacuumEnable := FALSE;
     bBusy := FALSE;
     bDone := FALSE;
     bReady := FALSE;
     bFaulted := TRUE;
-    stResult := stEquipmentResult;
-    stResult.bPassed := FALSE;
 
-    IF NOT stResult.bValid THEN
-        stResult.bValid := TRUE;
-        stResult.eCode := E_ProcessResultCode.EquipmentFault;
-    END_IF
+    stResult.bValid := FALSE;
+    stResult.bPassed := FALSE;
+    stResult.eCode := E_ProcessResultCode.EquipmentFault;
 
     eState := E_SiliconeProcessState.Fault;
 END_IF
-
 
 // Part holding vacuum must remain established while
 // the silicone process is active.
@@ -129,24 +133,24 @@ IF NOT bPartVacuumOk
     )
 THEN
 
-    bPinchValveRequest := FALSE;
-    bPartVacuumEnable := FALSE;
+    bPinchValveRequest 			:= FALSE;
+    bPartVacuumEnable 			:= FALSE;
 
-    bEquipmentStartRequest := FALSE;
-    bEquipmentStopRequest := TRUE;
-	bVacuumLostFault := TRUE;
+    bEquipmentStartRequest 		:= FALSE;
+    bEquipmentStopRequest 		:= TRUE;
+	bVacuumLostFault 			:= TRUE;
 
-    bReady := FALSE;
-    bBusy := FALSE;
-    bDone := FALSE;
-    bFaulted := TRUE;
+    bReady 						:= FALSE;
+    bBusy 						:= FALSE;
+    bDone 						:= FALSE;
+    bFaulted 					:= TRUE;
+	stResult.bValid 			:= FALSE;
+	stResult.bPassed 			:= FALSE;
 
     tonStep(IN := FALSE);
-
-    eState := E_SiliconeProcessState.Fault;
+    eState 						:= E_SiliconeProcessState.Fault;
 
 END_IF
-
 
 
 CASE eState OF
@@ -179,14 +183,36 @@ CASE eState OF
         END_IF
 
 
-    E_SiliconeProcessState.StartingVacuum:
+   	E_SiliconeProcessState.StartingVacuum:
 
-		bPartVacuumEnable := TRUE;
-		bPinchValveRequest := FALSE;
-	
-		tonStep(IN := FALSE);
-	
-		eState := E_SiliconeProcessState.WaitingVacuumReady;
+			bPinchValveRequest := FALSE;
+			tonStep(IN := FALSE);
+		
+			// The part can only be detected after the Silicone Support is extended.
+			// If no part is detected, finish the Silicone process as a valid FAIL.
+			// Do not start the vacuum and do not run the IVEK.
+			IF NOT bSiliconeStationPartPresent THEN
+		
+				bPartVacuumEnable := FALSE;
+		
+				bBusy := FALSE;
+				bDone := TRUE;
+				bReady := FALSE;
+				bFaulted := FALSE;
+		
+				stResult.bValid := TRUE;
+				stResult.bPassed := FALSE;
+				stResult.eCode := E_ProcessResultCode.Fail;
+		
+				eState := E_SiliconeProcessState.Complete;
+		
+			ELSE
+		
+				bPartVacuumEnable := TRUE;
+		
+				eState := E_SiliconeProcessState.WaitingVacuumReady;
+		
+			END_IF
 	
 	
 	E_SiliconeProcessState.WaitingVacuumReady:
@@ -215,6 +241,9 @@ CASE eState OF
 			bBusy := FALSE;
 			bReady := FALSE;
 			bDone := FALSE;
+			
+			stResult.bValid := FALSE;
+			stResult.bPassed := FALSE;
 	
 			tonStep(IN := FALSE);
 	
@@ -272,6 +301,8 @@ CASE eState OF
                 bPartVacuumEnable := FALSE;
                 bFaulted := TRUE;
                 bBusy := FALSE;
+				stResult.bValid := FALSE;
+				stResult.bPassed := FALSE;
 
                 eState := E_SiliconeProcessState.Fault;
             END_IF
@@ -311,6 +342,8 @@ CASE eState OF
 
             bFaulted := TRUE;
             bBusy := FALSE;
+			stResult.bValid := FALSE;
+			stResult.bPassed := FALSE;
 
             eState := E_SiliconeProcessState.Fault;
 
@@ -321,6 +354,7 @@ CASE eState OF
 
         bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
+		bEquipmentCompleteTimeoutFault := TRUE;
 
         tonStep(
             IN := TRUE,
@@ -329,10 +363,7 @@ CASE eState OF
 
         IF bEquipmentDone THEN
 
-            stResult := stEquipmentResult;
-
             tonStep(IN := FALSE);
-
             eState := E_SiliconeProcessState.ClosingPinchValve;
 
         ELSIF tonStep.Q THEN
@@ -386,11 +417,15 @@ CASE eState OF
 		
 			tonStep(IN := FALSE);
 		
-			bBusy := FALSE;
-			bDone := TRUE;
-			bReady := FALSE;
-		
-			eState := E_SiliconeProcessState.Complete;
+			bBusy 				:= FALSE;
+			bDone 				:= TRUE;
+			bReady 				:= FALSE;
+			
+			stResult.bValid 	:= TRUE;
+			stResult.bPassed 	:= TRUE;
+			
+			stResult.eCode 		:= E_ProcessResultCode.Pass;
+			eState 				:= E_SiliconeProcessState.Complete;
 		
 		ELSIF tonStep.Q THEN
 		
@@ -399,6 +434,8 @@ CASE eState OF
 			bReady := FALSE;
 			bDone := FALSE;
 			bVacuumReleaseTimeoutFault := TRUE;
+			stResult.bValid := FALSE;
+			stResult.bPassed := FALSE;
 		
 			tonStep(IN := FALSE);
 		

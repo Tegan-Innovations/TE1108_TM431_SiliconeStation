@@ -25,7 +25,6 @@ VAR
     fbIvek                      : FB_IvekDigiSpense4000;
     fbIvekSettingsLauncher      : FB_IvekSettingsLauncher;
 
-    fbSimulatedEquipment        : FB_SimulatedProcessEquipment;
     ipEquipment                 : I_ProcessEquipment;
 
 	// =====================================================
@@ -580,6 +579,7 @@ fbSiliconeProcess.Cyclic(
     tPinchSettlingDelay 		:= GVL_Config.stMachine.stSiliconeSupply.tPinchValveSettlingDelay,
     tEquipmentStartTimeout 		:= GVL_Config.stMachine.stSiliconeSupply.tIvekStartTimeout,
     tEquipmentCompleteTimeout 	:= GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout,
+	bSiliconeStationPartPresent := stInputs.bSiliconeStationPartPresent,
     bPartVacuumEnable 			=> stOutputsInternal.bPartVacuumEnable
 );
 
@@ -859,7 +859,8 @@ stPermissives.bInitialisationAllowed :=
     AND stPermissives.bAssemblyStationHome
     AND NOT fbAssemblyStation.IsFaulted()
     AND stPermissives.bDoorInitialisationReady
-	AND stPermissives.bExtractorReady;
+    AND stPermissives.bExtractorReady
+    AND NOT stInputs.bIvekHeaterControllerAlarm;
 	
 
 // =========================================================
@@ -1257,6 +1258,10 @@ CASE eMachineState OF
 		
 			eInitialisingWaitReason  :=E_InitialisingWaitReason.ExtractorNotReady;
 		
+		ELSIF stInputs.bIvekHeaterControllerAlarm THEN
+
+    		eInitialisingWaitReason := E_InitialisingWaitReason.IvekHeaterNotReady;
+		
 		// ---------------------------------------------------------
 		// INDEX MUST NOT BE BUSY
 		// ---------------------------------------------------------
@@ -1414,7 +1419,7 @@ THEN
 
 ELSIF tonInitialising.Q THEN
     bInitialisationTimeoutFault := TRUE;
-    eMachineState := E_MachineState.Fault;
+    bSafetyDropRequest := TRUE;
 END_IF
 
 E_MachineState.ReadyToStart:
@@ -1460,6 +1465,7 @@ E_MachineState.ReadyToStart:
             AND fbMainDoorLock.IsReadyForAutomatic()
             AND stSiliconeSupplyStatus.bSelectedReservoirReady
             AND bIvekAutoCycleReady
+			AND NOT stInputs.bIvekHeaterControllerAlarm
         THEN
 	
 			eCycleState := E_CycleState.Disabled;
@@ -1479,6 +1485,10 @@ E_MachineState.ReadyToStart:
 		
 		IF NOT stPermissives.bExtractorReady THEN
 			bExtractorAutoCycleFault := TRUE;
+			bSafetyDropRequest := TRUE;
+		END_IF
+		
+		IF stInputs.bIvekHeaterControllerAlarm THEN
 			bSafetyDropRequest := TRUE;
 		END_IF
 
@@ -1539,7 +1549,7 @@ E_MachineState.ReadyToStart:
 			
 		// Indexer
 		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
-		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed AND stInputs.bSiliconeSupportRetracted AND stInputs.bAssemblySupportRetracted;
+		stProcessCycleInputs.bIndexMoveAllowed := stPermissives.bIndexMoveAllowed AND stInputs.bSiliconeSupportRetracted AND stInputs.bAssemblySupportRetracted  AND NOT stInputs.bSiliconeStationPartPresent;
 		stProcessCycleInputs.bIndexReady := fbIndex.IsReady();
 		stProcessCycleInputs.bIndexLocked := stInputs.bIndexLocked;
 		stProcessCycleInputs.bIndexBusy := stIndexStatus.bBusy;
@@ -2652,8 +2662,9 @@ ELSIF eMachineState = E_MachineState.Fault THEN
             E_InitialisingWaitReason.MainDoorNotReady: stStatus.sMachineMessage := 'Initialisation timeout - main door did not lock';
             E_InitialisingWaitReason.ProcessStationFaulted:stStatus.sMachineMessage := 'Initialisation timeout - process station fault';
             E_InitialisingWaitReason.ProcessEquipmentNotReady:stStatus.sMachineMessage := 'Initialisation timeout - process equipment not ready';
-
-        ELSE
+			E_InitialisingWaitReason.IvekHeaterNotReady:stStatus.sMachineMessage :='System initialising - IVEK heater controller alarm';
+      
+		ELSE
 
             stStatus.sMachineMessage := 'Machine fault - initialisation timeout';
 

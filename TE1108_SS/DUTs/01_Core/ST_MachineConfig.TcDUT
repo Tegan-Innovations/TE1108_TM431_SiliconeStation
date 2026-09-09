@@ -14,14 +14,11 @@ STRUCT
     tDoorLockTimeout            : TIME := T#10S;
     tDoorUnlockTimeout          : TIME := T#10S;
     tCylinderTimeout            : TIME := T#30S;
-    tProcessTimeout             : TIME := T#60S;
+    tProcessTimeout             : TIME := T#12S;
     tOperatorIdleTimeout        : TIME := T#30S;
 	tPartVacuumBuildTimeout     : TIME := T#2S;
 	tPartVacuumReleaseTimeout   : TIME := T#2S;
     
-
-	tAssemblyProcessSimulation  : TIME := T#2S;
-	tSiliconeProcessSimulation  : TIME := T#2S;
 
     // Flipping station commissioning values. Reduce action delay after validation.
     tAssemblyActionDelay       : TIME := T#10MS;
@@ -36,7 +33,6 @@ STRUCT
     bRequireTwoHandsForIndex    : BOOL := TRUE;
     bAllowEmptyNestIndex        : BOOL := TRUE;
     bRequireRejectConfirm       : BOOL := TRUE;
-    bUseProcessSimulation       : BOOL := TRUE;
     aNestEnabled                : ARRAY[1..4] OF BOOL := [TRUE, TRUE, TRUE, TRUE];
 	
 	// =========================================================

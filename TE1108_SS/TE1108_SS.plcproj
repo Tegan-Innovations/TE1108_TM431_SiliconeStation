@@ -171,6 +171,9 @@
     <Compile Include="DUTs\02_HMI\E_LEDs_Mode.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\02_HMI\E_PLC_Power.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\02_HMI\ST_HmiCommands.TcDUT">
       <SubType>Code</SubType>
     </Compile>

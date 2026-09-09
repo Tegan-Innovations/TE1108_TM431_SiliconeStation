@@ -41,8 +41,8 @@
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{59DB0509-CA92-CFFF-9CB6-D7D3E97F755C}" AutoDeleteType="true">ST_PhysicalInputs</Name>
-			<BitSize>528</BitSize>
+			<Name GUID="{D91C3201-EAF9-4378-E889-096D122A3889}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<BitSize>544</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
@@ -324,41 +324,47 @@
 				<BitOffs>360</BitOffs>
 			</SubItem>
 			<SubItem>
+				<Name>bSiliconeStationPartPresent</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
+				<BitSize>8</BitSize>
+				<BitOffs>368</BitOffs>
+			</SubItem>
+			<SubItem>
 				<Name>bTransferVerticalMiniSlideRetracted</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<Comment><![CDATA[ Flipping / assembly station - EPLAN Term 8 Ch5..Ch10]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>368</BitOffs>
+				<BitOffs>376</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bTransferVerticalMiniSlideExtended</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>376</BitOffs>
+				<BitOffs>384</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bRotaryGripperOpened</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>384</BitOffs>
+				<BitOffs>392</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bRotaryGripperClosed</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>392</BitOffs>
+				<BitOffs>400</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bRotaryGripperRotationPick0</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>400</BitOffs>
+				<BitOffs>408</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>bRotaryGripperRotationPlace180</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>408</BitOffs>
+				<BitOffs>416</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiMainAirPressureRaw</Name>
@@ -366,43 +372,43 @@
 				<Comment><![CDATA[ Analog raw values. Engineering-unit scaling is intentionally kept
  outside the terminal mapping until the sensor ranges are confirmed.]]></Comment>
 				<BitSize>16</BitSize>
-				<BitOffs>416</BitOffs>
+				<BitOffs>432</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiSiliconePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>432</BitOffs>
+				<BitOffs>448</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiNozzlePressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>448</BitOffs>
+				<BitOffs>464</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiVacuumPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>464</BitOffs>
+				<BitOffs>480</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiExtractionAVacuumPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>480</BitOffs>
+				<BitOffs>496</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>uiExtractionBVacuumPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>496</BitOffs>
+				<BitOffs>512</BitOffs>
 			</SubItem>
 			<SubItem>
 				<Name>iPartVacuumPressureRaw</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>512</BitOffs>
+				<BitOffs>528</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -989,8 +995,8 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{17D54281-0D39-7882-B50F-6FFAF31B5E2A}" AutoDeleteType="true">ST_MachineConfig</Name>
-			<BitSize>1568</BitSize>
+			<Name GUID="{2BE8942C-162E-6416-CA81-5341B0AE54EA}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<BitSize>1504</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
@@ -1096,7 +1102,7 @@
 				<BitSize>32</BitSize>
 				<BitOffs>352</BitOffs>
 				<Default>
-					<DateTime>T#60S</DateTime>
+					<DateTime>T#12S</DateTime>
 				</Default>
 			</SubItem>
 			<SubItem>
@@ -1127,29 +1133,11 @@
 				</Default>
 			</SubItem>
 			<SubItem>
-				<Name>tAssemblyProcessSimulation</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>480</BitOffs>
-				<Default>
-					<DateTime>T#2S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>tSiliconeProcessSimulation</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
-				<BitSize>32</BitSize>
-				<BitOffs>512</BitOffs>
-				<Default>
-					<DateTime>T#2S</DateTime>
-				</Default>
-			</SubItem>
-			<SubItem>
 				<Name>tAssemblyActionDelay</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<Comment><![CDATA[ Flipping station commissioning values. Reduce action delay after validation.]]></Comment>
 				<BitSize>32</BitSize>
-				<BitOffs>544</BitOffs>
+				<BitOffs>480</BitOffs>
 				<Default>
 					<DateTime>T#10MS</DateTime>
 				</Default>
@@ -1158,7 +1146,7 @@
 				<Name>tAssemblyMovementTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>576</BitOffs>
+				<BitOffs>512</BitOffs>
 				<Default>
 					<DateTime>T#7S</DateTime>
 				</Default>
@@ -1167,7 +1155,7 @@
 				<Name>tAssemblyReleaseDelay</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>608</BitOffs>
+				<BitOffs>544</BitOffs>
 				<Default>
 					<DateTime>T#500MS</DateTime>
 				</Default>
@@ -1176,7 +1164,7 @@
 				<Name>eOperatorPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>640</BitOffs>
+				<BitOffs>576</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
@@ -1185,7 +1173,7 @@
 				<Name>eSiliconePosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>656</BitOffs>
+				<BitOffs>592</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position3</EnumText>
 				</Default>
@@ -1194,7 +1182,7 @@
 				<Name>eAssemblyPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>672</BitOffs>
+				<BitOffs>608</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position4</EnumText>
 				</Default>
@@ -1203,7 +1191,7 @@
 				<Name>eRejectPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>688</BitOffs>
+				<BitOffs>624</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
@@ -1212,7 +1200,7 @@
 				<Name>bRequireTwoHandsForIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>704</BitOffs>
+				<BitOffs>640</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -1221,7 +1209,7 @@
 				<Name>bAllowEmptyNestIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>712</BitOffs>
+				<BitOffs>648</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -1230,16 +1218,7 @@
 				<Name>bRequireRejectConfirm</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>720</BitOffs>
-				<Default>
-					<Bool>true</Bool>
-				</Default>
-			</SubItem>
-			<SubItem>
-				<Name>bUseProcessSimulation</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
-				<BitSize>8</BitSize>
-				<BitOffs>728</BitOffs>
+				<BitOffs>656</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -1252,7 +1231,7 @@
 					<Elements>4</Elements>
 				</ArrayInfo>
 				<BitSize>32</BitSize>
-				<BitOffs>736</BitOffs>
+				<BitOffs>664</BitOffs>
 				<Default>
 					<SubItem>
 						<Name>[1]</Name>
@@ -1279,13 +1258,22 @@
  SILICONE SUPPLY STRUCTURE
  =========================================================]]></Comment>
 				<BitSize>800</BitSize>
-				<BitOffs>768</BitOffs>
+				<BitOffs>704</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
 			<Name GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF BOOL</Name>
 			<BitSize>32</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
 			<ArrayInfo>
 				<LBound>1</LBound>
 				<Elements>4</Elements>
@@ -1542,7 +1530,7 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
+			<Name IecBaseType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
 			<BitSize>9348672</BitSize>
 			<BaseType GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}">ST_TestHistory</BaseType>
 			<ArrayInfo>
@@ -1572,15 +1560,6 @@
 					<Value>1</Value>
 				</Default>
 			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
 		</DataType>
 		<DataType>
 			<Name GUID="{2438F91B-E188-4ED7-8594-54354F9ED6A4}" Namespace="Safety" TcBaseType="true">FSOE_6</Name>
@@ -1762,7 +1741,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{3555F263-DE3B-6E2D-D2A4-183410BF3C24}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{7BD751F8-2A76-C02B-07DB-5137F5F7027F}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1770,7 +1749,7 @@
 						<Var>
 							<Name>GVL_Config.stMachine</Name>
 							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{17D54281-0D39-7882-B50F-6FFAF31B5E2A}">ST_MachineConfig</Type>
+							<Type GUID="{2BE8942C-162E-6416-CA81-5341B0AE54EA}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1781,6 +1760,11 @@
 						<Var>
 							<Name>GVL_Config.aNestEnabled</Name>
 							<Type GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}">ARRAY [1..4] OF BOOL</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1811,11 +1795,6 @@
 						<Var>
 							<Name>GVL_Persistent.stSiliconeSupply</Name>
 							<Type GUID="{EDD38FAB-5BAA-9388-2D7D-5173435AF951}">ST_SiliconeSupplyPersistent</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
-							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 					</Vars>
@@ -1984,7 +1963,7 @@
 							<Name>GVL_IO.stInputs</Name>
 							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
  Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{59DB0509-CA92-CFFF-9CB6-D7D3E97F755C}">ST_PhysicalInputs</Type>
+							<Type GUID="{D91C3201-EAF9-4378-E889-096D122A3889}">ST_PhysicalInputs</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>

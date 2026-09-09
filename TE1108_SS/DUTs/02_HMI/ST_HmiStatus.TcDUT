@@ -12,6 +12,9 @@ STRUCT
     eStoppingWaitReason             : E_StoppingWaitReason;
     stProcessCycle                  : ST_ProcessCycleStatus;
     eCurrentIndexPosition           : E_TablePosition;
+	
+	iPowerCountdown 				: INT;
+	
     bIndexPositionValid             : BOOL;
     bTwoHandsSafe                   : BOOL;
     bGearboxAssemblyPartPresent     : BOOL;
@@ -74,8 +77,8 @@ STRUCT
     bAssemblyStationManualEnabled         : BOOL;
     bAssemblyStationManualStartPermissive : BOOL;
 
-    sMachineMessage                 : STRING(160);
-    sOperatorMessage                : STRING(255);
+    sMachineMessage                 	  : STRING(160);
+    sOperatorMessage                	  : STRING(255);
 	
 
     // Manual Silicone Station
@@ -86,12 +89,12 @@ STRUCT
     bSiliconeStationManualStartPermissive   : BOOL;
 
     // IVEK Manual HMI status
-    bIvekReady                              : BOOL;
-    bIvekProductionReady                    : BOOL;
-    bIvekBusy                               : BOOL;
-    bIvekHealthy                            : BOOL;
-    bIvekFaulted                            : BOOL;
-    bIvekMotionEnabled                      : BOOL;
+    bIvekReady                               : BOOL;
+    bIvekProductionReady                     : BOOL;
+    bIvekBusy                                : BOOL;
+    bIvekHealthy                             : BOOL;
+    bIvekFaulted                             : BOOL;
+    bIvekMotionEnabled                       : BOOL;
     bIvekReferenceRequired                   : BOOL;
     bIvekReferenceReady                      : BOOL;
     bIvekReferenceActive                     : BOOL;

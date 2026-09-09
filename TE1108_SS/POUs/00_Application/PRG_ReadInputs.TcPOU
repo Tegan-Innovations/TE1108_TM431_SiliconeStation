@@ -168,6 +168,7 @@ GVL_MASTER.stInputs.bGearboxAssemblyPartPresent        := GVL_IO.stInputs.bGearb
 GVL_MASTER.stInputs.bReservoirPartPresent              := GVL_IO.stInputs.bReservoirPartPresent;
 GVL_MASTER.stInputs.bBothPartPresent                   := GVL_IO.stInputs.bBothPartPresent;
 GVL_MASTER.stInputs.bRejectChutePartPresent            := GVL_IO.stInputs.bRejectChutePartPresent;
+GVL_MASTER.stInputs.bSiliconeStationPartPresent 	    :=GVL_IO.stInputs.bSiliconeStationPartPresent;
 
 // -----------------------------------------------------------------------------
 // INDEX TABLE

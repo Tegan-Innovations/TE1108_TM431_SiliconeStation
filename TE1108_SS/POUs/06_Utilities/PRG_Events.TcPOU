@@ -86,24 +86,24 @@ GVL_MASTER.sSystemTime := '';
 // A FALSE state on either channel indicates an open E-stop safety circuit.
 GVL_MASTER.stStationEvents[0].aEvents[0].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[0].bEventFlag := NOT GVL_MASTER.stInputs.bEmergencyStopChannel1 OR NOT GVL_MASTER.stInputs.bEmergencyStopChannel2;
-GVL_MASTER.stStationEvents[0].aEvents[0].bEventText := 'Emergency stop activated';
-GVL_MASTER.stStationEvents[0].aEvents[0].sSolution := 'Release the emergency stop and check both E-stop safety channels';
+GVL_MASTER.stStationEvents[0].aEvents[0].bEventText := 'E-stop activated';
+GVL_MASTER.stStationEvents[0].aEvents[0].sSolution := 'Release E-stop and reset Safety';
 
 // -----------------------------------------------------------------------------
 // EMERGENCY STOP CHANNEL 1 FAULT
 // -----------------------------------------------------------------------------
 GVL_MASTER.stStationEvents[0].aEvents[1].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[1].bEventFlag := NOT GVL_MASTER.stInputs.bEmergencyStopChannel1 AND GVL_MASTER.stInputs.bEmergencyStopChannel2;
-GVL_MASTER.stStationEvents[0].aEvents[1].bEventText := 'Emergency stop Channel 1 fault';
-GVL_MASTER.stStationEvents[0].aEvents[1].sSolution := 'Check Emergency Stop Channel 1 wiring, contact and EL1918 input';
+GVL_MASTER.stStationEvents[0].aEvents[1].bEventText := 'E-stop Channel 1 fault';
+GVL_MASTER.stStationEvents[0].aEvents[1].sSolution := 'Check E-stop Channel 1';
 
 // -----------------------------------------------------------------------------
 // EMERGENCY STOP CHANNEL 2 FAULT
 // -----------------------------------------------------------------------------
 GVL_MASTER.stStationEvents[0].aEvents[2].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[2].bEventFlag := GVL_MASTER.stInputs.bEmergencyStopChannel1 AND NOT GVL_MASTER.stInputs.bEmergencyStopChannel2;
-GVL_MASTER.stStationEvents[0].aEvents[2].bEventText := 'Emergency stop Channel 2 fault';
-GVL_MASTER.stStationEvents[0].aEvents[2].sSolution := 'Check Emergency Stop Channel 2 wiring, contact and EL1918 input';
+GVL_MASTER.stStationEvents[0].aEvents[2].bEventText := 'E-stop Channel 2 fault';
+GVL_MASTER.stStationEvents[0].aEvents[2].sSolution := 'Check E-stop Channel 2';
 
 
 // -----------------------------------------------------------------------------
@@ -118,8 +118,8 @@ GVL_MASTER.stStationEvents[0].aEvents[3].bEventFlag :=
     AND NOT GVL_MASTER.stInputs.bMainDoorFeedback
 	AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.Stopped;
 
-GVL_MASTER.stStationEvents[0].aEvents[3].bEventText := 'Main safety door open';
-GVL_MASTER.stStationEvents[0].aEvents[3].sSolution := 'Close the main safety door and reset the machine';
+GVL_MASTER.stStationEvents[0].aEvents[3].bEventText := 'Main door open';
+GVL_MASTER.stStationEvents[0].aEvents[3].sSolution := 'Close main door and reset Safety';
 
 // -----------------------------------------------------------------------------
 // LEFT SAFETY FLAP
@@ -128,8 +128,8 @@ GVL_MASTER.stStationEvents[0].aEvents[3].sSolution := 'Close the main safety doo
 // Both channels must be active for the left flap to be considered safe.
 GVL_MASTER.stStationEvents[0].aEvents[4].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[4].bEventFlag := (NOT GVL_MASTER.stInputs.bLeftFlapChannel1 OR NOT GVL_MASTER.stInputs.bLeftFlapChannel2) AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
-GVL_MASTER.stStationEvents[0].aEvents[4].bEventText := 'Left safety flap activated';
-GVL_MASTER.stStationEvents[0].aEvents[4].sSolution := 'Clear the left flap, inspect the safety device and reset the safety circuit';
+GVL_MASTER.stStationEvents[0].aEvents[4].bEventText := 'Left safety flap active';
+GVL_MASTER.stStationEvents[0].aEvents[4].sSolution := 'Clear left flap and reset Safety';
 
 // -----------------------------------------------------------------------------
 // RIGHT SAFETY FLAP
@@ -138,23 +138,23 @@ GVL_MASTER.stStationEvents[0].aEvents[4].sSolution := 'Clear the left flap, insp
 // Both channels must be active for the right flap to be considered safe.
 GVL_MASTER.stStationEvents[0].aEvents[5].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[5].bEventFlag := (NOT GVL_MASTER.stInputs.bRightFlapChannel1 OR NOT GVL_MASTER.stInputs.bRightFlapChannel2) AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp;
-GVL_MASTER.stStationEvents[0].aEvents[5].bEventText := 'Right safety flap activated';
-GVL_MASTER.stStationEvents[0].aEvents[5].sSolution := 'Clear the right flap, inspect the safety device and reset the safety circuit';
+GVL_MASTER.stStationEvents[0].aEvents[5].bEventText := 'Right safety flap active';
+GVL_MASTER.stStationEvents[0].aEvents[5].sSolution := 'Clear right flap and reset Safety';
 GVL_MASTER.stStationEvents[0].aEvents[6].bCycleStopRequest := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[6].bEventFlag := GVL_MASTER.stCommand.bStop;
 GVL_MASTER.stStationEvents[0].aEvents[6].bEventText := 'Cycle stop requested';
-GVL_MASTER.stStationEvents[0].aEvents[6].sSolution := 'Wait for the current operation to stop safely';
+GVL_MASTER.stStationEvents[0].aEvents[6].sSolution := 'Wait for cycle to stop';
 
 
 GVL_MASTER.stStationEvents[0].aEvents[7].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[7].bEventFlag := GVL_MASTER.stStatus.bInitialisationTimeoutFault;
 GVL_MASTER.stStationEvents[0].aEvents[7].bEventText := 'System initialisation timeout';
-GVL_MASTER.stStationEvents[0].aEvents[7].sSolution := 'Check safety, index home condition, tooling position and process equipment readiness';
+GVL_MASTER.stStationEvents[0].aEvents[7].sSolution := 'Check initialisation conditions';
 
 GVL_MASTER.stStationEvents[0].aEvents[8].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[8].bEventFlag := GVL_MASTER.stStatus.bStoppingTimeoutFault;
 GVL_MASTER.stStationEvents[0].aEvents[8].bEventText := 'System stopping timeout';
-GVL_MASTER.stStationEvents[0].aEvents[8].sSolution := 'Check process equipment stop, Silicone Support Cylinder retraction and index table status';
+GVL_MASTER.stStationEvents[0].aEvents[8].sSolution := 'Check equipment and index status';
 
 // -----------------------------------------------------------------------------
 // VACUUM EXTRACTOR INITIALISATION TIMEOUT
@@ -163,7 +163,7 @@ GVL_MASTER.stStationEvents[0].aEvents[9].bFault     := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[9].bEventFlag := GVL_MASTER.stStatus.bInitialisationTimeoutFault
     AND GVL_MASTER.stStatus.eInitialisingWaitReason  =  E_InitialisingWaitReason.ExtractorNotReady;
 GVL_MASTER.stStationEvents[0].aEvents[9].bEventText := 'Vacuum extractor failed to start';
-GVL_MASTER.stStationEvents[0].aEvents[9].sSolution  :='Check vacuum extractor power and feedback signal';
+GVL_MASTER.stStationEvents[0].aEvents[9].sSolution  :='Check extractor power and feedback';
 
 
 
@@ -171,14 +171,14 @@ GVL_MASTER.stStationEvents[0].aEvents[9].sSolution  :='Check vacuum extractor po
 tonUpSupplyLost(IN := NOT GVL_MASTER.stInputs.bUp24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[10].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[10].bEventFlag := tonUpSupplyLost.Q;
-GVL_MASTER.stStationEvents[0].aEvents[10].bEventText := '24 V Up power supply not healthy';
-GVL_MASTER.stStationEvents[0].aEvents[10].sSolution := 'Check PSU 1, DC-OK signal, fuse and Term 7 Channel 3 wiring';
+GVL_MASTER.stStationEvents[0].aEvents[10].bEventText := '24 V Up supply fault';
+GVL_MASTER.stStationEvents[0].aEvents[10].sSolution := 'Check 24 V Up power supply';
 
 tonUsSupplyLost(IN := NOT GVL_MASTER.stInputs.bUs24VPowerSupplyOk AND GVL_MASTER.stStatus.eMachineState <> E_MachineState.PowerUp, PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[11].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[11].bEventFlag := tonUsSupplyLost.Q;
-GVL_MASTER.stStationEvents[0].aEvents[11].bEventText := '24 V Us power supply not healthy';
-GVL_MASTER.stStationEvents[0].aEvents[11].sSolution := 'Check PSU 2, DC-OK signal, fuse and Term 7 Channel 4 wiring';
+GVL_MASTER.stStationEvents[0].aEvents[11].bEventText := '24 V Us supply fault';
+GVL_MASTER.stStationEvents[0].aEvents[11].sSolution := 'Check 24 V Us power supply';
 
 
 // -----------------------------------------------------------------------------
@@ -211,19 +211,19 @@ bAirLostDuringOperation :=
 GVL_MASTER.stStationEvents[0].aEvents[12].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[12].bEventFlag := tonAirSupplyLost.Q OR bAirLostDuringOperation;
 GVL_MASTER.stStationEvents[0].aEvents[12].bEventText := 'Air supply not available';
-GVL_MASTER.stStationEvents[0].aEvents[12].sSolution := 'Check the main air supply, MS6 unit and dump valve feedback';
+GVL_MASTER.stStationEvents[0].aEvents[12].sSolution := 'Check main air supply and MS6';
 
 
 tonMs6Feedback(IN := NOT GVL_MASTER.stInputs.bMs6FeedbackOk AND (GVL_MASTER.stStatus.eMachineState = E_MachineState.Initialising OR GVL_MASTER.stStatus.eMachineState = E_MachineState.ReadyToStart OR GVL_MASTER.stStatus.eMachineState = E_MachineState.AutoCycle OR GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual), PT := T#1S);
 GVL_MASTER.stStationEvents[0].aEvents[14].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[14].bEventFlag := tonMs6Feedback.Q;
-GVL_MASTER.stStationEvents[0].aEvents[14].bEventText := 'Festo MS6 feedback not healthy';
-GVL_MASTER.stStationEvents[0].aEvents[14].sSolution := 'Check MS6 feedback channels, Pilz relays, pneumatic enable and exhaust state';
+GVL_MASTER.stStationEvents[0].aEvents[14].bEventText := 'Festo MS6 feedback fault';
+GVL_MASTER.stStationEvents[0].aEvents[14].sSolution := 'Check MS6 and pneumatic enable';
 
 GVL_MASTER.stStationEvents[0].aEvents[15].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[15].bEventFlag := GVL_MASTER.stInputs.bAirExhausted AND (GVL_MASTER.stStatus.eMachineState = E_MachineState.ReadyToStart OR GVL_MASTER.stStatus.eMachineState = E_MachineState.AutoCycle OR GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual);
-GVL_MASTER.stStationEvents[0].aEvents[15].bEventText := 'Pneumatic system is exhausted while operation is requested';
-GVL_MASTER.stStationEvents[0].aEvents[15].sSolution := 'Check the MS6 dump valve, reset circuit and air exhaust feedback';
+GVL_MASTER.stStationEvents[0].aEvents[15].bEventText := 'Pneumatic system exhausted';
+GVL_MASTER.stStationEvents[0].aEvents[15].sSolution := 'Reset MS6 and check air supply';
 
 
 
@@ -233,8 +233,8 @@ GVL_MASTER.stStationEvents[0].aEvents[15].sSolution := 'Check the MS6 dump valve
 // -----------------------------------------------------------------------------
 GVL_MASTER.stStationEvents[0].aEvents[16].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[16].bEventFlag := GVL_MASTER.stStatus.bHmiLogoutFault;
-GVL_MASTER.stStationEvents[0].aEvents[16].bEventText := 'Unexpected HMI logout during machine operation';
-GVL_MASTER.stStationEvents[0].aEvents[16].sSolution := 'Log in to the HMI and reset the machine';
+GVL_MASTER.stStationEvents[0].aEvents[16].bEventText := 'HMI logout during operation';
+GVL_MASTER.stStationEvents[0].aEvents[16].sSolution := 'Log in and reset machine';
 
 // -----------------------------------------------------------------------------
 // STOP REQUEST TIMEOUT
@@ -244,14 +244,14 @@ GVL_MASTER.stStationEvents[0].aEvents[16].sSolution := 'Log in to the HMI and re
 GVL_MASTER.stStationEvents[0].aEvents[17].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[17].bEventFlag := GVL_MASTER.stStatus.bStopRequestTimeout;
 GVL_MASTER.stStationEvents[0].aEvents[17].bEventText := 'Stop request timeout';
-GVL_MASTER.stStationEvents[0].aEvents[17].sSolution := 'Check why the current machine state could not complete the stop sequence';
+GVL_MASTER.stStationEvents[0].aEvents[17].sSolution := 'Check machine stop conditions';
 
 
 // Station 1 - Process station / simulated IVEK
 GVL_MASTER.stStationEvents[1].aEvents[0].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[0].bEventFlag := GVL_MASTER.stStatus.eCycleState = E_CycleState.Fault;
 GVL_MASTER.stStationEvents[1].aEvents[0].bEventText := 'Process cycle fault';
-GVL_MASTER.stStationEvents[1].aEvents[0].sSolution := 'Check Silicone Support Cylinder, equipment status and process permissives';
+GVL_MASTER.stStationEvents[1].aEvents[0].sSolution := 'Check process station conditions';
 
 // -----------------------------------------------------------------------------
 // IVEK DIAGNOSTICS
@@ -277,8 +277,8 @@ GVL_MASTER.stStationEvents[1].aEvents[1].bCycleStopRequest := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[1].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[1].bPersistentMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[1].bEventFlag := tonIvekCommunicationLost.Q;
-GVL_MASTER.stStationEvents[1].aEvents[1].bEventText := 'IVEK DigiSpense communication lost';
-GVL_MASTER.stStationEvents[1].aEvents[1].sSolution := 'Check EL6652 EtherNet/IP connection, network cable, IVEK power and IP configuration.';
+GVL_MASTER.stStationEvents[1].aEvents[1].bEventText := 'IVEK communication lost';
+GVL_MASTER.stStationEvents[1].aEvents[1].sSolution := 'Check IVEK power and communication';
 
 GVL_MASTER.stStationEvents[1].aEvents[7].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[7].bCycleStopRequest := TRUE;
@@ -287,8 +287,8 @@ GVL_MASTER.stStationEvents[1].aEvents[7].bPersistentMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[7].bEventFlag :=
     GVL_MASTER.bIvekCommsOk
     AND GVL_MASTER.stStatus.bIvekFaulted;
-GVL_MASTER.stStationEvents[1].aEvents[7].bEventText := 'IVEK DigiSpense fault active';
-GVL_MASTER.stStationEvents[1].aEvents[7].sSolution := 'Check the IVEK Fault Code on the HMI or IVEK interface, correct the cause and reset the equipment.';
+GVL_MASTER.stStationEvents[1].aEvents[7].bEventText := 'IVEK fault active';
+GVL_MASTER.stStationEvents[1].aEvents[7].sSolution := 'Check IVEK fault code and reset';
 
 tonIvekNotReady(
     IN := GVL_MASTER.bIvekCommsOk
@@ -313,15 +313,15 @@ GVL_MASTER.stStationEvents[1].aEvents[8].bCycleStopRequest := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[8].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[8].bPersistentMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[8].bEventFlag := tonIvekNotReady.Q;
-GVL_MASTER.stStationEvents[1].aEvents[8].bEventText := 'IVEK DigiSpense not ready for production';
-GVL_MASTER.stStationEvents[1].aEvents[8].sSolution := 'IVEK remained not ready for more than 3 seconds while idle. Check Motion Enable, recipe/configuration and IVEK diagnostics before restarting.';
+GVL_MASTER.stStationEvents[1].aEvents[8].bEventText := 'IVEK not ready for production';
+GVL_MASTER.stStationEvents[1].aEvents[8].sSolution := 'Check IVEK settings and diagnostics';
 
 
 // EPLAN process material and heater signals (Term 7)
 GVL_MASTER.stStationEvents[1].aEvents[2].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[2].bEventFlag := GVL_MASTER.stInputs.bIvekHeaterControllerAlarm;
-GVL_MASTER.stStationEvents[1].aEvents[2].bEventText := 'IVEK heater controller alarm';
-GVL_MASTER.stStationEvents[1].aEvents[2].sSolution := 'Check the heater controller alarm output, temperature control and power supply';
+GVL_MASTER.stStationEvents[1].aEvents[2].bEventText := 'IVEK heater alarm';
+GVL_MASTER.stStationEvents[1].aEvents[2].sSolution := 'Check IVEK heater and temperature';
 
 // -----------------------------------------------------------------------------
 // SILICONE RESERVOIR TOP-UP REQUIRED
@@ -334,11 +334,11 @@ GVL_MASTER.stStationEvents[1].aEvents[3].bEventFlag :=
     GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bTopUpRequired;
 
 IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bAutomaticChangeoverOccurred THEN
-    GVL_MASTER.stStationEvents[1].aEvents[3].bEventText := 'Reservoir 1 needs top-up - changed automatically to Reservoir 2';
+    GVL_MASTER.stStationEvents[1].aEvents[3].bEventText := 'Reservoir 1 low - switched to Reservoir 2';
 ELSE
     GVL_MASTER.stStationEvents[1].aEvents[3].bEventText := 'Reservoir 1 needs top-up';
 END_IF
-GVL_MASTER.stStationEvents[1].aEvents[3].sSolution := 'Top up Reservoir 1. Degassing is required before it can be selected again.';
+GVL_MASTER.stStationEvents[1].aEvents[3].sSolution := 'Top up Reservoir 1 and degas';
 
 GVL_MASTER.stStationEvents[1].aEvents[4].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[4].bCycleStopRequest := FALSE;
@@ -348,16 +348,16 @@ GVL_MASTER.stStationEvents[1].aEvents[4].bEventFlag :=
     GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bTopUpRequired;
 
 IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bAutomaticChangeoverOccurred THEN
-    GVL_MASTER.stStationEvents[1].aEvents[4].bEventText := 'Reservoir 2 needs top-up - changed automatically to Reservoir 1';
+    GVL_MASTER.stStationEvents[1].aEvents[4].bEventText := 'Reservoir 2 low - switched to Reservoir 1';
 ELSE
     GVL_MASTER.stStationEvents[1].aEvents[4].bEventText := 'Reservoir 2 needs top-up';
 END_IF
-GVL_MASTER.stStationEvents[1].aEvents[4].sSolution := 'Top up Reservoir 2. Degassing is required before it can be selected again.';
+GVL_MASTER.stStationEvents[1].aEvents[4].sSolution := 'Top up Reservoir 2 and degas';
 
 GVL_MASTER.stStationEvents[1].aEvents[5].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[5].bEventFlag :=GVL_MASTER.stStatus.stProcessCycle.bTimeoutFault;
-GVL_MASTER.stStationEvents[1].aEvents[5].bEventText :='Automatic process cycle timeout';
-GVL_MASTER.stStationEvents[1].aEvents[5].sSolution :='Check index movement, support cylinders and Assembly/Silicone process execution';
+GVL_MASTER.stStationEvents[1].aEvents[5].bEventText :='Process cycle timeout';
+GVL_MASTER.stStationEvents[1].aEvents[5].sSolution :='Check index and process stations';
 
 // IVEK reference is a recoverable maintenance condition. It blocks AutoCycle
 // and returns an active machine to Stopped without dropping the safety run.
@@ -366,8 +366,8 @@ GVL_MASTER.stStationEvents[1].aEvents[6].bCycleStopRequest := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[6].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[6].bPersistentMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[6].bEventFlag := GVL_MASTER.stStatus.bIvekReferenceRequired;
-GVL_MASTER.stStationEvents[1].aEvents[6].bEventText := 'IVEK reference required - AutoCycle blocked';
-GVL_MASTER.stStationEvents[1].aEvents[6].sSolution := 'Open Engineer Settings and run IVEK Reference before starting AutoCycle.';
+GVL_MASTER.stStationEvents[1].aEvents[6].bEventText := 'IVEK reference required';
+GVL_MASTER.stStationEvents[1].aEvents[6].sSolution := 'Reference IVEK in Engineer Settings';
 
 
 
@@ -376,27 +376,27 @@ GVL_MASTER.stStationEvents[1].aEvents[6].sSolution := 'Open Engineer Settings an
 // -----------------------------------------------------------------------------
 GVL_MASTER.stStationEvents[1].aEvents[9].bFault 		:= TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[9].bEventFlag 	:=GVL_MASTER.stStatus.bExtractorAutoCycleFault;
-GVL_MASTER.stStationEvents[1].aEvents[9].bEventText 	:= 'Vacuum extractor lost during automatic cycle';
-GVL_MASTER.stStationEvents[1].aEvents[9].sSolution 		:='Check vacuum extractor power, vacuum supply and feedback signal';
+GVL_MASTER.stStationEvents[1].aEvents[9].bEventText 	:= 'Vacuum extractor lost in AutoCycle';
+GVL_MASTER.stStationEvents[1].aEvents[9].sSolution 		:='Check extractor supply and feedback';
 
 
 // Process station component faults
 GVL_MASTER.stStationEvents[1].aEvents[10].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[10].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderExtendTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[10].bEventText := 'Silicone Support Cylinder extend timeout';
-GVL_MASTER.stStationEvents[1].aEvents[10].sSolution := 'Check air supply, extend valve and extended sensor';
+GVL_MASTER.stStationEvents[1].aEvents[10].bEventText := 'Silicone support extend timeout';
+GVL_MASTER.stStationEvents[1].aEvents[10].sSolution := 'Check air, extend valve and sensor';
 GVL_MASTER.stStationEvents[1].aEvents[11].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[11].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderRetractTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[11].bEventText := 'Silicone Support Cylinder retract timeout';
-GVL_MASTER.stStationEvents[1].aEvents[11].sSolution := 'Check air supply, retract valve and retracted sensor';
+GVL_MASTER.stStationEvents[1].aEvents[11].bEventText := 'Silicone support retract timeout';
+GVL_MASTER.stStationEvents[1].aEvents[11].sSolution := 'Check air, retract valve and sensor';
 GVL_MASTER.stStationEvents[1].aEvents[12].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[12].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderSensorMismatch;
-GVL_MASTER.stStationEvents[1].aEvents[12].bEventText := 'Silicone Support Cylinder sensor mismatch';
-GVL_MASTER.stStationEvents[1].aEvents[12].sSolution := 'Check extended and retracted sensors; both cannot be active together';
+GVL_MASTER.stStationEvents[1].aEvents[12].bEventText := 'Silicone support sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[12].sSolution := 'Check cylinder position sensors';
 GVL_MASTER.stStationEvents[1].aEvents[13].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[13].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.ProcessTimeout;
 GVL_MASTER.stStationEvents[1].aEvents[13].bEventText := 'Process station timeout';
-GVL_MASTER.stStationEvents[1].aEvents[13].sSolution := 'Check process equipment, permissives and cylinder position';
+GVL_MASTER.stStationEvents[1].aEvents[13].sSolution := 'Check process station conditions';
 
 // =========================================================
 // PART VACUUM BUILD TIMEOUT
@@ -404,8 +404,8 @@ GVL_MASTER.stStationEvents[1].aEvents[13].sSolution := 'Check process equipment,
 
 GVL_MASTER.stStationEvents[1].aEvents[15].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[15].bEventFlag :=GVL_MASTER.stStatus.bPartVacuumBuildTimeoutFault;
-GVL_MASTER.stStationEvents[1].aEvents[15].bEventText :='Part holding vacuum build-up timeout';
-GVL_MASTER.stStationEvents[1].aEvents[15].sSolution := 'Check part vacuum supply, solenoid, hose, fixture seal and vacuum feedback';
+GVL_MASTER.stStationEvents[1].aEvents[15].bEventText :='Part vacuum build timeout';
+GVL_MASTER.stStationEvents[1].aEvents[15].sSolution := 'Check part vacuum and fixture seal';
 
 // =========================================================
 // PART VACUUM LOST DURING SILICONE PROCESS
@@ -413,8 +413,8 @@ GVL_MASTER.stStationEvents[1].aEvents[15].sSolution := 'Check part vacuum supply
 
 GVL_MASTER.stStationEvents[1].aEvents[16].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[16].bEventFlag :=GVL_MASTER.stStatus.bPartVacuumLostFault;
-GVL_MASTER.stStationEvents[1].aEvents[16].bEventText :='Part holding vacuum lost during silicone process';
-GVL_MASTER.stStationEvents[1].aEvents[16].sSolution :='Check part seating, vacuum circuit, fixture seal and vacuum feedback';
+GVL_MASTER.stStationEvents[1].aEvents[16].bEventText :='Part vacuum lost during process';
+GVL_MASTER.stStationEvents[1].aEvents[16].sSolution :='Check part seating and vacuum';
 
 // =========================================================
 // PART VACUUM RELEASE TIMEOUT
@@ -422,58 +422,58 @@ GVL_MASTER.stStationEvents[1].aEvents[16].sSolution :='Check part seating, vacuu
 
 GVL_MASTER.stStationEvents[1].aEvents[17].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[17].bEventFlag :=GVL_MASTER.stStatus.bPartVacuumReleaseTimeoutFault;
-GVL_MASTER.stStationEvents[1].aEvents[17].bEventText :='Part holding vacuum release timeout';
-GVL_MASTER.stStationEvents[1].aEvents[17].sSolution := 'Check vacuum solenoid, exhaust path and vacuum feedback';
+GVL_MASTER.stStationEvents[1].aEvents[17].bEventText :='Part vacuum release timeout';
+GVL_MASTER.stStationEvents[1].aEvents[17].sSolution := 'Check vacuum solenoid and exhaust';
 
 // Main door lock component faults
 GVL_MASTER.stStationEvents[0].aEvents[20].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[20].bEventFlag := GVL_MASTER.stStatus.stMainDoorLock.eFault = E_MainDoorLockFault.LockTimeout;
 GVL_MASTER.stStationEvents[0].aEvents[20].bEventText := 'Main door lock timeout';
-GVL_MASTER.stStationEvents[0].aEvents[20].sSolution := 'Close the door and check the lock output and locked feedback';
+GVL_MASTER.stStationEvents[0].aEvents[20].sSolution := 'Close door and check door lock';
 GVL_MASTER.stStationEvents[0].aEvents[21].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[21].bEventFlag := GVL_MASTER.stStatus.stMainDoorLock.eFault = E_MainDoorLockFault.UnlockTimeout;
 GVL_MASTER.stStationEvents[0].aEvents[21].bEventText := 'Main door unlock timeout';
-GVL_MASTER.stStationEvents[0].aEvents[21].sSolution := 'Check the lock mechanism and unlock feedback';
+GVL_MASTER.stStationEvents[0].aEvents[21].sSolution := 'Check door lock mechanism';
 GVL_MASTER.stStationEvents[0].aEvents[22].bFault := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[22].bEventFlag := GVL_MASTER.stStatus.stMainDoorLock.eFault = E_MainDoorLockFault.FeedbackMismatch;
 GVL_MASTER.stStationEvents[0].aEvents[22].bEventText := 'Main door feedback mismatch';
-GVL_MASTER.stStationEvents[0].aEvents[22].sSolution := 'Check closed, locked and TwinSAFE door feedbacks';
+GVL_MASTER.stStationEvents[0].aEvents[22].sSolution := 'Check door safety feedbacks';
 
 // Station 2 - Index table
 GVL_MASTER.stStationEvents[2].aEvents[0].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[0].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.eFault = E_IndexFault.InitialPositionInvalid OR GVL_MASTER.stStatus.stIndexStatus.eFault = E_IndexFault.PositionInvalid;
-GVL_MASTER.stStationEvents[2].aEvents[0].bEventText := 'Index table position invalid';
-GVL_MASTER.stStationEvents[2].aEvents[0].sSolution := 'Check table position sensors and recover the table using the two-hand controls';
+GVL_MASTER.stStationEvents[2].aEvents[0].bEventText := 'Index position invalid';
+GVL_MASTER.stStationEvents[2].aEvents[0].sSolution := 'Check index position and recover table';
 
 GVL_MASTER.stStationEvents[2].aEvents[1].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[1].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.eFault = E_IndexFault.SupportRetractTimeout;
 GVL_MASTER.stStationEvents[2].aEvents[1].bEventText := 'Index support retract timeout';
-GVL_MASTER.stStationEvents[2].aEvents[1].sSolution := 'Check air supply, support cylinder and retracted sensor';
+GVL_MASTER.stStationEvents[2].aEvents[1].sSolution := 'Check support retract and sensor';
 
 GVL_MASTER.stStationEvents[2].aEvents[2].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[2].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.eFault = E_IndexFault.RotationTimeout;
-GVL_MASTER.stStationEvents[2].aEvents[2].bEventText := 'Index table rotation timeout';
-GVL_MASTER.stStationEvents[2].aEvents[2].sSolution := 'Check table air supply, Port A valve and completed sensor';
+GVL_MASTER.stStationEvents[2].aEvents[2].bEventText := 'Index rotation timeout';
+GVL_MASTER.stStationEvents[2].aEvents[2].sSolution := 'Check index rotation and sensors';
 
 GVL_MASTER.stStationEvents[2].aEvents[3].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[3].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.eFault = E_IndexFault.StopAndLockTimeout;
-GVL_MASTER.stStationEvents[2].aEvents[3].bEventText := 'Index table stop or lock timeout';
-GVL_MASTER.stStationEvents[2].aEvents[3].sSolution := 'Check Port B valve, ready sensor and locked sensor';
+GVL_MASTER.stStationEvents[2].aEvents[3].bEventText := 'Index stop/lock timeout';
+GVL_MASTER.stStationEvents[2].aEvents[3].sSolution := 'Check index stop/lock sensors';
 
 GVL_MASTER.stStationEvents[2].aEvents[4].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[4].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.eFault = E_IndexFault.SupportExtendTimeout;
 GVL_MASTER.stStationEvents[2].aEvents[4].bEventText := 'Index support extend timeout';
-GVL_MASTER.stStationEvents[2].aEvents[4].sSolution := 'Check support cylinder, extended sensor and pneumatic supply';
+GVL_MASTER.stStationEvents[2].aEvents[4].sSolution := 'Check support extend and sensor';
 
 GVL_MASTER.stStationEvents[2].aEvents[5].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[5].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.eFault = E_IndexFault.WrongPositionTimeout;
-GVL_MASTER.stStationEvents[2].aEvents[5].bEventText := 'Index recovery two-hand timeout';
-GVL_MASTER.stStationEvents[2].aEvents[5].sSolution := 'Press both safety controls to complete index recovery';
+GVL_MASTER.stStationEvents[2].aEvents[5].bEventText := 'Index recovery timeout';
+GVL_MASTER.stStationEvents[2].aEvents[5].sSolution := 'Use two-hand controls to recover';
 
 GVL_MASTER.stStationEvents[2].aEvents[10].bMessage := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[10].bEventFlag := GVL_MASTER.stStatus.stIndexStatus.bWaitingOperatorExchange;
-GVL_MASTER.stStationEvents[2].aEvents[10].bEventText := 'Index waiting for operator exchange';
-GVL_MASTER.stStationEvents[2].aEvents[10].sSolution := 'Complete part removal, reject confirmation.';
+GVL_MASTER.stStationEvents[2].aEvents[10].bEventText := 'Waiting for operator exchange';
+GVL_MASTER.stStationEvents[2].aEvents[10].sSolution := 'Complete part removal or reject';
 // =========================================================
 // PROCESS SUPPORT CYLINDER FAULTS
 // =========================================================
@@ -485,7 +485,7 @@ GVL_MASTER.stStationEvents[2].aEvents[10].sSolution := 'Complete part removal, r
 GVL_MASTER.stStationEvents[1].aEvents[20].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[20].bEventFlag := GVL_MASTER.stStatus.bSiliconeSupportFaulted;
 GVL_MASTER.stStationEvents[1].aEvents[20].bEventText := 'Silicone Support Cylinder fault';
-GVL_MASTER.stStationEvents[1].aEvents[20].sSolution := 'Check Silicone Support Cylinder air supply, valve and position sensors';
+GVL_MASTER.stStationEvents[1].aEvents[20].sSolution := 'Check silicone support and sensors';
 
 
 // ---------------------------------------------------------
@@ -495,7 +495,7 @@ GVL_MASTER.stStationEvents[1].aEvents[20].sSolution := 'Check Silicone Support C
 GVL_MASTER.stStationEvents[1].aEvents[21].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[21].bEventFlag := GVL_MASTER.stStatus.bAssemblySupportFaulted;
 GVL_MASTER.stStationEvents[1].aEvents[21].bEventText := 'Assembly Support Cylinder fault';
-GVL_MASTER.stStationEvents[1].aEvents[21].sSolution := 'Check Assembly Support Cylinder air supply, valve and position sensors';
+GVL_MASTER.stStationEvents[1].aEvents[21].sSolution := 'Check assembly support and sensors';
 
 // ---------------------------------------------------------
 // PRESSURE OUT RANGE EVENTS
@@ -506,28 +506,28 @@ GVL_MASTER.stStationEvents[1].aEvents[22].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[22].bEventFlag := GVL_MASTER.stStatus.stSiliconeSupply.bSiliconePressureLow;
 GVL_MASTER.stStationEvents[1].aEvents[22].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[22].bEventText := 'Silicone pressure below operating range';
-GVL_MASTER.stStationEvents[1].aEvents[22].sSolution := 'Adjust Silicone pressure regulator to configured range.';
+GVL_MASTER.stStationEvents[1].aEvents[22].sSolution := 'Adjust silicone pressure regulator';
 
 // 23 - Silicone pressure high
 GVL_MASTER.stStationEvents[1].aEvents[23].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[23].bEventFlag := GVL_MASTER.stStatus.stSiliconeSupply.bSiliconePressureHigh;
 GVL_MASTER.stStationEvents[1].aEvents[23].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[23].bEventText := 'Silicone pressure above operating range';
-GVL_MASTER.stStationEvents[1].aEvents[23].sSolution := 'Adjust Silicone pressure regulator to configured range.';
+GVL_MASTER.stStationEvents[1].aEvents[23].sSolution := 'Adjust silicone pressure regulator';
 
 // 24 - Nozzle pressure low
 GVL_MASTER.stStationEvents[1].aEvents[24].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[24].bEventFlag := GVL_MASTER.stStatus.stSiliconeSupply.bNozzlePressureLow;
 GVL_MASTER.stStationEvents[1].aEvents[24].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[24].bEventText := 'Nozzle pressure below operating range';
-GVL_MASTER.stStationEvents[1].aEvents[24].sSolution := 'Adjust Nozzle pressure regulator to configured range.';
+GVL_MASTER.stStationEvents[1].aEvents[24].sSolution := 'Adjust nozzle pressure regulator';
 
 // 25 - Nozzle pressure high
 GVL_MASTER.stStationEvents[1].aEvents[25].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[25].bEventFlag := GVL_MASTER.stStatus.stSiliconeSupply.bNozzlePressureHigh;
 GVL_MASTER.stStationEvents[1].aEvents[25].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[25].bEventText := 'Nozzle pressure above operating range';
-GVL_MASTER.stStationEvents[1].aEvents[25].sSolution := 'Adjust Nozzle pressure regulator to configured range.';
+GVL_MASTER.stStationEvents[1].aEvents[25].sSolution := 'Adjust nozzle pressure regulator';
 
 // 26/27 - Refilled but not degassed
 GVL_MASTER.stStationEvents[1].aEvents[26].bFault := FALSE;
@@ -538,11 +538,11 @@ GVL_MASTER.stStationEvents[1].aEvents[26].bEventFlag :=
     GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassingActionRequired;
 
 IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bVacuumFault THEN
-    GVL_MASTER.stStationEvents[1].aEvents[26].bEventText := 'Reservoir 1 degassing failed - press Reset to take action';
+    GVL_MASTER.stStationEvents[1].aEvents[26].bEventText := 'Reservoir 1 degassing failed';
 ELSE
-    GVL_MASTER.stStationEvents[1].aEvents[26].bEventText := 'Reservoir 1 topped up - press Reset to take action';
+    GVL_MASTER.stStationEvents[1].aEvents[26].bEventText := 'Reservoir 1 topped up';
 END_IF
-GVL_MASTER.stStationEvents[1].aEvents[26].sSolution := 'Press Reset and confirm Start Degassing, or use Reservoir Settings.';
+GVL_MASTER.stStationEvents[1].aEvents[26].sSolution := 'Press Reset to start degassing';
 
 GVL_MASTER.stStationEvents[1].aEvents[27].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[27].bCycleStopRequest := FALSE;
@@ -553,26 +553,26 @@ GVL_MASTER.stStationEvents[1].aEvents[27].bEventFlag :=
 
 IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bVacuumFault THEN
     GVL_MASTER.stStationEvents[1].aEvents[27].bEventText :=
-        'Reservoir 2 degassing failed - press Reset to take action';
+        'Reservoir 2 degassing failed';
 ELSE
     GVL_MASTER.stStationEvents[1].aEvents[27].bEventText :=
-        'Reservoir 2 topped up - press Reset to take action';
+        'Reservoir 2 topped up';
 END_IF
 GVL_MASTER.stStationEvents[1].aEvents[27].sSolution :=
-    'Press Reset and confirm Start Degassing, or use Reservoir Settings.';
+    'Press Reset to start degassing';
 
 // 28/29 - Vacuum acquisition failure
 GVL_MASTER.stStationEvents[1].aEvents[28].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[28].bEventFlag := GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bVacuumFault;
 GVL_MASTER.stStationEvents[1].aEvents[28].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[28].bEventText := 'Reservoir 1 degassing vacuum timeout';
-GVL_MASTER.stStationEvents[1].aEvents[28].sSolution := 'Check vacuum pump, tubing, valve and vacuum threshold, then restart degassing.';
+GVL_MASTER.stStationEvents[1].aEvents[28].sSolution := 'Check vacuum system and restart degassing';
 
 GVL_MASTER.stStationEvents[1].aEvents[29].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[29].bEventFlag := GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bVacuumFault;
 GVL_MASTER.stStationEvents[1].aEvents[29].bMessage := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[29].bEventText := 'Reservoir 2 degassing vacuum timeout';
-GVL_MASTER.stStationEvents[1].aEvents[29].sSolution := 'Check vacuum pump, tubing, valve and vacuum threshold, then restart degassing.';
+GVL_MASTER.stStationEvents[1].aEvents[29].sSolution := 'Check vacuum system and restart degassing';
 
 // 30 - No selected reservoir: block Start from ReadyToStart.
 GVL_MASTER.stStationEvents[1].aEvents[30].bFault := FALSE;
@@ -585,7 +585,7 @@ GVL_MASTER.stStationEvents[1].aEvents[30].bEventFlag :=
 GVL_MASTER.stStationEvents[1].aEvents[30].bEventText :=
     'No silicone reservoir selected';
 GVL_MASTER.stStationEvents[1].aEvents[30].sSolution :=
-    'Select a Ready silicone reservoir in Settings before starting AutoCycle.';
+    'Select a Ready reservoir in Settings';
 
 // 31/32 - Active degassing progress.
 GVL_MASTER.stStationEvents[1].aEvents[31].bFault := FALSE;
@@ -596,13 +596,13 @@ GVL_MASTER.stStationEvents[1].aEvents[31].bEventFlag :=
     GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassing;
 GVL_MASTER.stStationEvents[1].aEvents[31].bEventText :=
     CONCAT(
-        STR1 := 'Reservoir 1 degassing - remaining ',
+        STR1 := 'Reservoir 1 degassing-remaining ',
         STR2 := TIME_TO_STRING(
             GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].tDegassingRemaining
         )
     );
 GVL_MASTER.stStationEvents[1].aEvents[31].sSolution :=
-    'Degassing is automatic. This message clears when Reservoir 1 is Ready.';
+    'Wait for Reservoir 1 degassing';
 
 GVL_MASTER.stStationEvents[1].aEvents[32].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[32].bCycleStopRequest := FALSE;
@@ -612,13 +612,13 @@ GVL_MASTER.stStationEvents[1].aEvents[32].bEventFlag :=
     GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassing;
 GVL_MASTER.stStationEvents[1].aEvents[32].bEventText :=
     CONCAT(
-        STR1 := 'Reservoir 2 degassing - remaining ',
+        STR1 := 'Reservoir 2 degassing-remaining ',
         STR2 := TIME_TO_STRING(
             GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].tDegassingRemaining
         )
     );
 GVL_MASTER.stStationEvents[1].aEvents[32].sSolution :=
-    'Degassing is automatic. This message clears when Reservoir 2 is Ready.';
+    'Wait for Reservoir 2 degassing';
 
 
 // =========================================================
@@ -629,75 +629,75 @@ GVL_MASTER.stStationEvents[1].aEvents[32].sSolution :=
 
 GVL_MASTER.stStationEvents[1].aEvents[40].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[40].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SlideRetractedSensorTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[40].bEventText := 'Transfer Vertical Mini Slide retracted sensor timeout';
-GVL_MASTER.stStationEvents[1].aEvents[40].sSolution := 'Check slide retract valve/output Term 10 Ch10 and retracted feedback Term 8 Ch5';
+GVL_MASTER.stStationEvents[1].aEvents[40].bEventText := 'Vertical slide retract timeout';
+GVL_MASTER.stStationEvents[1].aEvents[40].sSolution := 'Check slide retract valve and sensor';
 
 GVL_MASTER.stStationEvents[1].aEvents[41].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[41].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SlideExtendedSensorTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[41].bEventText := 'Transfer Vertical Mini Slide extended sensor timeout';
-GVL_MASTER.stStationEvents[1].aEvents[41].sSolution := 'Check slide extend valve/output Term 10 Ch9 and extended feedback Term 8 Ch6';
+GVL_MASTER.stStationEvents[1].aEvents[41].bEventText := 'Vertical slide extend timeout';
+GVL_MASTER.stStationEvents[1].aEvents[41].sSolution := 'Check slide extend valve and sensor';
 
 GVL_MASTER.stStationEvents[1].aEvents[42].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[42].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SlideSensorMismatch;
-GVL_MASTER.stStationEvents[1].aEvents[42].bEventText := 'Transfer Vertical Mini Slide sensor mismatch';
-GVL_MASTER.stStationEvents[1].aEvents[42].sSolution := 'Both slide position sensors are active; check Term 8 Ch5 and Ch6, sensor mounting and wiring';
+GVL_MASTER.stStationEvents[1].aEvents[42].bEventText := 'Vertical slide sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[42].sSolution := 'Check slide position sensors';
 
 GVL_MASTER.stStationEvents[1].aEvents[43].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[43].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.GripperOpenSensorTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[43].bEventText := 'Rotary Gripper opened-position sensor timeout';
-GVL_MASTER.stStationEvents[1].aEvents[43].sSolution := 'Check gripper open output Term 10 Ch11 and opened feedback Term 8 Ch7';
+GVL_MASTER.stStationEvents[1].aEvents[43].bEventText := 'Gripper open timeout';
+GVL_MASTER.stStationEvents[1].aEvents[43].sSolution := 'Check gripper open valve and sensor';
 
 GVL_MASTER.stStationEvents[1].aEvents[44].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[44].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.GripperClosedSensorTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[44].bEventText := 'Rotary Gripper closed-position sensor timeout';
-GVL_MASTER.stStationEvents[1].aEvents[44].sSolution := 'Check gripper close output Term 10 Ch12 and closed feedback Term 8 Ch8';
+GVL_MASTER.stStationEvents[1].aEvents[44].bEventText := 'Gripper close timeout';
+GVL_MASTER.stStationEvents[1].aEvents[44].sSolution := 'Check gripper close valve and sensor';
 
 GVL_MASTER.stStationEvents[1].aEvents[45].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[45].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.GripperSensorMismatch;
-GVL_MASTER.stStationEvents[1].aEvents[45].bEventText := 'Rotary Gripper position sensor mismatch';
-GVL_MASTER.stStationEvents[1].aEvents[45].sSolution := 'Both gripper position sensors are active; check Term 8 Ch7 and Ch8, sensor mounting and wiring';
+GVL_MASTER.stStationEvents[1].aEvents[45].bEventText := 'Gripper sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[45].sSolution := 'Check gripper position sensors';
 
 GVL_MASTER.stStationEvents[1].aEvents[46].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[46].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.RotationPickSensorTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[46].bEventText := 'Rotary Gripper Rotation 0 degree sensor timeout';
-GVL_MASTER.stStationEvents[1].aEvents[46].sSolution := 'Check rotation-to-pick output Term 10 Ch13 and 0 degree feedback Term 8 Ch9';
+GVL_MASTER.stStationEvents[1].aEvents[46].bEventText := 'Gripper rotation 0 deg timeout';
+GVL_MASTER.stStationEvents[1].aEvents[46].sSolution := 'Check 0 deg rotation valve and sensor';
 
 GVL_MASTER.stStationEvents[1].aEvents[47].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[47].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.RotationPlaceSensorTimeout;
-GVL_MASTER.stStationEvents[1].aEvents[47].bEventText := 'Rotary Gripper Rotation 180 degree sensor timeout';
-GVL_MASTER.stStationEvents[1].aEvents[47].sSolution := 'Check rotation-to-place output Term 10 Ch14 and 180 degree feedback Term 8 Ch10';
+GVL_MASTER.stStationEvents[1].aEvents[47].bEventText := 'Gripper rotation 180 deg timeout';
+GVL_MASTER.stStationEvents[1].aEvents[47].sSolution := 'Check 180 deg rotation valve and sensor';
 
 GVL_MASTER.stStationEvents[1].aEvents[48].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[48].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.RotationSensorMismatch;
-GVL_MASTER.stStationEvents[1].aEvents[48].bEventText := 'Rotary Gripper Rotation sensor mismatch';
-GVL_MASTER.stStationEvents[1].aEvents[48].sSolution := 'Both rotation sensors are active; check Term 8 Ch9 and Ch10, sensor mounting and wiring';
+GVL_MASTER.stStationEvents[1].aEvents[48].bEventText := 'Gripper rotation sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[48].sSolution := 'Check gripper rotation sensors';
 
 GVL_MASTER.stStationEvents[1].aEvents[49].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[49].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.IndexNotSafe;
-GVL_MASTER.stStationEvents[1].aEvents[49].bEventText := 'Assembly station lost index ready/locked condition';
-GVL_MASTER.stStationEvents[1].aEvents[49].sSolution := 'Check index Ready and Locked feedback; the index must remain stationary during flipping';
+GVL_MASTER.stStationEvents[1].aEvents[49].bEventText := 'Assembly index permissive lost';
+GVL_MASTER.stStationEvents[1].aEvents[49].sSolution := 'Check index Ready and Locked';
 
 GVL_MASTER.stStationEvents[1].aEvents[50].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[50].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.AssemblySupportNotExtended;
-GVL_MASTER.stStationEvents[1].aEvents[50].bEventText := 'Assembly Support Cylinder not extended during flipping';
-GVL_MASTER.stStationEvents[1].aEvents[50].sSolution := 'Check Assembly Support extended feedback before and during the flipping sequence';
+GVL_MASTER.stStationEvents[1].aEvents[50].bEventText := 'Assembly support not extended';
+GVL_MASTER.stStationEvents[1].aEvents[50].sSolution := 'Check assembly support feedback';
 
 GVL_MASTER.stStationEvents[1].aEvents[51].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[51].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.AirSupplyLost;
-GVL_MASTER.stStationEvents[1].aEvents[51].bEventText := 'Assembly station pneumatic supply lost';
-GVL_MASTER.stStationEvents[1].aEvents[51].sSolution := 'Check MS6 air supply feedback and pneumatic pressure';
+GVL_MASTER.stStationEvents[1].aEvents[51].bEventText := 'Assembly air supply lost';
+GVL_MASTER.stStationEvents[1].aEvents[51].sSolution := 'Check MS6 and air pressure';
 
 GVL_MASTER.stStationEvents[1].aEvents[52].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[52].bEventFlag := GVL_MASTER.stStatus.stAssemblyStation.eFault = E_AssemblyStationFault.SafetyLost;
-GVL_MASTER.stStationEvents[1].aEvents[52].bEventText := 'Assembly station safety permissive lost';
-GVL_MASTER.stStationEvents[1].aEvents[52].sSolution := 'Check TwinSAFE status, safety flaps, E-stop and main door';
+GVL_MASTER.stStationEvents[1].aEvents[52].bEventText := 'Assembly safety permissive lost';
+GVL_MASTER.stStationEvents[1].aEvents[52].sSolution := 'Check Safety devices and TwinSAFE';
 
 // Operator station diagnostics. These are visual messages only; the active
 // operator instruction itself remains reserved for DataGrid row 0.
 GVL_MASTER.stStationEvents[0].aEvents[30].bMessage := TRUE;
 GVL_MASTER.stStationEvents[0].aEvents[30].bEventFlag := GVL_MASTER.stStatus.stOperatorStation.bRejectWaitingForClear;
-GVL_MASTER.stStationEvents[0].aEvents[30].bEventText := 'Reject confirmation ignored because reject chute sensor was active before nest removal';
-GVL_MASTER.stStationEvents[0].aEvents[30].sSolution := 'Clear the reject chute sensor, then place the rejected part in the bin again';
+GVL_MASTER.stStationEvents[0].aEvents[30].bEventText := 'Reject confirmation blocked';
+GVL_MASTER.stStationEvents[0].aEvents[30].sSolution := 'Clear reject chute and retry reject';
 
 
 
@@ -706,20 +706,20 @@ GVL_MASTER.stStationEvents[0].aEvents[30].sSolution := 'Clear the reject chute s
 tonIndexPositionInvalid(IN := GVL_MASTER.stInputs.bIndexReady AND GVL_MASTER.stInputs.bIndexLocked AND GVL_MASTER.stInputs.eIndexPosition = E_TablePosition.Unknown, PT := T#500MS);
 GVL_MASTER.stStationEvents[2].aEvents[6].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[6].bEventFlag := tonIndexPositionInvalid.Q;
-GVL_MASTER.stStationEvents[2].aEvents[6].bEventText := 'Index table position sensor combination invalid';
-GVL_MASTER.stStationEvents[2].aEvents[6].sSolution := 'Check position sensors 1, 2 and 3, their binary code and Term 7 Channels 6 to 8';
+GVL_MASTER.stStationEvents[2].aEvents[6].bEventText := 'Index position sensors invalid';
+GVL_MASTER.stStationEvents[2].aEvents[6].sSolution := 'Check index position sensors';
 
 tonIndexSupportMismatch(IN := GVL_MASTER.stInputs.bIndexSupportExtended AND GVL_MASTER.stInputs.bIndexSupportRetracted, PT := T#250MS);
 GVL_MASTER.stStationEvents[2].aEvents[7].bFault := TRUE;
 GVL_MASTER.stStationEvents[2].aEvents[7].bEventFlag := tonIndexSupportMismatch.Q;
-GVL_MASTER.stStationEvents[2].aEvents[7].bEventText := 'Nest support cylinder sensor mismatch';
-GVL_MASTER.stStationEvents[2].aEvents[7].sSolution := 'Check the nest support cylinder extended and retracted sensors on Term 8 Channels 1 and 2';
+GVL_MASTER.stStationEvents[2].aEvents[7].bEventText := 'Nest support sensor mismatch';
+GVL_MASTER.stStationEvents[2].aEvents[7].sSolution := 'Check nest support sensors';
 
 tonTransferSupportMismatch(IN := GVL_MASTER.stInputs.bSiliconeSupportExtended AND GVL_MASTER.stInputs.bSiliconeSupportRetracted, PT := T#250MS);
 GVL_MASTER.stStationEvents[1].aEvents[14].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[14].bEventFlag := tonTransferSupportMismatch.Q;
-GVL_MASTER.stStationEvents[1].aEvents[14].bEventText := 'Silicone Support Cylinder sensor mismatch';
-GVL_MASTER.stStationEvents[1].aEvents[14].sSolution := 'Check the Silicone Support Cylinder sensors on Term 8 Channels 3 and 4';
+GVL_MASTER.stStationEvents[1].aEvents[14].bEventText := 'Silicone support sensor mismatch';
+GVL_MASTER.stStationEvents[1].aEvents[14].sSolution := 'Check silicone support sensors';
 
 
 

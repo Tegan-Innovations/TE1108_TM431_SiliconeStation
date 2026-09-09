@@ -236,8 +236,7 @@
                     0,
                     1,
                     2,
-                    3,
-                    4
+                    3
                 ],
                 "options": [
                     {
@@ -255,10 +254,6 @@
                     {
                         "label": "Cancel",
                         "value": 3
-                    },
-                    {
-                        "label": "ExitHMI",
-                        "value": 4
                     }
                 ],
                 "type": "integer"
@@ -4884,6 +4879,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.ePowerCmd": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::ePowerCmd",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.E_PLC_Power"
+                    },
+                    {
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stCommands.uiResetStatisticsNestId": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6104,6 +6116,23 @@
                     },
                     {
                         "propertyOrder": 16
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.iPowerCountdown": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::iPowerCountdown",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/INT"
+                    },
+                    {
+                        "propertyOrder": 10
                     }
                 ]
             },
@@ -9809,6 +9838,7 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationStart": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.ePowerCmd": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.uiResetStatisticsNestId": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics": 3,
@@ -9882,6 +9912,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationPartPresent": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.iPowerCountdown": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiAssemblyStationNestId": 3,

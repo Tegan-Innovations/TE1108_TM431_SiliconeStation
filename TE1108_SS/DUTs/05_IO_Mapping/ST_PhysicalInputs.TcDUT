@@ -67,6 +67,7 @@ STRUCT
     bSiliconeSupportRetracted       	: BOOL;
 	bAssemblySupportExtended  			: BOOL;
 	bAssemblySupportRetracted 			: BOOL;
+	bSiliconeStationPartPresent 		: BOOL;
 
     // Flipping / assembly station - EPLAN Term 8 Ch5..Ch10
     bTransferVerticalMiniSlideRetracted : BOOL;

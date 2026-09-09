@@ -219,7 +219,7 @@ CASE eState OF
 			AND stInputs.bSafetyOk
 			AND stInputs.bIndexMoveAllowed
 			AND stInputs.bIndexReady
-			AND stInputs.bIndexLocked
+			//AND stInputs.bIndexLocked
 			AND stInputs.bSiliconeSupportRetracted
 			AND stInputs.bAssemblySupportRetracted
 		THEN
@@ -596,7 +596,8 @@ CASE eState OF
 			eState := E_CycleState.Fault;
 		
 		ELSIF (NOT stInputs.bSiliconeProcessRequired OR stInputs.bSiliconeSupportRetracted)
-			AND (NOT stInputs.bAssemblyProcessRequired OR stInputs.bAssemblySupportRetracted)
+			AND (NOT stInputs.bAssemblyProcessRequired OR stInputs.bAssemblySupportRetracted) 
+			AND stInputs.bIndexMoveAllowed
 		THEN
 		
 			eState := E_CycleState.CycleComplete;

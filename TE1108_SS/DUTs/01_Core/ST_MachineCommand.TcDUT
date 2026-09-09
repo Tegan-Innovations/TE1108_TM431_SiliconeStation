@@ -20,9 +20,7 @@ STRUCT
     bProcessRequest                : BOOL;
     bAcknowledge                   : BOOL;
     bAcknowledgePuckRemovalFault   : BOOL;
-    bSimulateProcessPass           : BOOL;
-    bSimulateProcessFail           : BOOL;
-    bSimulateProcessFault          : BOOL;
+
     usiRecipeRequest               : USINT;
 	
 	// Silicone Support

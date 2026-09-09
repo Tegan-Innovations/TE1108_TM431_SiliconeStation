@@ -4,9 +4,17 @@
     <Declaration><![CDATA[PROGRAM PRG_HmiCommands
 VAR
     rtStart : R_TRIG; rtReset : R_TRIG; rtAck : R_TRIG; rtPuckAck : R_TRIG;
+	
 	rtManualRequest 			: R_TRIG;
 	bManualRequestLatched 		: BOOL;
 	tonManualModeHmiGuard 		: TON;
+	
+	tonPowerDelay       		: TON;
+    fbReboot            		: NT_Reboot;
+    fbShutdown          		: NT_Shutdown;
+    bTriggerReboot      		: BOOL;
+    bTriggerShutdown    		: BOOL;
+    iPowerCountdown     		: INT;
 
     rtReservoir1Select          : R_TRIG;
     rtReservoir2Select          : R_TRIG;
@@ -25,6 +33,7 @@ VAR
     rtIvekPrime                  : R_TRIG;
     rtIvekReference              : R_TRIG;
     rtIvekMaintenanceStop        : R_TRIG;
+	
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -251,12 +260,107 @@ GVL_MASTER.stCommand.bManualMainDoorUnlock 			:= GVL_HMI.stCommands.bMainDoorUnl
 GVL_MASTER.stCommand.bManualEquipmentStart 			:= GVL_HMI.stCommands.bIvekStartManual;
 GVL_MASTER.stCommand.bManualEquipmentStop 			:= GVL_HMI.stCommands.bIvekStopManual;
 GVL_MASTER.stCommand.bManualEquipmentReset 			:= GVL_HMI.stCommands.bIvekReset;
-GVL_MASTER.stCommand.bSimulateProcessPass 			:= GVL_HMI.stCommands.bSimulateProcessPass;
-GVL_MASTER.stCommand.bSimulateProcessFail 			:= GVL_HMI.stCommands.bSimulateProcessFail;
-GVL_MASTER.stCommand.bSimulateProcessFault 			:= GVL_HMI.stCommands.bSimulateProcessFault;
 GVL_MASTER.stCommand.usiRecipeRequest 				:= GVL_HMI.stCommands.usiRecipeRequest;
 GVL_MASTER.stCommand.uiResetStatisticsNestId 		:= GVL_HMI.stCommands.uiResetStatisticsNestId;
 
+
+// -----------------------------------------------------------------------------
+// PLC POWER CONTROL
+// -----------------------------------------------------------------------------
+
+IF GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Reboot THEN
+    tonPowerDelay.PT := T#15S;
+
+ELSIF GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Shutdown THEN
+    tonPowerDelay.PT := T#60S;
+END_IF
+
+tonPowerDelay(
+    IN :=
+        (GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Reboot)
+        OR
+        (GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Shutdown)
+);
+
+IF tonPowerDelay.IN THEN
+
+    IF GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Shutdown THEN
+
+        iPowerCountdown :=
+            DINT_TO_INT(
+                60 - (TIME_TO_DINT(tonPowerDelay.ET) / 1000)
+            );
+
+    ELSIF GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Reboot THEN
+
+        iPowerCountdown :=
+            DINT_TO_INT(
+                15 - (TIME_TO_DINT(tonPowerDelay.ET) / 1000)
+            );
+    END_IF
+
+ELSE
+    iPowerCountdown := 0;
+END_IF
+
+// Publish power countdown to HMI status.
+GVL_HMI.stStatus.iPowerCountdown := iPowerCountdown;
+
+CASE GVL_HMI.stCommands.ePowerCmd OF
+
+    E_PLC_Power.Idle:
+
+        bTriggerReboot := FALSE;
+        bTriggerShutdown := FALSE;
+
+    E_PLC_Power.Reboot:
+
+        IF tonPowerDelay.Q THEN
+            bTriggerReboot := TRUE;
+        END_IF
+
+    E_PLC_Power.Shutdown:
+
+        IF tonPowerDelay.Q THEN
+            bTriggerShutdown := TRUE;
+        END_IF
+
+    E_PLC_Power.Cancel:
+
+        bTriggerReboot := FALSE;
+        bTriggerShutdown := FALSE;
+
+        GVL_HMI.stCommands.ePowerCmd :=
+            E_PLC_Power.Idle;
+END_CASE
+
+fbReboot(
+    NETID := '',
+    START := bTriggerReboot,
+    TMOUT := DEFAULT_ADS_TIMEOUT
+);
+
+fbShutdown(
+    NETID := '',
+    START := bTriggerShutdown,
+    TMOUT := DEFAULT_ADS_TIMEOUT
+);
+
+IF fbReboot.BUSY OR fbReboot.ERR THEN
+
+    bTriggerReboot := FALSE;
+
+    GVL_HMI.stCommands.ePowerCmd :=
+        E_PLC_Power.Idle;
+END_IF
+
+IF fbShutdown.BUSY OR fbShutdown.ERR THEN
+
+    bTriggerShutdown := FALSE;
+
+    GVL_HMI.stCommands.ePowerCmd :=
+        E_PLC_Power.Idle;
+END_IF
 
 ]]></ST>
     </Implementation>

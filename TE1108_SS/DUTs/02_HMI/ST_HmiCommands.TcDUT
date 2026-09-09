@@ -3,6 +3,9 @@
   <DUT Name="ST_HmiCommands" Id="{77685773-5031-434b-8aac-fa8b49ef7063}">
     <Declaration><![CDATA[TYPE ST_HmiCommands :
 STRUCT
+	
+	ePowerCmd 						: E_PLC_Power := E_PLC_Power.Idle;
+	
     bStart                          : BOOL;
     bStop                           : BOOL;
     bReset                          : BOOL;
@@ -24,9 +27,6 @@ STRUCT
 	bAssemblySupportRetract 		: BOOL;
 	
     bMainDoorUnlock                 : BOOL;
-    bSimulateProcessPass            : BOOL;
-    bSimulateProcessFail            : BOOL;
-    bSimulateProcessFault           : BOOL;
     bIvekStartManual                : BOOL;
     bIvekStopManual                 : BOOL;
     bIvekReset                      : BOOL;

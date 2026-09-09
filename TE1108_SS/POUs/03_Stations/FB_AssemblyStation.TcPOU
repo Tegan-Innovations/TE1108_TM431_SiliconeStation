@@ -574,6 +574,8 @@ CASE eState OF
     E_AssemblyStationState.Fault:
         tonMovementTimeout(IN := FALSE);
         tonActionDelay(IN := FALSE);
+		stResult.bValid := FALSE;
+    	stResult.bPassed := FALSE;
 
 END_CASE
 
