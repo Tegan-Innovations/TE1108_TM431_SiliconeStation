@@ -225,6 +225,9 @@ GVL_MASTER.stStationEvents[0].aEvents[15].bEventFlag := GVL_MASTER.stInputs.bAir
 GVL_MASTER.stStationEvents[0].aEvents[15].bEventText := 'Pneumatic system is exhausted while operation is requested';
 GVL_MASTER.stStationEvents[0].aEvents[15].sSolution := 'Check the MS6 dump valve, reset circuit and air exhaust feedback';
 
+
+
+
 // -----------------------------------------------------------------------------
 // UNEXPECTED HMI LOGOUT
 // -----------------------------------------------------------------------------
@@ -367,6 +370,16 @@ GVL_MASTER.stStationEvents[1].aEvents[6].bEventText := 'IVEK reference required 
 GVL_MASTER.stStationEvents[1].aEvents[6].sSolution := 'Open Engineer Settings and run IVEK Reference before starting AutoCycle.';
 
 
+
+// -----------------------------------------------------------------------------
+// VACUUM EXTRACTOR LOST DURING AUTO CYCLE
+// -----------------------------------------------------------------------------
+GVL_MASTER.stStationEvents[1].aEvents[9].bFault 		:= TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[9].bEventFlag 	:=GVL_MASTER.stStatus.bExtractorAutoCycleFault;
+GVL_MASTER.stStationEvents[1].aEvents[9].bEventText 	:= 'Vacuum extractor lost during automatic cycle';
+GVL_MASTER.stStationEvents[1].aEvents[9].sSolution 		:='Check vacuum extractor power, vacuum supply and feedback signal';
+
+
 // Process station component faults
 GVL_MASTER.stStationEvents[1].aEvents[10].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[10].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.CylinderExtendTimeout;
@@ -384,6 +397,33 @@ GVL_MASTER.stStationEvents[1].aEvents[13].bFault := TRUE;
 GVL_MASTER.stStationEvents[1].aEvents[13].bEventFlag := GVL_MASTER.stStatus.stProcessStation.eFault = E_ProcessStationFault.ProcessTimeout;
 GVL_MASTER.stStationEvents[1].aEvents[13].bEventText := 'Process station timeout';
 GVL_MASTER.stStationEvents[1].aEvents[13].sSolution := 'Check process equipment, permissives and cylinder position';
+
+// =========================================================
+// PART VACUUM BUILD TIMEOUT
+// =========================================================
+
+GVL_MASTER.stStationEvents[1].aEvents[15].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[15].bEventFlag :=GVL_MASTER.stStatus.bPartVacuumBuildTimeoutFault;
+GVL_MASTER.stStationEvents[1].aEvents[15].bEventText :='Part holding vacuum build-up timeout';
+GVL_MASTER.stStationEvents[1].aEvents[15].sSolution := 'Check part vacuum supply, solenoid, hose, fixture seal and vacuum feedback';
+
+// =========================================================
+// PART VACUUM LOST DURING SILICONE PROCESS
+// =========================================================
+
+GVL_MASTER.stStationEvents[1].aEvents[16].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[16].bEventFlag :=GVL_MASTER.stStatus.bPartVacuumLostFault;
+GVL_MASTER.stStationEvents[1].aEvents[16].bEventText :='Part holding vacuum lost during silicone process';
+GVL_MASTER.stStationEvents[1].aEvents[16].sSolution :='Check part seating, vacuum circuit, fixture seal and vacuum feedback';
+
+// =========================================================
+// PART VACUUM RELEASE TIMEOUT
+// =========================================================
+
+GVL_MASTER.stStationEvents[1].aEvents[17].bFault := TRUE;
+GVL_MASTER.stStationEvents[1].aEvents[17].bEventFlag :=GVL_MASTER.stStatus.bPartVacuumReleaseTimeoutFault;
+GVL_MASTER.stStationEvents[1].aEvents[17].bEventText :='Part holding vacuum release timeout';
+GVL_MASTER.stStationEvents[1].aEvents[17].sSolution := 'Check vacuum solenoid, exhaust path and vacuum feedback';
 
 // Main door lock component faults
 GVL_MASTER.stStationEvents[0].aEvents[20].bFault := TRUE;

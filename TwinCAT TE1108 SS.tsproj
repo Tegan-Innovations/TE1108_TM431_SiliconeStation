@@ -41,7 +41,7 @@
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{F0FC2FAA-02FE-4049-8B91-78F01A2836BF}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<Name GUID="{59DB0509-CA92-CFFF-9CB6-D7D3E97F755C}" AutoDeleteType="true">ST_PhysicalInputs</Name>
 			<BitSize>528</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
@@ -400,7 +400,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>iPartVacuumPressureRaw</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000006}">INT</Type>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>512</BitOffs>
 			</SubItem>
@@ -758,15 +758,6 @@
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
 			<Name GUID="{5E77FC20-F718-695B-0D6E-6DFF92E2609B}" AutoDeleteType="true">ST_SiliconeSupplyConfig</Name>
 			<BitSize>800</BitSize>
 			<SubItem>
@@ -998,8 +989,8 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{58500C32-0BDB-53B4-AF2E-A9F69526C5BC}" AutoDeleteType="true">ST_MachineConfig</Name>
-			<BitSize>1504</BitSize>
+			<Name GUID="{17D54281-0D39-7882-B50F-6FFAF31B5E2A}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<BitSize>1568</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
@@ -1118,7 +1109,7 @@
 				</Default>
 			</SubItem>
 			<SubItem>
-				<Name>tAssemblyProcessSimulation</Name>
+				<Name>tPartVacuumBuildTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
 				<BitOffs>416</BitOffs>
@@ -1127,10 +1118,28 @@
 				</Default>
 			</SubItem>
 			<SubItem>
-				<Name>tSiliconeProcessSimulation</Name>
+				<Name>tPartVacuumReleaseTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
 				<BitOffs>448</BitOffs>
+				<Default>
+					<DateTime>T#2S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tAssemblyProcessSimulation</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>480</BitOffs>
+				<Default>
+					<DateTime>T#2S</DateTime>
+				</Default>
+			</SubItem>
+			<SubItem>
+				<Name>tSiliconeProcessSimulation</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
+				<BitSize>32</BitSize>
+				<BitOffs>512</BitOffs>
 				<Default>
 					<DateTime>T#2S</DateTime>
 				</Default>
@@ -1140,7 +1149,7 @@
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<Comment><![CDATA[ Flipping station commissioning values. Reduce action delay after validation.]]></Comment>
 				<BitSize>32</BitSize>
-				<BitOffs>480</BitOffs>
+				<BitOffs>544</BitOffs>
 				<Default>
 					<DateTime>T#10MS</DateTime>
 				</Default>
@@ -1149,7 +1158,7 @@
 				<Name>tAssemblyMovementTimeout</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>512</BitOffs>
+				<BitOffs>576</BitOffs>
 				<Default>
 					<DateTime>T#7S</DateTime>
 				</Default>
@@ -1158,7 +1167,7 @@
 				<Name>tAssemblyReleaseDelay</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000048}">TIME</Type>
 				<BitSize>32</BitSize>
-				<BitOffs>544</BitOffs>
+				<BitOffs>608</BitOffs>
 				<Default>
 					<DateTime>T#500MS</DateTime>
 				</Default>
@@ -1167,7 +1176,7 @@
 				<Name>eOperatorPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>576</BitOffs>
+				<BitOffs>640</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
@@ -1176,7 +1185,7 @@
 				<Name>eSiliconePosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>592</BitOffs>
+				<BitOffs>656</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position3</EnumText>
 				</Default>
@@ -1185,7 +1194,7 @@
 				<Name>eAssemblyPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>608</BitOffs>
+				<BitOffs>672</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position4</EnumText>
 				</Default>
@@ -1194,7 +1203,7 @@
 				<Name>eRejectPosition</Name>
 				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
-				<BitOffs>624</BitOffs>
+				<BitOffs>688</BitOffs>
 				<Default>
 					<EnumText>E_TablePosition.Position1</EnumText>
 				</Default>
@@ -1203,7 +1212,7 @@
 				<Name>bRequireTwoHandsForIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>640</BitOffs>
+				<BitOffs>704</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -1212,7 +1221,7 @@
 				<Name>bAllowEmptyNestIndex</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>648</BitOffs>
+				<BitOffs>712</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -1221,7 +1230,7 @@
 				<Name>bRequireRejectConfirm</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>656</BitOffs>
+				<BitOffs>720</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -1230,7 +1239,7 @@
 				<Name>bUseProcessSimulation</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000030}">BOOL</Type>
 				<BitSize>8</BitSize>
-				<BitOffs>664</BitOffs>
+				<BitOffs>728</BitOffs>
 				<Default>
 					<Bool>true</Bool>
 				</Default>
@@ -1243,7 +1252,7 @@
 					<Elements>4</Elements>
 				</ArrayInfo>
 				<BitSize>32</BitSize>
-				<BitOffs>672</BitOffs>
+				<BitOffs>736</BitOffs>
 				<Default>
 					<SubItem>
 						<Name>[1]</Name>
@@ -1270,7 +1279,7 @@
  SILICONE SUPPLY STRUCTURE
  =========================================================]]></Comment>
 				<BitSize>800</BitSize>
-				<BitOffs>704</BitOffs>
+				<BitOffs>768</BitOffs>
 			</SubItem>
 		</DataType>
 		<DataType>
@@ -1565,6 +1574,15 @@
 			</SubItem>
 		</DataType>
 		<DataType>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{2438F91B-E188-4ED7-8594-54354F9ED6A4}" Namespace="Safety" TcBaseType="true">FSOE_6</Name>
 			<BitSize>48</BitSize>
 			<SubItem>
@@ -1744,25 +1762,20 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{435ED56E-C029-B53F-0B81-93D44A8C772C}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{3555F263-DE3B-6E2D-D2A4-183410BF3C24}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
-							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{17D54281-0D39-7882-B50F-6FFAF31B5E2A}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
 							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
 							<Type>USINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{58500C32-0BDB-53B4-AF2E-A9F69526C5BC}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1772,11 +1785,6 @@
 						</Var>
 						<Var>
 							<Name>GVL_Persistent.uiTestHistoryWriteIndex</Name>
-							<Type>UINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Persistent.uiTestHistoryCount</Name>
 							<Type>UINT</Type>
 							<InOut>7</InOut>
 						</Var>
@@ -1796,17 +1804,23 @@
 							<InOut>7</InOut>
 						</Var>
 						<Var>
+							<Name>GVL_Persistent.uiTestHistoryCount</Name>
+							<Type>UINT</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
 							<Name>GVL_Persistent.stSiliconeSupply</Name>
 							<Type GUID="{EDD38FAB-5BAA-9388-2D7D-5173435AF951}">ST_SiliconeSupplyPersistent</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
-						<Var>
-							<Name>GVL_IO.stOutputs</Name>
-							<Type GUID="{9BED2248-E1F8-C0FA-D7B4-AD0762DD29B5}">ST_PhysicalOutputs</Type>
-						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1</Name>
 							<Type>BOOL</Type>
@@ -1956,12 +1970,22 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
+							<Name>GVL_IO.stOutputs</Name>
+							<Type GUID="{9BED2248-E1F8-C0FA-D7B4-AD0762DD29B5}">ST_PhysicalOutputs</Type>
+						</Var>
+						<Var>
 							<Name>GVL_IVEK_EIP.stOutput</Name>
 							<Type GUID="{B39B9377-AF50-4659-E2C2-F2D4B10F3D96}">ST_IvekCyclicOutput</Type>
 						</Var>
 					</Vars>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
+						<Var>
+							<Name>GVL_IO.stInputs</Name>
+							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
+ Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
+							<Type GUID="{59DB0509-CA92-CFFF-9CB6-D7D3E97F755C}">ST_PhysicalInputs</Type>
+						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
 							<Comment><![CDATA[ ---------------------------------------------------------------------
@@ -1972,10 +1996,16 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL_IO.stInputs</Name>
-							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
- Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{F0FC2FAA-02FE-4049-8B91-78F01A2836BF}">ST_PhysicalInputs</Type>
+							<Name>GVL_Safety.bEmergencyStopOk</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bMainDoorUnSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bLeftFlapSafe</Name>
+							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.nTerminal_State</Name>
@@ -2371,18 +2401,6 @@
 							<Name>GVL_EtherCAT.stTerm15_EL6652.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
 							<Type>UINT</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bEmergencyStopOk</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bMainDoorUnSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bLeftFlapSafe</Name>
-							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bRightFlapSafe</Name>

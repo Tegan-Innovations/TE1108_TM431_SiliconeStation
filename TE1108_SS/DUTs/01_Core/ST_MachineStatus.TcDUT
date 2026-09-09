@@ -39,6 +39,10 @@ STRUCT
 	bSiliconeSupportFaulted 		: BOOL;
 	bAssemblySupportFaulted 		: BOOL;
     bAssemblyStationFaulted         : BOOL;
+	bExtractorAutoCycleFault 		: BOOL;
+	bPartVacuumBuildTimeoutFault   : BOOL;
+	bPartVacuumLostFault           : BOOL;
+	bPartVacuumReleaseTimeoutFault : BOOL;
 	
     stPermissives           : ST_MachinePermissives;
     stLastResult            : ST_ProcessResult;

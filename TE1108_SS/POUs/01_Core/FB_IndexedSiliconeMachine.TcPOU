@@ -155,6 +155,8 @@ VAR
     bStoppingTimeoutFault         : BOOL;
 	bStopRequestTimeout 		  : BOOL;
 	
+	bExtractorAutoCycleFault 	  : BOOL;
+	
     tonInitialising               : TON;
     tonStopping                   : TON;
     tonAutoCycleIdleTimeout       : TON;
@@ -564,22 +566,21 @@ END_IF
 // Execute exactly once per PLC scan, after the selected process
 // equipment has updated its status for this scan.
 fbSiliconeProcess.Cyclic(
-    bSupplyReady := fbSiliconeSupply.IsReadyForDispense(),
-    bEquipmentReady := fbIvek.IsReady(),
-    bEquipmentBusy := fbIvek.IsBusy(),
-    bEquipmentDone := fbIvek.IsDone(),
-    bEquipmentFaulted := fbIvek.IsFaulted(),
-    stEquipmentResult := fbIvek.GetResult(),
-
-    bSiliconeSupportExtended := stInputs.bSiliconeSupportExtended,
-    bExtractorReady := stPermissives.bExtractorReady,
-    bPartVacuumOk := stInputs.bPartVacuumOk,
-
-    tPinchSettlingDelay := GVL_Config.stMachine.stSiliconeSupply.tPinchValveSettlingDelay,
-    tEquipmentStartTimeout := GVL_Config.stMachine.stSiliconeSupply.tIvekStartTimeout,
-    tEquipmentCompleteTimeout := GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout,
-
-    bPartVacuumEnable => stOutputsInternal.bPartVacuumEnable
+    bSupplyReady 				:= fbSiliconeSupply.IsReadyForDispense(),
+    bEquipmentReady 			:= fbIvek.IsReady(),
+    bEquipmentBusy 				:= fbIvek.IsBusy(),
+    bEquipmentDone 				:= fbIvek.IsDone(),
+    bEquipmentFaulted 			:= fbIvek.IsFaulted(),
+    stEquipmentResult 			:= fbIvek.GetResult(),
+    bSiliconeSupportExtended 	:= stInputs.bSiliconeSupportExtended,
+    bExtractorReady 			:= stPermissives.bExtractorReady,
+	bPartVacuumOk 				:= stInputs.bPartVacuumOk,
+	tPartVacuumBuildTimeout 	:= GVL_Config.stMachine.tPartVacuumBuildTimeout,
+	tPartVacuumReleaseTimeout 	:= GVL_Config.stMachine.tPartVacuumReleaseTimeout,
+    tPinchSettlingDelay 		:= GVL_Config.stMachine.stSiliconeSupply.tPinchValveSettlingDelay,
+    tEquipmentStartTimeout 		:= GVL_Config.stMachine.stSiliconeSupply.tIvekStartTimeout,
+    tEquipmentCompleteTimeout 	:= GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout,
+    bPartVacuumEnable 			=> stOutputsInternal.bPartVacuumEnable
 );
 
 // The coordinator generates one-scan equipment requests.
@@ -1034,8 +1035,9 @@ CASE eMachineState OF
 	
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
-	
+		fbSiliconeProcess.RequestStop();
 		fbIvek.RequestStop();
+		
 	
 		// -----------------------------------------------------
 		// LATCH RESET REQUEST
@@ -1045,6 +1047,7 @@ CASE eMachineState OF
 			bFaultResetRequested := TRUE;
 			bHmiLogoutFault := FALSE;
 			bStopRequestTimeout := FALSE;
+			bExtractorAutoCycleFault := FALSE;
 	
 			fbIndex.Reset();
 			fbSiliconeSupportCylinder.Reset();
@@ -1465,7 +1468,19 @@ E_MachineState.ReadyToStart:
 		END_IF
 // 	
 	E_MachineState.AutoCycle:
-	
+		
+		// ---------------------------------------------------------
+		// VACUUM EXTRACTOR SUPERVISION
+		// ---------------------------------------------------------
+		// The extractor must remain running throughout AutoCycle.
+		// Loss of feedback is an immediate machine fault because
+		// the silicone process must not continue without extraction.
+		// ---------------------------------------------------------
+		
+		IF NOT stPermissives.bExtractorReady THEN
+			bExtractorAutoCycleFault := TRUE;
+			bSafetyDropRequest := TRUE;
+		END_IF
 
         // Any IVEK health loss requires a controlled stop.
         IF fbIvek.IsFaulted()
@@ -1730,7 +1745,7 @@ E_MachineState.ReadyToStart:
 	
 		// PROCESS CYCLE FAULT
 		IF stProcessCycleStatus.bFaulted THEN
-			eMachineState := E_MachineState.Fault;
+			bSafetyDropRequest := TRUE;
 		END_IF
 	
 		// LEAVE AUTO CYCLE
@@ -2401,6 +2416,7 @@ stStatus.bReady 				:= eMachineState = E_MachineState.ReadyToStart;
 stStatus.bBusy 					:= eMachineState = E_MachineState.AutoCycle;
 stStatus.bFaulted 				:= eMachineState = E_MachineState.Fault;
 stStatus.bInitialisationTimeoutFault := bInitialisationTimeoutFault;
+stStatus.bExtractorAutoCycleFault := bExtractorAutoCycleFault;
 stStatus.bHmiLogoutFault 		:= bHmiLogoutFault;
 stStatus.bStoppingTimeoutFault 	:= bStoppingTimeoutFault;
 stStatus.bSafetyStopRequested 	:= tpSafetyRunDrop.Q;
@@ -2417,6 +2433,9 @@ GVL_Persistent.stStatistics.aNest := fbNestManager.GetAllNestStatistics();
 stStatus.bSiliconeSupportFaulted := fbSiliconeSupportCylinder.IsFaulted();
 stStatus.bAssemblySupportFaulted := fbAssemblySupportCylinder.IsFaulted();
 stStatus.bAssemblyStationFaulted := fbAssemblyStation.IsFaulted();
+stStatus.bPartVacuumBuildTimeoutFault :=fbSiliconeProcess.bVacuumBuildTimeoutFault;
+stStatus.bPartVacuumLostFault :=fbSiliconeProcess.bVacuumLostFault;
+stStatus.bPartVacuumReleaseTimeoutFault :=fbSiliconeProcess.bVacuumReleaseTimeoutFault;
 
 // 
 // 

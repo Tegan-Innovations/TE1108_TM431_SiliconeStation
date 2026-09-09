@@ -16,6 +16,8 @@ STRUCT
     tCylinderTimeout            : TIME := T#30S;
     tProcessTimeout             : TIME := T#60S;
     tOperatorIdleTimeout        : TIME := T#30S;
+	tPartVacuumBuildTimeout     : TIME := T#2S;
+	tPartVacuumReleaseTimeout   : TIME := T#2S;
     
 
 	tAssemblyProcessSimulation  : TIME := T#2S;

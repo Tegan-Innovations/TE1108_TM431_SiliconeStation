@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Kistler_HMI</title>
-  <meta name="tchmi-buildtime" content="2026-09-07T14:17:56">
+  <meta name="tchmi-buildtime" content="2026-09-08T14:34:42">
 
   <!-- target-densitydpi=device-dpi -->
   <meta name="viewport" content="initial-scale=1.0"><script>
@@ -308,84 +308,104 @@
 </script>
 
 <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-[
-  {
-    "event": "%s%ADS.PLC1.GVL_IO.stInputs.bBothPartPresent%/s%",
-    "actions": [
-      {
-        "objectType": "Condition",
-        "active": true,
-        "parts": [
+        [
           {
-            "if": [
+            "event": "%s%ADS.PLC1.GVL_IO.stInputs.bBothPartPresent%/s%",
+            "actions": [
               {
-                "compare1": {
-                  "objectType": "Symbol",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "symbolExpression": "%s%ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent%/s%"
-                },
-                "compare2": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": true
-                },
-                "compareOperator": "==",
-                "logic": null
-              },
-              {
-                "compare1": {
-                  "objectType": "Symbol",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "symbolExpression": "%s%ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent%/s%"
-                },
-                "compare2": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": true
-                },
-                "compareOperator": "==",
-                "logic": "AND"
-              }
-            ],
-            "then": [
-              {
-                "objectType": "WriteToSymbol",
+                "objectType": "Condition",
                 "active": true,
-                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(21, 196, 11, 1)"
+                "parts": [
+                  {
+                    "if": [
+                      {
+                        "compare1": {
+                          "objectType": "Symbol",
+                          "valueType": "tchmi:general#/definitions/BOOL",
+                          "symbolExpression": "%s%ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent%/s%"
+                        },
+                        "compare2": {
+                          "objectType": "StaticValue",
+                          "valueType": "tchmi:general#/definitions/BOOL",
+                          "value": true
+                        },
+                        "compareOperator": "==",
+                        "logic": null
+                      },
+                      {
+                        "compare1": {
+                          "objectType": "Symbol",
+                          "valueType": "tchmi:general#/definitions/BOOL",
+                          "symbolExpression": "%s%ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent%/s%"
+                        },
+                        "compare2": {
+                          "objectType": "StaticValue",
+                          "valueType": "tchmi:general#/definitions/BOOL",
+                          "value": true
+                        },
+                        "compareOperator": "==",
+                        "logic": "AND"
+                      }
+                    ],
+                    "then": [
+                      {
+                        "objectType": "WriteToSymbol",
+                        "active": true,
+                        "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
+                        "value": {
+                          "objectType": "StaticValue",
+                          "valueType": "tchmi:framework#/definitions/Color",
+                          "value": {
+                             "angle": 45.0,
+                                 "stopPoints": [
+                                   {
+                                     "color": "rgba(19, 113, 19, 1)",
+                                     "stop": "0%"
+                                   },
+                                   {
+                                     "color": "rgba(35, 195, 35, 1)",
+                                     "stop": "100%"
+                                   }
+                                 ]
+                          }
+                        },
+                        "asyncWait": true
+                      }
+                    ]
+                  },
+                  {
+                    "else": [
+                      {
+                        "objectType": "WriteToSymbol",
+                        "active": true,
+                        "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
+                        "value": {
+                          "objectType": "StaticValue",
+                          "valueType": "tchmi:framework#/definitions/Color",
+                          "value": {
+                            "angle": 45.0,
+                                "stopPoints": [
+                                  {
+                                    "color": "rgba(197, 35, 35, 1)",
+                                    "stop": "0%"
+                                  },
+                                  {
+                                    "color": "rgba(254, 90, 90, 1)",
+                                    "stop": "100%"
+                                  }
+                                ]
+                          }
+                        },
+                        "asyncWait": true
+                      }
+                    ]
                   }
-                },
-                "asyncWait": true
-              }
-            ]
-          },
-          {
-            "else": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Color",
-                  "value": {
-                    "color": "rgba(255, 0, 0, 1)"
-                  }
-                },
+                ],
                 "asyncWait": true
               }
             ]
           }
-        ],
-        "asyncWait": true
-      }
-    ]
-  }
-]
+        ]
 </script>
 
 <script data-tchmi-target-attribute="data-tchmi-border-color" type="application/json">

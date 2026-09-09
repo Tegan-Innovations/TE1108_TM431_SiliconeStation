@@ -11,6 +11,11 @@ VAR
     bBusy                   : BOOL;
     bDone                   : BOOL;
     bFaulted                : BOOL;
+	
+	bVacuumBuildTimeoutFault   : BOOL;
+	bVacuumLostFault           : BOOL;
+	bVacuumReleaseTimeoutFault : BOOL;
+	
     bPinchValveRequest      : BOOL;
     bEquipmentStartRequest  : BOOL;
     bEquipmentStopRequest   : BOOL;
@@ -34,6 +39,8 @@ VAR_INPUT
     bSiliconeSupportExtended   : BOOL;
     bExtractorReady            : BOOL;
     bPartVacuumOk              : BOOL;
+	tPartVacuumBuildTimeout    : TIME;
+	tPartVacuumReleaseTimeout  : TIME;
 
     tPinchSettlingDelay        : TIME;
     tEquipmentStartTimeout     : TIME;
@@ -61,6 +68,9 @@ IF bResetRequest THEN
     bBusy := FALSE;
     bDone := FALSE;
     bFaulted := FALSE;
+	bVacuumBuildTimeoutFault := FALSE;
+	bVacuumLostFault := FALSE;
+	bVacuumReleaseTimeoutFault := FALSE;
     stResult.bValid := FALSE;
     stResult.bPassed := FALSE;
     stResult.eCode := E_ProcessResultCode.None;
@@ -105,6 +115,40 @@ IF bEquipmentFaulted AND (eState <> E_SiliconeProcessState.Idle) THEN
     eState := E_SiliconeProcessState.Fault;
 END_IF
 
+
+// Part holding vacuum must remain established while
+// the silicone process is active.
+IF NOT bPartVacuumOk
+    AND (
+        eState = E_SiliconeProcessState.OpeningPinchValve
+        OR eState = E_SiliconeProcessState.WaitingPinchSettling
+        OR eState = E_SiliconeProcessState.StartingEquipment
+        OR eState = E_SiliconeProcessState.WaitingEquipmentBusy
+        OR eState = E_SiliconeProcessState.WaitingEquipmentComplete
+        OR eState = E_SiliconeProcessState.ClosingPinchValve
+    )
+THEN
+
+    bPinchValveRequest := FALSE;
+    bPartVacuumEnable := FALSE;
+
+    bEquipmentStartRequest := FALSE;
+    bEquipmentStopRequest := TRUE;
+	bVacuumLostFault := TRUE;
+
+    bReady := FALSE;
+    bBusy := FALSE;
+    bDone := FALSE;
+    bFaulted := TRUE;
+
+    tonStep(IN := FALSE);
+
+    eState := E_SiliconeProcessState.Fault;
+
+END_IF
+
+
+
 CASE eState OF
 
     E_SiliconeProcessState.Idle:
@@ -137,26 +181,47 @@ CASE eState OF
 
     E_SiliconeProcessState.StartingVacuum:
 
-        bPartVacuumEnable := TRUE;
-        bPinchValveRequest := FALSE;
-
-        tonStep(IN := FALSE);
-
-        eState := E_SiliconeProcessState.WaitingVacuumReady;
-
-
-    E_SiliconeProcessState.WaitingVacuumReady:
-
-        bPartVacuumEnable := TRUE;
-        bPinchValveRequest := FALSE;
-
-        tonStep(IN := FALSE);
-
-        IF bPartVacuumOk THEN
-            eState := E_SiliconeProcessState.OpeningPinchValve;
-        END_IF
-
-
+		bPartVacuumEnable := TRUE;
+		bPinchValveRequest := FALSE;
+	
+		tonStep(IN := FALSE);
+	
+		eState := E_SiliconeProcessState.WaitingVacuumReady;
+	
+	
+	E_SiliconeProcessState.WaitingVacuumReady:
+	
+		bPartVacuumEnable := TRUE;
+		bPinchValveRequest := FALSE;
+	
+		tonStep(
+			IN := TRUE,
+			PT := tPartVacuumBuildTimeout
+		);
+	
+		IF bPartVacuumOk THEN
+	
+			tonStep(IN := FALSE);
+	
+			eState := E_SiliconeProcessState.OpeningPinchValve;
+	
+		ELSIF tonStep.Q THEN
+	
+			bPartVacuumEnable := FALSE;
+			bPinchValveRequest := FALSE;
+	
+			bVacuumBuildTimeoutFault := TRUE;
+			bFaulted := TRUE;
+			bBusy := FALSE;
+			bReady := FALSE;
+			bDone := FALSE;
+	
+			tonStep(IN := FALSE);
+	
+			eState := E_SiliconeProcessState.Fault;
+	
+		END_IF
+		
     E_SiliconeProcessState.OpeningPinchValve:
 
         bPartVacuumEnable := TRUE;
@@ -310,18 +375,36 @@ CASE eState OF
     E_SiliconeProcessState.WaitingVacuumReleased:
 
         bPartVacuumEnable := FALSE;
-        bPinchValveRequest := FALSE;
-
-        tonStep(IN := FALSE);
-
-        IF NOT bPartVacuumOk THEN
-            bBusy := FALSE;
-            bDone := TRUE;
-            bReady := FALSE;
-
-            eState := E_SiliconeProcessState.Complete;
-        END_IF
-
+		bPinchValveRequest := FALSE;
+		
+		tonStep(
+			IN := TRUE,
+			PT := tPartVacuumReleaseTimeout
+		);
+		
+		IF NOT bPartVacuumOk THEN
+		
+			tonStep(IN := FALSE);
+		
+			bBusy := FALSE;
+			bDone := TRUE;
+			bReady := FALSE;
+		
+			eState := E_SiliconeProcessState.Complete;
+		
+		ELSIF tonStep.Q THEN
+		
+			bFaulted := TRUE;
+			bBusy := FALSE;
+			bReady := FALSE;
+			bDone := FALSE;
+			bVacuumReleaseTimeoutFault := TRUE;
+		
+			tonStep(IN := FALSE);
+		
+			eState := E_SiliconeProcessState.Fault;
+		
+		END_IF
 
     E_SiliconeProcessState.Complete:
 

@@ -52,21 +52,21 @@ STRUCT
 	bBothPartPresent			  : BOOL;
 
     // Index table
-    bIndexPositionSensor1         : BOOL;
-    bIndexPositionSensor2         : BOOL;
-    bIndexPositionSensor3         : BOOL;
-    bIndexReady                   : BOOL;
-    bIndexLocked                  : BOOL;
-    bIndexCompletedSensor         : BOOL;
-    bIndexSupportExtended         : BOOL;
-    bIndexSupportRetracted        : BOOL;
-    eIndexPosition                : E_TablePosition;
+    bIndexPositionSensor1         		: BOOL;
+    bIndexPositionSensor2         		: BOOL;
+    bIndexPositionSensor3         		: BOOL;
+    bIndexReady                   		: BOOL;
+    bIndexLocked                  		: BOOL;
+    bIndexCompletedSensor         		: BOOL;
+    bIndexSupportExtended         		: BOOL;
+    bIndexSupportRetracted        		: BOOL;
+    eIndexPosition                		: E_TablePosition;
 
     // Transfer nest support / process tooling cylinder
-    bSiliconeSupportExtended        : BOOL;
-    bSiliconeSupportRetracted       : BOOL;
-	bAssemblySupportExtended  		: BOOL;
-	bAssemblySupportRetracted 		: BOOL;
+    bSiliconeSupportExtended        	: BOOL;
+    bSiliconeSupportRetracted       	: BOOL;
+	bAssemblySupportExtended  			: BOOL;
+	bAssemblySupportRetracted 			: BOOL;
 
     // Flipping / assembly station - EPLAN Term 8 Ch5..Ch10
     bTransferVerticalMiniSlideRetracted : BOOL;
@@ -78,13 +78,13 @@ STRUCT
 
     // Analog raw values. Engineering-unit scaling is intentionally kept
     // outside the terminal mapping until the sensor ranges are confirmed.
-    uiMainAirPressureRaw          : UINT;
-    uiSiliconePressureRaw         : UINT;
-    uiNozzlePressureRaw           : UINT;
-    uiVacuumPressureRaw           : UINT;
-	uiExtractionAVacuumPressureRaw: UINT;
-	uiExtractionBVacuumPressureRaw: UINT;
-	iPartVacuumPressureRaw 			: INT;
+    uiMainAirPressureRaw          		: UINT;
+    uiSiliconePressureRaw         		: UINT;
+    uiNozzlePressureRaw           		: UINT;
+    uiVacuumPressureRaw           		: UINT;
+	uiExtractionAVacuumPressureRaw		: UINT;
+	uiExtractionBVacuumPressureRaw		: UINT;
+	iPartVacuumPressureRaw 				: UINT;
 
 END_STRUCT
 END_TYPE
