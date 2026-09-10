@@ -144,26 +144,25 @@ stStatusInternal.bAssemblySupportPermissive :=
 // =========================================================
 stStatusInternal.bSiliconeStationStartPermissive :=
     bEnable
-    //AND stCommand.bSiliconeStationManualEnable
     AND stInputs.bSafetyOk
     AND stInputs.bProcessSafetyPermitted
     AND stInputs.bIndexReady
     AND stInputs.bIndexLocked
     AND NOT stInputs.bIndexBusy
-    AND stInputs.bSiliconeSupportExtended
-    AND stInputs.bReservoirPartPresent
-    //AND NOT stInputs.bSiliconeNestAlreadyProcessed
-    AND stInputs.bSiliconeProcessReady
     AND NOT stInputs.bSiliconeProcessBusy
     AND NOT stInputs.bSiliconeProcessFaulted;
 
 // =========================================================
 // ASSEMBLY / FLIPPING STATION PERMISSIVE
 // =========================================================
-// Manual assembly requires a complete part pair at the physical Assembly
-// Station and the Assembly Support already confirmed Extended.
-// Siliconized status is published to the operator but is deliberately not
-// used as a hard manual interlock here.
+// In Manual Mode, the flipping station is treated as a
+// maintenance/test operation. It does not depend on part
+// presence or production history.
+//
+// The station may start only when the support is safely
+// retracted and the machine/station conditions are ready.
+// =========================================================
+
 stStatusInternal.bAssemblyStationStartPermissive :=
     bEnable
     AND stCommand.bAssemblyStationManualEnable
@@ -172,9 +171,7 @@ stStatusInternal.bAssemblyStationStartPermissive :=
     AND stInputs.bIndexReady
     AND stInputs.bIndexLocked
     AND NOT stInputs.bIndexBusy
-    AND stInputs.bAssemblySupportExtended
-    AND stInputs.bAssemblyNestPartPresent
-    AND NOT stInputs.bAssemblyNestAlreadyAssembled
+    AND stInputs.bAssemblySupportRetracted
     AND stInputs.bAssemblyStationReady
     AND NOT stInputs.bAssemblyStationBusy
     AND NOT stInputs.bAssemblyStationFaulted;

@@ -44,6 +44,7 @@ VAR
     // MACHINE MODES
     // =====================================================
     fbManualMode                : FB_ManualMode;
+	bManualAssemblySupportRaised : BOOL;
 
     // =====================================================
     // MACHINE / CYCLE STATES
@@ -1602,11 +1603,13 @@ E_MachineState.ReadyToStart:
 		stProcessCycleInputs.bSiliconeProcessRequired :=
 			stSiliconeNest.bEnabled
 			AND stSiliconeNest.bPartComplete
+			AND NOT stSiliconeNest.stResult.bValid
 			AND NOT stSiliconeNest.stSiliconeResult.bValid;
 		
 		stProcessCycleInputs.bAssemblyProcessRequired :=
 			stAssemblyNest.bEnabled
 			AND stAssemblyNest.bPartComplete
+			AND NOT stAssemblyNest.stResult.bValid
 			AND stAssemblyNest.stSiliconeResult.bValid
 			AND stAssemblyNest.stSiliconeResult.bPassed
 			AND NOT stAssemblyNest.stAssemblyResult.bValid;
@@ -1870,31 +1873,45 @@ E_MachineState.ReadyToStart:
 		// MANUAL SILICONE PROCESS
 		// ---------------------------------------------------------
 		IF stManualModeRequests.bSiliconeProcessStart THEN
-			fbSiliconeProcess.RequestStart();
 			bManualSiliconeCycleActive := TRUE;
 		END_IF
+		
+		// Start the Silicone Process only after the support
+		// has reached the extended position.
+		IF bManualSiliconeCycleActive
+			AND stInputs.bSiliconeSupportExtended
+			AND fbSiliconeProcess.IsReady()
+		THEN
+			fbSiliconeProcess.RequestStart();
+END_IF
 
 		IF stManualModeRequests.bSiliconeProcessStop THEN
 			fbSiliconeProcess.RequestStop();
 		END_IF
 
-		IF bManualSiliconeCycleActive AND fbSiliconeProcess.IsDone() THEN
-
+		IF bManualSiliconeCycleActive
+			AND fbSiliconeProcess.IsDone()
+		THEN
+		
 			stLastResult := fbSiliconeProcess.GetResult();
-
+		
 			bResultStoredFeedback :=
 				fbNestManager.StoreSiliconeResultAtPosition(
 					ePosition := stConfig.eSiliconePosition,
 					stResult := stLastResult
 				);
-
-			IF bResultStoredFeedback THEN
-				stSiliconeNest :=
-					fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
-				fbSiliconeProcess.RequestReset();
-				bManualSiliconeCycleActive := FALSE;
-			END_IF
-
+		
+		END_IF
+		
+		
+		IF bManualSiliconeCycleActive
+			AND fbSiliconeProcess.IsDone()
+			AND stInputs.bSiliconeSupportRetracted
+		THEN
+		
+			fbSiliconeProcess.RequestReset();
+			bManualSiliconeCycleActive := FALSE;
+		
 		END_IF
 
 		// ---------------------------------------------------------
@@ -1995,19 +2012,70 @@ IF eMachineState = E_MachineState.Initialising THEN
 // ---------------------------------------------------------
 
 ELSIF eMachineState = E_MachineState.Manual THEN
+	
+	IF bManualSiliconeCycleActive THEN
+	
+		IF fbSiliconeProcess.IsDone() THEN
+	
+			bSiliconeSupportRaiseRequest := FALSE;
+			bSiliconeSupportLowerRequest := TRUE;
+	
+		ELSE
+	
+			bSiliconeSupportRaiseRequest := TRUE;
+			bSiliconeSupportLowerRequest := FALSE;
+	
+		END_IF
+	
+	ELSE
+	
+		bSiliconeSupportRaiseRequest :=
+			stManualModeRequests.bSiliconeSupportExtend;
+	
+		bSiliconeSupportLowerRequest :=
+			stManualModeRequests.bSiliconeSupportRetract;
+	
+	END_IF
 
-    bSiliconeSupportRaiseRequest := stManualModeRequests.bSiliconeSupportExtend;
-    bSiliconeSupportLowerRequest := stManualModeRequests.bSiliconeSupportRetract;
+	IF bManualAssemblyCycleActive THEN
 
-    bAssemblySupportRaiseRequest := stManualModeRequests.bAssemblySupportExtend;
-    bAssemblySupportLowerRequest := stManualModeRequests.bAssemblySupportRetract;
+		// During the active flipping sequence:
+		// 180 -> 0 with support down.
+		// At 0°, raise support and keep it raised.
+		// Once the Assembly Station completes, retract the support.
+		IF fbAssemblyStation.IsDone() THEN
+	
+			bAssemblySupportRaiseRequest := FALSE;
+			bAssemblySupportLowerRequest := TRUE;
+	
+		ELSE
+	
+			bAssemblySupportRaiseRequest :=
+				stAssemblyStationStatus.bRotationPlace
+				OR stInputs.bAssemblySupportExtended;
+	
+			bAssemblySupportLowerRequest :=
+				NOT bAssemblySupportRaiseRequest;
+	
+		END_IF
+	
+	ELSE
+	
+		// Normal Manual Mode support control.
+		bAssemblySupportRaiseRequest :=
+			stManualModeRequests.bAssemblySupportExtend;
+	
+		bAssemblySupportLowerRequest :=
+			stManualModeRequests.bAssemblySupportRetract;
+	
+	END_IF
 
     // Manual assembly/flipping request execution.
-    IF stManualModeRequests.bAssemblyStationStart THEN
-        IF fbAssemblyStation.RequestStart() THEN
-            bManualAssemblyCycleActive := TRUE;
-        END_IF
-    END_IF
+	IF stManualModeRequests.bAssemblyStationStart THEN
+		IF fbAssemblyStation.RequestStart() THEN
+			bManualAssemblyCycleActive := TRUE;
+		END_IF
+	END_IF
 
     IF stManualModeRequests.bAssemblyStationStop THEN
         fbAssemblyStation.RequestStop();
@@ -2016,50 +2084,60 @@ ELSIF eMachineState = E_MachineState.Manual THEN
 
 
 
-    // ---------------------------------------------------------
-    // MANUAL ASSEMBLY RESULT HANDLING
-    // ---------------------------------------------------------
-    // A manual "Assemble Parts" action is a real process operation. Store its
-    // assembly result at the nest currently mapped to the Assembly Station so
-    // the same part will not be flipped again after returning to AutoCycle.
-    IF bManualAssemblyCycleActive AND fbAssemblyStation.IsDone() THEN
+//     // ---------------------------------------------------------
+//     // MANUAL ASSEMBLY RESULT HANDLING
+//     // ---------------------------------------------------------
+//     // A manual "Assemble Parts" action is a real process operation. Store its
+//     // assembly result at the nest currently mapped to the Assembly Station so
+//     // the same part will not be flipped again after returning to AutoCycle.
+//     IF bManualAssemblyCycleActive AND fbAssemblyStation.IsDone() THEN
+// 
+//         stLastResult := fbAssemblyStation.GetResult();
+// 
+//         bResultStoredFeedback :=
+//             fbNestManager.StoreAssemblyResultAtPosition(
+//                 ePosition := stConfig.eAssemblyPosition,
+//                 stResult := stLastResult
+//             );
+// 
+//         IF bResultStoredFeedback THEN
+// 
+//             stAssemblyNest :=
+//                 fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
+// 
+//             stLastResult.bValid :=
+//                 stAssemblyNest.stSiliconeResult.bValid
+//                 AND stAssemblyNest.stAssemblyResult.bValid;
+// 
+//             stLastResult.bPassed :=
+//                 stLastResult.bValid
+//                 AND stAssemblyNest.stSiliconeResult.bPassed
+//                 AND stAssemblyNest.stAssemblyResult.bPassed;
+// 
+//             bResultStoredFeedback :=
+//                 fbNestManager.StoreResultAtPosition(
+//                     ePosition := stConfig.eAssemblyPosition,
+//                     stResult := stLastResult
+//                 );
+// 
+//             IF bResultStoredFeedback THEN
+//                 fbAssemblyStation.RequestReset();
+//                 bManualAssemblyCycleActive := FALSE;
+//             END_IF
+// 
+//         END_IF
+// 
+//     END_IF
 
-        stLastResult := fbAssemblyStation.GetResult();
 
-        bResultStoredFeedback :=
-            fbNestManager.StoreAssemblyResultAtPosition(
-                ePosition := stConfig.eAssemblyPosition,
-                stResult := stLastResult
-            );
+	IF bManualAssemblyCycleActive
+		AND fbAssemblyStation.IsDone()
+		AND stInputs.bAssemblySupportRetracted
+	THEN
+		fbAssemblyStation.RequestReset();
+		bManualAssemblyCycleActive := FALSE;
+	END_IF
 
-        IF bResultStoredFeedback THEN
-
-            stAssemblyNest :=
-                fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
-
-            stLastResult.bValid :=
-                stAssemblyNest.stSiliconeResult.bValid
-                AND stAssemblyNest.stAssemblyResult.bValid;
-
-            stLastResult.bPassed :=
-                stLastResult.bValid
-                AND stAssemblyNest.stSiliconeResult.bPassed
-                AND stAssemblyNest.stAssemblyResult.bPassed;
-
-            bResultStoredFeedback :=
-                fbNestManager.StoreResultAtPosition(
-                    ePosition := stConfig.eAssemblyPosition,
-                    stResult := stLastResult
-                );
-
-            IF bResultStoredFeedback THEN
-                fbAssemblyStation.RequestReset();
-                bManualAssemblyCycleActive := FALSE;
-            END_IF
-
-        END_IF
-
-    END_IF
 
 // ---------------------------------------------------------
 // AUTOMATIC CYCLE
