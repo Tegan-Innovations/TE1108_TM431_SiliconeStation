@@ -144,15 +144,15 @@ stStatusInternal.bAssemblySupportPermissive :=
 // =========================================================
 stStatusInternal.bSiliconeStationStartPermissive :=
     bEnable
-    AND stCommand.bSiliconeStationManualEnable
+    //AND stCommand.bSiliconeStationManualEnable
     AND stInputs.bSafetyOk
     AND stInputs.bProcessSafetyPermitted
     AND stInputs.bIndexReady
     AND stInputs.bIndexLocked
     AND NOT stInputs.bIndexBusy
     AND stInputs.bSiliconeSupportExtended
-    AND stInputs.bSiliconeNestPartPresent
-    AND NOT stInputs.bSiliconeNestAlreadyProcessed
+    AND stInputs.bReservoirPartPresent
+    //AND NOT stInputs.bSiliconeNestAlreadyProcessed
     AND stInputs.bSiliconeProcessReady
     AND NOT stInputs.bSiliconeProcessBusy
     AND NOT stInputs.bSiliconeProcessFaulted;
