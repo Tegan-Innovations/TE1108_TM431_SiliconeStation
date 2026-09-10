@@ -753,9 +753,12 @@ IF fbNestManager.GetStatisticsEvent(
 
 END_IF
 
+
+
 // =========================================================
 // OPERATOR STATION CONTROL
 // =========================================================
+
 
 // Operator exchange is evaluated independently of process-equipment implementation.
 fbOperatorStation.Cyclic(
@@ -928,7 +931,7 @@ stManualModeInputs.bSiliconeNestPartPresent := stSiliconeNest.bPartComplete;
 stManualModeInputs.bSiliconeNestAlreadyProcessed :=
     stSiliconeNest.stSiliconeResult.bValid;
 
-stManualModeInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
+stManualModeInputs.bReservoirPartPresent :=stInputs.bSiliconeStationPartPresent;
 stManualModeInputs.bAssemblyStationReady := fbAssemblyStation.IsReady();
 stManualModeInputs.bAssemblyStationBusy := fbAssemblyStation.IsBusy();
 stManualModeInputs.bAssemblyStationFaulted := fbAssemblyStation.IsFaulted();
@@ -1552,15 +1555,61 @@ E_MachineState.ReadyToStart:
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
 
+		IF stAssemblyNest.bEnabled
+			AND
+			(
+				stAssemblyNest.bGearboxAssemblyPartPresent
+				OR stAssemblyNest.bReservoirPartPresent
+			)
+			AND NOT stAssemblyNest.stResult.bValid
+			AND
+			(
+				NOT stAssemblyNest.bPartComplete
+				OR NOT stAssemblyNest.stSiliconeResult.bValid
+				OR NOT stAssemblyNest.stSiliconeResult.bPassed
+			)
+		THEN
+		
+			stLastResult.bValid := TRUE;
+			stLastResult.bPassed := FALSE;
+			stLastResult.eCode := E_ProcessResultCode.Aborted;
+			stLastResult.sDetail := 'Rejected - process incomplete or Silicone not passed';
+		
+			bResultStoredFeedback :=
+				fbNestManager.StoreResultAtPosition(
+					ePosition := stConfig.eAssemblyPosition,
+					stResult := stLastResult
+				);
+		
+			IF bResultStoredFeedback THEN
+		
+				stAssemblyNest :=
+					fbNestManager.GetNestAtPosition(
+						stConfig.eAssemblyPosition
+					);
+		
+			END_IF
+		
+		END_IF
+
+
 	
 		// PROCESS CYCLE INPUT MAPPING
 		stProcessCycleInputs.bSafetyOk := stInputs.stSafety.bSafetyOk;
 		stProcessCycleInputs.bTwoHandsSafe := stInputs.bTwoHandsSafe;
 		
 		// PROCESS REQUIREMENTS
-		stProcessCycleInputs.bSiliconeProcessRequired := stSiliconeNest.bEnabled AND stSiliconeNest.bPartComplete AND NOT stSiliconeNest.stResult.bValid;
+		stProcessCycleInputs.bSiliconeProcessRequired :=
+			stSiliconeNest.bEnabled
+			AND stSiliconeNest.bPartComplete
+			AND NOT stSiliconeNest.stSiliconeResult.bValid;
 		
-		stProcessCycleInputs.bAssemblyProcessRequired := stAssemblyNest.bEnabled AND stAssemblyNest.bPartComplete AND NOT stAssemblyNest.stResult.bValid;
+		stProcessCycleInputs.bAssemblyProcessRequired :=
+			stAssemblyNest.bEnabled
+			AND stAssemblyNest.bPartComplete
+			AND stAssemblyNest.stSiliconeResult.bValid
+			AND stAssemblyNest.stSiliconeResult.bPassed
+			AND NOT stAssemblyNest.stAssemblyResult.bValid;
 			
 		// Indexer
 		stProcessCycleInputs.bIndexPositionValid := stInputs.eIndexPosition <> E_TablePosition.Unknown;
@@ -1584,16 +1633,7 @@ E_MachineState.ReadyToStart:
 		stProcessCycleInputs.bAssemblySupportRetracted := stInputs.bAssemblySupportRetracted;
 		stProcessCycleInputs.bAssemblySupportFaulted := fbAssemblySupportCylinder.IsFaulted();
 	
-		// FUTURE PROCESS INPUTS
-		// stProcessNest := fbNestManager.GetNestAtPosition(stConfig.eProcessPosition);
-		// stProcessCycleInputs.bProcessNestEnabled := stProcessNest.bEnabled;
-		// stProcessCycleInputs.bReservoirPartPresent := stInputs.bReservoirPartPresent;
-		// stProcessCycleInputs.bProcessResultAlreadyValid := stProcessNest.stResult.bValid;
-		// stProcessCycleInputs.bProcessStationReady := fbProcessStation.IndexPermissive() AND NOT fbProcessStation.IsFaulted();
-		// stProcessCycleInputs.bProcessStationBusy := ipEquipment.IsBusy();
-		// stProcessCycleInputs.bProcessStationComplete := fbProcessStation.IsComplete();
-		// stProcessCycleInputs.bProcessStationFaulted := fbProcessStation.IsFaulted();
-		// stProcessCycleInputs.bResultStored := bResultStoredFeedback;
+
 		stProcessCycleInputs.bOperatorExchangeComplete := fbOperatorStation.IsComplete();
 	
 			// =========================================================
@@ -2383,7 +2423,7 @@ stStatus.stAssemblyStation      := stAssemblyStationStatus;
 
 // Manual HMI projection for the physical Silicone Station.
 stStatus.uiSiliconeStationNestId := stSiliconeNest.nId;
-stStatus.bSiliconeStationPartPresent := stSiliconeNest.bPartComplete;
+stStatus.bSiliconeStationPartPresent :=stInputs.bSiliconeStationPartPresent;
 stStatus.bSiliconeStationReady :=
     stManualModeStatus.bSiliconeStationStartPermissive;
 stStatus.bSiliconeStationManualEnabled :=
