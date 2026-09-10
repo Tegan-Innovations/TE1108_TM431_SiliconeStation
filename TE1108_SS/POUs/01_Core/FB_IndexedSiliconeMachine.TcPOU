@@ -1392,6 +1392,17 @@ tonIvekInitialisingRecovery(
 );
 
 IF bInitialisationComplete
+    AND NOT stSiliconeSupplyStatus.bSelectedReservoirReady
+THEN
+    // Silicone supply is not ready.
+    // Return to Stopped so the reservoir can be configured in Settings.
+    tonIvekInitialisingRecovery(IN := FALSE);
+    tonIvekReferenceStable(IN := FALSE);
+    tonInitialising(IN := FALSE);
+    eCycleState := E_CycleState.Disabled;
+    eMachineState := E_MachineState.Stopped;
+
+ELSIF bInitialisationComplete
     AND bIvekAutoCycleReady
 THEN
     tonIvekInitialisingRecovery(IN := FALSE);
@@ -2703,8 +2714,13 @@ ELSIF eMachineState = E_MachineState.Fault THEN
 ELSIF eMachineState = E_MachineState.Stopped THEN
     IF GVL_HMI.bIvekSettingsInterlock THEN
         stStatus.sMachineMessage := 'Machine stopped - IVEK configuration interface active';
+
+    ELSIF NOT stSiliconeSupplyStatus.bSelectedReservoirReady THEN
+        stStatus.sMachineMessage := 'Silicone supply not ready - configure reservoir in Settings';
+
     ELSIF NOT stInputs.bMainDoorClosed THEN
         stStatus.sMachineMessage := 'Machine stopped - close the main door and press Reset';
+
     ELSE
         stStatus.sMachineMessage := 'Machine stopped - press Reset to initialise';
     END_IF
