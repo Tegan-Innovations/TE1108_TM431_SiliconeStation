@@ -844,7 +844,11 @@ stPermissives.bSupportsHome :=
 stPermissives.bAssemblyStationHome := fbAssemblyStation.IsHome();
 
 stPermissives.bIndexInitialisationReady :=
-    NOT stIndexStatus.bBusy
+    ( NOT stIndexStatus.bBusy
+        OR
+        (stIndexStatus.eState = E_IndexState.WrongPositionRecovery
+            AND stInputs.eIndexPosition = E_TablePosition.Unknown)
+    )
     AND NOT fbIndex.IsFaulted();
 
 stPermissives.bDoorInitialisationReady :=
@@ -2558,14 +2562,19 @@ stStatus.sOperatorMessage 					:= fbOperatorStation.GetMessage();
 
 // Row 0 of the event DataGrid is exclusively the current automatic-cycle instruction.
 IF eMachineState = E_MachineState.AutoCycle THEN
-    // During active process execution, the machine-level
-    // process message has priority over operator instructions.
-    IF stProcessCycleStatus.eState = E_CycleState.WaitingForProcessesComplete THEN
-        stStatus.sMachineMessage := stProcessCycleStatus.sMessage;
+
+    IF stIndexStatus.eState = E_IndexState.WrongPositionRecovery THEN
+        stStatus.sMachineMessage :='Index wrong position - place both hands on the safety controls to recover';
+
+    ELSIF stProcessCycleStatus.eState = E_CycleState.WaitingForProcessesComplete THEN
+		 stStatus.sMachineMessage :=stProcessCycleStatus.sMessage;
+		 
     ELSIF fbOperatorStation.GetInstruction() <> E_OperatorInstruction.None THEN
-        stStatus.sMachineMessage := fbOperatorStation.GetMessage();
+        stStatus.sMachineMessage :=fbOperatorStation.GetMessage();
+		
     ELSE
         stStatus.sMachineMessage := stProcessCycleStatus.sMessage;
+
     END_IF
 	
 ELSIF eMachineState = E_MachineState.Manual THEN
@@ -2598,21 +2607,23 @@ ELSIF eMachineState = E_MachineState.Initialising THEN
 END_CASE
 	
 ELSIF eMachineState = E_MachineState.ReadyToStart THEN
-    stStatus.sMachineMessage := 'Ready to start';
+
+    IF stInputs.eIndexPosition = E_TablePosition.Unknown THEN
+        stStatus.sMachineMessage :='Index wrong position - press Start to recover in Auto Cycle';
+
+    ELSE
+        stStatus.sMachineMessage :='Ready to start';
+
+    END_IF
 	
 	
 ELSIF eMachineState = E_MachineState.Stopping THEN
     CASE eStoppingWaitReason OF
-        E_StoppingWaitReason.IndexStillMoving:
-            stStatus.sMachineMessage := 'System stopping - waiting for index';
-        E_StoppingWaitReason.SiliconeSupportRetracting:
-            stStatus.sMachineMessage := 'System stopping - retracting Silicone Support Cylinder';
-		E_StoppingWaitReason.AssemblySupportRetracting:
-            stStatus.sMachineMessage := 'System stopping - retracting Assembly Support Cylinder';
-        E_StoppingWaitReason.ProcessEquipmentStopping:
-            stStatus.sMachineMessage := 'System stopping - stopping process equipment';
-        E_StoppingWaitReason.MainDoorTransition:
-            stStatus.sMachineMessage := 'System stopping - waiting for main door transition';
+        E_StoppingWaitReason.IndexStillMoving:stStatus.sMachineMessage := 'System stopping - waiting for index';
+        E_StoppingWaitReason.SiliconeSupportRetracting:stStatus.sMachineMessage := 'System stopping - retracting Silicone Support Cylinder';
+		E_StoppingWaitReason.AssemblySupportRetracting: stStatus.sMachineMessage := 'System stopping - retracting Assembly Support Cylinder';
+        E_StoppingWaitReason.ProcessEquipmentStopping:stStatus.sMachineMessage := 'System stopping - stopping process equipment';
+        E_StoppingWaitReason.MainDoorTransition:stStatus.sMachineMessage := 'System stopping - waiting for main door transition';
     ELSE
         stStatus.sMachineMessage := 'System stopping';
     END_CASE
@@ -2623,7 +2634,6 @@ ELSIF eMachineState = E_MachineState.Fault THEN
     IF NOT stInputs.stSafety.bSafetyOk THEN
 
         stStatus.sMachineMessage :='Machine fault - safety system not ready';
-
 
     // ---------------------------------------------------------
     // SILICONE SUPPORT FAULT
