@@ -2,7 +2,7 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.22">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}" AutoDeleteType="true">E_TablePosition</Name>
+			<Name GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}" AutoDeleteType="true">E_TablePosition</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
 			<EnumInfo>
@@ -27,9 +27,6 @@
 			</EnumInfo>
 			<Properties>
 				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
-				<Property>
 					<Name>qualified_only</Name>
 				</Property>
 				<Property>
@@ -38,10 +35,13 @@
 				<Property>
 					<Name>to_string</Name>
 				</Property>
+				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{6285251B-0F28-4EBB-6B56-0274F17CE575}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<Name GUID="{D91C3201-EAF9-4378-E889-096D122A3889}" AutoDeleteType="true">ST_PhysicalInputs</Name>
 			<BitSize>544</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
@@ -294,7 +294,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eIndexPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>320</BitOffs>
 			</SubItem>
@@ -995,7 +995,7 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{87E3DC3D-B4A5-F72D-E3C5-00B73F010CE8}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<Name GUID="{2BE8942C-162E-6416-CA81-5341B0AE54EA}" AutoDeleteType="true">ST_MachineConfig</Name>
 			<BitSize>1504</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
@@ -1162,7 +1162,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eOperatorPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>576</BitOffs>
 				<Default>
@@ -1171,7 +1171,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eSiliconePosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>592</BitOffs>
 				<Default>
@@ -1180,7 +1180,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eAssemblyPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>608</BitOffs>
 				<Default>
@@ -1189,7 +1189,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eRejectPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>624</BitOffs>
 				<Default>
@@ -1429,7 +1429,7 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{C698F2ED-7C1A-5CC8-A92E-96C98EC91D53}" AutoDeleteType="true">E_PartDisposition</Name>
+			<Name GUID="{94F0423F-94ED-B090-CFF1-387053E49355}" AutoDeleteType="true">E_PartDisposition</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
 			<EnumInfo>
@@ -1446,9 +1446,6 @@
 			</EnumInfo>
 			<Properties>
 				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
-				<Property>
 					<Name>qualified_only</Name>
 				</Property>
 				<Property>
@@ -1457,10 +1454,13 @@
 				<Property>
 					<Name>to_string</Name>
 				</Property>
+				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{D82D9E6A-8BE1-6146-7AD7-8BB4BACBACFC}" AutoDeleteType="true">ST_TestHistory</Name>
+			<Name GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}" AutoDeleteType="true">ST_TestHistory</Name>
 			<BitSize>4672</BitSize>
 			<SubItem>
 				<Name>uiNestId</Name>
@@ -1470,7 +1470,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eResult</Name>
-				<Type GUID="{C698F2ED-7C1A-5CC8-A92E-96C98EC91D53}">E_PartDisposition</Type>
+				<Type GUID="{94F0423F-94ED-B090-CFF1-387053E49355}">E_PartDisposition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>16</BitOffs>
 			</SubItem>
@@ -1532,7 +1532,7 @@
 		<DataType>
 			<Name IecBaseType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
 			<BitSize>9348672</BitSize>
-			<BaseType GUID="{D82D9E6A-8BE1-6146-7AD7-8BB4BACBACFC}">ST_TestHistory</BaseType>
+			<BaseType GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}">ST_TestHistory</BaseType>
 			<ArrayInfo>
 				<LBound>0</LBound>
 				<Elements>2001</Elements>
@@ -1741,7 +1741,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{56CE192D-A630-DF7B-6698-D1D15193349B}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{C636FDF4-94FB-3B54-2100-B6F05781D27A}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -1749,7 +1749,7 @@
 						<Var>
 							<Name>GVL_Config.stMachine</Name>
 							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{87E3DC3D-B4A5-F72D-E3C5-00B73F010CE8}">ST_MachineConfig</Type>
+							<Type GUID="{2BE8942C-162E-6416-CA81-5341B0AE54EA}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1784,7 +1784,7 @@
 						</Var>
 						<Var>
 							<Name>GVL_Persistent.astTestHistory</Name>
-							<Type GUID="{D5871551-D318-1A57-6C63-9941C5180C8D}">ARRAY [0..2000] OF ST_TestHistory</Type>
+							<Type GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}">ARRAY [0..2000] OF ST_TestHistory</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1963,7 +1963,7 @@
 							<Name>GVL_IO.stInputs</Name>
 							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
  Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{6285251B-0F28-4EBB-6B56-0274F17CE575}">ST_PhysicalInputs</Type>
+							<Type GUID="{D91C3201-EAF9-4378-E889-096D122A3889}">ST_PhysicalInputs</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
