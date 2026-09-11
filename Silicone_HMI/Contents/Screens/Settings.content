@@ -36,7 +36,7 @@
         "Name": "Enable Nests"
       },
       {
-        "Name": "Puck Gate"
+        "Name": " Parameters"
       },
       {
         "Name": "Silicone Reservoirs"
@@ -125,7 +125,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "Puck Gate"
+              "value": " Parameters"
             },
             "actions": [
               {
@@ -135,7 +135,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Screens/Settings/settings_Puck.content"
+                  "value": "Contents/Screens/Settings/settings_parameter.content"
                 },
                 "asyncWait": true
               }

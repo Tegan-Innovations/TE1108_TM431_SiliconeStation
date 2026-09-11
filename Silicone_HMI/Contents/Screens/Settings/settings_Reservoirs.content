@@ -891,91 +891,91 @@
             </script>
 
             <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-                [
-                  {
-                    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bNeedsDegassing%/s%",
-                    "actions": [
+[
+  {
+    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bNeedsDegassing%/s%",
+    "actions": [
+      {
+        "objectType": "Condition",
+        "active": true,
+        "parts": [
+          {
+            "if": [
+              {
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bNeedsDegassing%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "value": false
+                },
+                "compareOperator": "==",
+                "logic": null
+              }
+            ],
+            "then": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_28::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
                       {
-                        "objectType": "Condition",
-                        "active": true,
-                        "parts": [
-                          {
-                            "if": [
-                              {
-                                "compare1": {
-                                  "objectType": "Symbol",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bNeedsDegassing%/s%"
-                                },
-                                "compare2": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "value": true
-                                },
-                                "compareOperator": "==",
-                                "logic": null
-                              }
-                            ],
-                            "then": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_28::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(19, 113, 19, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(35, 195, 35, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          },
-                          {
-                            "else": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_28::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(197, 35, 35, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(254, 90, 90, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          }
-                        ],
-                        "asyncWait": true
+                        "color": "rgba(19, 113, 19, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(35, 195, 35, 1)",
+                        "stop": "100%"
                       }
                     ]
                   }
-                ]
-            </script>
+                },
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "else": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_28::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(197, 35, 35, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(254, 90, 90, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
+          }
+        ],
+        "asyncWait": true
+      }
+    ]
+  }
+]
+</script>
         </div>
         <div id="TcHmiHtmlHost_LedNeedDegass_R1_29" data-tchmi-type="TcHmi.Controls.System.TcHmiHtmlHost" data-tchmi-height="30" data-tchmi-height-unit="px" data-tchmi-left="287" data-tchmi-left-unit="px" data-tchmi-top="268" data-tchmi-top-unit="px" data-tchmi-width="30" data-tchmi-width-unit="px" data-tchmi-zindex="28">
             <script data-tchmi-target-attribute="data-tchmi-border-style" type="application/json">
@@ -1035,91 +1035,91 @@
             </script>
 
             <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-                [
-                  {
-                    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bVacuumFault%/s%",
-                    "actions": [
+[
+  {
+    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bVacuumFault%/s%",
+    "actions": [
+      {
+        "objectType": "Condition",
+        "active": true,
+        "parts": [
+          {
+            "if": [
+              {
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bVacuumFault%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "value": false
+                },
+                "compareOperator": "==",
+                "logic": null
+              }
+            ],
+            "then": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_29::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
                       {
-                        "objectType": "Condition",
-                        "active": true,
-                        "parts": [
-                          {
-                            "if": [
-                              {
-                                "compare1": {
-                                  "objectType": "Symbol",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1::bVacuumFault%/s%"
-                                },
-                                "compare2": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "value": true
-                                },
-                                "compareOperator": "==",
-                                "logic": null
-                              }
-                            ],
-                            "then": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_29::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(19, 113, 19, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(35, 195, 35, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          },
-                          {
-                            "else": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_29::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(197, 35, 35, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(254, 90, 90, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          }
-                        ],
-                        "asyncWait": true
+                        "color": "rgba(19, 113, 19, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(35, 195, 35, 1)",
+                        "stop": "100%"
                       }
                     ]
                   }
-                ]
-            </script>
+                },
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "else": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1_29::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(197, 35, 35, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(254, 90, 90, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
+          }
+        ],
+        "asyncWait": true
+      }
+    ]
+  }
+]
+</script>
         </div>
         <div id="TcHmiTextblock_1364" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="30" data-tchmi-height-unit="px" data-tchmi-left="347" data-tchmi-left-unit="px" data-tchmi-text="Needs Degassing" data-tchmi-top="228" data-tchmi-top-unit="px" data-tchmi-width="156" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="22" data-tchmi-text-horizontal-alignment="Left" data-tchmi-background-image-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center">
         </div>
@@ -1619,91 +1619,91 @@
             </script>
 
             <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-                [
-                  {
-                    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bNeedsDegassing%/s%",
-                    "actions": [
+[
+  {
+    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bNeedsDegassing%/s%",
+    "actions": [
+      {
+        "objectType": "Condition",
+        "active": true,
+        "parts": [
+          {
+            "if": [
+              {
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bNeedsDegassing%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "value": false
+                },
+                "compareOperator": "==",
+                "logic": null
+              }
+            ],
+            "then": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
                       {
-                        "objectType": "Condition",
-                        "active": true,
-                        "parts": [
-                          {
-                            "if": [
-                              {
-                                "compare1": {
-                                  "objectType": "Symbol",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bNeedsDegassing%/s%"
-                                },
-                                "compare2": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "value": true
-                                },
-                                "compareOperator": "==",
-                                "logic": null
-                              }
-                            ],
-                            "then": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(19, 113, 19, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(35, 195, 35, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          },
-                          {
-                            "else": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(197, 35, 35, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(254, 90, 90, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          }
-                        ],
-                        "asyncWait": true
+                        "color": "rgba(19, 113, 19, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(35, 195, 35, 1)",
+                        "stop": "100%"
                       }
                     ]
                   }
-                ]
-            </script>
+                },
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "else": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedNeedDegass_R1::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(197, 35, 35, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(254, 90, 90, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
+          }
+        ],
+        "asyncWait": true
+      }
+    ]
+  }
+]
+</script>
         </div>
         <div id="TcHmiHtmlHost_LedVacuumFault_R1" data-tchmi-type="TcHmi.Controls.System.TcHmiHtmlHost" data-tchmi-height="30" data-tchmi-height-unit="px" data-tchmi-left="30" data-tchmi-left-unit="px" data-tchmi-top="268" data-tchmi-top-unit="px" data-tchmi-width="30" data-tchmi-width-unit="px" data-tchmi-zindex="28">
             <script data-tchmi-target-attribute="data-tchmi-border-style" type="application/json">
@@ -1763,91 +1763,91 @@
             </script>
 
             <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-                [
-                  {
-                    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bVacuumFault%/s%",
-                    "actions": [
+[
+  {
+    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bVacuumFault%/s%",
+    "actions": [
+      {
+        "objectType": "Condition",
+        "active": true,
+        "parts": [
+          {
+            "if": [
+              {
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bVacuumFault%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "value": false
+                },
+                "compareOperator": "==",
+                "logic": null
+              }
+            ],
+            "then": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedVacuumFault_R1::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
                       {
-                        "objectType": "Condition",
-                        "active": true,
-                        "parts": [
-                          {
-                            "if": [
-                              {
-                                "compare1": {
-                                  "objectType": "Symbol",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0::bVacuumFault%/s%"
-                                },
-                                "compare2": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:general#/definitions/BOOL",
-                                  "value": true
-                                },
-                                "compareOperator": "==",
-                                "logic": null
-                              }
-                            ],
-                            "then": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedVacuumFault_R1::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(19, 113, 19, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(35, 195, 35, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          },
-                          {
-                            "else": [
-                              {
-                                "objectType": "WriteToSymbol",
-                                "active": true,
-                                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedVacuumFault_R1::BackgroundColor%/ctrl%",
-                                "value": {
-                                  "objectType": "StaticValue",
-                                  "valueType": "tchmi:framework#/definitions/Color",
-                                  "value": {
-                                    "angle": 45.0,
-                                    "stopPoints": [
-                                      {
-                                        "color": "rgba(197, 35, 35, 1)",
-                                        "stop": "0%"
-                                      },
-                                      {
-                                        "color": "rgba(254, 90, 90, 1)",
-                                        "stop": "100%"
-                                      }
-                                    ]
-                                  }
-                                },
-                                "asyncWait": true
-                              }
-                            ]
-                          }
-                        ],
-                        "asyncWait": true
+                        "color": "rgba(19, 113, 19, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(35, 195, 35, 1)",
+                        "stop": "100%"
                       }
                     ]
                   }
-                ]
-            </script>
+                },
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "else": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctrl%TcHmiHtmlHost_LedVacuumFault_R1::BackgroundColor%/ctrl%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(197, 35, 35, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(254, 90, 90, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
+          }
+        ],
+        "asyncWait": true
+      }
+    ]
+  }
+]
+</script>
         </div>
     </div>
     <div id="TcHmiTextblock_1360" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="48" data-tchmi-height-unit="px" data-tchmi-left="255" data-tchmi-left-unit="px" data-tchmi-text="1" data-tchmi-top="203" data-tchmi-top-unit="px" data-tchmi-width="23" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="32" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center">

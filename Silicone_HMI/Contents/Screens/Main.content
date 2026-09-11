@@ -184,7 +184,7 @@
 </script>
 </div>
 </div>
-<div id="TcHmiImage_39" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-height="315" data-tchmi-height-unit="px" data-tchmi-left="66" data-tchmi-left-unit="px" data-tchmi-src="Imports/Images/SiliconeIndexTableV4-0-0.png" data-tchmi-top="60" data-tchmi-top-unit="px" data-tchmi-width="315" data-tchmi-width-unit="px" data-tchmi-zindex="48">
+<div id="TcHmiImage_39" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-height="315" data-tchmi-height-unit="px" data-tchmi-left="66" data-tchmi-left-unit="px" data-tchmi-src="Imports/Images/SiliconeIndexTableV4-0-0.png" data-tchmi-top="57" data-tchmi-top-unit="px" data-tchmi-width="315" data-tchmi-width-unit="px" data-tchmi-zindex="48">
 
 <script data-tchmi-target-attribute="data-tchmi-transform" type="application/json">
 [
@@ -5848,90 +5848,90 @@
 </script>
 
 <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-    [
+[
+  {
+    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted%/s%",
+    "actions": [
       {
-        "event": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted%/s%",
-        "actions": [
+        "objectType": "Condition",
+        "active": true,
+        "parts": [
           {
-            "objectType": "Condition",
-            "active": true,
-            "parts": [
+            "if": [
               {
-                "if": [
-                  {
-                    "compare1": {
-                      "objectType": "Symbol",
-                      "valueType": "tchmi:general#/definitions/BOOL",
-                      "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted%/s%"
-                    },
-                    "compare2": {
-                      "objectType": "StaticValue",
-                      "valueType": "tchmi:general#/definitions/BOOL",
-                      "value": true
-                    },
-                    "compareOperator": "==",
-                    "logic": null
-                  }
-                ],
-                "then": [
-                  {
-                    "objectType": "WriteToSymbol",
-                    "active": true,
-                    "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                    "value": {
-                      "objectType": "StaticValue",
-                      "valueType": "tchmi:framework#/definitions/Color",
-                      "value": {
-                        "angle": 45.0,
-                            "stopPoints": [
-                              {
-                                "color": "rgba(19, 113, 19, 1)",
-                                "stop": "0%"
-                              },
-                              {
-                                "color": "rgba(35, 195, 35, 1)",
-                                "stop": "100%"
-                              }
-                            ]
-                      }
-                    },
-                    "asyncWait": true
-                  }
-                ]
-              },
-              {
-                "else": [
-                  {
-                    "objectType": "WriteToSymbol",
-                    "active": true,
-                    "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                    "value": {
-                      "objectType": "StaticValue",
-                      "valueType": "tchmi:framework#/definitions/Color",
-                      "value": {
-                        "angle": 45.0,
-                        "stopPoints": [
-                          {
-                            "color": "rgba(197, 35, 35, 1)",
-                            "stop": "0%"
-                          },
-                          {
-                            "color": "rgba(254, 90, 90, 1)",
-                            "stop": "100%"
-                          }
-                        ]
-                      }
-                    },
-                    "asyncWait": true
-                  }
-                ]
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "value": false
+                },
+                "compareOperator": "==",
+                "logic": null
               }
             ],
-            "asyncWait": true
+            "then": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(19, 113, 19, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(35, 195, 35, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "else": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(197, 35, 35, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(254, 90, 90, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
           }
-        ]
+        ],
+        "asyncWait": true
       }
     ]
+  }
+]
 </script>
 
 <script data-tchmi-target-attribute="data-tchmi-border-color" type="application/json">
@@ -6380,90 +6380,90 @@
 </script>
 
 <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-    [
+[
+  {
+    "event": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired%/s%",
+    "actions": [
       {
-        "event": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired%/s%",
-        "actions": [
+        "objectType": "Condition",
+        "active": true,
+        "parts": [
           {
-            "objectType": "Condition",
-            "active": true,
-            "parts": [
+            "if": [
               {
-                "if": [
-                  {
-                    "compare1": {
-                      "objectType": "Symbol",
-                      "valueType": "tchmi:general#/definitions/BOOL",
-                      "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired%/s%"
-                    },
-                    "compare2": {
-                      "objectType": "StaticValue",
-                      "valueType": "tchmi:general#/definitions/BOOL",
-                      "value": true
-                    },
-                    "compareOperator": "==",
-                    "logic": null
-                  }
-                ],
-                "then": [
-                  {
-                    "objectType": "WriteToSymbol",
-                    "active": true,
-                    "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                    "value": {
-                      "objectType": "StaticValue",
-                      "valueType": "tchmi:framework#/definitions/Color",
-                      "value": {
-                        "angle": 45.0,
-                            "stopPoints": [
-                              {
-                                "color": "rgba(19, 113, 19, 1)",
-                                "stop": "0%"
-                              },
-                              {
-                                "color": "rgba(35, 195, 35, 1)",
-                                "stop": "100%"
-                              }
-                            ]
-                      }
-                    },
-                    "asyncWait": true
-                  }
-                ]
-              },
-              {
-                "else": [
-                  {
-                    "objectType": "WriteToSymbol",
-                    "active": true,
-                    "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
-                    "value": {
-                      "objectType": "StaticValue",
-                      "valueType": "tchmi:framework#/definitions/Color",
-                      "value": {
-                        "angle": 45.0,
-                        "stopPoints": [
-                          {
-                            "color": "rgba(197, 35, 35, 1)",
-                            "stop": "0%"
-                          },
-                          {
-                            "color": "rgba(254, 90, 90, 1)",
-                            "stop": "100%"
-                          }
-                        ]
-                      }
-                    },
-                    "asyncWait": true
-                  }
-                ]
+                "compare1": {
+                  "objectType": "Symbol",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired%/s%"
+                },
+                "compare2": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:general#/definitions/BOOL",
+                  "value": false
+                },
+                "compareOperator": "==",
+                "logic": null
               }
             ],
-            "asyncWait": true
+            "then": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(19, 113, 19, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(35, 195, 35, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
+          },
+          {
+            "else": [
+              {
+                "objectType": "WriteToSymbol",
+                "active": true,
+                "symbolExpression": "%ctx%owner::BackgroundColor%/ctx%",
+                "value": {
+                  "objectType": "StaticValue",
+                  "valueType": "tchmi:framework#/definitions/Color",
+                  "value": {
+                    "angle": 45.0,
+                    "stopPoints": [
+                      {
+                        "color": "rgba(197, 35, 35, 1)",
+                        "stop": "0%"
+                      },
+                      {
+                        "color": "rgba(254, 90, 90, 1)",
+                        "stop": "100%"
+                      }
+                    ]
+                  }
+                },
+                "asyncWait": true
+              }
+            ]
           }
-        ]
+        ],
+        "asyncWait": true
       }
     ]
+  }
+]
 </script>
 </div>
 </div>

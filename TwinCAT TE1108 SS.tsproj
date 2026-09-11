@@ -764,6 +764,15 @@
 			</Properties>
 		</DataType>
 		<DataType>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{5E77FC20-F718-695B-0D6E-6DFF92E2609B}" AutoDeleteType="true">ST_SiliconeSupplyConfig</Name>
 			<BitSize>800</BitSize>
 			<SubItem>
@@ -1271,15 +1280,6 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
 			<Name GUID="{F7DBE463-070B-11E6-E7FD-B33D5329F5C1}" AutoDeleteType="true">ST_NestStatistics</Name>
 			<BitSize>192</BitSize>
 			<SubItem>
@@ -1530,7 +1530,7 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name IecBaseType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
+			<Name GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
 			<BitSize>9348672</BitSize>
 			<BaseType GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}">ST_TestHistory</BaseType>
 			<ArrayInfo>
@@ -1741,15 +1741,14 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{C636FDF4-94FB-3B54-2100-B6F05781D27A}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{23ADFC42-3921-3E8E-F6A0-DDB73F00492F}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{2BE8942C-162E-6416-CA81-5341B0AE54EA}">ST_MachineConfig</Type>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1758,17 +1757,23 @@
 							<InOut>7</InOut>
 						</Var>
 						<Var>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{2BE8942C-162E-6416-CA81-5341B0AE54EA}">ST_MachineConfig</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
 							<Name>GVL_Config.aNestEnabled</Name>
 							<Type GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}">ARRAY [1..4] OF BOOL</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
-							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
-							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
+							<Name>GVL_Persistent.uiTestHistoryWriteIndex</Name>
+							<Type>UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
-							<Name>GVL_Persistent.uiTestHistoryWriteIndex</Name>
+							<Name>GVL_Persistent.uiTestHistoryCount</Name>
 							<Type>UINT</Type>
 							<InOut>7</InOut>
 						</Var>
@@ -1788,11 +1793,6 @@
 							<InOut>7</InOut>
 						</Var>
 						<Var>
-							<Name>GVL_Persistent.uiTestHistoryCount</Name>
-							<Type>UINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
 							<Name>GVL_Persistent.stSiliconeSupply</Name>
 							<Type GUID="{EDD38FAB-5BAA-9388-2D7D-5173435AF951}">ST_SiliconeSupplyPersistent</Type>
 							<InOut>7</InOut>
@@ -1800,6 +1800,10 @@
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
+						<Var>
+							<Name>GVL_IO.stOutputs</Name>
+							<Type GUID="{9BED2248-E1F8-C0FA-D7B4-AD0762DD29B5}">ST_PhysicalOutputs</Type>
+						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1</Name>
 							<Type>BOOL</Type>
@@ -1949,22 +1953,12 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL_IO.stOutputs</Name>
-							<Type GUID="{9BED2248-E1F8-C0FA-D7B4-AD0762DD29B5}">ST_PhysicalOutputs</Type>
-						</Var>
-						<Var>
 							<Name>GVL_IVEK_EIP.stOutput</Name>
 							<Type GUID="{B39B9377-AF50-4659-E2C2-F2D4B10F3D96}">ST_IvekCyclicOutput</Type>
 						</Var>
 					</Vars>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
-						<Var>
-							<Name>GVL_IO.stInputs</Name>
-							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
- Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{D91C3201-EAF9-4378-E889-096D122A3889}">ST_PhysicalInputs</Type>
-						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
 							<Comment><![CDATA[ ---------------------------------------------------------------------
@@ -1975,15 +1969,17 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
+							<Name>GVL_IO.stInputs</Name>
+							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
+ Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
+							<Type GUID="{D91C3201-EAF9-4378-E889-096D122A3889}">ST_PhysicalInputs</Type>
+						</Var>
+						<Var>
 							<Name>GVL_Safety.bEmergencyStopOk</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bMainDoorUnSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bLeftFlapSafe</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -2380,6 +2376,10 @@
 							<Name>GVL_EtherCAT.stTerm15_EL6652.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
 							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bLeftFlapSafe</Name>
+							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bRightFlapSafe</Name>
@@ -4460,7 +4460,7 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 					</EthernetIp>
 				</Box>
 				<Ethernet DeviceDesc="EL6652 EtherNet/IP Scanner (Master)" SpecialTask="true" TaskPort="301"/>
-				<EtherNetIPMasterDev m_EthIpMasterDevPar="02000000446576696365203220284543415420454950205363616e6e65722028454c36360c0000006c000000fa19000001010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010582411e140aa8c000ffffff000000000000800001001e000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
+				<EtherNetIPMasterDev m_EthIpMasterDevPar="02000000446576696365203220284543415420454950205363616e6e65722028454c36360c0000006c000000fa190000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000140aa8c000ffffff000000000000800001001e000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
 					<Ethernet/>
 				</EtherNetIPMasterDev>
 			</Device>

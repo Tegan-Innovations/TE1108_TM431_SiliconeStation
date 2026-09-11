@@ -12,7 +12,7 @@
     <HmiTitle>Kistler_HMI</HmiTitle>
     <HmiVerboseLevel>2</HmiVerboseLevel>
     <HmiVersion>1.0.0.0</HmiVersion>
-    <HmiCommunicationServerPort>3000</HmiCommunicationServerPort>
+    <HmiCommunicationServerPort>3001</HmiCommunicationServerPort>
     <HmiLogTcHmiServerMessages>false</HmiLogTcHmiServerMessages>
     <HmiLogDesignerModeComMessages>false</HmiLogDesignerModeComMessages>
     <HmiDefaultLanguage>client</HmiDefaultLanguage>
@@ -289,7 +289,7 @@
     <Content Include="Contents\Screens\popups\Content_Popup_Reject_Part.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Screens\Settings\settings_Puck.content">
+    <Content Include="Contents\Screens\Settings\settings_parameter.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Screens\Settings\settings_IVEK.content">
@@ -835,6 +835,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Project\SiliconeIndexTableV4.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\SiliconeReservoirs.png">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Images\Project\SS_PneumaticsPopUp.png">
