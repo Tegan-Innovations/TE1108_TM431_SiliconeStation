@@ -1935,6 +1935,108 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMax": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::rNozzlePressureMax",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMin": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::rNozzlePressureMin",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMax": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::rSiliconePressureMax",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMin": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::rSiliconePressureMin",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::tDegassingDuration",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/TIME"
+                    },
+                    {
+                        "propertyOrder": 7
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.tDegassingVacuumTimeout": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::tDegassingVacuumTimeout",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/TIME"
+                    },
+                    {
+                        "propertyOrder": 8
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4896,6 +4998,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.uiDegassingTimeMinutesRequest": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::uiDegassingTimeMinutesRequest",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "propertyOrder": 12
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stCommands.uiResetStatisticsNestId": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -5916,6 +6035,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekHeaterControllerAlarm": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekHeaterControllerAlarm",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 31
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.bIvekMotionEnabled": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6138,6 +6274,126 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bAirSupplyReady": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stPermissives::bAirSupplyReady",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Pneumatic supply feedback confirmed",
+                        "propertyOrder": 13
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bExtractorReady": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stPermissives::bExtractorReady",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bNozzlePressureOk": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stSiliconeSupply::bNozzlePressureOk",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 9
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSelectedReservoirReady": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stSiliconeSupply::bSelectedReservoirReady",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 15
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSiliconePressureOk": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stSiliconeSupply::bSiliconePressureOk",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 8
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rNozzlePressureBar": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stSiliconeSupply::rNozzlePressureBar",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rSiliconePressureBar": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stSiliconeSupply::rSiliconePressureBar",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "propertyOrder": 5
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6171,6 +6427,23 @@
                     {
                         "comment": "Manual Assembly / Flipping Station",
                         "propertyOrder": 60
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.uiDegassingTimeMinutes": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::uiDegassingTimeMinutes",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "propertyOrder": 66
                     }
                 ]
             },
@@ -9670,6 +9943,12 @@
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.1": 3,
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.2": 3,
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.3": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMax": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMin": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMax": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMin": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.tDegassingVacuumTimeout": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11": 3,
@@ -9839,6 +10118,7 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportExtend": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bSiliconeSupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.ePowerCmd": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.uiDegassingTimeMinutesRequest": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.uiResetStatisticsNestId": 3,
                 "ADS.PLC1.GVL_HMI.stPuckLocker.nPucksAllowedToPass": 3,
                 "ADS.PLC1.GVL_HMI.stStatistics": 3,
@@ -9900,6 +10180,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekCommunicationOk": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekHealthy": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekHeaterControllerAlarm": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekMotionEnabled": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekPrimePermissive": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekProductionReady": 3,
@@ -9913,9 +10194,17 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iPowerCountdown": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bAirSupplyReady": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bExtractorReady": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bNozzlePressureOk": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSelectedReservoirReady": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSiliconePressureOk": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rNozzlePressureBar": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rSiliconePressureBar": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiAssemblyStationNestId": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.uiDegassingTimeMinutes": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiSiliconeStationNestId": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.usiReservoirDegassingPopup": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": 3,

@@ -251,7 +251,14 @@ ELSE
     GVL_HMI.StatusHMI.sBannerBckColor := GVL_HMI.sDARKGREY;
     GVL_HMI.StatusHMI.sBannerTextColor := GVL_HMI.sWHITE;
 END_CASE
-]]></ST>
+
+
+GVL_HMI.stStatus.uiDegassingTimeMinutes :=
+    UDINT_TO_UINT(
+        TIME_TO_UDINT(
+            GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration
+        ) / 60000
+    );]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

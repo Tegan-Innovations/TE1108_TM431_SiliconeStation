@@ -362,6 +362,37 @@ IF fbShutdown.BUSY OR fbShutdown.ERR THEN
         E_PLC_Power.Idle;
 END_IF
 
+
+// Degassing time setting
+// Valid range: 1 to 60 minutes.
+
+IF GVL_HMI.stCommands.uiDegassingTimeMinutesRequest = 0 THEN
+
+    // Initialise HMI request with the current configured value.
+    GVL_HMI.stCommands.uiDegassingTimeMinutesRequest :=
+        UDINT_TO_UINT(
+            TIME_TO_UDINT(
+                GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration
+            ) / 60000
+        );
+
+ELSIF GVL_HMI.stCommands.uiDegassingTimeMinutesRequest <= 60 THEN
+
+    // Apply HMI setting to the actual degassing timer.
+    GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration :=
+        UDINT_TO_TIME(
+            UINT_TO_UDINT(
+                GVL_HMI.stCommands.uiDegassingTimeMinutesRequest
+            ) * 60000
+        );
+
+ELSE
+
+    // Clamp values above the allowed maximum to 60 minutes.
+    GVL_HMI.stCommands.uiDegassingTimeMinutesRequest := 60;
+
+END_IF
+
 ]]></ST>
     </Implementation>
   </POU>

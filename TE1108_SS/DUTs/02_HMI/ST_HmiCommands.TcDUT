@@ -16,6 +16,7 @@ STRUCT
     bIndexHome                      : BOOL;
 	bExternalLight					: BOOL;
 	uiResetStatisticsNestId 		: UINT;
+	uiDegassingTimeMinutesRequest : UINT;
 	 
 	
     // Silicone Support

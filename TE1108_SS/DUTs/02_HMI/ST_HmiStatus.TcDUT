@@ -77,6 +77,8 @@ STRUCT
     bAssemblyStationManualEnabled         : BOOL;
     bAssemblyStationManualStartPermissive : BOOL;
 
+	uiDegassingTimeMinutes 				 : UINT;
+
     sMachineMessage                 	  : STRING(160);
     sOperatorMessage                	  : STRING(255);
 	
