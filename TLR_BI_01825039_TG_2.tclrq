@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<TcLicenseInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2011/11/TcLicenseInfo">
+	<TargetInfo>
+		<TcTargetDesc>
+			<TargetType>Generic Device-WIN 10.0</TargetType>
+			<TargetVersion>
+				<Version>3</Version>
+				<Revision>1</Revision>
+				<Build>4026</Build>
+			</TargetVersion>
+			<TargetFeatures>
+				<Level>CP</Level>
+				<NetId>172.18.234.29.1.1</NetId>
+			</TargetFeatures>
+			<Hardware>
+				<Model>C6015-0030</Model>
+				<SerialNo>000UF2RQ</SerialNo>
+				<CPUVersion>0.0</CPUVersion>
+				<Date>0.0.00</Date>
+				<CPUArchitecture>9</CPUArchitecture>
+			</Hardware>
+			<OsImage>
+				<ImageDevice>CB6283</ImageDevice>
+				<ImageVersion>2025-22-0005H</ImageVersion>
+				<ImageLevel>IN-0410-0612-09-1</ImageLevel>
+				<OsName>Windows 10 Enterprise LTSC 2021</OsName>
+				<OsVersion>10.0</OsVersion>
+			</OsImage>
+		</TcTargetDesc>
+	</TargetInfo>
+	<LicenseInfo>
+		<SystemId Level="50" SerialNo="000btrhs">{1E9FDA1E-818B-D414-32B3-3A88032BF570}</SystemId>
+		<PurchaseOrder><![CDATA[01825039]]></PurchaseOrder>
+		<IssueTime>2026-09-14T07:48:00</IssueTime>
+		<License>
+			<LicenseId>{66689887-CCBD-452C-AC9A-039D997C6E66}</LicenseId>
+			<Name>TC3 PLC</Name>
+			<OrderNo>TC1200</OrderNo>
+		</License>
+		<License ManuallyAdded="true">
+			<LicenseId>{796D380F-D49E-4C0C-A05F-500052FAC883}</LicenseId>
+			<Name>TC3 HMI Server</Name>
+			<OrderNo>TF2000</OrderNo>
+		</License>
+	</LicenseInfo>
+</TcLicenseInfo>
