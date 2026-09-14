@@ -705,7 +705,7 @@ IF fbNestManager.GetStatisticsEvent(
 		// Silicone result text
 		IF NOT stHistoryNest.stSiliconeResult.bValid THEN
 		
-			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sSiliconeResult := 'NOT TESTED';
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sSiliconeResult := 'NOT STARTED';
 		
 		ELSIF stHistoryNest.stSiliconeResult.bPassed THEN
 		
@@ -721,7 +721,7 @@ IF fbNestManager.GetStatisticsEvent(
 		// Flipping result text
 		IF NOT stHistoryNest.stAssemblyResult.bValid THEN
 		
-			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sFlippingResult := 'NOT TESTED';
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sFlippingResult := 'NOT STARTED';
 		
 		ELSIF stHistoryNest.stAssemblyResult.bPassed THEN
 		
