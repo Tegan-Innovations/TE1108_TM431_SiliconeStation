@@ -1743,7 +1743,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{2EAE0235-BE13-FA51-D058-566D56119206}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{0D91D331-5E4B-EBA5-D8CC-5FFB449F5CC8}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
@@ -2464,9 +2464,9 @@
 			</Project>
 		</Plc>
 		<Safety>
-			<Project GUID="{323EDEFA-A5FC-4A8F-910E-C2F6B9923A7D}" Name="Safety_TE1108_kistler" PrjFilePath="Safety_TE1108_silicone\Safety_TE1108_kistler.splcproj" TmcFilePath="Safety_TE1108_silicone\Safety_TE1108_kistler.tmc" GeneralArchiveSettings="#x000f" TargetArchiveSettings="#x0007" FileArchiveSettings="#x000e">
-				<Instance Id="#x01010010" KeepUnrestoredLinks="2">
-					<Name>Safety_TE1108_kistler Instance</Name>
+			<Project GUID="{323EDEFA-A5FC-4A8F-910E-C2F6B9923A7D}" Name="Safety_TE1108_SS" PrjFilePath="Safety_TE1108_silicone\Safety_TE1108_SS.splcproj" TmcFilePath="Safety_TE1108_silicone\Safety_TE1108_SS.tmc" GeneralArchiveSettings="#x000f" TargetArchiveSettings="#x0007" FileArchiveSettings="#x000e">
+				<Instance Id="#x01010020" KeepUnrestoredLinks="2">
+					<Name>Safety_TE1108_SS Instance</Name>
 					<TmcDesc GUID="{72A6D5B8-E98C-4604-8B90-09D1F8AB38A9}">
 						<Name>Safety</Name>
 						<InitSequence>PO</InitSequence>
