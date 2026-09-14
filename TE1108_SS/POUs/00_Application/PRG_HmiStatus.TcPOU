@@ -171,6 +171,16 @@ GVL_HMI.stStatus.stAlarms 					:= GVL_MASTER.stStatus.stAlarms;
 
 GVL_HMI.stStatus.stSiliconeSupply := GVL_MASTER.stStatus.stSiliconeSupply;
 
+
+// Current configured degassing time [minutes]
+GVL_HMI.stStatus.uiDegassingTimeMinutes :=
+    UDINT_TO_UINT(
+        TIME_TO_UDINT(
+            GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration
+        ) / 60000
+    );
+
+
 // Toggle controls are command inputs but visually mirror accepted PLC status.
 GVL_HMI.stCommands.bReservoir1Select :=
     GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bSelected;

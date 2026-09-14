@@ -69,6 +69,7 @@ STRUCT
     stSiliconeSupply                  : ST_SiliconeSupplyStatus;
     bReservoirDegassingPopup          : BOOL;
     usiReservoirDegassingPopup        : USINT;
+	uiDegassingTimeMinutes 			  : UINT;
 
     // Manual Assembly / Flipping Station
     uiAssemblyStationNestId               : UINT;

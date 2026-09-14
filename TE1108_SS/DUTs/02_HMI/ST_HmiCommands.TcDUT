@@ -16,6 +16,9 @@ STRUCT
     bIndexHome                      : BOOL;
 	bExternalLight					: BOOL;
 	uiResetStatisticsNestId 		: UINT;
+	
+// Degassing time setting from HMI [minutes]
+	uiDegassingTimeMinutesRequest : UINT;
 	 
 	
     // Silicone Support

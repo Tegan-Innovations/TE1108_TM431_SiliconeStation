@@ -20,6 +20,8 @@ STRUCT
     tPinchValveSettlingDelay    : TIME := T#300MS;
     tIvekStartTimeout           : TIME := T#5S;
     tIvekCompleteTimeout        : TIME := T#60S;
+	
+	tLowLevelDelay 				: TIME := T#5S;
 
 	// =========================================================
 	// ANALOG SCALING

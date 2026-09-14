@@ -130,6 +130,26 @@ GVL_SiliconeSupply_Interface.bCmdCancelDegassing :=
     rtReservoirCancelDegass.Q;
 
 
+
+// -----------------------------------------------------------------------------
+// DEGASSING TIME SETTING
+// HMI value is entered in minutes.
+// Valid range: 1 to 60 minutes.
+// -----------------------------------------------------------------------------
+IF (GVL_HMI.stCommands.uiDegassingTimeMinutesRequest >= 1)
+    AND (GVL_HMI.stCommands.uiDegassingTimeMinutesRequest <= 60)
+THEN
+
+    GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration :=
+        UDINT_TO_TIME(
+            UINT_TO_UDINT(
+                GVL_HMI.stCommands.uiDegassingTimeMinutesRequest
+            ) * 60000
+        );
+
+END_IF
+
+
 rtAssemblyStationStart(
     CLK := GVL_HMI.stCommands.bAssemblyStationStart
 );
@@ -137,6 +157,8 @@ rtAssemblyStationStart(
 rtSiliconeStationStart(
     CLK := GVL_HMI.stCommands.bSiliconeStationStart
 );
+
+
 
 rtIvekPrime(CLK := GVL_HMI.stCommands.bIvekPrime);
 rtIvekReference(CLK := GVL_HMI.stCommands.bIvekReference);

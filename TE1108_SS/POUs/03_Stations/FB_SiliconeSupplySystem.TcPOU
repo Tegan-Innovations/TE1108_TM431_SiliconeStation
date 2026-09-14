@@ -20,6 +20,8 @@ VAR
     tonVacuumAcquire            : TON;
     tonVacuumTimeout            : TON;
     tonDegassing                : TON;
+	tonLowLevel1 				: TON;
+	tonLowLevel2 			    : TON;
 
     bSiliconePressureOkLatched  : BOOL;
     bNozzlePressureOkLatched    : BOOL;
@@ -106,11 +108,25 @@ rtSelect1(CLK := bCmdSelectReservoir1);
 rtSelect2(CLK := bCmdSelectReservoir2);
 rtCancelDegas(CLK := bCmdCancelDegassing);
 
-// A low level immediately invalidates previous degassing qualification.
-IF NOT bLevel1Ok THEN
+
+// Low level debounce.
+// The level must remain FALSE continuously for 5 seconds
+// before the reservoir is considered low.
+tonLowLevel1(
+    IN := NOT bLevel1Ok,
+    PT := stConfig.tLowLevelDelay
+);
+
+tonLowLevel2(
+    IN := NOT bLevel2Ok,
+    PT := stConfig.tLowLevelDelay
+);
+
+IF tonLowLevel1.Q THEN
     stPersistent.aReservoirDegassed[1] := FALSE;
 END_IF
-IF NOT bLevel2Ok THEN
+
+IF tonLowLevel2.Q THEN
     stPersistent.aReservoirDegassed[2] := FALSE;
 END_IF
 
