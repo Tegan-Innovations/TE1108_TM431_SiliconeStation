@@ -2,7 +2,7 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.22">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}" AutoDeleteType="true">E_TablePosition</Name>
+			<Name GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}" AutoDeleteType="true">E_TablePosition</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
 			<EnumInfo>
@@ -27,9 +27,6 @@
 			</EnumInfo>
 			<Properties>
 				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
-				<Property>
 					<Name>qualified_only</Name>
 				</Property>
 				<Property>
@@ -38,10 +35,13 @@
 				<Property>
 					<Name>to_string</Name>
 				</Property>
+				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{6285251B-0F28-4EBB-6B56-0274F17CE575}" AutoDeleteType="true">ST_PhysicalInputs</Name>
+			<Name GUID="{D91C3201-EAF9-4378-E889-096D122A3889}" AutoDeleteType="true">ST_PhysicalInputs</Name>
 			<BitSize>544</BitSize>
 			<SubItem>
 				<Name>bStartButton</Name>
@@ -294,7 +294,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eIndexPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>320</BitOffs>
 			</SubItem>
@@ -764,6 +764,15 @@
 			</Properties>
 		</DataType>
 		<DataType>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{D89B586F-8B86-C622-5497-4F4DC81266A1}" AutoDeleteType="true">ST_SiliconeSupplyConfig</Name>
 			<BitSize>832</BitSize>
 			<SubItem>
@@ -1010,7 +1019,7 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{DE67F6A6-0CDF-1EB2-E143-16302800588F}" AutoDeleteType="true">ST_MachineConfig</Name>
+			<Name GUID="{25AD4523-FCD0-CF9B-9F6C-0602508F6346}" AutoDeleteType="true">ST_MachineConfig</Name>
 			<BitSize>1536</BitSize>
 			<SubItem>
 				<Name>tInitialiseTimeout</Name>
@@ -1177,7 +1186,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eOperatorPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>576</BitOffs>
 				<Default>
@@ -1186,7 +1195,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eSiliconePosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>592</BitOffs>
 				<Default>
@@ -1195,7 +1204,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eAssemblyPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>608</BitOffs>
 				<Default>
@@ -1204,7 +1213,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eRejectPosition</Name>
-				<Type GUID="{632B92C7-9274-B156-EA1C-A57CA676A35F}">E_TablePosition</Type>
+				<Type GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}">E_TablePosition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>624</BitOffs>
 				<Default>
@@ -1280,15 +1289,6 @@
 			<Name GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF BOOL</Name>
 			<BitSize>32</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000030}">BOOL</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
-			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
 			<ArrayInfo>
 				<LBound>1</LBound>
 				<Elements>4</Elements>
@@ -1444,7 +1444,7 @@
 			</ArrayInfo>
 		</DataType>
 		<DataType>
-			<Name GUID="{C698F2ED-7C1A-5CC8-A92E-96C98EC91D53}" AutoDeleteType="true">E_PartDisposition</Name>
+			<Name GUID="{94F0423F-94ED-B090-CFF1-387053E49355}" AutoDeleteType="true">E_PartDisposition</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
 			<EnumInfo>
@@ -1461,9 +1461,6 @@
 			</EnumInfo>
 			<Properties>
 				<Property>
-					<Name>generate_implicit_init_function</Name>
-				</Property>
-				<Property>
 					<Name>qualified_only</Name>
 				</Property>
 				<Property>
@@ -1472,10 +1469,13 @@
 				<Property>
 					<Name>to_string</Name>
 				</Property>
+				<Property>
+					<Name>generate_implicit_init_function</Name>
+				</Property>
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{D82D9E6A-8BE1-6146-7AD7-8BB4BACBACFC}" AutoDeleteType="true">ST_TestHistory</Name>
+			<Name GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}" AutoDeleteType="true">ST_TestHistory</Name>
 			<BitSize>4672</BitSize>
 			<SubItem>
 				<Name>uiNestId</Name>
@@ -1485,7 +1485,7 @@
 			</SubItem>
 			<SubItem>
 				<Name>eResult</Name>
-				<Type GUID="{C698F2ED-7C1A-5CC8-A92E-96C98EC91D53}">E_PartDisposition</Type>
+				<Type GUID="{94F0423F-94ED-B090-CFF1-387053E49355}">E_PartDisposition</Type>
 				<BitSize>16</BitSize>
 				<BitOffs>16</BitOffs>
 			</SubItem>
@@ -1545,9 +1545,9 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name IecBaseType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
+			<Name GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
 			<BitSize>9348672</BitSize>
-			<BaseType GUID="{D82D9E6A-8BE1-6146-7AD7-8BB4BACBACFC}">ST_TestHistory</BaseType>
+			<BaseType GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}">ST_TestHistory</BaseType>
 			<ArrayInfo>
 				<LBound>0</LBound>
 				<Elements>2001</Elements>
@@ -1758,15 +1758,14 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{12D2F5B6-18D2-37EB-E165-8AC3F3051C6B}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{2169F925-7555-BAEE-3633-771237EAD865}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{DE67F6A6-0CDF-1EB2-E143-16302800588F}">ST_MachineConfig</Type>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1775,18 +1774,14 @@
 							<InOut>7</InOut>
 						</Var>
 						<Var>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{25AD4523-FCD0-CF9B-9F6C-0602508F6346}">ST_MachineConfig</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
 							<Name>GVL_Config.aNestEnabled</Name>
 							<Type GUID="{064EA673-04B6-D0C1-CD14-82E56022843A}">ARRAY [1..4] OF BOOL</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
-							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Persistent.uiTestHistoryWriteIndex</Name>
-							<Type>UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1801,7 +1796,12 @@
 						</Var>
 						<Var>
 							<Name>GVL_Persistent.astTestHistory</Name>
-							<Type GUID="{D5871551-D318-1A57-6C63-9941C5180C8D}">ARRAY [0..2000] OF ST_TestHistory</Type>
+							<Type GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}">ARRAY [0..2000] OF ST_TestHistory</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>GVL_Persistent.uiTestHistoryWriteIndex</Name>
+							<Type>UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1817,6 +1817,10 @@
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
+						<Var>
+							<Name>GVL_IO.stOutputs</Name>
+							<Type GUID="{9BED2248-E1F8-C0FA-D7B4-AD0762DD29B5}">ST_PhysicalOutputs</Type>
+						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1</Name>
 							<Type>BOOL</Type>
@@ -1966,22 +1970,12 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
-							<Name>GVL_IO.stOutputs</Name>
-							<Type GUID="{9BED2248-E1F8-C0FA-D7B4-AD0762DD29B5}">ST_PhysicalOutputs</Type>
-						</Var>
-						<Var>
 							<Name>GVL_IVEK_EIP.stOutput</Name>
 							<Type GUID="{B39B9377-AF50-4659-E2C2-F2D4B10F3D96}">ST_IvekCyclicOutput</Type>
 						</Var>
 					</Vars>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
-						<Var>
-							<Name>GVL_IO.stInputs</Name>
-							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
- Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{6285251B-0F28-4EBB-6B56-0274F17CE575}">ST_PhysicalInputs</Type>
-						</Var>
 						<Var>
 							<Name>GVL_Safety.bSafetyOk</Name>
 							<Comment><![CDATA[ ---------------------------------------------------------------------
@@ -1992,15 +1986,17 @@
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
+							<Name>GVL_IO.stInputs</Name>
+							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
+ Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
+							<Type GUID="{D91C3201-EAF9-4378-E889-096D122A3889}">ST_PhysicalInputs</Type>
+						</Var>
+						<Var>
 							<Name>GVL_Safety.bEmergencyStopOk</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bMainDoorUnSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bLeftFlapSafe</Name>
 							<Type>BOOL</Type>
 						</Var>
 						<Var>
@@ -2397,6 +2393,10 @@
 							<Name>GVL_EtherCAT.stTerm15_EL6652.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
 							<Type>UINT</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bLeftFlapSafe</Name>
+							<Type>BOOL</Type>
 						</Var>
 						<Var>
 							<Name>GVL_Safety.bRightFlapSafe</Name>

@@ -88,7 +88,7 @@ VAR_GLOBAL CONSTANT
     sTwincat         : STRING := 'v3.1.4026.22.0, Runtime v3.1.4026.22.0 ';
 	sTwincatHMI      : STRING := 'TE2000 v14.16.2';
 	sHMIServer       : STRING := 'TF2000 v14.16.0';
-	sSoftwareDate	 : STRING := 'xx/09/2026';
+	sSoftwareDate	 : STRING := '14/09/2026';
     
 END_VAR]]></Declaration>
   </GVL>

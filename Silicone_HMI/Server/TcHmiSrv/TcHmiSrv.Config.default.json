@@ -6343,6 +6343,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSiliconePressureLow": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::stSiliconeSupply::bSiliconePressureLow",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 10
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSiliconePressureOk": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6481,6 +6498,16 @@
                         "propertyOrder": 59
                     }
                 ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.testeHMIBUT": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::testeHMIBUT",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/UINT"
             },
             "USEMAPPING": true
         },
@@ -10198,6 +10225,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bExtractorReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bNozzlePressureOk": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSelectedReservoirReady": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSiliconePressureLow": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bSiliconePressureOk": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rNozzlePressureBar": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rSiliconePressureBar": 3,
@@ -10207,6 +10235,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.uiDegassingTimeMinutes": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiSiliconeStationNestId": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.usiReservoirDegassingPopup": 3,
+                "ADS.PLC1.GVL_HMI.testeHMIBUT": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bBothPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bGearboxAssemblyPartPresent": 3,
                 "ADS.PLC1.GVL_IO.stInputs.bReservoirPartPresent": 3,
