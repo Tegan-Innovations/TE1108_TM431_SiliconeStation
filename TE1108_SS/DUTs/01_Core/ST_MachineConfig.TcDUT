@@ -3,7 +3,9 @@
   <DUT Name="ST_MachineConfig" Id="{846fa9b5-dfee-4d5c-87c6-eecc7b019629}">
     <Declaration><![CDATA[TYPE ST_MachineConfig :
 STRUCT
-    tInitialiseTimeout          : TIME := T#15S;
+    tInitialiseTimeout          : TIME := T#20S;
+	tInitialiseMinTime 			: TIME := T#10S;
+	
     tStoppingTimeout            : TIME := T#15S;
     tIndexTimeout               : TIME := T#10S;
     tIndexRotateDelay           : TIME := T#500MS;

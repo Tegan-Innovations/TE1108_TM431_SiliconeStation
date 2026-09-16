@@ -158,6 +158,7 @@ VAR
 	bExtractorAutoCycleFault 	  : BOOL;
 	
     tonInitialising               : TON;
+	tonInitialisingMinTime 	      : TON;
     tonStopping                   : TON;
     tonAutoCycleIdleTimeout       : TON;
 	tonMainDoorNotClosed 		  : TON;
@@ -183,7 +184,12 @@ VAR
 
     tpSafetyRunDrop               : TP;
 	bHmiLogoutFault 				: BOOL;
+		
+	bSiliconePressureFault 			: BOOL;
+	bNozzlePressureFault   			: BOOL;
 
+	bSiliconePressureConfigRequired : BOOL;
+	bNozzlePressureConfigRequired   : BOOL;
     // =====================================================
     // CONFIGURATION
     // =====================================================
@@ -209,6 +215,8 @@ VAR
     // Extractor
     // =====================================================
 	bExtractorEnable 				: BOOL;
+
+	
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -869,6 +877,8 @@ stPermissives.bInitialisationAllowed :=
     AND stPermissives.bDoorInitialisationReady
     AND stPermissives.bExtractorReady
     AND NOT stInputs.bIvekHeaterControllerAlarm;
+	//AND stSiliconeSupplyStatus.bSiliconePressureOk
+    //AND stSiliconeSupplyStatus.bNozzlePressureOk;
 	
 
 // =========================================================
@@ -980,6 +990,41 @@ END_IF
 
 
 // =========================================================
+// PRESSURE FAULT CAUSE LATCH
+// =========================================================
+
+// Pressure faults are valid only while pressure is expected.
+// Once detected, keep the cause latched while the machine
+// transitions to Fault.
+
+IF
+    (
+        stSiliconeSupplyStatus.bSiliconePressureLow
+        OR stSiliconeSupplyStatus.bSiliconePressureHigh
+    )
+    AND (eMachineState = E_MachineState.AutoCycle
+		OR eMachineState = E_MachineState.Manual)
+THEN
+    bSiliconePressureFault := TRUE;
+    bSafetyDropRequest := TRUE;
+END_IF
+
+
+IF
+    (
+        stSiliconeSupplyStatus.bNozzlePressureLow
+        OR stSiliconeSupplyStatus.bNozzlePressureHigh
+    )
+    AND (eMachineState = E_MachineState.AutoCycle
+		OR eMachineState = E_MachineState.Manual)
+THEN
+    bNozzlePressureFault := TRUE;
+	bSafetyDropRequest := TRUE;
+END_IF
+
+
+
+// =========================================================
 // MACHINE STATE MANAGEMENT
 // =========================================================
 
@@ -999,6 +1044,7 @@ CASE eMachineState OF
 
 		// Same machine lifecycle used by the Kistler: always enter a controlled stop first.
 		tonInitialising(IN := FALSE);
+		tonInitialisingMinTime(IN := FALSE);
 		tonStopping(IN := FALSE);
 		eCycleState := E_CycleState.Disabled;
 		eMachineState := E_MachineState.Stopping;
@@ -1043,6 +1089,7 @@ CASE eMachineState OF
 		bExtractorEnable := FALSE;
 	
 		tonInitialising(IN := FALSE);
+		tonInitialisingMinTime(IN := FALSE);
 		tonStopping(IN := FALSE);
 		fbSiliconeProcess.RequestStop();
 		fbIvek.RequestStop();
@@ -1057,6 +1104,10 @@ CASE eMachineState OF
 			bHmiLogoutFault := FALSE;
 			bStopRequestTimeout := FALSE;
 			bExtractorAutoCycleFault := FALSE;
+			bInitialisationTimeoutFault := FALSE;
+    		bStoppingTimeoutFault := FALSE;
+			bSiliconePressureFault := FALSE;
+			bNozzlePressureFault := FALSE;
 	
 			fbIndex.Reset();
 			fbSiliconeSupportCylinder.Reset();
@@ -1157,6 +1208,7 @@ CASE eMachineState OF
 		
 		
 		tonInitialising(IN := FALSE);
+		tonInitialisingMinTime(IN := FALSE);
 		tonStopping(IN := FALSE);
 		
 		IF blogoutHMI THEN
@@ -1192,6 +1244,7 @@ CASE eMachineState OF
 	
 		tonStopping(IN := FALSE);
 		tonInitialising(IN := TRUE, PT := stConfig.tInitialiseTimeout);
+		tonInitialisingMinTime(IN := TRUE, PT := stConfig.tInitialiseMinTime);
 
 		eMode_LED_Start := E_LEDs_Mode.OFF;
 		eMode_LED_Reset := E_LEDs_Mode.OFF;
@@ -1228,6 +1281,8 @@ CASE eMachineState OF
 	
 			bIndexRequestAcceptedFeedback := FALSE;
 			bIndexRecoveryRequestAcceptedFeedback := FALSE;
+			bSiliconePressureConfigRequired := FALSE;
+			bNozzlePressureConfigRequired := FALSE;
 	
 			// bProcessStartPulse := FALSE;
 	
@@ -1361,7 +1416,8 @@ CASE eMachineState OF
 		// INITIALISATION COMPLETE
 		// =========================================================
 	
-		bInitialisationComplete := stPermissives.bInitialisationAllowed;
+		bInitialisationComplete := stPermissives.bInitialisationAllowed 
+									AND tonInitialisingMinTime.Q;
 
 // =========================================================
 // IVEK RECOVERY DURING INITIALISING
@@ -1464,6 +1520,33 @@ E_MachineState.ReadyToStart:
 		
 		tonInitialising(IN := FALSE);
 		tonStopping(IN := FALSE);
+		
+		// ---------------------------------------------------------
+		// PRESSURE RANGE SUPERVISION
+		// ---------------------------------------------------------
+		// In ReadyToStart, invalid pressure is a configuration
+		// condition, not a machine fault.
+		
+		IF NOT stSiliconeSupplyStatus.bSiliconePressureOk
+			OR NOT stSiliconeSupplyStatus.bNozzlePressureOk
+		THEN
+		
+			IF (stInputs.rSiliconePressureBar < GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMin)
+				OR (stInputs.rSiliconePressureBar > GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMax)
+			THEN
+				bSiliconePressureConfigRequired := TRUE;
+			END_IF
+		
+			IF (stInputs.rNozzlePressureBar < GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMin)
+				OR (stInputs.rNozzlePressureBar > GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMax)
+			THEN
+				bNozzlePressureConfigRequired := TRUE;
+			END_IF
+		
+			bStopRequested := TRUE;
+		
+		END_IF
+		
 	
 		IF bStopRequested THEN
 	
@@ -2579,6 +2662,13 @@ stStatus.bAssemblyStationFaulted := fbAssemblyStation.IsFaulted();
 stStatus.bPartVacuumBuildTimeoutFault :=fbSiliconeProcess.bVacuumBuildTimeoutFault;
 stStatus.bPartVacuumLostFault :=fbSiliconeProcess.bVacuumLostFault;
 stStatus.bPartVacuumReleaseTimeoutFault :=fbSiliconeProcess.bVacuumReleaseTimeoutFault;
+stStatus.bSiliconePressureFault := bSiliconePressureFault;
+stStatus.bNozzlePressureFault := bNozzlePressureFault;
+stStatus.bSiliconePressureConfigRequired := bSiliconePressureConfigRequired;
+stStatus.bNozzlePressureConfigRequired := bNozzlePressureConfigRequired;
+
+
+
 
 // 
 // 

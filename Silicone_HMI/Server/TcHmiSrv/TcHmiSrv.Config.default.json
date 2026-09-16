@@ -6421,6 +6421,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0.bDegassing": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stSiliconeSupply::aReservoir[0]::bDegassing",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6428,6 +6445,23 @@
             "MAPPING": "PLC1::GVL_HMI::stStatus::stSiliconeSupply::aReservoir[1]",
             "SCHEMA": {
                 "$ref": "tchmi:server#/definitions/ADS-PLC1.ST_SiliconeReservoirStatus"
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1.bDegassing": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stSiliconeSupply::aReservoir[1]::bDegassing",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 6
+                    }
+                ]
             },
             "USEMAPPING": true
         },
@@ -10230,7 +10264,9 @@
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rNozzlePressureBar": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.rSiliconePressureBar": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.0.bDegassing": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1.bDegassing": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiAssemblyStationNestId": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiDegassingTimeMinutes": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiSiliconeStationNestId": 3,

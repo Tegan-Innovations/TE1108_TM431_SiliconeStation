@@ -40,9 +40,13 @@ STRUCT
 	bAssemblySupportFaulted 		: BOOL;
     bAssemblyStationFaulted         : BOOL;
 	bExtractorAutoCycleFault 		: BOOL;
-	bPartVacuumBuildTimeoutFault   : BOOL;
-	bPartVacuumLostFault           : BOOL;
-	bPartVacuumReleaseTimeoutFault : BOOL;
+	bPartVacuumBuildTimeoutFault    : BOOL;
+	bPartVacuumLostFault            : BOOL;
+	bPartVacuumReleaseTimeoutFault  : BOOL;
+	bSiliconePressureFault 			: BOOL;
+	bNozzlePressureFault   			: BOOL;
+	bSiliconePressureConfigRequired : BOOL;
+	bNozzlePressureConfigRequired   : BOOL;
 	
     stPermissives           : ST_MachinePermissives;
     stLastResult            : ST_ProcessResult;
