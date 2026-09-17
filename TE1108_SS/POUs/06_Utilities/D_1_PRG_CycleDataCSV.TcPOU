@@ -1,0 +1,376 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="D_1_PRG_CycleDataCSV" Id="{b410e4e2-b582-4746-ad53-5b50de91f34e}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM D_1_PRG_CycleDataCSV
+VAR_INPUT
+
+    stCycleData     : ST_CycleDataCSV;
+    bWriteRequest   : BOOL;
+
+END_VAR
+
+VAR_OUTPUT
+
+    bCSVDone        : BOOL;
+    bReady          : BOOL;
+    bCSVError       : BOOL;
+    nCSVErrorId     : UDINT;
+
+END_VAR
+
+VAR
+
+    // CSV file
+    sFileName       : T_MaxString := 'C:\Users\Administrator\Desktop\csv\CycleData_#date#.csv';
+    sCSVLine        : T_MaxString := '#1#;#2#;#3#;#4#;#5#;#6#$L';
+
+    // File handling
+    bBusy           : BOOL;
+    bError          : BOOL;
+    nErrId          : UDINT;
+    hFile           : UINT := 0;
+    step            : DWORD := 0;
+
+    fbFileOpen      : FB_FileOpen;
+    fbFileClose     : FB_FileClose;
+    fbFilePuts      : FB_FilePuts;
+
+    // CSV fields
+    f1_Nest             : STRING;
+    f2_GeneralResult    : STRING;
+    f3_SiliconeResult   : STRING;
+    f4_FlippingResult   : STRING;
+    f5_Date             : STRING;
+    f6_Time             : STRING;
+
+    // Write control
+    bWrite              : BOOL;
+    bWritingFirstRow    : BOOL;
+	bCycleWritePending  : BOOL;
+    rWriteRequest       : R_TRIG;
+    rError              : R_TRIG;
+
+    // Date control
+    sLastDateCSV        : STRING(255);
+	sFileDate 			: STRING(255);
+
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// =========================================================
+// READY STATUS
+// =========================================================
+
+IF step = 0 THEN
+    bReady := TRUE;
+ELSE
+    bReady := FALSE;
+END_IF
+
+
+// =========================================================
+// CSV WRITER STATE MACHINE
+// =========================================================
+
+CASE step OF
+
+    0:  // Wait for write request
+
+        bCSVDone := FALSE;
+
+        IF bWrite THEN
+
+            bWrite := FALSE;
+            bBusy := TRUE;
+            bError := FALSE;
+            nErrId := 0;
+            hFile := 0;
+
+            step := 1;
+
+        END_IF
+
+
+    1:  // Open CSV file
+
+        fbFileOpen(
+            bExecute := FALSE
+        );
+
+        fbFileOpen(
+            sNetId := '',
+            sPathName := sFileName,
+            nMode := FOPEN_MODEAPPEND OR FOPEN_MODETEXT,
+            ePath := PATH_GENERIC,
+            bExecute := TRUE
+        );
+
+        step := 2;
+
+
+    2:  // Wait until file open is complete
+
+        fbFileOpen(
+            bExecute := FALSE,
+            bError => bError,
+            nErrID => nErrId,
+            hFile => hFile
+        );
+
+        IF NOT fbFileOpen.bBusy THEN
+
+            IF NOT fbFileOpen.bError THEN
+                step := 3;
+            ELSE
+                step := 100;
+            END_IF
+
+        END_IF
+
+
+    3:  // Convert one PLC record to CSV format
+
+        FindAndReplace(
+            pSrcString := ADR(sCSVLine),
+            pDeleteString := ADR('#1#'),
+            pInsertString := ADR(f1_Nest),
+            pDstString := ADR(sCSVLine),
+            nDstSize := SIZEOF(sCSVLine)
+        );
+
+        FindAndReplace(
+            pSrcString := ADR(sCSVLine),
+            pDeleteString := ADR('#2#'),
+            pInsertString := ADR(f2_GeneralResult),
+            pDstString := ADR(sCSVLine),
+            nDstSize := SIZEOF(sCSVLine)
+        );
+
+        FindAndReplace(
+            pSrcString := ADR(sCSVLine),
+            pDeleteString := ADR('#3#'),
+            pInsertString := ADR(f3_SiliconeResult),
+            pDstString := ADR(sCSVLine),
+            nDstSize := SIZEOF(sCSVLine)
+        );
+
+        FindAndReplace(
+            pSrcString := ADR(sCSVLine),
+            pDeleteString := ADR('#4#'),
+            pInsertString := ADR(f4_FlippingResult),
+            pDstString := ADR(sCSVLine),
+            nDstSize := SIZEOF(sCSVLine)
+        );
+
+        FindAndReplace(
+            pSrcString := ADR(sCSVLine),
+            pDeleteString := ADR('#5#'),
+            pInsertString := ADR(f5_Date),
+            pDstString := ADR(sCSVLine),
+            nDstSize := SIZEOF(sCSVLine)
+        );
+
+        FindAndReplace(
+            pSrcString := ADR(sCSVLine),
+            pDeleteString := ADR('#6#'),
+            pInsertString := ADR(f6_Time),
+            pDstString := ADR(sCSVLine),
+            nDstSize := SIZEOF(sCSVLine)
+        );
+
+        step := 4;
+
+
+    4:  // Write single text line
+
+        fbFilePuts(
+            bExecute := FALSE
+        );
+
+        fbFilePuts(
+            sNetId := '',
+            hFile := hFile,
+            sLine := sCSVLine,
+            bExecute := TRUE
+        );
+
+        step := 5;
+
+
+    5:  // Wait until write is complete
+
+        fbFilePuts(
+            bExecute := FALSE,
+            bError => bError,
+            nErrID => nErrId
+        );
+
+        IF NOT fbFilePuts.bBusy THEN
+
+            IF NOT fbFilePuts.bError THEN
+                step := 10;
+            ELSE
+                step := 100;
+            END_IF
+
+        END_IF
+
+
+    10: // Close CSV file
+
+        fbFileClose(
+            bExecute := FALSE
+        );
+
+        fbFileClose(
+            sNetId := '',
+            hFile := hFile,
+            bExecute := TRUE
+        );
+
+        // Restore CSV template for next record
+        sCSVLine := '#1#;#2#;#3#;#4#;#5#;#6#$L';
+
+        step := 11;
+
+
+    11: // Wait until close is complete
+
+        fbFileClose(
+            bExecute := FALSE,
+            bError => bError,
+            nErrID => nErrId
+        );
+
+        IF NOT fbFileClose.bBusy THEN
+
+            bWritingFirstRow := FALSE;
+
+            hFile := 0;
+            step := 100;
+
+        END_IF
+
+
+    100: // Error or ready step => cleanup
+
+        IF hFile <> 0 THEN
+
+            step := 10;
+
+        ELSE
+
+            bBusy := FALSE;
+            step := 0;
+            bCSVDone := TRUE;
+
+        END_IF
+
+END_CASE
+
+
+// =========================================================
+// DAILY CSV FILE / HEADER
+// =========================================================
+
+IF (sLastDateCSV <> GVL_MASTER.sSystemDate)
+AND (step = 0)
+AND NOT bWritingFirstRow THEN
+
+    // Keep original system date for the CSV data
+    sLastDateCSV := GVL_MASTER.sSystemDate;
+
+    // Create a filename-safe version of the date
+    sFileDate := sLastDateCSV;
+
+	FindAndReplace(
+		pSrcString := ADR(sLastDateCSV),
+		pDeleteString := ADR('/'),
+		pInsertString := ADR('_'),
+		pDstString := ADR(sFileDate),
+		nDstSize := SIZEOF(sFileDate)
+	);
+    // Build daily CSV filename
+    sFileName :=
+        'C:\Users\Administrator\Desktop\csv\CycleData_#date#.csv';
+
+    FindAndReplace(
+        pSrcString := ADR(sFileName),
+        pDeleteString := ADR('#date#'),
+        pInsertString := ADR(sFileDate),
+        pDstString := ADR(sFileName),
+        nDstSize := SIZEOF(sFileName)
+    );
+
+    // CSV header
+    f1_Nest             := 'NEST';
+    f2_GeneralResult    := 'GENERAL RESULTS';
+    f3_SiliconeResult   := 'SILICONE RESULTS';
+    f4_FlippingResult   := 'FLIPPING RESULTS';
+    f5_Date             := 'DATE';
+    f6_Time             := 'TIME';
+
+    bWrite := TRUE;
+    bWritingFirstRow := TRUE;
+
+END_IF
+
+
+// =========================================================
+// LINK NEW CYCLE RESULT
+// =========================================================
+
+// Detect the one-scan request generated by the machine
+rWriteRequest(
+    CLK := bWriteRequest
+);
+
+// Memorise the request if the CSV writer is currently busy
+IF rWriteRequest.Q THEN
+    bCycleWritePending := TRUE;
+END_IF
+
+
+// Process the pending result when the writer is available
+IF bCycleWritePending
+AND NOT bWritingFirstRow
+AND (step = 0) THEN
+
+    f1_Nest :=
+        UINT_TO_STRING(stCycleData.uiNestId);
+
+    f2_GeneralResult :=
+        stCycleData.sGeneralResult;
+
+    f3_SiliconeResult :=
+        stCycleData.sSiliconeResult;
+
+    f4_FlippingResult :=
+        stCycleData.sFlippingResult;
+
+    f5_Date :=
+        stCycleData.sDate;
+
+    f6_Time :=
+        stCycleData.sTime;
+
+    bWrite := TRUE;
+    bCycleWritePending := FALSE;
+
+END_IF
+
+
+// =========================================================
+// ERROR STATUS
+// =========================================================
+
+rError(
+    CLK := bError
+);
+
+IF rError.Q THEN
+    bCSVError := TRUE;
+    nCSVErrorId := nErrId;
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

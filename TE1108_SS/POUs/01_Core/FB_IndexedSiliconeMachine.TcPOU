@@ -215,8 +215,11 @@ VAR
     // Extractor
     // =====================================================
 	bExtractorEnable 				: BOOL;
-
 	
+	// CSV cycle data
+	stCycleDataCSV      			: ST_CycleDataCSV;
+	bCycleDataCSVWrite  			: BOOL;
+
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -266,6 +269,8 @@ VAR_OUTPUT
     stOutputs      : ST_MachineOutputs;
     stStatus       : ST_MachineStatus;
     stIvekOutput   : ST_IvekCyclicOutput;
+	stCycleDataCSVOut     : ST_CycleDataCSV;
+	bCycleDataCSVWriteOut : BOOL;
 END_VAR
 
 ]]></Declaration>
@@ -318,6 +323,9 @@ bLedBlink := bLedBlinkState;
 
 // Deterministic defaults
 ResetCyclicOutputs();
+
+// CSV write request is generated for one PLC scan
+bCycleDataCSVWrite := FALSE;
 
 // This request is generated for one PLC scan by an internal machine fault.
 // The TP converts the one-scan request into the required TwinSAFE run-drop time.
@@ -742,6 +750,32 @@ IF fbNestManager.GetStatisticsEvent(
 			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sFlippingResult := 'FAIL';
 		
 		END_IF;
+				
+		// -----------------------------------------------------
+		// PREPARE CSV CYCLE DATA
+		// -----------------------------------------------------
+		
+		stCycleDataCSV.uiNestId :=
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].uiNestId;
+		
+		stCycleDataCSV.sGeneralResult :=
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sResult;
+		
+		stCycleDataCSV.sSiliconeResult :=
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sSiliconeResult;
+		
+		stCycleDataCSV.sFlippingResult :=
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sFlippingResult;
+		
+		stCycleDataCSV.sDate :=
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sDate;
+		
+		stCycleDataCSV.sTime :=
+			GVL_Persistent.astTestHistory[GVL_Persistent.uiTestHistoryWriteIndex].sTime;
+		
+		bCycleDataCSVWrite := TRUE;	
+				
+				
 				
 		// -----------------------------------------------------
 		// ADVANCE TEST HISTORY WRITE INDEX
@@ -2694,7 +2728,8 @@ stStatus.bSiliconePressureConfigRequired := bSiliconePressureConfigRequired;
 stStatus.bNozzlePressureConfigRequired := bNozzlePressureConfigRequired;
 
 
-
+stCycleDataCSVOut := stCycleDataCSV;
+bCycleDataCSVWriteOut := bCycleDataCSVWrite;
 
 // 
 // 

@@ -7,6 +7,8 @@ VAR
 	tonHMIAliveOn        : TON;
     tonHMIAliveOff       : TON;
     bOutHMI   			 : BOOL;
+	stCycleDataCSV     : ST_CycleDataCSV;
+	bCycleDataCSVWrite : BOOL;
 	
 END_VAR
 ]]></Declaration>
@@ -28,7 +30,13 @@ fbMachine.Cyclic(
 	blogoutHMI 	  := bOutHMI,
     stOutputs     => GVL_MASTER.stOutputs,
     stStatus      => GVL_MASTER.stStatus,	
-    stIvekOutput  => GVL_MASTER.stIvekOutput);]]></ST>
+    stIvekOutput  => GVL_MASTER.stIvekOutput,
+	stCycleDataCSVOut     => stCycleDataCSV,
+	bCycleDataCSVWriteOut => bCycleDataCSVWrite);
+	
+	
+D_1_PRG_CycleDataCSV.stCycleData := stCycleDataCSV;
+D_1_PRG_CycleDataCSV.bWriteRequest := bCycleDataCSVWrite;]]></ST>
     </Implementation>
     <Action Name="ACT_UserLogout" Id="{5c1cdba2-cfdc-4365-84bf-77af4bab5a6c}">
       <Implementation>

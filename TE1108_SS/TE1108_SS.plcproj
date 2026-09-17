@@ -18,6 +18,9 @@
     <LibraryReferences>{ac9ebb17-05f3-4e58-8830-56d57f8cbe05}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DUTs\01_Core\CSV\ST_CycleDataCSV.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\01_Core\E_CycleState.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -375,6 +378,9 @@
     <Compile Include="POUs\05_IO_Mapping\PRG_TerminalMapping.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\06_Utilities\D_1_PRG_CycleDataCSV.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\06_Utilities\FB_EventsManager.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -394,6 +400,7 @@
   <ItemGroup>
     <Folder Include="DUTs" />
     <Folder Include="DUTs\01_Core" />
+    <Folder Include="DUTs\01_Core\CSV" />
     <Folder Include="DUTs\01_Core\SiliconeSupply" />
     <Folder Include="DUTs\02_HMI" />
     <Folder Include="DUTs\04_IVEK" />
