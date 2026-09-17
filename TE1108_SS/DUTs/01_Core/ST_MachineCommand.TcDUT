@@ -50,6 +50,7 @@ STRUCT
     bIvekPrime                             : BOOL;
     bIvekReference                         : BOOL;
     bIvekMaintenanceStop                   : BOOL;
+	bIvekPrimeEnable : BOOL;
 
 END_STRUCT
 END_TYPE

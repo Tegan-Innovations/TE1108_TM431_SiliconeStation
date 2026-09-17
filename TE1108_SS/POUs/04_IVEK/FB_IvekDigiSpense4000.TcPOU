@@ -9,9 +9,12 @@ VAR_INPUT
     // TRUE only while the machine itself is in System Initialising.
     // Used for automatic Load recovery when the IVEK reports Load Required.
     bSystemInitialising     : BOOL;
-    // Maintenance motion is used only for Engineer Settings operations
-    // (Prime / Reference) while the machine is Stopped.
-    bMaintenancePermissive : BOOL;
+	// Maintenance motion is used for Engineer Reference
+	// while the machine is Stopped.
+	bMaintenancePermissive : BOOL;
+	
+	// Prime is executed separately through the Manual Mode sequence.
+	bPrimePermissive : BOOL;
 END_VAR
 VAR_OUTPUT
     stCyclicOut      : ST_IvekCyclicOutput;
@@ -284,21 +287,29 @@ tonLoadCompleteTimeout(
 // recovery according to the IVEK protocol.
 // =========================================================
 
-// Production follows the normal machine permissive. Engineer maintenance
-// operations use the separate maintenance permissive while Stopped.
+// Production follows the normal machine permissive.
+// Reference uses the maintenance permissive while Stopped.
+// Prime uses its dedicated Manual Mode permissive.
 IF NOT bOperationPermissive
 AND (bProductionRequestActive OR bBusyProduction) THEN
     bStopPending := TRUE;
 END_IF
 
+// Reference remains supervised by the Engineer maintenance permissive.
 IF NOT bMaintenancePermissive
 AND (
-    bReferenceRequestActive OR bBusyReference
-    OR bFluidicRequestActive OR bBusyFluidic
-    // Load is a System Initialising recovery operation, not an Engineer
-    // maintenance operation. Do not cancel it just because the machine has
-    // left Stopped and therefore bMaintenancePermissive is FALSE.
+    bReferenceRequestActive
+    OR bBusyReference
     OR ((bLoadRequestActive OR bBusyLoad) AND NOT bSystemInitialising)
+) THEN
+    bStopPending := TRUE;
+END_IF
+
+// Prime is supervised separately by the Manual Mode permissive.
+IF NOT bPrimePermissive
+AND (
+    bFluidicRequestActive
+    OR bBusyFluidic
 ) THEN
     bStopPending := TRUE;
 END_IF
@@ -321,6 +332,7 @@ bMotionEnableCommand :=
         OR bBusyFluidic
         OR bLoadRequestActive
         OR bBusyLoad
+		OR bPrimePermissive
     );
 
 IF bMotionEnableCommand THEN
@@ -500,7 +512,7 @@ END_IF
 // during commissioning). The PLC does not alter the IVEK recipe/configuration.
 IF bFluidicStartPending
 AND bReadyFluidic
-AND bMaintenancePermissive
+AND bPrimePermissive
 AND NOT bStopIssuedThisScan
 AND NOT bReferenceRequestActive
 AND NOT bProductionRequestActive
@@ -519,6 +531,7 @@ END_IF
 
 IF bFluidicRequestActive
 AND bFluidicStartPulseActive
+AND bPrimePermissive
 AND NOT tonFluidicStartPulse.Q THEN
     stCyclicOut.udiCommands :=
         stCyclicOut.udiCommands
@@ -1188,7 +1201,7 @@ METHOD IsReady : BOOL
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF bCommunicationOk
-AND bMaintenancePermissive
+AND bPrimePermissive
 AND bReadyFluidic
 AND NOT bBusyAnyOperation
 AND NOT bReferenceRequired

@@ -12,6 +12,8 @@ STRUCT
     bSiliconeSupportPermissive : BOOL;
     bDoorUnlockPermissive      : BOOL;
     bEquipmentStartPermissive  : BOOL;
+	// IVEK Prime
+	bIvekPrimePermissive 		: BOOL;
 
     // Manual Assembly / Flipping Station
     bAssemblyStationStartPermissive : BOOL;

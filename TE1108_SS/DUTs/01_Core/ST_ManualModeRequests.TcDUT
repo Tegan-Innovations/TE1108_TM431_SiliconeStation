@@ -18,13 +18,17 @@ STRUCT
 	
 
     // Manual Assembly / Flipping Station
-    bAssemblyStationStart              : BOOL;
-    bAssemblyStationStop               : BOOL;
-
+    bAssemblyStationStart       : BOOL;
+    bAssemblyStationStop        : BOOL;
+	
+	// Manual IVEK Prime
+	bIvekPrime             		: BOOL;
+	bIvekPrimeEnable 			: BOOL;
+	bPartVacuumEnable 			: BOOL;
 
     // Manual Silicone Station
-    bSiliconeProcessStart               : BOOL;
-    bSiliconeProcessStop                : BOOL;
+    bSiliconeProcessStart       : BOOL;
+    bSiliconeProcessStop        : BOOL;
 
 END_STRUCT
 END_TYPE]]></Declaration>

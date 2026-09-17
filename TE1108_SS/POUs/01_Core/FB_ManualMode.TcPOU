@@ -5,6 +5,7 @@
 VAR
     eState                  : E_ManualModeState := E_ManualModeState.Disabled;
     eMessage                : E_ManualModeMessage := E_ManualModeMessage.None;
+	eManualPrimeState 		: E_ManualPrimeState := E_ManualPrimeState.Idle;
     stRequestsInternal      : ST_ManualModeRequests;
     stStatusInternal        : ST_ManualModeStatus;
     bWasEnabled             : BOOL;
@@ -17,6 +18,7 @@ VAR
     rtDoorUnlock            : R_TRIG;
     rtAssemblyStationStart  : R_TRIG;
     rtSiliconeStationStart   : R_TRIG;
+	rtIvekPrime 			: R_TRIG;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -75,7 +77,9 @@ rtSiliconeStationStart(
     CLK := stCommand.bManualSiliconeStart
 );
 
-
+rtIvekPrime(
+    CLK := stCommand.bIvekPrime
+);
 // =========================================================
 // CYCLIC DEFAULTS
 // =========================================================
@@ -111,7 +115,8 @@ stStatusInternal.bIndexPermissive :=
     AND stCommand.bIndexerManualEnable
     AND stInputs.bTwoHandsSafe
     AND stInputs.bSiliconeSupportRetracted
-    AND stInputs.bAssemblySupportRetracted;
+    AND stInputs.bAssemblySupportRetracted
+	AND (eManualPrimeState = E_ManualPrimeState.Idle);
 
 
 
@@ -138,6 +143,24 @@ stStatusInternal.bAssemblySupportPermissive :=
     AND stInputs.bSafetyOk
     AND NOT stInputs.bIndexBusy
     AND NOT stInputs.bEquipmentBusy;
+	
+// =========================================================
+// MANUAL PRIMER IVEK PERMISSIVE
+// =========================================================
+stStatusInternal.bIvekPrimePermissive :=
+    bEnable
+    AND stInputs.bSafetyOk
+    AND stInputs.bProcessSafetyPermitted
+    AND stInputs.bIndexReady
+    AND stInputs.bIndexLocked
+    AND NOT stInputs.bIndexBusy
+    AND NOT stInputs.bSiliconeProcessBusy
+    AND NOT stInputs.bSiliconeProcessFaulted
+    AND stInputs.bIvekEnabled
+    AND stInputs.bIvekFluidicReady
+    AND NOT stInputs.bIvekFluidicActive
+	AND stInputs.bIvekPrimeEnable
+    AND NOT stInputs.bEquipmentFaulted;
 
 // =========================================================
 // MANUAL SILICONE STATION PERMISSIVE
@@ -145,6 +168,7 @@ stStatusInternal.bAssemblySupportPermissive :=
 stStatusInternal.bSiliconeStationStartPermissive :=
     bEnable
     AND stInputs.bSafetyOk
+	AND (eManualPrimeState = E_ManualPrimeState.Idle)
     AND stInputs.bProcessSafetyPermitted
     AND stInputs.bIndexReady
     AND stInputs.bIndexLocked
@@ -175,6 +199,8 @@ stStatusInternal.bAssemblyStationStartPermissive :=
     AND stInputs.bAssemblyStationReady
     AND NOT stInputs.bAssemblyStationBusy
     AND NOT stInputs.bAssemblyStationFaulted;
+	
+	
 
 // =========================================================
 // MAIN DOOR PERMISSIVE
@@ -305,7 +331,7 @@ IF bStopRequest THEN
 
         IF rtIndexMove.Q THEN
 
-            IF stStatusInternal.bIndexPermissive THEN
+            IF stStatusInternal.bIndexPermissive AND NOT rtIvekPrime.Q THEN
                 stRequestsInternal.bIndexMoveRequest := TRUE;
                 eMessage := E_ManualModeMessage.IndexCommandActive;
             ELSE
@@ -334,8 +360,27 @@ IF bStopRequest THEN
 
         END_IF
 
+        // =================================================
+        // IVEK PRIME
+        // =================================================
 
-            // =================================================
+        IF rtIvekPrime.Q THEN
+
+            IF stStatusInternal.bIvekPrimePermissive
+                AND (eManualPrimeState = E_ManualPrimeState.Idle)
+            THEN
+
+                eManualPrimeState := E_ManualPrimeState.ExtendingSupport;
+
+            ELSE
+
+                stStatusInternal.bCommandRejected := TRUE;
+
+            END_IF
+
+        END_IF
+
+         // =================================================
         // SILICONE SUPPORT
         // =================================================
 
@@ -523,6 +568,149 @@ IF bStopRequest THEN
 END_IF
 
 
+
+// Abort an active Prime sequence if Manual Mode or its
+// process permissives are lost.
+IF (eManualPrimeState <> E_ManualPrimeState.Idle)
+AND (eManualPrimeState <> E_ManualPrimeState.Aborting)
+AND (
+    NOT bEnable
+    OR bStopRequest
+    OR NOT stInputs.bSafetyOk
+    OR NOT stInputs.bProcessSafetyPermitted
+    OR stInputs.bEquipmentFaulted
+    OR stInputs.bSiliconeProcessFaulted
+	OR NOT stInputs.bIvekPrimeEnable
+)
+THEN
+
+    eManualPrimeState := E_ManualPrimeState.Aborting;
+
+END_IF
+
+// =========================================================
+// MANUAL IVEK PRIME SEQUENCE
+// =========================================================
+
+CASE eManualPrimeState OF
+
+    E_ManualPrimeState.Idle:
+        // No active Prime sequence.
+
+
+    E_ManualPrimeState.ExtendingSupport:
+
+        stRequestsInternal.bSiliconeSupportExtend := TRUE;
+
+        IF stInputs.bSiliconeSupportExtended THEN
+
+            stRequestsInternal.bSiliconeSupportExtend := FALSE;
+            eManualPrimeState := E_ManualPrimeState.CheckingPart;
+
+        END_IF
+
+
+    E_ManualPrimeState.CheckingPart:
+
+        IF stInputs.bReservoirPartPresent THEN
+
+            eManualPrimeState := E_ManualPrimeState.BuildingVacuum;
+
+        ELSE
+
+            eManualPrimeState := E_ManualPrimeState.Aborting;
+
+        END_IF
+
+
+    E_ManualPrimeState.BuildingVacuum:
+
+        stRequestsInternal.bPartVacuumEnable := TRUE;
+
+        IF stInputs.bPartVacuumOk THEN
+
+            eManualPrimeState := E_ManualPrimeState.StartingPrime;
+
+        END_IF
+
+
+    E_ManualPrimeState.StartingPrime:
+
+        // Keep vacuum applied while requesting Prime.
+        stRequestsInternal.bPartVacuumEnable := TRUE;
+        stRequestsInternal.bIvekPrime := TRUE;
+
+        IF stInputs.bIvekFluidicActive THEN
+
+            eManualPrimeState := E_ManualPrimeState.WaitingPrime;
+
+        END_IF
+
+
+    E_ManualPrimeState.WaitingPrime:
+
+        // Part must remain held during the complete Prime operation.
+        stRequestsInternal.bPartVacuumEnable := TRUE;
+
+        IF NOT stInputs.bPartVacuumOk THEN
+
+            eManualPrimeState := E_ManualPrimeState.Aborting;
+
+        ELSIF NOT stInputs.bIvekFluidicActive THEN
+
+            eManualPrimeState := E_ManualPrimeState.ReleasingVacuum;
+
+        END_IF
+
+
+    E_ManualPrimeState.ReleasingVacuum:
+
+        stRequestsInternal.bPartVacuumEnable := FALSE;
+
+        IF NOT stInputs.bPartVacuumOk THEN
+
+            eManualPrimeState := E_ManualPrimeState.RetractingSupport;
+
+        END_IF
+
+
+    E_ManualPrimeState.RetractingSupport:
+
+        stRequestsInternal.bSiliconeSupportRetract := TRUE;
+
+        IF stInputs.bSiliconeSupportRetracted THEN
+
+            stRequestsInternal.bSiliconeSupportRetract := FALSE;
+            eManualPrimeState := E_ManualPrimeState.Complete;
+
+        END_IF
+
+
+    E_ManualPrimeState.Complete:
+
+        eManualPrimeState := E_ManualPrimeState.Idle;
+
+
+    E_ManualPrimeState.Aborting:
+
+        // Remove vacuum first.
+        stRequestsInternal.bPartVacuumEnable := FALSE;
+
+        // Do not lower the support until vacuum has been released.
+        IF NOT stInputs.bPartVacuumOk THEN
+
+            stRequestsInternal.bSiliconeSupportRetract := TRUE;
+
+            IF stInputs.bSiliconeSupportRetracted THEN
+
+                stRequestsInternal.bSiliconeSupportRetract := FALSE;
+                eManualPrimeState := E_ManualPrimeState.Idle;
+
+            END_IF
+
+        END_IF
+
+END_CASE
 // =========================================================
 // OUTPUT MAPPING
 // =========================================================
@@ -595,7 +783,9 @@ stRequestsInternal.bSiliconeProcessStop         := FALSE;
 
 stRequestsInternal.bEquipmentStart 				:= FALSE;
 stRequestsInternal.bEquipmentStop 				:= FALSE;
-stRequestsInternal.bEquipmentReset 				:= FALSE;]]></ST>
+stRequestsInternal.bEquipmentReset 				:= FALSE;
+stRequestsInternal.bIvekPrime 					:= FALSE;
+stRequestsInternal.bPartVacuumEnable 			:= FALSE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="UpdateMessage" Id="{82995339-ff21-4701-8208-d0bdacd4bd00}">

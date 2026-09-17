@@ -284,7 +284,7 @@ GVL_MASTER.stCommand.bManualEquipmentStop 			:= GVL_HMI.stCommands.bIvekStopManu
 GVL_MASTER.stCommand.bManualEquipmentReset 			:= GVL_HMI.stCommands.bIvekReset;
 GVL_MASTER.stCommand.usiRecipeRequest 				:= GVL_HMI.stCommands.usiRecipeRequest;
 GVL_MASTER.stCommand.uiResetStatisticsNestId 		:= GVL_HMI.stCommands.uiResetStatisticsNestId;
-
+GVL_MASTER.stCommand.bIvekPrimeEnable 				:=GVL_HMI.stCommands.bIvekPrimeEnable;
 
 // -----------------------------------------------------------------------------
 // PLC POWER CONTROL

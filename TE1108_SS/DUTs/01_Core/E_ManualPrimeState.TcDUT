@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <DUT Name="E_ManualPrimeState" Id="{8be5667d-801a-438e-a326-e6bbda5039b7}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+TYPE E_ManualPrimeState :
+(
+    Idle := 0,
+    ExtendingSupport,
+    CheckingPart,
+    BuildingVacuum,
+    StartingPrime,
+    WaitingPrime,
+    ReleasingVacuum,
+    RetractingSupport,
+    Complete,
+    Aborting
+);
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

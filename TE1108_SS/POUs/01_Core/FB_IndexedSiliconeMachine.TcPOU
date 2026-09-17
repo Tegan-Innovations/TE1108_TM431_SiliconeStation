@@ -144,7 +144,7 @@ VAR
     bProcExtend                   : BOOL;
     bProcRetract                  : BOOL;
 
-
+	bSiliconeProcessPartVacuumEnable : BOOL;
     // =====================================================
     // INITIALISATION / STOPPING
     // =====================================================
@@ -482,6 +482,11 @@ fbIvek.bCommunicationOk := bIvekCommsOk;
 fbIvek.bOperationPermissive := bIvekOperationPermissive;
 fbIvek.bSystemInitialising := (eMachineState = E_MachineState.Initialising);
 fbIvek.bMaintenancePermissive := bIvekMaintenancePermissive;
+fbIvek.bPrimePermissive :=
+    (eMachineState = E_MachineState.Manual)
+    AND bIvekCommsOk
+    AND stInputs.stSafety.bProcessSafetyPermitted
+    AND GVL_Safety.bAirSupplySafe;
 fbIvek.Cyclic();
 
 // =========================================================
@@ -554,10 +559,7 @@ IF stCommand.bIvekReference THEN
     fbIvek.RequestReference();
 END_IF
 
-IF stCommand.bIvekPrime
-AND stSiliconeSupplyStatus.bSelectedReservoirReady THEN
-    fbIvek.RequestPrime();
-END_IF
+
 
 
 // Process simulation removed from runtime path. The real IVEK is always used.
@@ -589,7 +591,7 @@ fbSiliconeProcess.Cyclic(
     tEquipmentStartTimeout 		:= GVL_Config.stMachine.stSiliconeSupply.tIvekStartTimeout,
     tEquipmentCompleteTimeout 	:= GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout,
 	bSiliconeStationPartPresent := stInputs.bSiliconeStationPartPresent,
-    bPartVacuumEnable 			=> stOutputsInternal.bPartVacuumEnable
+    bPartVacuumEnable 			=> bSiliconeProcessPartVacuumEnable
 );
 
 // The coordinator generates one-scan equipment requests.
@@ -935,6 +937,12 @@ stManualModeInputs.bEquipmentReady := fbIvek.IsReady();
 stManualModeInputs.bEquipmentBusy := fbIvek.IsBusy();
 stManualModeInputs.bEquipmentFaulted := fbIvek.IsFaulted();
 
+stManualModeInputs.bIvekEnabled := bIvekCommsOk AND NOT fbIvek.bMotionDisabled;
+stManualModeInputs.bIvekFluidicReady := fbIvek.IsFluidicReady();
+stManualModeInputs.bIvekFluidicActive := fbIvek.IsFluidicActive();
+stManualModeInputs.bPartVacuumOk := stInputs.bPartVacuumOk;
+stManualModeInputs.bIvekPrimeEnable :=stCommand.bIvekPrimeEnable;
+
 stManualModeInputs.bSiliconeProcessReady := fbSiliconeProcess.IsReady();
 stManualModeInputs.bSiliconeProcessBusy := fbSiliconeProcess.IsBusy();
 stManualModeInputs.bSiliconeProcessFaulted := fbSiliconeProcess.IsFaulted();
@@ -960,7 +968,26 @@ fbManualMode.Cyclic(
     stInputs := stManualModeInputs,
     stRequests => stManualModeRequests,
     stStatus => stManualModeStatus);
+	
+// =========================================================
+// PART VACUUM OUTPUT ARBITRATION
+// =========================================================
+// Keep the existing Silicone Process vacuum behaviour.
+// Manual Mode may additionally request vacuum during Prime.
 
+stOutputsInternal.bPartVacuumEnable :=
+    bSiliconeProcessPartVacuumEnable
+    OR (
+        (eMachineState = E_MachineState.Manual)
+        AND stManualModeRequests.bPartVacuumEnable
+    );
+	
+// Manual Prime equipment request.
+// The complete mechanical/vacuum sequence is coordinated by FB_ManualMode.
+IF (eMachineState = E_MachineState.Manual)
+AND stManualModeRequests.bIvekPrime THEN
+    fbIvek.RequestPrime();
+END_IF
 
 stProcessCycleInputs.bSiliconeSupportExtended := stInputs.bSiliconeSupportExtended;
 stProcessCycleInputs.bSiliconeSupportRetracted := stInputs.bSiliconeSupportRetracted;
@@ -2605,11 +2632,10 @@ stStatus.bIvekReferenceReady := fbIvek.bReadyReference;
 stStatus.bIvekReferenceActive := fbIvek.IsReferenceActive();
 stStatus.bIvekFluidicReady := fbIvek.IsFluidicReady();
 stStatus.bIvekFluidicActive := fbIvek.IsFluidicActive();
+
 stStatus.bIvekPrimePermissive :=
-    bIvekMaintenancePermissive
-    AND stSiliconeSupplyStatus.bSelectedReservoirReady
-    AND fbIvek.IsFluidicReady()
-    AND NOT fbIvek.IsReferenceRequired();
+    stManualModeStatus.bIvekPrimePermissive;
+	
 stStatus.bIvekReferencePermissive :=
     bIvekMaintenancePermissive
     AND fbIvek.IsReferenceRequired()

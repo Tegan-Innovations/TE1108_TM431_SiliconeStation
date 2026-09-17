@@ -765,6 +765,12 @@
     <Content Include="Images\Project\Cylinders\SiliconeCylinderRetracted_V2.png">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Project\flipping.png">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Images\Project\FlippingGrip.png">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Project\IndexKistler_1.png">
       <SubType>Content</SubType>
     </Content>

@@ -31,16 +31,24 @@ STRUCT
     bAssemblyStationFaulted        : BOOL;
     bAssemblyNestPartPresent       : BOOL;
     bAssemblyNestSiliconized       : BOOL;
-    bAssemblyNestAlreadyAssembled   : BOOL;
+    bAssemblyNestAlreadyAssembled  : BOOL;
 
     bReservoirPartPresent          : BOOL;
 
     // Manual Silicone Station
-    bSiliconeProcessReady               : BOOL;
-    bSiliconeProcessBusy                : BOOL;
-    bSiliconeProcessFaulted             : BOOL;
-    bSiliconeNestPartPresent            : BOOL;
-    bSiliconeNestAlreadyProcessed       : BOOL;
+    bSiliconeProcessReady          : BOOL;
+    bSiliconeProcessBusy           : BOOL;
+    bSiliconeProcessFaulted        : BOOL;
+    bSiliconeNestPartPresent       : BOOL;
+    bSiliconeNestAlreadyProcessed  : BOOL;
+	
+	// IVEK Prime
+	bIvekEnabled       			   : BOOL;
+	bIvekFluidicReady 			   : BOOL;
+	bIvekFluidicActive 			   : BOOL;
+	bPartVacuumOk 					: BOOL;
+	bIvekPrimeEnable 				: BOOL;
+
 
 END_STRUCT
 END_TYPE]]></Declaration>
