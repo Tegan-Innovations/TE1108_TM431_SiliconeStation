@@ -1,5 +1,5 @@
 <div id="Content_logout" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="480" data-tchmi-height="350" data-tchmi-zindex="1">
-<div id="TcHmiTextblock_1261" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="70" data-tchmi-height-unit="px" data-tchmi-left="65" data-tchmi-left-unit="px" data-tchmi-text="Do you want to Logout?" data-tchmi-top="65" data-tchmi-top-unit="px" data-tchmi-width="350" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="26" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="1">
+<div id="TcHmiTextblock_1269" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="70" data-tchmi-height-unit="px" data-tchmi-left="65" data-tchmi-left-unit="px" data-tchmi-text="Do you want to Logout?" data-tchmi-top="65" data-tchmi-top-unit="px" data-tchmi-width="350" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="26" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="1">
 
 
 
@@ -61,7 +61,7 @@
 ]
 </script>
 </div>
-<div id="TcHmiRectangle_popUpBackground_299" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiRectangle" data-tchmi-height="350" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-zindex="0">
+<div id="TcHmiRectangle_popUpBackground_222" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiRectangle" data-tchmi-height="350" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-zindex="0">
 <script data-tchmi-target-attribute="data-tchmi-background-color" type="application/json">
 {
   "angle": 0.0,

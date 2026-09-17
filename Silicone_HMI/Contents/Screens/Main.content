@@ -184,18 +184,6 @@
 </script>
 </div>
 </div>
-<div id="TcHmiImage_39" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-height="315" data-tchmi-height-unit="px" data-tchmi-left="66" data-tchmi-left-unit="px" data-tchmi-src="Imports/Images/SiliconeIndexTableV4-0-0.png" data-tchmi-top="57" data-tchmi-top-unit="px" data-tchmi-width="315" data-tchmi-width-unit="px" data-tchmi-zindex="48">
-
-<script data-tchmi-target-attribute="data-tchmi-transform" type="application/json">
-[
-  {
-    "transformType": "Rotate",
-    "angleUnit": "deg",
-    "angle": "%s%ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle%/s%"
-  }
-]
-</script>
-</div>
 <div id="TcHmiContainer_80" data-tchmi-type="TcHmi.Controls.System.TcHmiContainer" data-tchmi-height="450" data-tchmi-height-unit="px" data-tchmi-left="19" data-tchmi-left-unit="px" data-tchmi-top="25" data-tchmi-top-unit="px" data-tchmi-width="410" data-tchmi-width-unit="px" data-tchmi-zindex="12" data-tchmi-is-enabled="False" data-tchmi-creator-visibility="Visible">
 <script data-tchmi-target-attribute="data-tchmi-background-color" type="application/json">
 {
@@ -6486,4 +6474,15 @@
 </div>
 
 
+<div id="TcHmiImage_399" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiImage" data-tchmi-height="315" data-tchmi-height-unit="px" data-tchmi-left="66" data-tchmi-left-unit="px" data-tchmi-src="Imports/Images/SiliconeIndexTableV4-0-0.png" data-tchmi-top="57" data-tchmi-top-unit="px" data-tchmi-width="315" data-tchmi-width-unit="px" data-tchmi-zindex="49">
+<script data-tchmi-target-attribute="data-tchmi-transform" type="application/json">
+[
+  {
+    "transformType": "Rotate",
+    "angleUnit": "deg",
+    "angle": "%s%ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle%/s%"
+  }
+]
+</script>
+</div>
 </div>
