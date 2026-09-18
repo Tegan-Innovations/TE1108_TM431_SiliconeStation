@@ -4841,6 +4841,24 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoir1DegassingPopupStart": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoir1DegassingPopupStart",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "comment": "Degassing action popup commands\r\n Degassing action popup commands",
+                        "propertyOrder": 32
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stCommands.bReservoir1Select": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4871,6 +4889,23 @@
                     },
                     {
                         "propertyOrder": 27
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stCommands.bReservoir2DegassingPopupStart": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bReservoir2DegassingPopupStart",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 33
                     }
                 ]
             },
@@ -6184,6 +6219,40 @@
                     },
                     {
                         "propertyOrder": 15
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bReservoir1DegassingPopupEnabled": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bReservoir1DegassingPopupEnabled",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 62
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bReservoir2DegassingPopupEnabled": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bReservoir2DegassingPopupEnabled",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 63
                     }
                 ]
             },
@@ -10187,8 +10256,10 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bManualModeRequest": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bNestCylindersManualEnable": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bReservoir1Degass": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoir1DegassingPopupStart": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bReservoir1Select": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bReservoir2Degass": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bReservoir2DegassingPopupStart": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bReservoir2Select": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupClose": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupStart": 3,
@@ -10267,6 +10338,8 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekReferencePermissive": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bReservoir1DegassingPopupEnabled": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bReservoir2DegassingPopupEnabled": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bReservoirDegassingPopup": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationManualStartPermissive": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationPartPresent": 3,

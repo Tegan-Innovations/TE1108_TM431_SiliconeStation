@@ -50,8 +50,10 @@ STRUCT
     bCancelReservoirDegassing         : BOOL;
 
     // Degassing action popup commands
-    bReservoirDegassingPopupStart     : BOOL;
-    bReservoirDegassingPopupClose     : BOOL;
+    // Degassing action popup commands
+	bReservoir1DegassingPopupStart    : BOOL;
+	bReservoir2DegassingPopupStart    : BOOL;
+	bReservoirDegassingPopupClose     : BOOL;
 
 
     // Manual Assembly / Flipping Station

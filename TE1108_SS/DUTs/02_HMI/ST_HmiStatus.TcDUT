@@ -70,6 +70,8 @@ STRUCT
     bReservoirDegassingPopup          : BOOL;
     usiReservoirDegassingPopup        : USINT;
 	uiDegassingTimeMinutes 			  : UINT;
+	bReservoir1DegassingPopupEnabled  : BOOL;
+	bReservoir2DegassingPopupEnabled  : BOOL;
 
     // Manual Assembly / Flipping Station
     uiAssemblyStationNestId               : UINT;

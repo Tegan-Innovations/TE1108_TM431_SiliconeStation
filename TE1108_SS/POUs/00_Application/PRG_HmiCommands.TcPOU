@@ -3,39 +3,59 @@
   <POU Name="PRG_HmiCommands" Id="{8117f6b5-ff2d-4018-a49c-355ec2d95973}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM PRG_HmiCommands
 VAR
-    rtStart : R_TRIG; rtReset : R_TRIG; rtAck : R_TRIG; rtPuckAck : R_TRIG;
-	
-	rtManualRequest 			: R_TRIG;
-	bManualRequestLatched 		: BOOL;
-	tonManualModeHmiGuard 		: TON;
-	
-	tonPowerDelay       		: TON;
-    fbReboot            		: NT_Reboot;
-    fbShutdown          		: NT_Shutdown;
-    bTriggerReboot      		: BOOL;
-    bTriggerShutdown    		: BOOL;
-    iPowerCountdown     		: INT;
+    rtStart                         : R_TRIG;
+    rtReset                         : R_TRIG;
+    rtAck                           : R_TRIG;
+    rtPuckAck                       : R_TRIG;
 
-    rtReservoir1Select          : R_TRIG;
-    rtReservoir2Select          : R_TRIG;
-    rtReservoir1Degass          : R_TRIG;
-    rtReservoir2Degass          : R_TRIG;
-    rtReservoirCancelDegass     : R_TRIG;
-    rtDegassingPopupStart       : R_TRIG;
-    rtDegassingPopupClose       : R_TRIG;
+    rtManualRequest                 : R_TRIG;
+    bManualRequestLatched           : BOOL;
+    tonManualModeHmiGuard           : TON;
 
-    bReservoirResetAction       : BOOL;
-    bPopupStartReservoir1       : BOOL;
-    bPopupStartReservoir2       : BOOL;
+    tonPowerDelay                   : TON;
+    fbReboot                        : NT_Reboot;
+    fbShutdown                      : NT_Shutdown;
+    bTriggerReboot                  : BOOL;
+    bTriggerShutdown                : BOOL;
+    iPowerCountdown                 : INT;
 
-    rtAssemblyStationStart      : R_TRIG;
-    rtSiliconeStationStart       : R_TRIG;
-    rtIvekPrime                  : R_TRIG;
-    rtIvekReference              : R_TRIG;
-    rtIvekMaintenanceStop        : R_TRIG;
-	
-END_VAR
-]]></Declaration>
+    // Reservoir selection
+    rtReservoir1Select              : R_TRIG;
+    rtReservoir2Select              : R_TRIG;
+
+    // Reservoir degassing - Settings
+    rtReservoir1Degass              : R_TRIG;
+    rtReservoir2Degass              : R_TRIG;
+    ftReservoir1Degass              : F_TRIG;
+    ftReservoir2Degass              : F_TRIG;
+    rtReservoirCancelDegass         : R_TRIG;
+
+    // Reservoir degassing - Popup
+    rtDegassingPopupStart1          : R_TRIG;
+    rtDegassingPopupStart2          : R_TRIG;
+    rtDegassingPopupClose           : R_TRIG;
+
+    // Detect new degassing-required occurrences
+    rtReservoir1DegassingRequired   : R_TRIG;
+    rtReservoir2DegassingRequired   : R_TRIG;
+
+    // Reservoir degassing popup control
+    bReservoirResetAction           : BOOL;
+    bPopupStartReservoir1           : BOOL;
+    bPopupStartReservoir2           : BOOL;
+    bReservoir1PopupPending         : BOOL;
+    bReservoir2PopupPending         : BOOL;
+
+    // Station commands
+    rtAssemblyStationStart          : R_TRIG;
+    rtSiliconeStationStart          : R_TRIG;
+
+    // IVEK commands
+    rtIvekPrime                     : R_TRIG;
+    rtIvekReference                 : R_TRIG;
+    rtIvekMaintenanceStop           : R_TRIG;
+
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[rtStart(CLK := GVL_MASTER.stInputs.bStartButton);
 rtReset(CLK := GVL_MASTER.stInputs.bResetButton);
@@ -43,92 +63,286 @@ rtAck(CLK := GVL_HMI.stCommands.bAcknowledge);
 
 rtReservoir1Select(CLK := GVL_HMI.stCommands.bReservoir1Select);
 rtReservoir2Select(CLK := GVL_HMI.stCommands.bReservoir2Select);
+
+// -----------------------------------------------------------------------------
+// RESERVOIR DEGASSING - SETTINGS COMMANDS
+// -----------------------------------------------------------------------------
+
 rtReservoir1Degass(CLK := GVL_HMI.stCommands.bReservoir1Degass);
 rtReservoir2Degass(CLK := GVL_HMI.stCommands.bReservoir2Degass);
-rtReservoirCancelDegass(CLK := GVL_HMI.stCommands.bCancelReservoirDegassing);
-rtDegassingPopupStart(CLK := GVL_HMI.stCommands.bReservoirDegassingPopupStart);
-rtDegassingPopupClose(CLK := GVL_HMI.stCommands.bReservoirDegassingPopupClose);
 
+ftReservoir1Degass(CLK := GVL_HMI.stCommands.bReservoir1Degass);
+ftReservoir2Degass(CLK := GVL_HMI.stCommands.bReservoir2Degass);
+
+rtReservoirCancelDegass(
+    CLK := GVL_HMI.stCommands.bCancelReservoirDegassing
+);
+
+// -----------------------------------------------------------------------------
+// RESERVOIR DEGASSING - POPUP COMMANDS
+// -----------------------------------------------------------------------------
+
+rtDegassingPopupStart1(
+    CLK := GVL_HMI.stCommands.bReservoir1DegassingPopupStart
+);
+
+rtDegassingPopupStart2(
+    CLK := GVL_HMI.stCommands.bReservoir2DegassingPopupStart
+);
+
+rtDegassingPopupClose(
+    CLK := GVL_HMI.stCommands.bReservoirDegassingPopupClose
+);
+
+
+// -----------------------------------------------------------------------------
+// DETECT NEW DEGASSING-REQUIRED OCCURRENCES
+// -----------------------------------------------------------------------------
+
+rtReservoir1DegassingRequired(
+    CLK :=
+        GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].
+        bDegassingActionRequired
+);
+
+rtReservoir2DegassingRequired(
+    CLK :=
+        GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].
+        bDegassingActionRequired
+);
+
+
+IF rtReservoir1DegassingRequired.Q THEN
+    bReservoir1PopupPending := TRUE;
+END_IF
+
+IF rtReservoir2DegassingRequired.Q THEN
+    bReservoir2PopupPending := TRUE;
+END_IF
+
+
+// -----------------------------------------------------------------------------
+// GENERIC DEGASSING POPUP BUTTON AVAILABILITY
+// -----------------------------------------------------------------------------
+
+GVL_HMI.stStatus.bReservoir1DegassingPopupEnabled :=
+    GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].
+    bDegassingActionRequired
+    AND NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive;
+
+GVL_HMI.stStatus.bReservoir2DegassingPopupEnabled :=
+    GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].
+    bDegassingActionRequired
+    AND NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive;
+
+
+// -----------------------------------------------------------------------------
+// RESET / DEGASSING POPUP
+// -----------------------------------------------------------------------------
+
+// Reset opens the popup only when:
+// - machine is not in Fault;
+// - no reservoir is currently degassing;
+// - at least one reservoir has a new popup occurrence pending.
 bReservoirResetAction :=
     rtReset.Q
     AND (GVL_MASTER.stStatus.eMachineState <> E_MachineState.Fault)
+    AND NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive
     AND (
-        GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassingActionRequired
-        OR GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassingActionRequired
+        bReservoir1PopupPending
+        OR bReservoir2PopupPending
     );
+
 
 GVL_MASTER.stCommand.bStart := rtStart.Q;
 GVL_MASTER.stCommand.bStop := GVL_MASTER.stInputs.bStopButton;
 
-// Reset is consumed by the reservoir action popup so it cannot reset the
-// active ProcessCycle/SiliconeProcess while AutoCycle is running.
-GVL_MASTER.stCommand.bReset := rtReset.Q AND NOT bReservoirResetAction;
+// Reset is consumed when it is being used to open the reservoir popup.
+GVL_MASTER.stCommand.bReset :=
+    rtReset.Q
+    AND NOT bReservoirResetAction;
+
 GVL_MASTER.stCommand.bAcknowledge := rtAck.Q;
 
+
+// Open the generic reservoir degassing popup.
 IF bReservoirResetAction THEN
-
     GVL_HMI.stStatus.bReservoirDegassingPopup := TRUE;
+END_IF
 
-    IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassingActionRequired THEN
-        GVL_HMI.stStatus.usiReservoirDegassingPopup := 1;
-    ELSE
-        GVL_HMI.stStatus.usiReservoirDegassingPopup := 2;
-    END_IF
+
+// -----------------------------------------------------------------------------
+// POPUP CANCEL
+// -----------------------------------------------------------------------------
+
+// Closing the popup consumes the popup occurrence.
+// It DOES NOT clear DegassingActionRequired.
+// The operator can therefore still start degassing later from Settings.
+IF rtDegassingPopupClose.Q THEN
+
+    GVL_HMI.stStatus.bReservoirDegassingPopup := FALSE;
+
+    bReservoir1PopupPending := FALSE;
+    bReservoir2PopupPending := FALSE;
+
+END_IF
+
+
+// -----------------------------------------------------------------------------
+// POPUP RESERVOIR SELECTION
+// -----------------------------------------------------------------------------
+
+bPopupStartReservoir1 :=
+    rtDegassingPopupStart1.Q
+    AND GVL_HMI.stStatus.bReservoirDegassingPopup
+    AND NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive
+    AND GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].
+        bDegassingActionRequired;
+
+
+bPopupStartReservoir2 :=
+    rtDegassingPopupStart2.Q
+    AND GVL_HMI.stStatus.bReservoirDegassingPopup
+    AND NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive
+    AND GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].
+        bDegassingActionRequired;
+
+
+// Reset momentary popup commands after edge detection.
+IF rtDegassingPopupStart1.Q THEN
+    GVL_HMI.stCommands.bReservoir1DegassingPopupStart := FALSE;
+END_IF
+
+IF rtDegassingPopupStart2.Q THEN
+    GVL_HMI.stCommands.bReservoir2DegassingPopupStart := FALSE;
 END_IF
 
 IF rtDegassingPopupClose.Q THEN
-    GVL_HMI.stStatus.bReservoirDegassingPopup := FALSE;
-    GVL_HMI.stStatus.usiReservoirDegassingPopup := 0;
-END_IF
-
-bPopupStartReservoir1 :=
-    rtDegassingPopupStart.Q
-    AND GVL_HMI.stStatus.bReservoirDegassingPopup
-    AND (GVL_HMI.stStatus.usiReservoirDegassingPopup = 1)
-    AND GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassingActionRequired;
-
-bPopupStartReservoir2 :=
-    rtDegassingPopupStart.Q
-    AND GVL_HMI.stStatus.bReservoirDegassingPopup
-    AND (GVL_HMI.stStatus.usiReservoirDegassingPopup = 2)
-    AND GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassingActionRequired;
-
-IF rtDegassingPopupStart.Q OR rtDegassingPopupClose.Q THEN
-    GVL_HMI.stCommands.bReservoirDegassingPopupStart := FALSE;
     GVL_HMI.stCommands.bReservoirDegassingPopupClose := FALSE;
 END_IF
 
-IF bPopupStartReservoir1 OR bPopupStartReservoir2 THEN
+
+// Starting Reservoir 1 consumes only Reservoir 1's popup occurrence.
+IF bPopupStartReservoir1 THEN
+
+    bReservoir1PopupPending := FALSE;
+
     GVL_HMI.stStatus.bReservoirDegassingPopup := FALSE;
-    GVL_HMI.stStatus.usiReservoirDegassingPopup := 0;
+
 END_IF
 
-IF GVL_HMI.stStatus.bReservoirDegassingPopup THEN
-    IF (GVL_HMI.stStatus.usiReservoirDegassingPopup = 1)
-       AND NOT GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassingActionRequired
-    THEN
-        GVL_HMI.stStatus.bReservoirDegassingPopup := FALSE;
-        GVL_HMI.stStatus.usiReservoirDegassingPopup := 0;
-    ELSIF (GVL_HMI.stStatus.usiReservoirDegassingPopup = 2)
-       AND NOT GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassingActionRequired
-    THEN
-        GVL_HMI.stStatus.bReservoirDegassingPopup := FALSE;
-        GVL_HMI.stStatus.usiReservoirDegassingPopup := 0;
-    END_IF
+
+// Starting Reservoir 2 consumes only Reservoir 2's popup occurrence.
+IF bPopupStartReservoir2 THEN
+
+    bReservoir2PopupPending := FALSE;
+
+    GVL_HMI.stStatus.bReservoirDegassingPopup := FALSE;
+
 END_IF
 
-GVL_SiliconeSupply_Interface.bCmdSelectReservoir1 := rtReservoir1Select.Q;
-GVL_SiliconeSupply_Interface.bCmdSelectReservoir2 := rtReservoir2Select.Q;
 
+// -----------------------------------------------------------------------------
+// RESERVOIR SELECTION
+// -----------------------------------------------------------------------------
+
+GVL_SiliconeSupply_Interface.bCmdSelectReservoir1 :=
+    rtReservoir1Select.Q;
+
+GVL_SiliconeSupply_Interface.bCmdSelectReservoir2 :=
+    rtReservoir2Select.Q;
+
+
+// -----------------------------------------------------------------------------
+// DEGASSING START
+// -----------------------------------------------------------------------------
+
+// Start can originate from:
+// - Reservoir Settings toggle;
+// - generic degassing popup.
+//
+// The Silicone Supply FB also performs the final validation and only accepts
+// a new request while its degassing state machine is Idle.
 GVL_SiliconeSupply_Interface.bCmdStartDegassing1 :=
-    rtReservoir1Degass.Q OR bPopupStartReservoir1;
+    (
+        rtReservoir1Degass.Q
+        OR bPopupStartReservoir1
+    )
+    AND NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive;
+
 
 GVL_SiliconeSupply_Interface.bCmdStartDegassing2 :=
-    rtReservoir2Degass.Q OR bPopupStartReservoir2;
+    (
+        rtReservoir2Degass.Q
+        OR bPopupStartReservoir2
+    )
+    AND NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive;
 
+
+// -----------------------------------------------------------------------------
+// DEGASSING CANCEL
+// -----------------------------------------------------------------------------
+
+// Cancel can originate from:
+// 1. Existing explicit Cancel command;
+// 2. Reservoir 1 toggle going OFF while Reservoir 1 is actually degassing;
+// 3. Reservoir 2 toggle going OFF while Reservoir 2 is actually degassing.
+//
+// A falling edge from the inactive reservoir cannot cancel the active one.
 GVL_SiliconeSupply_Interface.bCmdCancelDegassing :=
-    rtReservoirCancelDegass.Q;
+    rtReservoirCancelDegass.Q
 
+    OR
+    (
+        ftReservoir1Degass.Q
+        AND
+        GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassing
+    )
+
+    OR
+    (
+        ftReservoir2Degass.Q
+        AND
+        GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassing
+    );
+
+
+// -----------------------------------------------------------------------------
+// SYNCHRONISE SETTINGS TOGGLES WITH REAL DEGASSING STATUS
+// -----------------------------------------------------------------------------
+
+// Once a degassing cycle is active, the HMI command reflects the real state.
+// This also means that a cycle started from the popup makes the corresponding
+// Settings toggle appear ON.
+IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bDegassing THEN
+
+    GVL_HMI.stCommands.bReservoir1Degass := TRUE;
+    GVL_HMI.stCommands.bReservoir2Degass := FALSE;
+
+ELSIF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassing THEN
+
+    GVL_HMI.stCommands.bReservoir1Degass := FALSE;
+    GVL_HMI.stCommands.bReservoir2Degass := TRUE;
+
+END_IF
+
+
+// When degassing has finished or has been cancelled, return both command
+// toggles to OFF.
+//
+// Do not do this during the same scan as a new start request, otherwise the
+// HMI command could be cleared before the Silicone Supply FB processes it.
+IF NOT GVL_MASTER.stStatus.stSiliconeSupply.bDegassingActive
+    AND NOT rtReservoir1Degass.Q
+    AND NOT rtReservoir2Degass.Q
+    AND NOT bPopupStartReservoir1
+    AND NOT bPopupStartReservoir2
+THEN
+
+    GVL_HMI.stCommands.bReservoir1Degass := FALSE;
+    GVL_HMI.stCommands.bReservoir2Degass := FALSE;
+
+END_IF
 
 
 // -----------------------------------------------------------------------------
@@ -136,6 +350,7 @@ GVL_SiliconeSupply_Interface.bCmdCancelDegassing :=
 // HMI value is entered in minutes.
 // Valid range: 1 to 60 minutes.
 // -----------------------------------------------------------------------------
+
 IF (GVL_HMI.stCommands.uiDegassingTimeMinutesRequest >= 1)
     AND (GVL_HMI.stCommands.uiDegassingTimeMinutesRequest <= 60)
 THEN
@@ -150,6 +365,10 @@ THEN
 END_IF
 
 
+// -----------------------------------------------------------------------------
+// STATION COMMANDS
+// -----------------------------------------------------------------------------
+
 rtAssemblyStationStart(
     CLK := GVL_HMI.stCommands.bAssemblyStationStart
 );
@@ -159,106 +378,171 @@ rtSiliconeStationStart(
 );
 
 
+rtIvekPrime(
+    CLK := GVL_HMI.stCommands.bIvekPrime
+);
 
-rtIvekPrime(CLK := GVL_HMI.stCommands.bIvekPrime);
-rtIvekReference(CLK := GVL_HMI.stCommands.bIvekReference);
-rtIvekMaintenanceStop(CLK := GVL_HMI.stCommands.bIvekMaintenanceStop);
+rtIvekReference(
+    CLK := GVL_HMI.stCommands.bIvekReference
+);
 
-GVL_MASTER.stCommand.bIvekPrime := rtIvekPrime.Q;
-GVL_MASTER.stCommand.bIvekReference := rtIvekReference.Q;
-GVL_MASTER.stCommand.bIvekMaintenanceStop := rtIvekMaintenanceStop.Q;
+rtIvekMaintenanceStop(
+    CLK := GVL_HMI.stCommands.bIvekMaintenanceStop
+);
 
-IF rtIvekPrime.Q THEN GVL_HMI.stCommands.bIvekPrime := FALSE; END_IF
-IF rtIvekReference.Q THEN GVL_HMI.stCommands.bIvekReference := FALSE; END_IF
-IF rtIvekMaintenanceStop.Q THEN GVL_HMI.stCommands.bIvekMaintenanceStop := FALSE; END_IF
+
+GVL_MASTER.stCommand.bIvekPrime :=
+    rtIvekPrime.Q;
+
+GVL_MASTER.stCommand.bIvekReference :=
+    rtIvekReference.Q;
+
+GVL_MASTER.stCommand.bIvekMaintenanceStop :=
+    rtIvekMaintenanceStop.Q;
+
+
+IF rtIvekPrime.Q THEN
+    GVL_HMI.stCommands.bIvekPrime := FALSE;
+END_IF
+
+IF rtIvekReference.Q THEN
+    GVL_HMI.stCommands.bIvekReference := FALSE;
+END_IF
+
+IF rtIvekMaintenanceStop.Q THEN
+    GVL_HMI.stCommands.bIvekMaintenanceStop := FALSE;
+END_IF
+
 
 IF rtSiliconeStationStart.Q THEN
     GVL_HMI.stCommands.bSiliconeStationStart := FALSE;
-END_IF;
+END_IF
+
 
 IF rtAssemblyStationStart.Q THEN
+
     // Convert HMI button action to a single scan command.
     GVL_HMI.stCommands.bAssemblyStationStart := FALSE;
-END_IF;
 
+END_IF
+
+
+// -----------------------------------------------------------------------------
+// MANUAL MODE
+// -----------------------------------------------------------------------------
 
 // Gives the HMI time to stabilise after entering Manual Mode.
 tonManualModeHmiGuard(
     IN := GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual,
     PT := T#1S
-); 
-rtManualRequest(
-    CLK := GVL_HMI.stCommands.bManualModeRequest 	
 );
+
+
+rtManualRequest(
+    CLK := GVL_HMI.stCommands.bManualModeRequest
+);
+
 
 // Memorise a new HMI request until the machine accepts Manual mode.
 IF rtManualRequest.Q THEN
-	GVL_HMI.stCommands.bManualModeRequest := FALSE;
+
+    GVL_HMI.stCommands.bManualModeRequest := FALSE;
     bManualRequestLatched := TRUE;
+
 END_IF
+
 
 // Clear the request only after Manual mode has been accepted.
 IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual THEN
+
     bManualRequestLatched := FALSE;
+
 END_IF
 
-GVL_MASTER.stCommand.bManualRequest := bManualRequestLatched;
+
+GVL_MASTER.stCommand.bManualRequest :=
+    bManualRequestLatched;
+
 
 // Keep the HMI Manual Mode indication active until the machine reaches Stopped.
-// IF GVL_HMI.stCommands.bManualModeEnable  THEN
-// 
-//     GVL_MASTER.stStatus.eMachineState := E_MachineState.Manual;
+IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual
+    AND tonManualModeHmiGuard.Q
+THEN
 
-IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual AND tonManualModeHmiGuard.Q THEN
-	 IF NOT GVL_HMI.stCommands.bManualModeEnable THEN
-    	GVL_MASTER.stCommand.bStop := TRUE;
-	 END_IF
+    IF NOT GVL_HMI.stCommands.bManualModeEnable THEN
+        GVL_MASTER.stCommand.bStop := TRUE;
+    END_IF
+
 END_IF
 
 
+// -----------------------------------------------------------------------------
+// MANUAL MODE COMMANDS
+// -----------------------------------------------------------------------------
 
-// This command is only valid while the machine is in Manual Mode.
 IF GVL_MASTER.stStatus.eMachineState = E_MachineState.Manual THEN
 
-    GVL_MASTER.stCommand.bIndexerManualEnable 			:=GVL_HMI.stCommands.bIndexerManualEnable;
-	
-	GVL_MASTER.stCommand.bSiliconeSupportExtend 		:=GVL_HMI.stCommands.bSiliconeSupportExtend;
-	GVL_MASTER.stCommand.bSiliconeSupportRetract 		:=GVL_HMI.stCommands.bSiliconeSupportRetract;
-	GVL_MASTER.stCommand.bAssemblySupportExtend 		:=GVL_HMI.stCommands.bAssemblySupportExtend;
-	GVL_MASTER.stCommand.bAssemblySupportRetract 		:=GVL_HMI.stCommands.bAssemblySupportRetract;
+    GVL_MASTER.stCommand.bIndexerManualEnable :=
+        GVL_HMI.stCommands.bIndexerManualEnable;
 
-    GVL_MASTER.stCommand.bNestCylindersManualEnable := GVL_HMI.stCommands.bNestCylindersManualEnable;
+    GVL_MASTER.stCommand.bSiliconeSupportExtend :=
+        GVL_HMI.stCommands.bSiliconeSupportExtend;
 
-    GVL_MASTER.stCommand.bAssemblyStationManualEnable  := GVL_HMI.stCommands.bAssemblyStationManualEnable;
-    GVL_MASTER.stCommand.bManualAssemblyStart          := rtAssemblyStationStart.Q;
+    GVL_MASTER.stCommand.bSiliconeSupportRetract :=
+        GVL_HMI.stCommands.bSiliconeSupportRetract;
 
-    GVL_MASTER.stCommand.bSiliconeStationManualEnable := GVL_HMI.stCommands.bSiliconeStationManualEnable;
-    GVL_MASTER.stCommand.bManualSiliconeStart := rtSiliconeStationStart.Q;
+    GVL_MASTER.stCommand.bAssemblySupportExtend :=
+        GVL_HMI.stCommands.bAssemblySupportExtend;
+
+    GVL_MASTER.stCommand.bAssemblySupportRetract :=
+        GVL_HMI.stCommands.bAssemblySupportRetract;
+
+    GVL_MASTER.stCommand.bNestCylindersManualEnable :=
+        GVL_HMI.stCommands.bNestCylindersManualEnable;
+
+    GVL_MASTER.stCommand.bAssemblyStationManualEnable :=
+        GVL_HMI.stCommands.bAssemblyStationManualEnable;
+
+    GVL_MASTER.stCommand.bManualAssemblyStart :=
+        rtAssemblyStationStart.Q;
+
+    GVL_MASTER.stCommand.bSiliconeStationManualEnable :=
+        GVL_HMI.stCommands.bSiliconeStationManualEnable;
+
+    GVL_MASTER.stCommand.bManualSiliconeStart :=
+        rtSiliconeStationStart.Q;
+
 ELSE
-    GVL_HMI.stCommands.bIndexerManualEnable 			:= FALSE;
-    GVL_MASTER.stCommand.bIndexerManualEnable 			:= FALSE;
-	
-	GVL_HMI.stCommands.bSiliconeSupportExtend 			:= FALSE;
-    GVL_HMI.stCommands.bSiliconeSupportRetract 			:= FALSE;
-    GVL_HMI.stCommands.bAssemblySupportExtend 			:= FALSE;
-    GVL_HMI.stCommands.bAssemblySupportRetract 			:= FALSE;
-    GVL_MASTER.stCommand.bSiliconeSupportExtend 		:= FALSE;
-    GVL_MASTER.stCommand.bSiliconeSupportRetract 		:= FALSE;
-    GVL_MASTER.stCommand.bAssemblySupportExtend 		:= FALSE;
-    GVL_MASTER.stCommand.bAssemblySupportRetract 		:= FALSE;
 
-    GVL_HMI.stCommands.bAssemblyStationManualEnable     := FALSE;
-    GVL_HMI.stCommands.bAssemblyStationStart            := FALSE;
-    GVL_MASTER.stCommand.bAssemblyStationManualEnable   := FALSE;
-    GVL_MASTER.stCommand.bManualAssemblyStart           := FALSE;
-    GVL_HMI.stCommands.bSiliconeStationManualEnable     := FALSE;
-    GVL_HMI.stCommands.bSiliconeStationStart            := FALSE;
-    GVL_MASTER.stCommand.bSiliconeStationManualEnable   := FALSE;
-    GVL_MASTER.stCommand.bManualSiliconeStart           := FALSE;
+    GVL_HMI.stCommands.bIndexerManualEnable := FALSE;
+    GVL_MASTER.stCommand.bIndexerManualEnable := FALSE;
+
+    GVL_HMI.stCommands.bSiliconeSupportExtend := FALSE;
+    GVL_HMI.stCommands.bSiliconeSupportRetract := FALSE;
+    GVL_HMI.stCommands.bAssemblySupportExtend := FALSE;
+    GVL_HMI.stCommands.bAssemblySupportRetract := FALSE;
+
+    GVL_MASTER.stCommand.bSiliconeSupportExtend := FALSE;
+    GVL_MASTER.stCommand.bSiliconeSupportRetract := FALSE;
+    GVL_MASTER.stCommand.bAssemblySupportExtend := FALSE;
+    GVL_MASTER.stCommand.bAssemblySupportRetract := FALSE;
+
+    GVL_HMI.stCommands.bAssemblyStationManualEnable := FALSE;
+    GVL_HMI.stCommands.bAssemblyStationStart := FALSE;
+
+    GVL_MASTER.stCommand.bAssemblyStationManualEnable := FALSE;
+    GVL_MASTER.stCommand.bManualAssemblyStart := FALSE;
+
+    GVL_HMI.stCommands.bSiliconeStationManualEnable := FALSE;
+    GVL_HMI.stCommands.bSiliconeStationStart := FALSE;
+
+    GVL_MASTER.stCommand.bSiliconeStationManualEnable := FALSE;
+    GVL_MASTER.stCommand.bManualSiliconeStart := FALSE;
+
     GVL_HMI.stCommands.bNestCylindersManualEnable := FALSE;
     GVL_MASTER.stCommand.bNestCylindersManualEnable := FALSE;
-	
-	 // TODO:
+
+    // TODO:
     // Clear the remaining Manual Mode HMI commands here when their
     // reset behaviour is implemented.
     //
@@ -269,33 +553,55 @@ ELSE
     // bIvekStartManual
     // bIvekStopManual
     // bIvekReset
-	
+
 END_IF
 
 
-GVL_MASTER.stCommand.bManualIndexForward 			:= GVL_HMI.stCommands.bIndexForward;
-GVL_MASTER.stCommand.bManualIndexHome 				:= GVL_HMI.stCommands.bIndexHome;
-GVL_MASTER.stCommand.bExternalLight                 := GVL_HMI.stCommands.bExternalLight;
+GVL_MASTER.stCommand.bManualIndexForward :=
+    GVL_HMI.stCommands.bIndexForward;
 
+GVL_MASTER.stCommand.bManualIndexHome :=
+    GVL_HMI.stCommands.bIndexHome;
 
-GVL_MASTER.stCommand.bManualMainDoorUnlock 			:= GVL_HMI.stCommands.bMainDoorUnlock;
-GVL_MASTER.stCommand.bManualEquipmentStart 			:= GVL_HMI.stCommands.bIvekStartManual;
-GVL_MASTER.stCommand.bManualEquipmentStop 			:= GVL_HMI.stCommands.bIvekStopManual;
-GVL_MASTER.stCommand.bManualEquipmentReset 			:= GVL_HMI.stCommands.bIvekReset;
-GVL_MASTER.stCommand.usiRecipeRequest 				:= GVL_HMI.stCommands.usiRecipeRequest;
-GVL_MASTER.stCommand.uiResetStatisticsNestId 		:= GVL_HMI.stCommands.uiResetStatisticsNestId;
-GVL_MASTER.stCommand.bIvekPrimeEnable 				:=GVL_HMI.stCommands.bIvekPrimeEnable;
+GVL_MASTER.stCommand.bExternalLight :=
+    GVL_HMI.stCommands.bExternalLight;
+
+GVL_MASTER.stCommand.bManualMainDoorUnlock :=
+    GVL_HMI.stCommands.bMainDoorUnlock;
+
+GVL_MASTER.stCommand.bManualEquipmentStart :=
+    GVL_HMI.stCommands.bIvekStartManual;
+
+GVL_MASTER.stCommand.bManualEquipmentStop :=
+    GVL_HMI.stCommands.bIvekStopManual;
+
+GVL_MASTER.stCommand.bManualEquipmentReset :=
+    GVL_HMI.stCommands.bIvekReset;
+
+GVL_MASTER.stCommand.usiRecipeRequest :=
+    GVL_HMI.stCommands.usiRecipeRequest;
+
+GVL_MASTER.stCommand.uiResetStatisticsNestId :=
+    GVL_HMI.stCommands.uiResetStatisticsNestId;
+
+GVL_MASTER.stCommand.bIvekPrimeEnable :=
+    GVL_HMI.stCommands.bIvekPrimeEnable;
+
 
 // -----------------------------------------------------------------------------
 // PLC POWER CONTROL
 // -----------------------------------------------------------------------------
 
 IF GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Reboot THEN
+
     tonPowerDelay.PT := T#15S;
 
 ELSIF GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Shutdown THEN
+
     tonPowerDelay.PT := T#60S;
+
 END_IF
+
 
 tonPowerDelay(
     IN :=
@@ -303,6 +609,7 @@ tonPowerDelay(
         OR
         (GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Shutdown)
 );
+
 
 IF tonPowerDelay.IN THEN
 
@@ -319,14 +626,20 @@ IF tonPowerDelay.IN THEN
             DINT_TO_INT(
                 15 - (TIME_TO_DINT(tonPowerDelay.ET) / 1000)
             );
+
     END_IF
 
 ELSE
+
     iPowerCountdown := 0;
+
 END_IF
 
+
 // Publish power countdown to HMI status.
-GVL_HMI.stStatus.iPowerCountdown := iPowerCountdown;
+GVL_HMI.stStatus.iPowerCountdown :=
+    iPowerCountdown;
+
 
 CASE GVL_HMI.stCommands.ePowerCmd OF
 
@@ -335,17 +648,20 @@ CASE GVL_HMI.stCommands.ePowerCmd OF
         bTriggerReboot := FALSE;
         bTriggerShutdown := FALSE;
 
+
     E_PLC_Power.Reboot:
 
         IF tonPowerDelay.Q THEN
             bTriggerReboot := TRUE;
         END_IF
 
+
     E_PLC_Power.Shutdown:
 
         IF tonPowerDelay.Q THEN
             bTriggerShutdown := TRUE;
         END_IF
+
 
     E_PLC_Power.Cancel:
 
@@ -354,7 +670,9 @@ CASE GVL_HMI.stCommands.ePowerCmd OF
 
         GVL_HMI.stCommands.ePowerCmd :=
             E_PLC_Power.Idle;
+
 END_CASE
+
 
 fbReboot(
     NETID := '',
@@ -362,11 +680,13 @@ fbReboot(
     TMOUT := DEFAULT_ADS_TIMEOUT
 );
 
+
 fbShutdown(
     NETID := '',
     START := bTriggerShutdown,
     TMOUT := DEFAULT_ADS_TIMEOUT
 );
+
 
 IF fbReboot.BUSY OR fbReboot.ERR THEN
 
@@ -374,7 +694,9 @@ IF fbReboot.BUSY OR fbReboot.ERR THEN
 
     GVL_HMI.stCommands.ePowerCmd :=
         E_PLC_Power.Idle;
+
 END_IF
+
 
 IF fbShutdown.BUSY OR fbShutdown.ERR THEN
 
@@ -382,9 +704,8 @@ IF fbShutdown.BUSY OR fbShutdown.ERR THEN
 
     GVL_HMI.stCommands.ePowerCmd :=
         E_PLC_Power.Idle;
-END_IF
 
-]]></ST>
+END_IF]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

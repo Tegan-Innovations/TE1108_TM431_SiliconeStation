@@ -1,5 +1,5 @@
 <div id="Content_Popup_ManualMode_3" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="480" data-tchmi-height="350" data-tchmi-zindex="2">
-<div id="TcHmiTextblock_1367" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="70" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-text="SILICONE SUPPLY SYSTEM" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="200" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
+<div id="TcHmiTextblock_1367" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="70" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-text="SILICONE SUPPLY SYSTEM" data-tchmi-top="10" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="200" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
 
 
 
@@ -15,28 +15,9 @@
 
 
 </div>
-<div id="TcHmiButton_ManualModeYes_129" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="60" data-tchmi-height-unit="px" data-tchmi-left="40" data-tchmi-left-unit="px" data-tchmi-text="Start Degassing" data-tchmi-top="258" data-tchmi-top-unit="px" data-tchmi-width="180" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="25" data-tchmi-zindex="2" data-tchmi-text-font-weight="Bold" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stPuckLocker.bPuckDetected%/s%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupStart|BindingMode=TwoWay%/s%">
+<div id="TcHmiButton_Reservoir1" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="60" data-tchmi-height-unit="px" data-tchmi-left="40" data-tchmi-left-unit="px" data-tchmi-text="Reservoir 1" data-tchmi-top="259" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="25" data-tchmi-zindex="2" data-tchmi-text-font-weight="Bold" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bReservoir1DegassingPopupEnabled%/s%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bReservoir1DegassingPopupStart|BindingMode=TwoWay%/s%">
 
-<script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
-[
-  {
-    "event": "%ctx%owner::Id|EventRegistrationMode=Resolve%/ctx%.onPressed",
-    "actions": [
-      {
-        "objectType": "WriteToSymbol",
-        "active": true,
-        "symbolExpression": "%s%ADS.PLC1.GVL_HMI.stPuckLocker.bCmdAcknowledgeRemovalFault%/s%",
-        "value": {
-          "objectType": "StaticValue",
-          "valueType": "tchmi:general#/definitions/BOOL",
-          "value": true
-        },
-        "asyncWait": true
-      }
-    ]
-  }
-]
-</script>
+
 
 <script data-tchmi-target-attribute="data-tchmi-background-color" type="application/json">
 {
@@ -56,7 +37,7 @@
 }
 </script>
 </div>
-<div id="TcHmiButton_ManualModeNo_129" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="60" data-tchmi-height-unit="px" data-tchmi-text="Close" data-tchmi-top="258" data-tchmi-top-unit="px" data-tchmi-width="180" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="25" data-tchmi-zindex="2" data-tchmi-right="40" data-tchmi-text-font-weight="Bold" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupClose|BindingMode=TwoWay%/s%">
+<div id="TcHmiButton_ManualModeNo_129" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="60" data-tchmi-height-unit="px" data-tchmi-text="Cancel" data-tchmi-top="258" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="25" data-tchmi-zindex="2" data-tchmi-right="40" data-tchmi-text-font-weight="Bold" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bReservoirDegassingPopupClose|BindingMode=TwoWay%/s%">
 
 
 
@@ -93,7 +74,7 @@
 }
 </script>
 </div>
-<div id="TcHmiRectangle_popUpBackground_300" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiRectangle" data-tchmi-height="350" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="0" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-zindex="0">
+<div id="TcHmiRectangle_popUpBackground_300" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiRectangle" data-tchmi-height="350" data-tchmi-height-unit="px" data-tchmi-left="0" data-tchmi-left-unit="px" data-tchmi-top="10" data-tchmi-top-unit="px" data-tchmi-width="480" data-tchmi-width-unit="px" data-tchmi-zindex="0">
 
 
 <script data-tchmi-target-attribute="data-tchmi-border-style" type="application/json">
@@ -154,7 +135,7 @@
 }
 </script>
 </div>
-<div id="TcHmiTextblock_1366" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="100" data-tchmi-height-unit="px" data-tchmi-left="40" data-tchmi-left-unit="px" data-tchmi-text="Reservoir     has been topped up and must be degassed before it can be used." data-tchmi-top="108" data-tchmi-top-unit="px" data-tchmi-width="400" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="200" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
+<div id="TcHmiTextblock_1366" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="150" data-tchmi-height-unit="px" data-tchmi-left="40" data-tchmi-left-unit="px" data-tchmi-text="Reservoir DEGASSING is required before use. Select a reservoir to start the degassing process or cancel the operation." data-tchmi-top="88" data-tchmi-top-unit="px" data-tchmi-width="400" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="200" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
 <script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
 {
   "color": "rgba(0, 0, 0, 1)"
@@ -182,13 +163,25 @@
 }
 </script>
 </div>
-<div id="TcHmiTextblock_1368" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="35" data-tchmi-height-unit="px" data-tchmi-left="132" data-tchmi-left-unit="px" data-tchmi-text="%s%ADS.PLC1.GVL_HMI.stStatus.usiReservoirDegassingPopup%/s%" data-tchmi-top="125" data-tchmi-top-unit="px" data-tchmi-width="27" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="200" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-weight="Bold">
-<script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
+<div id="TcHmiButton_Reservoir2" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="60" data-tchmi-height-unit="px" data-tchmi-left="179" data-tchmi-left-unit="px" data-tchmi-text="Reservoir 2" data-tchmi-top="259" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="25" data-tchmi-zindex="2" data-tchmi-text-font-weight="Bold" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bReservoir2DegassingPopupEnabled%/s%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bReservoir2DegassingPopupStart|BindingMode=TwoWay%/s%" data-tchmi-is-read-only="False">
+
+
+<script data-tchmi-target-attribute="data-tchmi-background-color" type="application/json">
 {
-  "color": "rgba(0, 0, 0, 1)"
+  "color": "rgba(237, 235, 235, 1)"
 }
 </script>
 
 
+
+
+
+
+
+<script data-tchmi-target-attribute="data-tchmi-text-color" type="application/json">
+{
+  "color": "rgba(1, 0, 0, 1)"
+}
+</script>
 </div>
 </div>

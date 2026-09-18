@@ -548,7 +548,7 @@ IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[1].bVacuumFault THEN
 ELSE
     GVL_MASTER.stStationEvents[1].aEvents[26].bEventText := 'Reservoir 1 topped up';
 END_IF
-GVL_MASTER.stStationEvents[1].aEvents[26].sSolution := 'Press Reset to start degassing';
+GVL_MASTER.stStationEvents[1].aEvents[26].sSolution := 'Press Reset to start degassing or go to settings Silicone Reservoirs';
 
 GVL_MASTER.stStationEvents[1].aEvents[27].bFault := FALSE;
 GVL_MASTER.stStationEvents[1].aEvents[27].bCycleStopRequest := FALSE;
@@ -558,14 +558,11 @@ GVL_MASTER.stStationEvents[1].aEvents[27].bEventFlag :=
     GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bDegassingActionRequired;
 
 IF GVL_MASTER.stStatus.stSiliconeSupply.aReservoir[2].bVacuumFault THEN
-    GVL_MASTER.stStationEvents[1].aEvents[27].bEventText :=
-        'Reservoir 2 degassing failed';
+    GVL_MASTER.stStationEvents[1].aEvents[27].bEventText :='Reservoir 2 degassing failed';
 ELSE
-    GVL_MASTER.stStationEvents[1].aEvents[27].bEventText :=
-        'Reservoir 2 topped up';
+    GVL_MASTER.stStationEvents[1].aEvents[27].bEventText :='Reservoir 2 topped up';
 END_IF
-GVL_MASTER.stStationEvents[1].aEvents[27].sSolution :=
-    'Press Reset to start degassing';
+GVL_MASTER.stStationEvents[1].aEvents[27].sSolution :='Press Reset to start degassing or go to settings Silicone Reservoirs';
 
 // 28/29 - Vacuum acquisition failure
 GVL_MASTER.stStationEvents[1].aEvents[28].bFault := FALSE;
