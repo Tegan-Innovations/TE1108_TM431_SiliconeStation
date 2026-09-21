@@ -10,7 +10,7 @@ STRUCT
     tIndexTimeout               : TIME := T#10S;
     tIndexRotateDelay           : TIME := T#500MS;
     tIndexStopDelay             : TIME := T#1S;
-    tIndexSupportTimeout        : TIME := T#5S;
+    tIndexSupportTimeout        : TIME := T#8S;
     tTwoHandHold                : TIME := T#500MS;
     tTwoHandRecoveryTimeout     : TIME := T#10S;
     tDoorLockTimeout            : TIME := T#10S;
@@ -18,8 +18,8 @@ STRUCT
     tCylinderTimeout            : TIME := T#30S;
     tProcessTimeout             : TIME := T#12S;
     tOperatorIdleTimeout        : TIME := T#30S;
-	tPartVacuumBuildTimeout     : TIME := T#2S;
-	tPartVacuumReleaseTimeout   : TIME := T#2S;
+	tPartVacuumBuildTimeout     : TIME := T#8S;
+	tPartVacuumReleaseTimeout   : TIME := T#8S;
     
 
     // Flipping station commissioning values. Reduce action delay after validation.

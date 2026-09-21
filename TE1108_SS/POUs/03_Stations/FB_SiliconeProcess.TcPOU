@@ -16,6 +16,7 @@ VAR
 	bVacuumLostFault           : BOOL;
 	bVacuumReleaseTimeoutFault : BOOL;
 	bEquipmentCompleteTimeoutFault : BOOL;
+
 	
     bPinchValveRequest      : BOOL;
     bEquipmentStartRequest  : BOOL;
@@ -23,6 +24,7 @@ VAR
     bEquipmentResetRequest  : BOOL;
     stResult                : ST_ProcessResult;
     tonStep                 : TON;
+	tSiliconeAirDelay 		: TIME;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[// Runtime behaviour is implemented in Cyclic().]]></ST>
@@ -44,6 +46,7 @@ VAR_INPUT
 	tPartVacuumBuildTimeout    : TIME;
 	tPartVacuumReleaseTimeout  : TIME;
 
+
     tPinchSettlingDelay        : TIME;
     tEquipmentStartTimeout     : TIME;
     tEquipmentCompleteTimeout  : TIME;
@@ -51,6 +54,7 @@ END_VAR
 
 VAR_OUTPUT
     bPartVacuumEnable          : BOOL;
+    bSiliconeAirEnable         : BOOL;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[// Default one-scan handshake outputs.
@@ -58,6 +62,7 @@ bEquipmentStartRequest := FALSE;
 bEquipmentStopRequest := FALSE;
 bEquipmentResetRequest := FALSE;
 bPartVacuumEnable := FALSE;
+bSiliconeAirEnable := FALSE;
 
 // Stop/reset are handled before state logic.
 IF bResetRequest THEN
@@ -66,6 +71,7 @@ IF bResetRequest THEN
     bStopRequest := FALSE;
     bPinchValveRequest := FALSE;
     bPartVacuumEnable := FALSE;
+	bSiliconeAirEnable := FALSE;
     bReady := bSupplyReady AND bEquipmentReady AND NOT bEquipmentFaulted;
     bBusy := FALSE;
     bDone := FALSE;
@@ -91,6 +97,7 @@ IF bStopRequest THEN
     bStartRequest := FALSE;
     bPinchValveRequest := FALSE;
     bPartVacuumEnable := FALSE;
+	bSiliconeAirEnable := FALSE;
     bBusy := FALSE;
     bDone := FALSE;
     bEquipmentStopRequest := TRUE;
@@ -108,6 +115,7 @@ THEN
 
     bPinchValveRequest := FALSE;
     bPartVacuumEnable := FALSE;
+	bSiliconeAirEnable := FALSE;
     bBusy := FALSE;
     bDone := FALSE;
     bReady := FALSE;
@@ -124,17 +132,20 @@ END_IF
 // the silicone process is active.
 IF NOT bPartVacuumOk
     AND (
-        eState = E_SiliconeProcessState.OpeningPinchValve
+        eState = E_SiliconeProcessState.WaitingAirBeforeSilicone
+        OR eState = E_SiliconeProcessState.OpeningPinchValve
         OR eState = E_SiliconeProcessState.WaitingPinchSettling
         OR eState = E_SiliconeProcessState.StartingEquipment
         OR eState = E_SiliconeProcessState.WaitingEquipmentBusy
         OR eState = E_SiliconeProcessState.WaitingEquipmentComplete
         OR eState = E_SiliconeProcessState.ClosingPinchValve
+        OR eState = E_SiliconeProcessState.WaitingAirAfterSilicone
     )
 THEN
 
     bPinchValveRequest 			:= FALSE;
     bPartVacuumEnable 			:= FALSE;
+	bSiliconeAirEnable 			:= FALSE;
 
     bEquipmentStartRequest 		:= FALSE;
     bEquipmentStopRequest 		:= TRUE;
@@ -161,6 +172,7 @@ CASE eState OF
 
         bPinchValveRequest := FALSE;
         bPartVacuumEnable := FALSE;
+		bSiliconeAirEnable := FALSE;
         bBusy := FALSE;
         bDone := FALSE;
 
@@ -226,10 +238,10 @@ CASE eState OF
 		);
 	
 		IF bPartVacuumOk THEN
-	
+
 			tonStep(IN := FALSE);
-	
-			eState := E_SiliconeProcessState.OpeningPinchValve;
+		
+			eState := E_SiliconeProcessState.WaitingAirBeforeSilicone;
 	
 		ELSIF tonStep.Q THEN
 	
@@ -251,10 +263,31 @@ CASE eState OF
 	
 		END_IF
 		
+		
+	E_SiliconeProcessState.WaitingAirBeforeSilicone:
+
+			bPartVacuumEnable := TRUE;
+			bPinchValveRequest := FALSE;
+			bSiliconeAirEnable := TRUE;
+		
+			tonStep(
+				IN := TRUE,
+				PT := tSiliconeAirDelay
+			);
+		
+			IF tonStep.Q THEN
+		
+				tonStep(IN := FALSE);
+		
+				eState := E_SiliconeProcessState.OpeningPinchValve;
+		
+			END_IF
+		
     E_SiliconeProcessState.OpeningPinchValve:
 
         bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
+		bSiliconeAirEnable := TRUE;
 
         tonStep(IN := FALSE);
 
@@ -265,6 +298,7 @@ CASE eState OF
 
         bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
+		bSiliconeAirEnable := TRUE;
 
         tonStep(
             IN := TRUE,
@@ -281,6 +315,7 @@ CASE eState OF
 
         bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
+		bSiliconeAirEnable := TRUE;
 
         IF bEquipmentReady THEN
             bEquipmentStartRequest := TRUE;
@@ -299,6 +334,7 @@ CASE eState OF
             IF tonStep.Q THEN
                 bPinchValveRequest := FALSE;
                 bPartVacuumEnable := FALSE;
+				bSiliconeAirEnable := FALSE;
                 bFaulted := TRUE;
                 bBusy := FALSE;
 				stResult.bValid := FALSE;
@@ -314,6 +350,7 @@ CASE eState OF
 
         bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
+		bSiliconeAirEnable := TRUE;
 
         // Keep Start asserted until the equipment acknowledges
         // the command by becoming Busy or Done.
@@ -338,6 +375,7 @@ CASE eState OF
             bEquipmentStartRequest := FALSE;
             bPinchValveRequest := FALSE;
             bPartVacuumEnable := FALSE;
+			bSiliconeAirEnable := FALSE;
             bEquipmentStopRequest := TRUE;
 
             bFaulted := TRUE;
@@ -354,7 +392,8 @@ CASE eState OF
 
         bPartVacuumEnable := TRUE;
         bPinchValveRequest := TRUE;
-		bEquipmentCompleteTimeoutFault := TRUE;
+		bSiliconeAirEnable := TRUE;
+		//bEquipmentCompleteTimeoutFault := TRUE;
 
         tonStep(
             IN := TRUE,
@@ -368,29 +407,52 @@ CASE eState OF
 
         ELSIF tonStep.Q THEN
 
-            bPinchValveRequest := FALSE;
-            bPartVacuumEnable := FALSE;
-            bEquipmentStopRequest := TRUE;
-
-            bFaulted := TRUE;
-            bBusy := FALSE;
-
-            stResult.bValid := FALSE;
-            stResult.bPassed := FALSE;
-
-            eState := E_SiliconeProcessState.Fault;
-
-        END_IF
+			bPinchValveRequest := FALSE;
+			bPartVacuumEnable := FALSE;
+			bSiliconeAirEnable := FALSE;
+			bEquipmentStopRequest := TRUE;
+		
+			bEquipmentCompleteTimeoutFault := TRUE;
+		
+			bFaulted := TRUE;
+			bBusy := FALSE;
+		
+			stResult.bValid := FALSE;
+			stResult.bPassed := FALSE;
+		
+			eState := E_SiliconeProcessState.Fault;
+		
+		END_IF
 
 
     E_SiliconeProcessState.ClosingPinchValve:
 
-        bPartVacuumEnable := TRUE;
-        bPinchValveRequest := FALSE;
-
-        tonStep(IN := FALSE);
-
-        eState := E_SiliconeProcessState.StoppingVacuum;
+			bPartVacuumEnable := TRUE;
+			bSiliconeAirEnable := TRUE;
+			bPinchValveRequest := FALSE;
+	
+			tonStep(IN := FALSE);
+	
+			eState := E_SiliconeProcessState.WaitingAirAfterSilicone;
+			
+			E_SiliconeProcessState.WaitingAirAfterSilicone:
+	
+		bPartVacuumEnable := TRUE;
+		bPinchValveRequest := FALSE;
+		bSiliconeAirEnable := TRUE;
+	
+		tonStep(
+			IN := TRUE,
+			PT := tSiliconeAirDelay
+		);
+	
+		IF tonStep.Q THEN
+	
+			tonStep(IN := FALSE);
+	
+			eState := E_SiliconeProcessState.StoppingVacuum;
+	
+		END_IF
 
 
     E_SiliconeProcessState.StoppingVacuum:
@@ -447,6 +509,7 @@ CASE eState OF
 
         bPartVacuumEnable := FALSE;
         bPinchValveRequest := FALSE;
+		bSiliconeAirEnable := FALSE;
         bBusy := FALSE;
         bDone := TRUE;
 
@@ -455,6 +518,7 @@ CASE eState OF
 
         bPartVacuumEnable := FALSE;
         bPinchValveRequest := FALSE;
+		bSiliconeAirEnable := FALSE;
         bReady := FALSE;
         bBusy := FALSE;
         bDone := FALSE;

@@ -535,6 +535,20 @@ CASE eState OF
 		IF stInputs.bAssemblyProcessRequired AND stInputs.bAssemblyProcessComplete THEN
 			bAssemblyProcessCompleteLatched := TRUE;
 		END_IF
+		
+		// Retract each support independently as soon as its
+// respective process has completed.
+//
+		// Do not wait for the other station to finish.
+		stRequestsInternal.bSiliconeSupportRetract :=
+			stInputs.bSiliconeProcessRequired
+			AND bSiliconeProcessCompleteLatched
+			AND NOT stInputs.bSiliconeSupportRetracted;
+		
+// 		stRequestsInternal.bAssemblySupportRetract :=
+// 			stInputs.bAssemblyProcessRequired
+// 			AND bAssemblyProcessCompleteLatched
+// 			AND NOT stInputs.bAssemblySupportRetracted;
 	
 		// Process fault
 		IF (stInputs.bSiliconeProcessRequired

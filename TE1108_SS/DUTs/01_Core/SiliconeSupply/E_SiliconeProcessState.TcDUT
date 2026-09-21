@@ -8,12 +8,16 @@
     StartingVacuum           := 10,
     WaitingVacuumReady       := 20,
 
+    WaitingAirBeforeSilicone := 25,
+
     OpeningPinchValve        := 30,
     WaitingPinchSettling     := 40,
     StartingEquipment        := 50,
     WaitingEquipmentBusy     := 60,
     WaitingEquipmentComplete := 70,
     ClosingPinchValve        := 80,
+
+    WaitingAirAfterSilicone  := 85,
 
     StoppingVacuum           := 90,
     WaitingVacuumReleased    := 100,

@@ -13,6 +13,7 @@ STRUCT
 	rIvekHeaterTemperatureMax   : REAL := 107.0;  // °C
     tPressureFaultDelay         : TIME := T#2S;
     tPressureRecoverDelay       : TIME := T#1S;
+	tSiliconeAirDelay 			: TIME := T#1S;
 
     tDegassingDuration          : TIME := T#3M;
     tDegassingVacuumTimeout     : TIME := T#60S;

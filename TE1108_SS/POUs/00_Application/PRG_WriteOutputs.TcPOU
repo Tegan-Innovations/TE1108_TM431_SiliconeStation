@@ -19,6 +19,7 @@ GVL_IO.stOutputs.bAssemblySupportExtend					:= GVL_MASTER.stOutputs.bAssemblySup
 GVL_IO.stOutputs.bAssemblySupportRetract 				:= GVL_MASTER.stOutputs.bAssemblySupportRetract;
 GVL_IO.stOutputs.bSiliconeSupportExtend   				:= GVL_MASTER.stOutputs.bSiliconeSupportExtend;
 GVL_IO.stOutputs.bSiliconeSupportRetract 				:= GVL_MASTER.stOutputs.bSiliconeSupportRetract;
+GVL_IO.stOutputs.bSiliconeAirEnable 					:=GVL_MASTER.stOutputs.bSiliconeAirEnable;
 
 // Flipping / assembly station
 GVL_IO.stOutputs.bTransferVerticalMiniSlideExtend       := GVL_MASTER.stOutputs.bTransferVerticalMiniSlideExtend;

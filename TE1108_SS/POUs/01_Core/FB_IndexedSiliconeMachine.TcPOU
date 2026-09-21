@@ -599,7 +599,8 @@ fbSiliconeProcess.Cyclic(
     tEquipmentStartTimeout 		:= GVL_Config.stMachine.stSiliconeSupply.tIvekStartTimeout,
     tEquipmentCompleteTimeout 	:= GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout,
 	bSiliconeStationPartPresent := stInputs.bSiliconeStationPartPresent,
-    bPartVacuumEnable 			=> bSiliconeProcessPartVacuumEnable
+    bPartVacuumEnable 			=> bSiliconeProcessPartVacuumEnable,
+	bSiliconeAirEnable          => stOutputsInternal.bSiliconeAirEnable
 );
 
 // The coordinator generates one-scan equipment requests.
@@ -3072,8 +3073,8 @@ stOutputsInternal.bLedReset := FALSE;
 stOutputsInternal.bLedPass := FALSE;
 stOutputsInternal.bLedFail := FALSE;
 stOutputsInternal.bInternalLight := FALSE;
-//stOutputsInternal.bExternalLight := FALSE;
-stOutputsInternal.bPuckLockerPinUp := FALSE;]]></ST>
+stOutputsInternal.bPuckLockerPinUp := FALSE;
+stOutputsInternal.bSiliconeAirEnable := FALSE;]]></ST>
       </Implementation>
     </Method>
   </POU>
