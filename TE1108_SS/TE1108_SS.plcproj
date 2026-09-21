@@ -231,6 +231,9 @@
     <Compile Include="DUTs\05_IO_Mapping\Terminals\ST_EL3064.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DUTs\05_IO_Mapping\Terminals\ST_EL3314.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DUTs\05_IO_Mapping\Terminals\ST_EL6070.TcDUT">
       <SubType>Code</SubType>
     </Compile>

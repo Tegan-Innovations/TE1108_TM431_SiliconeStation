@@ -18,6 +18,7 @@ VAR_GLOBAL
     stTerm13_EL9410    : ST_EL9410;
 	stTerm14_EL3064	   : ST_EL3064;
     stTerm15_EL6652    : ST_EL6652;
+	stTerm33_EL3314    : ST_EL3314;
 END_VAR
 ]]></Declaration>
   </GVL>

@@ -133,6 +133,11 @@ GVL_IO.stInputs.uiSiliconePressureRaw 						:= GVL_EtherCAT.stTerm14_EL3064.iEL3
 GVL_IO.stInputs.uiNozzlePressureRaw 						:= GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch1;
 
 // ---------------------------------------------------------------------------
+// / Term 33 -Analog inputs Voltage
+// ---------------------------------------------------------------------------
+GVL_IO.stInputs.iIvekHeaterTemperature						:= GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch1;
+
+// ---------------------------------------------------------------------------
 // TwinSAFE -> PLC validated aliases
 // ---------------------------------------------------------------------------
 GVL_IO.stInputs.bResetButton 								:= GVL_Safety.bResetButtonPressed;

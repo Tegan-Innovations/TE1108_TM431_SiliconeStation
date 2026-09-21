@@ -15,6 +15,7 @@ STRUCT
     bUp24VPowerSupplyOk              : BOOL;
     bUs24VPowerSupplyOk              : BOOL;
     bIvekHeaterControllerAlarm       : BOOL;
+	rIvekHeaterTemperature 			 : REAL; // Term 33 Ch1 - IVEK heater temperature [°C]
     bMainDoorDiagnosticOk            : BOOL;
     bMs6FeedbackOk                   : BOOL;
     bAirExhausted                    : BOOL;

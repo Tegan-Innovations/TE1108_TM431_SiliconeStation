@@ -29,6 +29,7 @@ STRUCT
     bUp24VPowerSupplyOk         	: BOOL;
     bUs24VPowerSupplyOk         	: BOOL;
     bIvekHeaterControllerAlarm  	: BOOL;
+	iIvekHeaterTemperature			: REAL;
     bSiliconeMinimumLevelSensor1 	: BOOL;
     bSiliconeMinimumLevelSensor2 	: BOOL;
 	

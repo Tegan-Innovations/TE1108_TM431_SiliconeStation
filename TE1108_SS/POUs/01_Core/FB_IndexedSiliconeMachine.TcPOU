@@ -617,6 +617,15 @@ IF fbSiliconeProcess.GetEquipmentStartRequest() THEN
     fbIvek.RequestStart();
 END_IF
 
+stStatus.rIvekHeaterTemperature :=
+    stInputs.rIvekHeaterTemperature;
+
+stStatus.bIvekHeaterTemperatureOutOfRange :=
+    (stInputs.rIvekHeaterTemperature <
+        GVL_Config.stMachine.stSiliconeSupply.rIvekHeaterTemperatureMin)
+    OR
+    (stInputs.rIvekHeaterTemperature >
+        GVL_Config.stMachine.stSiliconeSupply.rIvekHeaterTemperatureMax);
 
 stStatus.eIvekStatusState := fbIvek.GetStatusState();
 
@@ -912,7 +921,8 @@ stPermissives.bInitialisationAllowed :=
     AND NOT fbAssemblyStation.IsFaulted()
     AND stPermissives.bDoorInitialisationReady
     AND stPermissives.bExtractorReady
-    AND NOT stInputs.bIvekHeaterControllerAlarm;
+    AND NOT stInputs.bIvekHeaterControllerAlarm
+	AND NOT stStatus.bIvekHeaterTemperatureOutOfRange ;
 	//AND stSiliconeSupplyStatus.bSiliconePressureOk
     //AND stSiliconeSupplyStatus.bNozzlePressureOk;
 	
@@ -1050,6 +1060,11 @@ IF tonStopRequest.Q THEN
 END_IF
 
 
+IF stStatus.bIvekHeaterTemperatureOutOfRange
+    AND (eMachineState = E_MachineState.Manual)
+THEN
+    bSafetyDropRequest := TRUE;
+END_IF
 // =========================================================
 // PRESSURE FAULT CAUSE LATCH
 // =========================================================
@@ -1382,7 +1397,7 @@ CASE eMachineState OF
 		
 			eInitialisingWaitReason  :=E_InitialisingWaitReason.ExtractorNotReady;
 		
-		ELSIF stInputs.bIvekHeaterControllerAlarm THEN
+		ELSIF stInputs.bIvekHeaterControllerAlarm OR stStatus.bIvekHeaterTemperatureOutOfRange THEN
 
     		eInitialisingWaitReason := E_InitialisingWaitReason.IvekHeaterNotReady;
 		
@@ -1629,6 +1644,7 @@ E_MachineState.ReadyToStart:
             AND stSiliconeSupplyStatus.bSelectedReservoirReady
             AND bIvekAutoCycleReady
 			AND NOT stInputs.bIvekHeaterControllerAlarm
+			AND NOT stStatus.bIvekHeaterTemperatureOutOfRange
         THEN
 	
 			eCycleState := E_CycleState.Disabled;
@@ -1651,7 +1667,7 @@ E_MachineState.ReadyToStart:
 			bSafetyDropRequest := TRUE;
 		END_IF
 		
-		IF stInputs.bIvekHeaterControllerAlarm THEN
+		IF stInputs.bIvekHeaterControllerAlarm OR stStatus.bIvekHeaterTemperatureOutOfRange THEN
 			bSafetyDropRequest := TRUE;
 		END_IF
 
@@ -2653,6 +2669,8 @@ stStatus.bSiliconeStationManualEnabled :=
     AND stCommand.bSiliconeStationManualEnable;
 stStatus.bSiliconeStationManualStartPermissive :=
     stManualModeStatus.bSiliconeStationStartPermissive;
+
+
 
 // Positive IVEK status booleans for TRUE=green / FALSE=red HMI convention.
 stStatus.bIvekReady := fbIvek.IsReady();

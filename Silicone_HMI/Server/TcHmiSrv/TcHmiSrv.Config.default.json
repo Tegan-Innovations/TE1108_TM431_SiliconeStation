@@ -1935,6 +1935,42 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rIvekHeaterTemperatureMax": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::rIvekHeaterTemperatureMax",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "comment": "°C",
+                        "propertyOrder": 6
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rIvekHeaterTemperatureMin": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::stMachine::stSiliconeSupply::rIvekHeaterTemperatureMin",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "comment": "°C",
+                        "propertyOrder": 5
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMax": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6360,6 +6396,41 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.bIvekHeaterTemperatureOutOfRange": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::bIvekHeaterTemperatureOutOfRange",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 44
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.rIvekHeaterTemperature": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::rIvekHeaterTemperature",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/REAL"
+                    },
+                    {
+                        "comment": "IVEK heater temperature [°C]",
+                        "propertyOrder": 76
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bAirSupplyReady": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -10090,6 +10161,8 @@
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.1": 3,
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.2": 3,
                 "ADS.PLC1.GVL_Config.stMachine.aNestEnabled.3": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rIvekHeaterTemperatureMax": 3,
+                "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rIvekHeaterTemperatureMin": 3,
                 "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMax": 3,
                 "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rNozzlePressureMin": 3,
                 "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMax": 3,
@@ -10346,6 +10419,8 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iPowerCountdown": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.bIvekHeaterTemperatureOutOfRange": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.rIvekHeaterTemperature": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bAirSupplyReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bExtractorReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stSiliconeSupply.bNozzlePressureOk": 3,
