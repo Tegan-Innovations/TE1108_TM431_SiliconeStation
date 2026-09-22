@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4026.18">
+  <POU Name="PRG_PersistentData" Id="{ab59fd1c-b90c-423d-a1f2-1f41cfcbfa09}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_PersistentData
+VAR
+    fbWritePersistentData : FB_WritePersistentData;
+
+    bSaveRequest          : BOOL;
+    bSaveBusy             : BOOL;
+    bSaveError            : BOOL;
+    nSaveErrorId          : UDINT;
+
+    fbStoppedTrigger      : R_TRIG;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// =====================================================
+// SAVE TRIGGER
+// =====================================================
+
+// Save persistent data once when the machine enters STOPPED.
+fbStoppedTrigger(
+    CLK := GVL_MASTER.stStatus.eMachineState = E_MachineState.Stopped
+);
+
+IF fbStoppedTrigger.Q THEN
+    bSaveRequest := TRUE;
+END_IF
+
+
+// =====================================================
+// PERSISTENT DATA WRITE
+// =====================================================
+
+fbWritePersistentData(
+    NETID := '',
+    PORT := 851,
+    START := bSaveRequest,
+    TMOUT := T#5S,
+    MODE := SPDM_VAR_BOOST
+);
+
+
+// =====================================================
+// WRITE STATUS
+// =====================================================
+
+bSaveBusy := fbWritePersistentData.BUSY;
+bSaveError := fbWritePersistentData.ERR;
+nSaveErrorId := fbWritePersistentData.ERRID;
+
+
+// =====================================================
+// SAVE REQUEST RESET
+// =====================================================
+
+// START only requires a rising edge.
+IF bSaveRequest THEN
+    bSaveRequest := FALSE;
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

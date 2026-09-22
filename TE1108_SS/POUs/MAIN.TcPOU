@@ -13,6 +13,7 @@ PRG_HmiCommands();
 PRG_Main();
 PRG_Events();
 D_1_PRG_CycleDataCSV();
+PRG_PersistentData();
 PRG_HmiStatus();
 PRG_WriteOutputs();
 PRG_TerminalMapping.WriteOutputs();]]></ST>

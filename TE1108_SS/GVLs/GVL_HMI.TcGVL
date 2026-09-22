@@ -84,7 +84,7 @@ VAR_GLOBAL CONSTANT
 	sSystemName 	 : STRING := 'Silicone Station';
 	sApplication 	 : STRING := 'Silicone Machine';
 	sProjectID       : STRING := 'TE1108';
-    sSoftwareVersion : STRING := 'v1.0.0-rc.1';
+    sSoftwareVersion : STRING := 'v1.0.0-rc.2';
     sTwincat         : STRING := 'v3.1.4026.22.0, Runtime v3.1.4026.22.0 ';
 	sTwincatHMI      : STRING := 'TE2000 v14.16.2';
 	sHMIServer       : STRING := 'TF2000 v14.16.0';

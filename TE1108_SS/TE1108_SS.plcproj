@@ -396,6 +396,9 @@
     <Compile Include="POUs\06_Utilities\PRG_Events.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\06_Utilities\PRG_PersistentData.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
       <SubType>Code</SubType>
     </Compile>
