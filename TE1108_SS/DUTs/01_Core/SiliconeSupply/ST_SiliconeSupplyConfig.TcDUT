@@ -9,8 +9,8 @@ STRUCT
     rSiliconePressureMax        : REAL := 1.7;
     rNozzlePressureMin          : REAL := 1.8;
     rNozzlePressureMax          : REAL := 2.0;
-	rIvekHeaterTemperatureMin   : REAL := 87.0;   // °C
-	rIvekHeaterTemperatureMax   : REAL := 107.0;  // °C
+	rIvekHeaterTemperatureMin   : REAL := 187.0;   // °C
+	rIvekHeaterTemperatureMax   : REAL := 227.0;  // °C
     tPressureFaultDelay         : TIME := T#2S;
     tPressureRecoverDelay       : TIME := T#1S;
 	tSiliconeAirDelay 			: TIME := T#1S;

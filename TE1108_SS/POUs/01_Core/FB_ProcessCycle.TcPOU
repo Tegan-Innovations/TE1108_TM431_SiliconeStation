@@ -541,14 +541,10 @@ CASE eState OF
 //
 		// Do not wait for the other station to finish.
 		stRequestsInternal.bSiliconeSupportRetract :=
-			stInputs.bSiliconeProcessRequired
-			AND bSiliconeProcessCompleteLatched
+			bSiliconeProcessCompleteLatched
 			AND NOT stInputs.bSiliconeSupportRetracted;
 		
-// 		stRequestsInternal.bAssemblySupportRetract :=
-// 			stInputs.bAssemblyProcessRequired
-// 			AND bAssemblyProcessCompleteLatched
-// 			AND NOT stInputs.bAssemblySupportRetracted;
+
 	
 		// Process fault
 		IF (stInputs.bSiliconeProcessRequired
