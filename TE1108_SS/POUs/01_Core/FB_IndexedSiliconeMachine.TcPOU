@@ -145,6 +145,7 @@ VAR
     bProcRetract                  : BOOL;
 
 	bSiliconeProcessPartVacuumEnable : BOOL;
+	bPartVacuumReleasePending        : BOOL;
     // =====================================================
     // INITIALISATION / STOPPING
     // =====================================================
@@ -1014,19 +1015,49 @@ fbManualMode.Cyclic(
     stRequests => stManualModeRequests,
     stStatus => stManualModeStatus);
 	
+	
+	
+	
+	
+// =========================================================
+// PART VACUUM RELEASE CONFIRMATION
+// =========================================================
+// After the Silicone process releases the vacuum, inhibit
+// automatic vacuum restoration until the vacuum feedback
+// confirms that the part has actually been released.
+
+IF fbSiliconeProcess.IsDone() AND stInputs.bPartVacuumOk THEN
+    bPartVacuumReleasePending := TRUE;
+END_IF
+
+IF bPartVacuumReleasePending AND NOT stInputs.bPartVacuumOk THEN
+    bPartVacuumReleasePending := FALSE;
+END_IF	
+	
 // =========================================================
 // PART VACUUM OUTPUT ARBITRATION
 // =========================================================
-// Keep the existing Silicone Process vacuum behaviour.
-// Manual Mode may additionally request vacuum during Prime.
+// In automatic operation the part vacuum follows the machine
+// pneumatic lifecycle while the Silicone Support is retracted.
+//
+// During the Silicone process, FB_SiliconeProcess owns the vacuum.
+// After dispensing it removes its vacuum request before the
+// Silicone Support retracts. Once the support is fully retracted,
+// the normal vacuum request is restored.
+//
+// Manual Mode keeps its existing independent vacuum control.
 
 stOutputsInternal.bPartVacuumEnable :=
     bSiliconeProcessPartVacuumEnable
     OR (
+        bExtractorEnable
+        AND stInputs.bSiliconeSupportRetracted
+        AND NOT bPartVacuumReleasePending
+    )
+    OR (
         (eMachineState = E_MachineState.Manual)
         AND stManualModeRequests.bPartVacuumEnable
     );
-	
 // Manual Prime equipment request.
 // The complete mechanical/vacuum sequence is coordinated by FB_ManualMode.
 IF (eMachineState = E_MachineState.Manual)
