@@ -561,9 +561,12 @@ tonIvekReferenceStop(
 
 // Engineer Settings commands. HMI page access is Engineer-only; PLC also
 // enforces Stopped + safety/air conditions before the FB accepts motion.
-IF stCommand.bIvekMaintenanceStop THEN
+// Controlled IVEK stop before PLC shutdown or reboot.
+IF stCommand.bIvekMaintenanceStop  OR stCommand.bPowerDownRequest THEN
     fbIvek.RequestStop();
 END_IF
+
+
 
 IF stCommand.bIvekReference THEN
     fbIvek.RequestReference();
@@ -2257,8 +2260,7 @@ ELSIF eMachineState = E_MachineState.Manual THEN
 				stAssemblyStationStatus.bRotationPlace
 				OR stInputs.bAssemblySupportExtended;
 	
-			bAssemblySupportLowerRequest :=
-				NOT bAssemblySupportRaiseRequest;
+			bAssemblySupportLowerRequest := FALSE;
 	
 		END_IF
 	

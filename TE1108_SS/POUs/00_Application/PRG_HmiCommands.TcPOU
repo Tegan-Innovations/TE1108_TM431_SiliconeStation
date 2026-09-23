@@ -591,6 +591,12 @@ GVL_MASTER.stCommand.bIvekPrimeEnable :=
 // -----------------------------------------------------------------------------
 // PLC POWER CONTROL
 // -----------------------------------------------------------------------------
+// Request a controlled IVEK stop while a PLC shutdown or reboot
+// sequence is active.
+GVL_MASTER.stCommand.bPowerDownRequest:=
+    (GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Reboot)
+    OR
+    (GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Shutdown);
 
 IF GVL_HMI.stCommands.ePowerCmd = E_PLC_Power.Reboot THEN
 
