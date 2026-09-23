@@ -71,6 +71,7 @@ VAR
 	stFaultNest 				: ST_Nest;
 
     stLastResult                : ST_ProcessResult;
+	bDisabledNestPartPresent 	: BOOL;
 
     // =====================================================
     // COMPONENT STATUS
@@ -562,11 +563,19 @@ tonIvekReferenceStop(
 // Engineer Settings commands. HMI page access is Engineer-only; PLC also
 // enforces Stopped + safety/air conditions before the FB accepts motion.
 // Controlled IVEK stop before PLC shutdown or reboot.
-IF stCommand.bIvekMaintenanceStop  OR stCommand.bPowerDownRequest THEN
+IF stCommand.bIvekMaintenanceStop THEN
     fbIvek.RequestStop();
 END_IF
 
+IF stCommand.bPowerDownRequest THEN
 
+    // Stop active equipment/process sequences before PLC shutdown or reboot.
+    fbIvek.RequestStop();
+    fbSiliconeProcess.RequestStop();
+    fbAssemblyStation.RequestStop();
+	bStopRequested := TRUE;
+
+END_IF
 
 IF stCommand.bIvekReference THEN
     fbIvek.RequestReference();
@@ -655,6 +664,21 @@ fbNestManager.Cyclic(
 stOperatorNest := fbNestManager.GetNestAtPosition(stConfig.eOperatorPosition);
 stSiliconeNest := fbNestManager.GetNestAtPosition(stConfig.eSiliconePosition);
 stAssemblyNest := fbNestManager.GetNestAtPosition(stConfig.eAssemblyPosition);
+
+// =========================================================
+// DISABLED OPERATOR NEST PART DETECTION
+// =========================================================
+// Disabled nests keep the existing machine behaviour while empty.
+// If a part is physically detected at the operator station while
+// the current operator nest is disabled, indexing will be inhibited.
+
+bDisabledNestPartPresent :=
+    NOT stOperatorNest.bEnabled
+    AND
+    (
+        stInputs.bGearboxAssemblyPartPresent
+        OR stInputs.bReservoirPartPresent
+    );
 
 // =========================================================
 // MANUAL MODE - NEW PART / NEST RESULT RESET
@@ -874,9 +898,11 @@ stPermissives.bProcessIndexPermissive 	:= 	NOT fbSiliconeProcess.IsBusy()
 											AND NOT fbSiliconeProcess.IsFaulted()
 											AND fbAssemblyStation.IndexPermissive();
 
-stPermissives.bIndexMoveAllowed 		:=	stPermissives.bSafetyIndexPermissive
+stPermissives.bIndexMoveAllowed :=
+											stPermissives.bSafetyIndexPermissive
 											//AND stPermissives.bOperatorIndexPermissive
-											AND stPermissives.bProcessIndexPermissive;
+											AND stPermissives.bProcessIndexPermissive
+											AND NOT bDisabledNestPartPresent;
 
 
 stPermissives.bProcessStartAllowed 		:= 	stInputs.stSafety.bProcessSafetyPermitted
@@ -2703,6 +2729,7 @@ stStatus.eCycleState 			:= stProcessCycleStatus.eState;
 stStatus.stProcessCycle 		:= stProcessCycleStatus;
 stStatus.stProcessStation 		:= stProcessStationStatus;
 stStatus.stAssemblyStation      := stAssemblyStationStatus;
+stStatus.bDisabledNestPartPresent := bDisabledNestPartPresent;
 
 // Manual HMI projection for the physical Silicone Station.
 stStatus.uiSiliconeStationNestId := stSiliconeNest.nId;

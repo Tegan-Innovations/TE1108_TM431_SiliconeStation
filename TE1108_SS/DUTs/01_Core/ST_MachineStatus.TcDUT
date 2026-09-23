@@ -48,6 +48,7 @@ STRUCT
 	bSiliconePressureConfigRequired : BOOL;
 	bNozzlePressureConfigRequired   : BOOL;
 	bIvekHeaterTemperatureOutOfRange : BOOL;
+	bDisabledNestPartPresent 		: BOOL;
 	
     stPermissives           : ST_MachinePermissives;
     stLastResult            : ST_ProcessResult;

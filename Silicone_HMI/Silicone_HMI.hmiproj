@@ -286,6 +286,9 @@
     <Content Include="Contents\Screens\popups\Content_Popup_Puck.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\popups\Content_Popup_DisabledNest.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_Reject_Part.content">
       <SubType>Content</SubType>
     </Content>
