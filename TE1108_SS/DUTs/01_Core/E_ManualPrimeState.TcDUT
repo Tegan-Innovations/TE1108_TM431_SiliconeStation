@@ -7,6 +7,7 @@ TYPE E_ManualPrimeState :
     Idle := 0,
     ExtendingSupport,
     CheckingPart,
+	WaitingForNozzlePressure,
     BuildingVacuum,
     StartingPrime,
     WaitingPrime,

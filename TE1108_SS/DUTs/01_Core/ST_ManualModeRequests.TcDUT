@@ -25,6 +25,7 @@ STRUCT
 	bIvekPrime             		: BOOL;
 	bIvekPrimeEnable 			: BOOL;
 	bPartVacuumEnable 			: BOOL;
+	bSiliconeAirEnable          : BOOL;
 
     // Manual Silicone Station
     bSiliconeProcessStart       : BOOL;

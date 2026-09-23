@@ -48,6 +48,7 @@ STRUCT
 	bIvekFluidicActive 			   : BOOL;
 	bPartVacuumOk 					: BOOL;
 	bIvekPrimeEnable 				: BOOL;
+	bNozzlePressureOk              : BOOL;
 
 
 END_STRUCT

@@ -146,6 +146,7 @@ VAR
 
 	bSiliconeProcessPartVacuumEnable : BOOL;
 	bPartVacuumReleasePending        : BOOL;
+	bSiliconeProcessAirEnable 		 : BOOL;
     // =====================================================
     // INITIALISATION / STOPPING
     // =====================================================
@@ -601,7 +602,7 @@ fbSiliconeProcess.Cyclic(
     tEquipmentCompleteTimeout 	:= GVL_Config.stMachine.stSiliconeSupply.tIvekCompleteTimeout,
 	bSiliconeStationPartPresent := stInputs.bSiliconeStationPartPresent,
     bPartVacuumEnable 			=> bSiliconeProcessPartVacuumEnable,
-	bSiliconeAirEnable          => stOutputsInternal.bSiliconeAirEnable
+	bSiliconeAirEnable 			=> bSiliconeProcessAirEnable
 );
 
 // The coordinator generates one-scan equipment requests.
@@ -988,6 +989,7 @@ stManualModeInputs.bIvekFluidicReady := fbIvek.IsFluidicReady();
 stManualModeInputs.bIvekFluidicActive := fbIvek.IsFluidicActive();
 stManualModeInputs.bPartVacuumOk := stInputs.bPartVacuumOk;
 stManualModeInputs.bIvekPrimeEnable :=stCommand.bIvekPrimeEnable;
+stManualModeInputs.bNozzlePressureOk :=stSiliconeSupplyStatus.bNozzlePressureOk;
 
 stManualModeInputs.bSiliconeProcessReady := fbSiliconeProcess.IsReady();
 stManualModeInputs.bSiliconeProcessBusy := fbSiliconeProcess.IsBusy();
@@ -1016,7 +1018,16 @@ fbManualMode.Cyclic(
     stStatus => stManualModeStatus);
 	
 	
-	
+// =========================================================
+// SILICONE AIR OUTPUT ARBITRATION
+// =========================================================
+
+stOutputsInternal.bSiliconeAirEnable :=
+    bSiliconeProcessAirEnable
+    OR (
+        (eMachineState = E_MachineState.Manual)
+        AND stManualModeRequests.bSiliconeAirEnable
+    );
 	
 	
 // =========================================================

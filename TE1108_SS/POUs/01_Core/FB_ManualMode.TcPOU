@@ -613,46 +613,74 @@ CASE eManualPrimeState OF
     E_ManualPrimeState.CheckingPart:
 
         IF stInputs.bReservoirPartPresent THEN
-
-            eManualPrimeState := E_ManualPrimeState.BuildingVacuum;
+			
+			 eManualPrimeState := E_ManualPrimeState.WaitingForNozzlePressure;
 
         ELSE
 
             eManualPrimeState := E_ManualPrimeState.Aborting;
 
         END_IF
-
+		
+	E_ManualPrimeState.WaitingForNozzlePressure:
+	
+		// Enable nozzle air and wait until the configured
+		// nozzle pressure range has been confirmed.
+		stRequestsInternal.bSiliconeAirEnable := TRUE;
+	
+		IF stInputs.bNozzlePressureOk THEN
+	
+			eManualPrimeState := E_ManualPrimeState.BuildingVacuum;
+	
+		END_IF
 
     E_ManualPrimeState.BuildingVacuum:
-
+		
+		stRequestsInternal.bSiliconeAirEnable := TRUE;
         stRequestsInternal.bPartVacuumEnable := TRUE;
 
-        IF stInputs.bPartVacuumOk THEN
+            // Nozzle pressure was already confirmed before entering
+		// this state and must remain valid.
+		IF NOT stInputs.bNozzlePressureOk THEN
+	
+			eManualPrimeState := E_ManualPrimeState.Aborting;
+	
+		ELSIF stInputs.bPartVacuumOk THEN
+	
+			eManualPrimeState := E_ManualPrimeState.StartingPrime;
+	
+		END_IF
 
-            eManualPrimeState := E_ManualPrimeState.StartingPrime;
-
-        END_IF
-
-
-    E_ManualPrimeState.StartingPrime:
-
-        // Keep vacuum applied while requesting Prime.
-        stRequestsInternal.bPartVacuumEnable := TRUE;
-        stRequestsInternal.bIvekPrime := TRUE;
-
-        IF stInputs.bIvekFluidicActive THEN
-
-            eManualPrimeState := E_ManualPrimeState.WaitingPrime;
-
-        END_IF
-
+	 E_ManualPrimeState.StartingPrime:
+	
+		// Nozzle air and vacuum must remain available
+		// before the IVEK Prime command is issued.
+		stRequestsInternal.bSiliconeAirEnable := TRUE;
+		stRequestsInternal.bPartVacuumEnable := TRUE;
+	
+		IF NOT stInputs.bNozzlePressureOk THEN
+	
+			eManualPrimeState := E_ManualPrimeState.Aborting;
+	
+		ELSE
+	
+			stRequestsInternal.bIvekPrime := TRUE;
+	
+			IF stInputs.bIvekFluidicActive THEN
+	
+				eManualPrimeState := E_ManualPrimeState.WaitingPrime;
+	
+			END_IF
+	
+		END_IF
 
     E_ManualPrimeState.WaitingPrime:
 
         // Part must remain held during the complete Prime operation.
+		stRequestsInternal.bSiliconeAirEnable := TRUE;
         stRequestsInternal.bPartVacuumEnable := TRUE;
 
-        IF NOT stInputs.bPartVacuumOk THEN
+        IF NOT stInputs.bPartVacuumOk OR NOT stInputs.bNozzlePressureOk THEN
 
             eManualPrimeState := E_ManualPrimeState.Aborting;
 
@@ -664,7 +692,8 @@ CASE eManualPrimeState OF
 
 
     E_ManualPrimeState.ReleasingVacuum:
-
+		
+		stRequestsInternal.bSiliconeAirEnable := FALSE;
         stRequestsInternal.bPartVacuumEnable := FALSE;
 
         IF NOT stInputs.bPartVacuumOk THEN
@@ -695,6 +724,7 @@ CASE eManualPrimeState OF
 
         // Remove vacuum first.
         stRequestsInternal.bPartVacuumEnable := FALSE;
+		stRequestsInternal.bSiliconeAirEnable := FALSE;
 
         // Do not lower the support until vacuum has been released.
         IF NOT stInputs.bPartVacuumOk THEN
@@ -785,7 +815,8 @@ stRequestsInternal.bEquipmentStart 				:= FALSE;
 stRequestsInternal.bEquipmentStop 				:= FALSE;
 stRequestsInternal.bEquipmentReset 				:= FALSE;
 stRequestsInternal.bIvekPrime 					:= FALSE;
-stRequestsInternal.bPartVacuumEnable 			:= FALSE;]]></ST>
+stRequestsInternal.bPartVacuumEnable 			:= FALSE;
+stRequestsInternal.bSiliconeAirEnable 			:= FALSE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="UpdateMessage" Id="{82995339-ff21-4701-8208-d0bdacd4bd00}">
