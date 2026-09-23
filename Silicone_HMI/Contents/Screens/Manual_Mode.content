@@ -448,7 +448,7 @@
 }
 </script>
 </div>
-<div id="TcHmiToggleSwitch_AssemblyNestSupport" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="40" data-tchmi-height-unit="px" data-tchmi-left="390" data-tchmi-left-unit="px" data-tchmi-top="68" data-tchmi-top-unit="px" data-tchmi-width="75" data-tchmi-width-unit="px" data-tchmi-text-font-size="16" data-tchmi-zindex="3">
+<div id="TcHmiToggleSwitch_AssemblyNestSupport" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="40" data-tchmi-height-unit="px" data-tchmi-left="390" data-tchmi-left-unit="px" data-tchmi-top="68" data-tchmi-top-unit="px" data-tchmi-width="75" data-tchmi-width-unit="px" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stCommands.bNestCylindersManualEnable%/s%">
 
 <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
 [
@@ -550,7 +550,7 @@
 }
 </script>
 </div>
-<div id="TcHmiToggleSwitch_SiliconeNestSupport" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="40" data-tchmi-height-unit="px" data-tchmi-left="129" data-tchmi-left-unit="px" data-tchmi-top="68" data-tchmi-top-unit="px" data-tchmi-width="75" data-tchmi-width-unit="px" data-tchmi-text-font-size="16" data-tchmi-zindex="3">
+<div id="TcHmiToggleSwitch_SiliconeNestSupport" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiToggleSwitch" data-tchmi-height="40" data-tchmi-height-unit="px" data-tchmi-left="129" data-tchmi-left-unit="px" data-tchmi-top="68" data-tchmi-top-unit="px" data-tchmi-width="75" data-tchmi-width-unit="px" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stCommands.bNestCylindersManualEnable%/s%">
 
 <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
 [
@@ -726,7 +726,7 @@
 }
 </script>
 </div>
-<div id="TcHmiButton_ApplySiliconeButton" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="839" data-tchmi-left-unit="px" data-tchmi-text="Apply Silicone" data-tchmi-top="17" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationStart%/s%" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationManualStartPermissive%/s%">
+<div id="TcHmiButton_ApplySiliconeButton" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="839" data-tchmi-left-unit="px" data-tchmi-text="Apply Silicone" data-tchmi-top="17" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationStart%/s%" data-tchmi-is-enabled="%f%%s%ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationManualStartPermissive%/s%&amp;&amp;%s%ADS.PLC1.GVL_HMI.stCommands.bSiliconeStationManualEnable%/s%%/f%">
 </div>
 <div id="TcHmiTextblock_1343" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="25" data-tchmi-height-unit="px" data-tchmi-left="722" data-tchmi-left-unit="px" data-tchmi-text="Parts Present" data-tchmi-top="20" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-zindex="37" data-tchmi-text-horizontal-alignment="Center" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-style="Auto" data-tchmi-text-font-weight="Normal" data-tchmi-ignore-escape-sequences="False" data-tchmi-creator-visibility="Visible">
 </div>
@@ -1743,7 +1743,7 @@
 }
 </script>
 </div>
-<div id="TcHmiButton_PrimeIVEKButton" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="8" data-tchmi-left-unit="px" data-tchmi-text="Prime Silicone" data-tchmi-top="66" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bIvekPrimePermissive%/s%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bIvekPrime%/s%">
+<div id="TcHmiButton_PrimeIVEKButton" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="8" data-tchmi-left-unit="px" data-tchmi-text="Prime Silicone" data-tchmi-top="66" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-is-enabled="%f%%s%ADS.PLC1.GVL_HMI.stStatus.bIvekPrimePermissive%/s% &amp;&amp; %s%ADS.PLC1.GVL_HMI.stCommands.bIvekPrimeEnable%/s%%/f%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bIvekPrime%/s%">
 </div>
 <div id="TcHmiTextblock_SS_text_1429" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="30" data-tchmi-height-unit="px" data-tchmi-left="48" data-tchmi-left-unit="px" data-tchmi-text="Pneumatics Schematics" data-tchmi-top="9" data-tchmi-top-unit="px" data-tchmi-width="185" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="16" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="3" data-tchmi-text-vertical-alignment="Center">
 </div>
@@ -1944,7 +1944,7 @@
 }
 </script>
 </div>
-<div id="TcHmiButton_AssemblePartsButton" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="298" data-tchmi-left-unit="px" data-tchmi-text="Assemble Parts" data-tchmi-top="36" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationManualStartPermissive%/s%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bAssemblyStationStart%/s%">
+<div id="TcHmiButton_AssemblePartsButton" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="50" data-tchmi-height-unit="px" data-tchmi-left="298" data-tchmi-left-unit="px" data-tchmi-text="Assemble Parts" data-tchmi-top="36" data-tchmi-top-unit="px" data-tchmi-width="120" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="16" data-tchmi-zindex="3" data-tchmi-is-enabled="%f%%s%ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationManualStartPermissive%/s%&amp;&amp;%s%ADS.PLC1.GVL_HMI.stCommands.bAssemblyStationManualEnable%/s%%/f%" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bAssemblyStationStart%/s%">
 </div>
 <div id="TcHmiTextblock_1345" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="30" data-tchmi-height-unit="px" data-tchmi-left="183" data-tchmi-left-unit="px" data-tchmi-text="Parts Present" data-tchmi-top="23" data-tchmi-top-unit="px" data-tchmi-width="100" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-zindex="37" data-tchmi-text-horizontal-alignment="Left" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-font-size="150" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-style="Auto" data-tchmi-text-font-weight="Normal" data-tchmi-ignore-escape-sequences="False" data-tchmi-creator-visibility="Visible">
 </div>
