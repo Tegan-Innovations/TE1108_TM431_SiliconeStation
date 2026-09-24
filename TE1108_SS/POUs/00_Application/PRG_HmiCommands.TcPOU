@@ -577,6 +577,9 @@ GVL_MASTER.stCommand.bManualEquipmentStop :=
 
 GVL_MASTER.stCommand.bManualEquipmentReset :=
     GVL_HMI.stCommands.bIvekReset;
+	
+GVL_MASTER.stCommand.bIvekClearFault :=
+    GVL_HMI.stCommands.bIvekClearFault;
 
 GVL_MASTER.stCommand.usiRecipeRequest :=
     GVL_HMI.stCommands.usiRecipeRequest;

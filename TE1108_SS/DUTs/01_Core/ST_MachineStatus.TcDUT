@@ -91,7 +91,7 @@ STRUCT
     bIvekPrimePermissive                     : BOOL;
     bIvekReferencePermissive                 : BOOL;
 	rIvekHeaterTemperature 					 : REAL; // IVEK heater temperature [°C]
-
+	bIvekClearFaultPermissive 				: BOOL;
 END_STRUCT
 END_TYPE
 

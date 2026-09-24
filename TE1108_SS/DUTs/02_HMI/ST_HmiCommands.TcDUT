@@ -40,6 +40,7 @@ STRUCT
 	bIndexerManualEnable            : BOOL;
     usiRecipeRequest                : USINT;
 	bIvekPrimeEnable 				: BOOL;
+	bIvekClearFault 				: BOOL;
 	
 	
     // Silicone reservoir Settings toggles

@@ -105,6 +105,7 @@ STRUCT
     bIvekFluidicActive                       : BOOL;
     bIvekPrimePermissive                     : BOOL;
     bIvekReferencePermissive                 : BOOL;
+	bIvekClearFaultPermissive 				 : BOOL;
 
 END_STRUCT
 END_TYPE]]></Declaration>

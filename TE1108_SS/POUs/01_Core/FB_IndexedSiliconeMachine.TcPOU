@@ -486,6 +486,11 @@ bIvekMaintenancePermissive :=
     AND stInputs.stSafety.bProcessSafetyPermitted
     AND GVL_Safety.bAirSupplySafe
     AND stInputs.bMainDoorClosed;
+	
+stStatus.bIvekClearFaultPermissive :=
+    bIvekCommsOk
+    AND (eMachineState = E_MachineState.Stopped OR eMachineState = E_MachineState.Fault)
+    AND fbIvek.IsFaulted();
 
 
 // Always execute the real IVEK object for communication diagnostics,
@@ -583,6 +588,9 @@ IF stCommand.bIvekReference THEN
     fbIvek.RequestReference();
 END_IF
 
+IF stCommand.bIvekClearFault THEN
+    fbIvek.RequestReset();
+END_IF
 
 
 

@@ -51,6 +51,7 @@ STRUCT
     bIvekReference                         : BOOL;
     bIvekMaintenanceStop                   : BOOL;
 	bIvekPrimeEnable 					   : BOOL;
+	bIvekClearFault       				   : BOOL;
 	
 	bPowerDownRequest 						: BOOL;
 

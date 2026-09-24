@@ -168,7 +168,7 @@ GVL_HMI.stStatus.bIvekFluidicActive := GVL_MASTER.stStatus.bIvekFluidicActive;
 GVL_HMI.stStatus.bIvekPrimePermissive := GVL_MASTER.stStatus.bIvekPrimePermissive;
 GVL_HMI.stStatus.bIvekReferencePermissive := GVL_MASTER.stStatus.bIvekReferencePermissive;
 GVL_HMI.stStatus.stAlarms 					:= GVL_MASTER.stStatus.stAlarms;
-
+GVL_HMI.stStatus.bIvekClearFaultPermissive :=GVL_MASTER.stStatus.bIvekClearFaultPermissive;
 GVL_HMI.stStatus.stSiliconeSupply := GVL_MASTER.stStatus.stSiliconeSupply;
 
 
