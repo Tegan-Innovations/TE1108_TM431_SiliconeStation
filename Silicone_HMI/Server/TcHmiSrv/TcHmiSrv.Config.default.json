@@ -4738,6 +4738,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stCommands.bIvekClearFault": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stCommands::bIvekClearFault",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 27
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stCommands.bIvekMaintenanceStop": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6067,6 +6084,23 @@
                     },
                     {
                         "propertyOrder": 73
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.bIvekClearFaultPermissive": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bIvekClearFaultPermissive",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 89
                     }
                 ]
             },
@@ -10338,6 +10372,7 @@
                 "ADS.PLC1.GVL_HMI.stCommands.bAssemblySupportRetract": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bExternalLight": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bIndexerManualEnable": 3,
+                "ADS.PLC1.GVL_HMI.stCommands.bIvekClearFault": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bIvekMaintenanceStop": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bIvekPrime": 3,
                 "ADS.PLC1.GVL_HMI.stCommands.bIvekPrimeEnable": 3,
@@ -10417,6 +10452,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bAssemblyStationPartSiliconized": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bEnableSettings": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekBusy": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bIvekClearFaultPermissive": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekCommunicationOk": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekFaulted": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekHealthy": 3,

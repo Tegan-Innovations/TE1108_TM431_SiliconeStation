@@ -127,7 +127,7 @@
 </div>
 
 
-<div id="TcHmiContainer_106" data-tchmi-type="TcHmi.Controls.System.TcHmiContainer" data-tchmi-height="360" data-tchmi-height-unit="px" data-tchmi-left="145" data-tchmi-left-unit="px" data-tchmi-top="65" data-tchmi-top-unit="px" data-tchmi-width="810" data-tchmi-width-unit="px" data-tchmi-zindex="0" data-tchmi-is-enabled="False" data-tchmi-creator-visibility="Visible">
+<div id="TcHmiContainer_106" data-tchmi-type="TcHmi.Controls.System.TcHmiContainer" data-tchmi-height="360" data-tchmi-height-unit="px" data-tchmi-left="145" data-tchmi-left-unit="px" data-tchmi-top="67" data-tchmi-top-unit="px" data-tchmi-width="810" data-tchmi-width-unit="px" data-tchmi-zindex="0" data-tchmi-is-enabled="False" data-tchmi-creator-visibility="Visible">
 <script data-tchmi-target-attribute="data-tchmi-background-image-padding" type="application/json">
 {
   "left": 0,
@@ -223,7 +223,7 @@
 }
 </script>
 </div>
-<div id="TcHmiButton_IvekReferenceBt" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="80" data-tchmi-height-unit="px" data-tchmi-left="668" data-tchmi-left-unit="px" data-tchmi-text="Reference" data-tchmi-top="249" data-tchmi-top-unit="px" data-tchmi-width="180" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="18" data-tchmi-zindex="2" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bIvekReference%/s%" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bIvekReferencePermissive%/s%">
+<div id="TcHmiButton_IvekReferenceBt" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="80" data-tchmi-height-unit="px" data-tchmi-left="668" data-tchmi-left-unit="px" data-tchmi-text="Reference" data-tchmi-top="159" data-tchmi-top-unit="px" data-tchmi-width="180" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="18" data-tchmi-zindex="2" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bIvekReference%/s%" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bIvekReferencePermissive%/s%">
 <script data-tchmi-target-attribute="data-tchmi-access-config" type="application/json">
 [
   {
@@ -289,6 +289,48 @@
 }
 </script>
 </div>
-<div id="TcHmiTextblock_1429" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="101" data-tchmi-height-unit="px" data-tchmi-left="573" data-tchmi-left-unit="px" data-tchmi-text="Use when re-referencing is required" data-tchmi-top="107" data-tchmi-top-unit="px" data-tchmi-width="352" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="25" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2">
+<div id="TcHmiTextblock_1429" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="101" data-tchmi-height-unit="px" data-tchmi-left="573" data-tchmi-left-unit="px" data-tchmi-text="Use when re-referencing is required" data-tchmi-top="67" data-tchmi-top-unit="px" data-tchmi-width="352" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="25" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2">
+</div>
+<div id="TcHmiTextblock_1437" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="101" data-tchmi-height-unit="px" data-tchmi-left="574" data-tchmi-left-unit="px" data-tchmi-text="Use when there is some Ivek Fault" data-tchmi-top="227" data-tchmi-top-unit="px" data-tchmi-width="352" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="25" data-tchmi-text-vertical-alignment="Center" data-tchmi-text-horizontal-alignment="Center" data-tchmi-zindex="2">
+</div>
+<div id="TcHmiButton_IvekReferenceBt_131" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="80" data-tchmi-height-unit="px" data-tchmi-left="668" data-tchmi-left-unit="px" data-tchmi-text="Clear Fault" data-tchmi-top="320" data-tchmi-top-unit="px" data-tchmi-width="180" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size="18" data-tchmi-zindex="2" data-tchmi-state-symbol="%s%ADS.PLC1.GVL_HMI.stCommands.bIvekClearFault%/s%" data-tchmi-is-enabled="%s%ADS.PLC1.GVL_HMI.stStatus.bIvekClearFaultPermissive%/s%">
+<script data-tchmi-target-attribute="data-tchmi-access-config" type="application/json">
+[
+  {
+    "accessright": "operate",
+    "group": "Administrator",
+    "permission": "Allow"
+  },
+  {
+    "accessright": "operate",
+    "group": "Engineer",
+    "permission": "Allow"
+  },
+  {
+    "accessright": "operate",
+    "group": "Operator",
+    "permission": "Allow"
+  },
+  {
+    "accessright": "observe",
+    "group": "Administrator",
+    "permission": "Allow"
+  },
+  {
+    "accessright": "observe",
+    "group": "Engineer",
+    "permission": "Allow"
+  },
+  {
+    "accessright": "observe",
+    "group": "Operator",
+    "permission": "Allow"
+  }
+]
+</script>
+
+
+
+
 </div>
 </div>

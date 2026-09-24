@@ -677,6 +677,7 @@ CASE eManualPrimeState OF
 			IF stInputs.bIvekFluidicActive THEN
 	
 				eManualPrimeState := E_ManualPrimeState.WaitingPrime;
+				
 	
 			END_IF
 	
