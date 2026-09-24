@@ -226,7 +226,10 @@
     <Content Include="Contents\Hardware\T07_EL1809.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Hardware\T12_EL3064 - Copy.content">
+    <Content Include="Contents\Hardware\T16_EL3314_.content">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Contents\Hardware\T14_EL3064_.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Hardware\T12_EL3064.content">
@@ -256,7 +259,7 @@
     <Content Include="Contents\Hardware\T09_EL2809.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Hardware\T13_EL2809.content">
+    <Content Include="Contents\Hardware\EL2809.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\IOs\Main_IOs.content">
