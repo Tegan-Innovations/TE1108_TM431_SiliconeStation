@@ -516,6 +516,9 @@
     <Content Include="Images\Client\JabilMasterLogo.png">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Images\Client\minimed_logo.png">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Images\Icons\box.svg">
       <SubType>Content</SubType>
     </Content>

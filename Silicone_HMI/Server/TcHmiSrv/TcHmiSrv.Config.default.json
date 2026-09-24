@@ -6840,6 +6840,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_MASTER.stStatus.bDisabledNestPartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_MASTER::stStatus::bDisabledNestPartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 45
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_MASTER.stStatus.eMachineState": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -10452,6 +10469,7 @@
                 "ADS.PLC1.GVL_MASTER.stNestTable.bNestReadySensor": 3,
                 "ADS.PLC1.GVL_MASTER.stProcess.bKistlerHomeDone": 3,
                 "ADS.PLC1.GVL_MASTER.stStatus.aNest.1.bProcessComplete": 3,
+                "ADS.PLC1.GVL_MASTER.stStatus.bDisabledNestPartPresent": 3,
                 "ADS.PLC1.GVL_MASTER.stStatus.eMachineState": 3,
                 "ADS.PLC1.GVL_Persistent.astEventsHistory": 3,
                 "ADS.PLC1.GVL_Persistent.stStatistics.udiTotalFail": 3,

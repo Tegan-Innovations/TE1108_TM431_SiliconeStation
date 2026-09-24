@@ -297,10 +297,12 @@ END_IF
 
 // Memorise the Stop command until the machine has
 // completed the required stopping sequence.
-IF stCommand.bStop THEN
+IF (stCommand.bStop OR stCommand.bPowerDownRequest)
+    AND (eMachineState <> E_MachineState.Stopping)
+    AND (eMachineState <> E_MachineState.Stopped)
+THEN
     bStopRequested := TRUE;
 END_IF
-
 
 // =========================================================
 // LED BLINK GENERATOR

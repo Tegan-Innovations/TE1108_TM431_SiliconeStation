@@ -652,6 +652,7 @@ CASE GVL_HMI.stCommands.ePowerCmd OF
 
         bTriggerReboot := FALSE;
         bTriggerShutdown := FALSE;
+		GVL_MASTER.stCommand.bPowerDownRequest:= FALSE; 
 
 
     E_PLC_Power.Reboot:
