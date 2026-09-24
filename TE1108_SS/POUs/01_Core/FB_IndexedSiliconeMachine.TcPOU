@@ -1064,17 +1064,44 @@ stOutputsInternal.bSiliconeAirEnable :=
 // =========================================================
 // PART VACUUM RELEASE CONFIRMATION
 // =========================================================
-// After the Silicone process releases the vacuum, inhibit
-// automatic vacuum restoration until the vacuum feedback
-// confirms that the part has actually been released.
 
-IF fbSiliconeProcess.IsDone() AND stInputs.bPartVacuumOk THEN
+// Latch the release condition when a process has finished
+// while vacuum is still present, or when Manual Prime
+// explicitly requests vacuum release.
+IF (fbSiliconeProcess.IsDone() AND stInputs.bPartVacuumOk)
+    OR stManualModeRequests.bPartVacuumReleaseRequest
+THEN
     bPartVacuumReleasePending := TRUE;
 END_IF
 
-IF bPartVacuumReleasePending AND NOT stInputs.bPartVacuumOk THEN
+// Release is complete only after the Silicone Support is
+// fully retracted and the station is confirmed empty.
+IF bPartVacuumReleasePending
+    AND stInputs.bSiliconeSupportRetracted
+    AND NOT stInputs.bSiliconeStationPartPresent
+THEN
+    bPartVacuumReleasePending := FALSE;
+END_IF
+
+// A new intentional Manual Prime vacuum request is allowed
+// only after the previous release sequence has physically
+// completed.
+IF (eMachineState = E_MachineState.Manual)
+    AND stManualModeRequests.bPartVacuumEnable
+    AND stInputs.bSiliconeSupportExtended
+    AND stInputs.bSiliconeStationPartPresent
+THEN
     bPartVacuumReleasePending := FALSE;
 END_IF	
+// Allow a new Silicone process to take ownership of the vacuum
+// once a new part is confirmed in the raised Silicone Support.
+
+IF bSiliconeProcessPartVacuumEnable
+    AND stInputs.bSiliconeSupportExtended
+    AND stInputs.bSiliconeStationPartPresent
+THEN
+    bPartVacuumReleasePending := FALSE;
+END_IF
 	
 // =========================================================
 // PART VACUUM OUTPUT ARBITRATION
@@ -1090,15 +1117,18 @@ END_IF
 // Manual Mode keeps its existing independent vacuum control.
 
 stOutputsInternal.bPartVacuumEnable :=
-    bSiliconeProcessPartVacuumEnable
-    OR (
-        bExtractorEnable
-        AND stInputs.bSiliconeSupportRetracted
-        AND NOT bPartVacuumReleasePending
-    )
-    OR (
-        (eMachineState = E_MachineState.Manual)
-        AND stManualModeRequests.bPartVacuumEnable
+    NOT bPartVacuumReleasePending
+    AND
+    (
+        bSiliconeProcessPartVacuumEnable
+        OR (
+            bExtractorEnable
+            AND stInputs.bSiliconeSupportRetracted
+        )
+        OR (
+            (eMachineState = E_MachineState.Manual)
+            AND stManualModeRequests.bPartVacuumEnable
+        )
     );
 // Manual Prime equipment request.
 // The complete mechanical/vacuum sequence is coordinated by FB_ManualMode.

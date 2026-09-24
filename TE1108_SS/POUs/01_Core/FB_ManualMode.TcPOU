@@ -270,6 +270,7 @@ IF bStopRequest THEN
     stRequestsInternal.bAssemblySupportExtend 		:= FALSE;
     stRequestsInternal.bAssemblyStationStart         := FALSE;
     stRequestsInternal.bSiliconeProcessStart          := FALSE;
+	stRequestsInternal.bPartVacuumReleaseRequest := FALSE;
     // -------------------------------------------------
     // Stop process equipment
     // -------------------------------------------------
@@ -604,7 +605,7 @@ CASE eManualPrimeState OF
 
         IF stInputs.bSiliconeSupportExtended THEN
 
-            stRequestsInternal.bSiliconeSupportExtend := FALSE;
+            //stRequestsInternal.bSiliconeSupportExtend := FALSE;
             eManualPrimeState := E_ManualPrimeState.CheckingPart;
 
         END_IF
@@ -612,6 +613,7 @@ CASE eManualPrimeState OF
 
     E_ManualPrimeState.CheckingPart:
 
+ 		stRequestsInternal.bSiliconeSupportExtend := TRUE;
         IF stInputs.bReservoirPartPresent THEN
 			
 			 eManualPrimeState := E_ManualPrimeState.WaitingForNozzlePressure;
@@ -627,6 +629,8 @@ CASE eManualPrimeState OF
 		// Enable nozzle air and wait until the configured
 		// nozzle pressure range has been confirmed.
 		stRequestsInternal.bSiliconeAirEnable := TRUE;
+		// Keep the Silicone Support raised during Prime.
+		stRequestsInternal.bSiliconeSupportExtend := TRUE;
 	
 		IF stInputs.bNozzlePressureOk THEN
 	
@@ -638,6 +642,8 @@ CASE eManualPrimeState OF
 		
 		stRequestsInternal.bSiliconeAirEnable := TRUE;
         stRequestsInternal.bPartVacuumEnable := TRUE;
+		// Keep the Silicone Support raised during Prime.
+		stRequestsInternal.bSiliconeSupportExtend := TRUE;
 
             // Nozzle pressure was already confirmed before entering
 		// this state and must remain valid.
@@ -657,6 +663,8 @@ CASE eManualPrimeState OF
 		// before the IVEK Prime command is issued.
 		stRequestsInternal.bSiliconeAirEnable := TRUE;
 		stRequestsInternal.bPartVacuumEnable := TRUE;
+		// Keep the Silicone Support raised during Prime.
+		stRequestsInternal.bSiliconeSupportExtend := TRUE;
 	
 		IF NOT stInputs.bNozzlePressureOk THEN
 	
@@ -679,6 +687,8 @@ CASE eManualPrimeState OF
         // Part must remain held during the complete Prime operation.
 		stRequestsInternal.bSiliconeAirEnable := TRUE;
         stRequestsInternal.bPartVacuumEnable := TRUE;
+		// Keep the Silicone Support raised during Prime.
+		stRequestsInternal.bSiliconeSupportExtend := TRUE;
 
         IF NOT stInputs.bPartVacuumOk OR NOT stInputs.bNozzlePressureOk THEN
 
@@ -692,9 +702,11 @@ CASE eManualPrimeState OF
 
 
     E_ManualPrimeState.ReleasingVacuum:
-		
+	
+		stRequestsInternal.bSiliconeSupportExtend := TRUE;
 		stRequestsInternal.bSiliconeAirEnable := FALSE;
         stRequestsInternal.bPartVacuumEnable := FALSE;
+		stRequestsInternal.bPartVacuumReleaseRequest := TRUE;
 
         IF NOT stInputs.bPartVacuumOk THEN
 
@@ -722,23 +734,29 @@ CASE eManualPrimeState OF
 
     E_ManualPrimeState.Aborting:
 
-        // Remove vacuum first.
-        stRequestsInternal.bPartVacuumEnable := FALSE;
+		// Remove air and vacuum first.
 		stRequestsInternal.bSiliconeAirEnable := FALSE;
-
-        // Do not lower the support until vacuum has been released.
-        IF NOT stInputs.bPartVacuumOk THEN
-
-            stRequestsInternal.bSiliconeSupportRetract := TRUE;
-
-            IF stInputs.bSiliconeSupportRetracted THEN
-
-                stRequestsInternal.bSiliconeSupportRetract := FALSE;
-                eManualPrimeState := E_ManualPrimeState.Idle;
-
-            END_IF
-
-        END_IF
+		stRequestsInternal.bPartVacuumEnable := FALSE;
+		stRequestsInternal.bPartVacuumReleaseRequest := TRUE;
+	
+		// Keep the Silicone Support raised until vacuum is fully released.
+		IF stInputs.bPartVacuumOk THEN
+	
+			stRequestsInternal.bSiliconeSupportExtend := TRUE;
+	
+		ELSE
+	
+			stRequestsInternal.bSiliconeSupportExtend := FALSE;
+			stRequestsInternal.bSiliconeSupportRetract := TRUE;
+	
+			IF stInputs.bSiliconeSupportRetracted THEN
+	
+				stRequestsInternal.bSiliconeSupportRetract := FALSE;
+				eManualPrimeState := E_ManualPrimeState.Idle;
+	
+			END_IF
+	
+		END_IF
 
 END_CASE
 // =========================================================

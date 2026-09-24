@@ -102,9 +102,8 @@ ELSE
             PT := tMovementTimeout
         );
 
-        IF NOT bExtended THEN
-            bExtendOutputInternal := TRUE;
-        END_IF
+        bExtendOutputInternal := TRUE;
+		bRetractOutputInternal := FALSE;
 
         IF tonMovementTimeout.Q THEN
             bFaultInternal := TRUE;
@@ -123,10 +122,10 @@ ELSE
             PT := tMovementTimeout
         );
 
-        IF NOT bRetracted THEN
-            bRetractOutputInternal := TRUE;
-        END_IF
-
+        // Maintain pressure on the retracted side while Lower is requested.
+		bExtendOutputInternal := FALSE;
+		bRetractOutputInternal := TRUE;
+		
         IF tonMovementTimeout.Q THEN
             bFaultInternal := TRUE;
         END_IF
