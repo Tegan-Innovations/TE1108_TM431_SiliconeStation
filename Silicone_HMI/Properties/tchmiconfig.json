@@ -163,6 +163,13 @@
       "preloadBindings": false
     },
     {
+      "url": "Contents/Hardware/EL2809.content",
+      "preload": false,
+      "keepAlive": false,
+      "loadSync": false,
+      "preloadBindings": false
+    },
+    {
       "url": "Contents/Hardware/EL9188.content",
       "preload": false,
       "keepAlive": false,
@@ -282,13 +289,6 @@
       "preloadBindings": false
     },
     {
-      "url": "Contents/Hardware/T13_EL2809.content",
-      "preload": false,
-      "keepAlive": false,
-      "loadSync": false,
-      "preloadBindings": false
-    },
-    {
       "url": "Contents/Hardware/T13_EL9410.content",
       "preload": false,
       "keepAlive": false,
@@ -296,21 +296,14 @@
       "preloadBindings": false
     },
     {
-      "url": "Contents/Hardware/T14_EL3064.content",
+      "url": "Contents/Hardware/T14_EL3064_.content",
       "preload": false,
       "keepAlive": false,
       "loadSync": false,
       "preloadBindings": false
     },
     {
-      "url": "Contents/Hardware/T15_EL6652.content",
-      "preload": false,
-      "keepAlive": false,
-      "loadSync": false,
-      "preloadBindings": false
-    },
-    {
-      "url": "Contents/Hardware/T16_EL3314.content",
+      "url": "Contents/Hardware/T16_EL3314_.content",
       "preload": false,
       "keepAlive": false,
       "loadSync": false,

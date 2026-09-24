@@ -63,6 +63,12 @@
               },
               {
                 "Name": "T12_EL3064"
+              },
+              {
+                "Name": "T14_EL3064"
+              },
+              {
+                "Name": "T16_EL3314"
               }
             ]
           },
@@ -81,10 +87,7 @@
             ]
           },
           {
-            "Name": "T13_EL9410"
-          },
-          {
-            "Name": "T14_EL6652"
+            "Name": "T15_EL6652"
           }
         ]
       }
@@ -372,7 +375,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T14_EL6652"
+              "value": "T14_EL3064"
             },
             "actions": [
               {
@@ -382,7 +385,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T14_EL6652.content"
+                  "value": "Contents/Hardware/T14_EL3064_.content"
                 },
                 "asyncWait": true
               }
@@ -432,7 +435,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "EL9188"
+              "value": "T16_EL3314"
             },
             "actions": [
               {
@@ -442,7 +445,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/EL9188.content"
+                  "value": "Contents/Hardware/T16_EL3314_.content"
                 },
                 "asyncWait": true
               }
