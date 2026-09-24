@@ -359,6 +359,16 @@
                     }
                 ]
             },
+            "ADS-PLC1.STRING-200": {
+                "allOf": [
+                    {
+                        "maxLength": 200
+                    },
+                    {
+                        "$ref": "tchmi:general#/definitions/String"
+                    }
+                ]
+            },
             "ADS-PLC1.STRING-255": {
                 "allOf": [
                     {
@@ -2781,6 +2791,125 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch1": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm14_EL3064::iEL3064_Ch1",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1809 channel 1",
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch2": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm14_EL3064::iEL3064_Ch2",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1809 channel 2",
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch3": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm14_EL3064::iEL3064_Ch3",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1809 channel 3",
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch4": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm14_EL3064::iEL3064_Ch4",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL1809 channel 4",
+                        "propertyOrder": 5
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm14_EL3064::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "--------------------------------------------------------------------------------------------------------",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm14_EL3064::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.bTerminalOperational": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -2844,6 +2973,125 @@
                     },
                     {
                         "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch1": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm33_EL3314::iEL3314_Ch1",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/INT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL3314 channel 1 - Temperature [0.1 °C]",
+                        "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch2": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm33_EL3314::iEL3314_Ch2",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/INT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL3314 channel 2 - Temperature [0.1 °C]",
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch3": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm33_EL3314::iEL3314_Ch3",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/INT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL3314 channel 3 - Temperature [0.1 °C]",
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch4": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm33_EL3314::iEL3314_Ch4",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/INT"
+                    },
+                    {
+                        "attributes": {
+                            "TcDataArea": "Input"
+                        },
+                        "comment": "EL3314 channel 4 - Temperature [0.1 °C]",
+                        "propertyOrder": 5
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm33_EL3314::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "--------------------------------------------------------------------------------------------------------",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm33_EL3314::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
                     }
                 ]
             },
@@ -6691,6 +6939,57 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.uiMainAirPressureRaw": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::uiMainAirPressureRaw",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "propertyOrder": 38
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.uiNozzlePressureRaw": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::uiNozzlePressureRaw",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "propertyOrder": 40
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.uiSiliconePressureRaw": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::uiSiliconePressureRaw",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/UINT"
+                    },
+                    {
+                        "propertyOrder": 39
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.uiSiliconeStationNestId": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6852,6 +7151,23 @@
                     },
                     {
                         "propertyOrder": 25
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_MASTER.stInputs.bPartVacuumOk": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_MASTER::stInputs::bPartVacuumOk",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 20
                     }
                 ]
             },
@@ -10256,10 +10572,22 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch4": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.sTerminalInfo": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch1": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch2": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch3": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch4": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.sTerminalName": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.sTerminalInfo": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch1": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch2": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch3": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch4": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.sTerminalName": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch1": 3,
@@ -10488,6 +10816,9 @@
                 "ADS.PLC1.GVL_HMI.stStatus.stSiliconeSupply.aReservoir.1.bDegassing": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiAssemblyStationNestId": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiDegassingTimeMinutes": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.uiMainAirPressureRaw": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.uiNozzlePressureRaw": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.uiSiliconePressureRaw": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.uiSiliconeStationNestId": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.usiReservoirDegassingPopup": 3,
                 "ADS.PLC1.GVL_HMI.testeHMIBUT": 3,
@@ -10500,6 +10831,7 @@
                 "ADS.PLC1.GVL_IO.stSafety.bTwoHandsLeft": 3,
                 "ADS.PLC1.GVL_MASTER.astActiveEvents": 3,
                 "ADS.PLC1.GVL_MASTER.stCommand.uiResetStatisticsNestId": 3,
+                "ADS.PLC1.GVL_MASTER.stInputs.bPartVacuumOk": 3,
                 "ADS.PLC1.GVL_MASTER.stMachineStatus.bBusy": 3,
                 "ADS.PLC1.GVL_MASTER.stNestTable.bNestCompletedSensor": 3,
                 "ADS.PLC1.GVL_MASTER.stNestTable.bNestReadySensor": 3,
