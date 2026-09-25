@@ -226,7 +226,7 @@
     <Content Include="Contents\Hardware\T07_EL1809.content">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Contents\Hardware\T16_EL3314_.content">
+    <Content Include="Contents\Hardware\T15_EL3314_.content">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Contents\Hardware\T14_EL3064_.content">

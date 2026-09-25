@@ -2403,6 +2403,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm10_EL2809::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                    },
+                    {
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.stTerminalInfo.bTerminalOperational": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -2639,6 +2656,24 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm11_EL3058::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "--------------------------------------------------------------------------------------------------------",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.stTerminalInfo.bTerminalOperational": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -2757,6 +2792,24 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm12_EL3064::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "--------------------------------------------------------------------------------------------------------",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.bTerminalOperational": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -2786,6 +2839,41 @@
                     },
                     {
                         "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm13_EL9410.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm13_EL9410::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "TERMINAL - EL9410\tE-Bus Power supply\t (Term 7)",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm13_EL9410.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm13_EL9410::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
                     }
                 ]
             },
@@ -2910,6 +2998,24 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm1_EK1100::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "TERMINAL - K1100\tEtherCAT Coupler\t (Term 1)",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.bTerminalOperational": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -2939,6 +3045,24 @@
                     },
                     {
                         "propertyOrder": 2
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm2_EL6070::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "TERMINAL - EL6070\tEtherCAT Terminal, license key FOR TwinCAT 3.1  (Term 2)",
+                        "propertyOrder": 1
                     }
                 ]
             },
@@ -3092,6 +3216,24 @@
                     },
                     {
                         "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm3_EL6910::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "TERMINAL - EL6910\tTwinSAFE logic\t (Term 3)",
+                        "propertyOrder": 1
                     }
                 ]
             },
@@ -3294,6 +3436,24 @@
                         },
                         "comment": "EL1918 channel 8",
                         "propertyOrder": 9
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm4_EL1918::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "--------------------------------------------------------------------------------------------------------",
+                        "propertyOrder": 1
                     }
                 ]
             },
@@ -3903,6 +4063,41 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm7_EL1809::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "--------------------------------------------------------------------------------------------------------",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm7_EL1809::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.stTerminalInfo.sTerminalInfo": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4256,6 +4451,41 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm8_EL1809::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.STRING-200"
+                    },
+                    {
+                        "comment": "--------------------------------------------------------------------------------------------------------",
+                        "propertyOrder": 1
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.stTerminalInfo.bTerminalOperational": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm8_EL1809::stTerminalInfo::bTerminalOperational",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 4
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.stTerminalInfo.sTerminalInfo": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4588,6 +4818,23 @@
                             "TcDataArea": "Output"
                         },
                         "propertyOrder": 10
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.sTerminalName": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_EtherCAT::stTerm9_EL2809::sTerminalName",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/STRING%2880%29"
+                    },
+                    {
+                        "propertyOrder": 1
                     }
                 ]
             },
@@ -6525,6 +6772,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.bMainDoorLocked": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bMainDoorLocked",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 24
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -7246,6 +7510,23 @@
                     },
                     {
                         "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.PRG_Main.fbMachine.bAirSupplyEnable": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::PRG_Main::fbMachine::bAirSupplyEnable",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 91
                     }
                 ]
             },
@@ -10552,6 +10833,7 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch7": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch8": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch9": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.stTerminalInfo.fbTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.stTerminalInfo.fbTerminalInfo.sTerminalState": 3,
@@ -10564,22 +10846,28 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch6": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch7": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch8": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm11_EL3058.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch1": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch2": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch3": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch4": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.sTerminalInfo": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm13_EL9410.sTerminalName": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm13_EL9410.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch1": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch2": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch3": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch4": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm14_EL3064.stTerminalInfo.bTerminalOperational": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.sTerminalInfo": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch1": 3,
@@ -10588,6 +10876,7 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch4": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm33_EL3314.stTerminalInfo.bTerminalOperational": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch1": 3,
@@ -10598,6 +10887,7 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch6": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch7": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch8": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch1": 3,
@@ -10630,6 +10920,8 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch6": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch7": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch8": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.sTerminalName": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm7_EL1809.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch10": 3,
@@ -10647,6 +10939,8 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch7": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch8": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch9": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.sTerminalName": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm8_EL1809.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch10": 3,
@@ -10664,6 +10958,7 @@
                 "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch7": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch8": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch9": 3,
+                "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.sTerminalName": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.stTerminalInfo.bTerminalOperational": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm9_EL2809.stTerminalInfo.sTerminalInfo": 3,
                 "ADS.PLC1.GVL_HMI.StatusHMI": 3,
@@ -10791,6 +11086,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekReady": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekReferencePermissive": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bMainDoorLocked": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bReservoir1DegassingPopupEnabled": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bReservoir2DegassingPopupEnabled": 3,
@@ -10843,6 +11139,7 @@
                 "ADS.PLC1.GVL_Persistent.stStatistics.udiTotalFail": 3,
                 "ADS.PLC1.PRG_MachineControl.bKistlerReady": 3,
                 "ADS.PLC1.PRG_MachineControl.eCurrentNestPos": 3,
+                "ADS.PLC1.PRG_Main.fbMachine.bAirSupplyEnable": 3,
                 "ChangeUserSettings": 3,
                 "ConfirmAlarm": 3,
                 "CreateEvent": 3,

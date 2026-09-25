@@ -2,101 +2,6 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4026.22">
 	<DataTypes>
 		<DataType>
-			<Name GUID="{C6ED06C6-0F78-FE18-9C0A-11288ED3ACBF}" AutoDeleteType="true">ST_IvekCyclicInput</Name>
-			<BitSize>272</BitSize>
-			<SubItem>
-				<Name>usiIvekConnectionState</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
-				<Comment><![CDATA[Box 16 (DS4000BT)]]></Comment>
-				<BitSize>16</BitSize>
-				<BitOffs>0</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiStatusFlags</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ P012 - bytes 0..3]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>16</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiStatusFlagsExt</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ P013 - bytes 4..7]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>48</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>usiStatusState</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
-				<Comment><![CDATA[ P014 - byte 8]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>80</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>aReserved1</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
-				<ArrayInfo>
-					<LBound>0</LBound>
-					<Elements>3</Elements>
-				</ArrayInfo>
-				<Comment><![CDATA[ bytes 9..11]]></Comment>
-				<BitSize>24</BitSize>
-				<BitOffs>88</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>usiCurrentRecipe</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
-				<Comment><![CDATA[ P017 - byte 12]]></Comment>
-				<BitSize>8</BitSize>
-				<BitOffs>112</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>aReserved2</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
-				<ArrayInfo>
-					<LBound>0</LBound>
-					<Elements>3</Elements>
-				</ArrayInfo>
-				<Comment><![CDATA[ bytes 13..15]]></Comment>
-				<BitSize>24</BitSize>
-				<BitOffs>120</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiFaultCode</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ P015 - bytes 16..19]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>144</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>udiAlertCode</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ P016 - bytes 20..23]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>176</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>diLastProductionVolume</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
-				<Comment><![CDATA[ P091 - bytes 24..27]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>208</BitOffs>
-			</SubItem>
-			<SubItem>
-				<Name>diActualRate</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
-				<Comment><![CDATA[ P075 - bytes 28..31]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>240</BitOffs>
-			</SubItem>
-			<Properties>
-				<Property>
-					<Name>pack_mode</Name>
-					<Value>1</Value>
-				</Property>
-			</Properties>
-		</DataType>
-		<DataType>
 			<Name GUID="{F04D3115-42E9-6EB7-4F07-15AE40BC9B63}" AutoDeleteType="true">E_TablePosition</Name>
 			<BitSize>16</BitSize>
 			<BaseType GUID="{18071995-0000-0000-0000-000000000006}">INT</BaseType>
@@ -513,31 +418,38 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name GUID="{B39B9377-AF50-4659-E2C2-F2D4B10F3D96}" AutoDeleteType="true">ST_IvekCyclicOutput</Name>
-			<BitSize>160</BitSize>
+			<Name GUID="{C6ED06C6-0F78-FE18-9C0A-11288ED3ACBF}" AutoDeleteType="true">ST_IvekCyclicInput</Name>
+			<BitSize>272</BitSize>
 			<SubItem>
-				<Name>udiCommands</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ P010 - bytes 0..3]]></Comment>
-				<BitSize>32</BitSize>
+				<Name>usiIvekConnectionState</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000005}">UINT</Type>
+				<Comment><![CDATA[Box 16 (DS4000BT)]]></Comment>
+				<BitSize>16</BitSize>
 				<BitOffs>0</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>udiCommandsExt</Name>
+				<Name>udiStatusFlags</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
-				<Comment><![CDATA[ P011 - bytes 4..7]]></Comment>
+				<Comment><![CDATA[ P012 - bytes 0..3]]></Comment>
 				<BitSize>32</BitSize>
-				<BitOffs>32</BitOffs>
+				<BitOffs>16</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>usiRecipeGet</Name>
+				<Name>udiStatusFlagsExt</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ P013 - bytes 4..7]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>48</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>usiStatusState</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
-				<Comment><![CDATA[ P018 - byte 8]]></Comment>
+				<Comment><![CDATA[ P014 - byte 8]]></Comment>
 				<BitSize>8</BitSize>
-				<BitOffs>64</BitOffs>
+				<BitOffs>80</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>aReserved</Name>
+				<Name>aReserved1</Name>
 				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
 				<ArrayInfo>
 					<LBound>0</LBound>
@@ -545,21 +457,53 @@
 				</ArrayInfo>
 				<Comment><![CDATA[ bytes 9..11]]></Comment>
 				<BitSize>24</BitSize>
-				<BitOffs>72</BitOffs>
+				<BitOffs>88</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>diDispenseVolume</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
-				<Comment><![CDATA[ P052 - bytes 12..15]]></Comment>
-				<BitSize>32</BitSize>
-				<BitOffs>96</BitOffs>
+				<Name>usiCurrentRecipe</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
+				<Comment><![CDATA[ P017 - byte 12]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>112</BitOffs>
 			</SubItem>
 			<SubItem>
-				<Name>diRateOrSetpoint</Name>
-				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
-				<Comment><![CDATA[ P076 - bytes 16..19]]></Comment>
+				<Name>aReserved2</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
+				<ArrayInfo>
+					<LBound>0</LBound>
+					<Elements>3</Elements>
+				</ArrayInfo>
+				<Comment><![CDATA[ bytes 13..15]]></Comment>
+				<BitSize>24</BitSize>
+				<BitOffs>120</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiFaultCode</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ P015 - bytes 16..19]]></Comment>
 				<BitSize>32</BitSize>
-				<BitOffs>128</BitOffs>
+				<BitOffs>144</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiAlertCode</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ P016 - bytes 20..23]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>176</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>diLastProductionVolume</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<Comment><![CDATA[ P091 - bytes 24..27]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>208</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>diActualRate</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<Comment><![CDATA[ P075 - bytes 28..31]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>240</BitOffs>
 			</SubItem>
 			<Properties>
 				<Property>
@@ -774,6 +718,71 @@
 				<BitSize>8</BitSize>
 				<BitOffs>256</BitOffs>
 			</SubItem>
+		</DataType>
+		<DataType>
+			<Name GUID="{B39B9377-AF50-4659-E2C2-F2D4B10F3D96}" AutoDeleteType="true">ST_IvekCyclicOutput</Name>
+			<BitSize>160</BitSize>
+			<SubItem>
+				<Name>udiCommands</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ P010 - bytes 0..3]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>0</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>udiCommandsExt</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000008}">UDINT</Type>
+				<Comment><![CDATA[ P011 - bytes 4..7]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>32</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>usiRecipeGet</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000002}">USINT</Type>
+				<Comment><![CDATA[ P018 - byte 8]]></Comment>
+				<BitSize>8</BitSize>
+				<BitOffs>64</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>aReserved</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000001}">BYTE</Type>
+				<ArrayInfo>
+					<LBound>0</LBound>
+					<Elements>3</Elements>
+				</ArrayInfo>
+				<Comment><![CDATA[ bytes 9..11]]></Comment>
+				<BitSize>24</BitSize>
+				<BitOffs>72</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>diDispenseVolume</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<Comment><![CDATA[ P052 - bytes 12..15]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>96</BitOffs>
+			</SubItem>
+			<SubItem>
+				<Name>diRateOrSetpoint</Name>
+				<Type GUID="{18071995-0000-0000-0000-000000000009}">DINT</Type>
+				<Comment><![CDATA[ P076 - bytes 16..19]]></Comment>
+				<BitSize>32</BitSize>
+				<BitOffs>128</BitOffs>
+			</SubItem>
+			<Properties>
+				<Property>
+					<Name>pack_mode</Name>
+					<Value>1</Value>
+				</Property>
+			</Properties>
+		</DataType>
+		<DataType>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
 		</DataType>
 		<DataType>
 			<Name GUID="{501A31C3-933E-B0B2-BAFF-4BB78E0FAF10}" AutoDeleteType="true">ST_SiliconeSupplyConfig</Name>
@@ -1586,7 +1595,7 @@
 			</SubItem>
 		</DataType>
 		<DataType>
-			<Name IecBaseType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
+			<Name GUID="{CB686C7B-2FDA-C94A-C1A8-0C831F8075C0}" IecBaseType="true" AutoDeleteType="true">ARRAY [0..2000] OF ST_TestHistory</Name>
 			<BitSize>9348672</BitSize>
 			<BaseType GUID="{2FC4D7BD-410C-9947-2989-23FDC109740E}">ST_TestHistory</BaseType>
 			<ArrayInfo>
@@ -1616,15 +1625,6 @@
 					<Value>1</Value>
 				</Default>
 			</SubItem>
-		</DataType>
-		<DataType>
-			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
 		</DataType>
 		<DataType>
 			<Name GUID="{2438F91B-E188-4ED7-8594-54354F9ED6A4}" Namespace="Safety" TcBaseType="true">FSOE_6</Name>
@@ -1817,20 +1817,25 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{3005F9E1-3B5D-8582-1DF6-1CB47A5E063A}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{1ECC0EB4-ECA5-DB77-8441-183170FD9840}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>GVL_Config.stMachine</Name>
-							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
-							<Type GUID="{8A8DAD4B-733F-4B9C-A85E-1813135F5660}">ST_MachineConfig</Type>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
 							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
 							<Type>USINT</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>GVL_Config.stMachine</Name>
+							<Comment><![CDATA[ Machine behavior configuration. Values should be editable only by authorised users.]]></Comment>
+							<Type GUID="{8A8DAD4B-733F-4B9C-A85E-1813135F5660}">ST_MachineConfig</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1868,14 +1873,13 @@
 							<Type GUID="{EDD38FAB-5BAA-9388-2D7D-5173435AF951}">ST_SiliconeSupplyPersistent</Type>
 							<InOut>7</InOut>
 						</Var>
-						<Var>
-							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
-							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
-							<InOut>7</InOut>
-						</Var>
 					</Vars>
 					<Vars VarGrpType="2" AreaNo="1">
 						<Name>PlcTask Outputs</Name>
+						<Var>
+							<Name>GVL_IO.stOutputs</Name>
+							<Type GUID="{F91C55FA-EABE-4CAF-3FCB-B93A4AACD055}">ST_PhysicalOutputs</Type>
+						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1</Name>
 							<Type>BOOL</Type>
@@ -2028,13 +2032,52 @@
 							<Name>GVL_IVEK_EIP.stOutput</Name>
 							<Type GUID="{B39B9377-AF50-4659-E2C2-F2D4B10F3D96}">ST_IvekCyclicOutput</Type>
 						</Var>
-						<Var>
-							<Name>GVL_IO.stOutputs</Name>
-							<Type GUID="{F91C55FA-EABE-4CAF-3FCB-B93A4AACD055}">ST_PhysicalOutputs</Type>
-						</Var>
 					</Vars>
 					<Vars VarGrpType="1">
 						<Name>PlcTask Inputs</Name>
+						<Var>
+							<Name>GVL_Safety.bSafetyOk</Name>
+							<Comment><![CDATA[ ---------------------------------------------------------------------
+ TwinSAFE -> standard PLC aliases (link as PLC inputs in the Safety
+ project). These are validated statuses/diagnostics, not reconstructed
+ safety logic in the standard PLC.
+ ---------------------------------------------------------------------]]></Comment>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_IO.stInputs</Name>
+							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
+ Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
+							<Type GUID="{39AF1686-B3BD-A806-5ACA-3976DF49B7EF}">ST_PhysicalInputs</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bEmergencyStopOk</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bMainDoorUnSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bLeftFlapSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bRightFlapSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bFlapsSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bTwoHandSafe</Name>
+							<Type>BOOL</Type>
+						</Var>
+						<Var>
+							<Name>GVL_Safety.bAirSupplySafe</Name>
+							<Type>BOOL</Type>
+						</Var>
 						<Var>
 							<Name>GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.nTerminal_State</Name>
 							<Comment><![CDATA[ Terminal State from IO Terminal Info Data]]></Comment>
@@ -2456,43 +2499,6 @@
 							<Type>UINT</Type>
 						</Var>
 						<Var>
-							<Name>GVL_Safety.bSafetyOk</Name>
-							<Comment><![CDATA[ ---------------------------------------------------------------------
- TwinSAFE -> standard PLC aliases (link as PLC inputs in the Safety
- project). These are validated statuses/diagnostics, not reconstructed
- safety logic in the standard PLC.
- ---------------------------------------------------------------------]]></Comment>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bEmergencyStopOk</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bMainDoorUnSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bLeftFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bRightFlapSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bFlapsSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bTwoHandSafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
-							<Name>GVL_Safety.bAirSupplySafe</Name>
-							<Type>BOOL</Type>
-						</Var>
-						<Var>
 							<Name>GVL_Safety.bFsoeOk</Name>
 							<Type>BOOL</Type>
 						</Var>
@@ -2530,12 +2536,6 @@
 							<Comment><![CDATA[ Map/link these fields to the EDS-generated EtherNet/IP process image.
  The exact byte offsets and assembly sizes must be confirmed using the IVEK EDS/firmware manual.]]></Comment>
 							<Type GUID="{C6ED06C6-0F78-FE18-9C0A-11288ED3ACBF}">ST_IvekCyclicInput</Type>
-						</Var>
-						<Var>
-							<Name>GVL_IO.stInputs</Name>
-							<Comment><![CDATA[ Logical physical I/O. Link these members to the same EtherCAT/TwinSAFE channels used by Kistler.
- Keeping terminal-specific names outside the core makes future hardware changes local to this GVL/mapper.]]></Comment>
-							<Type GUID="{39AF1686-B3BD-A806-5ACA-3976DF49B7EF}">ST_PhysicalInputs</Type>
 						</Var>
 					</Vars>
 					<UnrestoredVarLinks ImportTime="2026-07-29T09:34:25">
@@ -4783,6 +4783,7 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 	</Project>
 	<Mappings>
 		<MappingInfo Identifier="{00000000-2001-0850-0020-500810000403}" Id="#x02030030"/>
+		<MappingInfo Identifier="{00000000-2001-0850-0020-500822000403}" Id="#x02030050"/>
 		<MappingInfo Identifier="{00000000-2001-0850-0020-500830000403}" Id="#x02030040"/>
 		<MappingInfo Identifier="{00000000-0010-0304-1000-040351000403}" Id="#x02030020"/>
 		<MappingInfo Identifier="{03040010-0010-0304-1000-040310000403}" Id="#x02030010" Watchdog="04000000040000000400000004000000"/>
@@ -4801,7 +4802,11 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 			</OwnerB>
 		</OwnerA>
 		<OwnerA Name="TIPC^TE1108_SS^TE1108_SS Instance">
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
+			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 10 (EL2809-0015)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm10_EL2809.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1" VarB="Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10" VarB="Channel 10^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11" VarB="Channel 11^Output"/>
@@ -4824,17 +4829,30 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch2" VarB="AI Standard Channel 2^Value"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch3" VarB="AI Standard Channel 3^Value"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.iEL3058_Ch4" VarB="AI Standard Channel 4^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm11_EL3058.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 12 (EL3064)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch1" VarB="AI Standard Channel 1^Value"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch2" VarB="AI Standard Channel 2^Value"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.iEL3064_Ch3" VarB="AI Standard Channel 3^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 13 (EL9410)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm13_EL9410.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 14 (EL3064)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch1" VarB="AI Standard Channel 1^Value"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm14_EL3064.iEL3064_Ch2" VarB="AI Standard Channel 2^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm14_EL3064.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 15 (EL6652)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm15_EL6652.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 2 (EL6070-0033)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 3 (EL6910)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bAirSupplySafe" VarB="StandardInputs^TwinSafeGroup1.AirSupply_OK_37"/>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bMainDoorClosed" VarB="StandardInputs^TwinSafeGroup1.MainDoorClosed_49"/>
 				<Link VarA="PlcTask Inputs^GVL_Safety.bMainDoorLocked" VarB="StandardInputs^TwinSafeGroup1.MainDoorLocked_33"/>
@@ -4852,6 +4870,7 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch2" VarB="TC Inputs Channel 2^Value"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch3" VarB="TC Inputs Channel 3^Value"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm33_EL3314.iEL3314_Ch4" VarB="TC Inputs Channel 4^Value"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm33_EL3314.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 4 (EL1918)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch1" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 1.Input"/>
@@ -4862,6 +4881,7 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch6" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 6.Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch7" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 7.Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm4_EL1918.iEL1918_Ch8" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 8.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 5 (EL1918)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch1" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 1.Input"/>
@@ -4872,6 +4892,10 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch6" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 6.Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch7" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 7.Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.iEL1918_Ch8" VarB="Module 1 (FSOE)^FSoE Inputs^FSOE^FSIN Module 8.Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm5_EL1918.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 6 (EL2904)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm6_EL2904.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 7 (EL1809)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch1" VarB="Channel 1^Input"/>
@@ -4890,6 +4914,7 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch7" VarB="Channel 7^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch8" VarB="Channel 8^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.iEL1809_Ch9" VarB="Channel 9^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm7_EL1809.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 8 (EL1809)">
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch1" VarB="Channel 1^Input"/>
@@ -4908,8 +4933,10 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch7" VarB="Channel 7^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch8" VarB="Channel 8^Input"/>
 				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.iEL1809_Ch9" VarB="Channel 9^Input"/>
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm8_EL1809.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 			</OwnerB>
 			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1100)^Term 9 (EL2809-0015)">
+				<Link VarA="PlcTask Inputs^GVL_EtherCAT.stTerm9_EL2809.stTerminalInfo.nTerminal_State" VarB="InfoData^State"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch1" VarB="Channel 1^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch10" VarB="Channel 10^Output"/>
 				<Link VarA="PlcTask Outputs^GVL_EtherCAT.stTerm9_EL2809.iEL2809_Ch11" VarB="Channel 11^Output"/>

@@ -68,7 +68,7 @@
                 "Name": "T14_EL3064"
               },
               {
-                "Name": "T16_EL3314"
+                "Name": "T15_EL3314"
               }
             ]
           },
@@ -85,9 +85,6 @@
                 "Name": "T10_EL2809"
               }
             ]
-          },
-          {
-            "Name": "T15_EL6652"
           }
         ]
       }
@@ -435,7 +432,7 @@
             "caseValue": {
               "objectType": "StaticValue",
               "valueType": "tchmi:general#/definitions/Any",
-              "value": "T16_EL3314"
+              "value": "T15_EL3314"
             },
             "actions": [
               {
@@ -445,7 +442,7 @@
                 "value": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:framework#/definitions/ContentPath",
-                  "value": "Contents/Hardware/T16_EL3314_.content"
+                  "value": "Contents/Hardware/T15_EL3314_.content"
                 },
                 "asyncWait": true
               }

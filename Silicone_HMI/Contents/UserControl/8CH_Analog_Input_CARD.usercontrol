@@ -167,9 +167,9 @@
                 "compare2": {
                   "objectType": "StaticValue",
                   "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": false
+                  "value": true
                 },
-                "compareOperator": "==",
+                "compareOperator": "!=",
                 "logic": null
               }
             ],

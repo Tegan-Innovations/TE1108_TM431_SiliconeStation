@@ -158,7 +158,60 @@ GVL_IO.stInputs.bMainDoorDiagnosticOk 						:= GVL_Safety.bMainDoorDiagnosticOk;
 // GVL_IO.stInputs.bMs6FeedbackOk 								:= GVL_Safety.bMs6FeedbackOk;
 // GVL_IO.stInputs.bAirExhausted 								:= GVL_Safety.bAirExhausted;
 
-]]></ST>
+
+
+// =========================================================
+// ETHERCAT TERMINAL OPERATIONAL STATUS
+// State 8 = EtherCAT OP
+// =========================================================
+
+GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm1_EK1100.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm2_EL6070.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm3_EL6910.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm4_EL1918.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm5_EL1918.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm5_EL1918.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm6_EL2904.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm6_EL2904.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm7_EL1809.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm7_EL1809.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm8_EL1809.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm8_EL1809.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm9_EL2809.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm9_EL2809.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm10_EL2809.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm10_EL2809.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm11_EL3058.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm11_EL3058.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm12_EL3064.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm13_EL9410.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm13_EL9410.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm14_EL3064.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm14_EL3064.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm15_EL6652.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm15_EL6652.stTerminalInfo.nTerminal_State = UINT#8;
+
+GVL_EtherCAT.stTerm33_EL3314.stTerminalInfo.bTerminalOperational :=
+    GVL_EtherCAT.stTerm33_EL3314.stTerminalInfo.nTerminal_State = UINT#8;]]></ST>
       </Implementation>
     </Method>
     <Method Name="WriteOutputs" Id="{4e3bd4ad-ac4e-448e-a2a8-70de4747ca16}">
