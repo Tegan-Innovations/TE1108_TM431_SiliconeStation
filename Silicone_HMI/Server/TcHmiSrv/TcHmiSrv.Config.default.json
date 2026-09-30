@@ -1297,6 +1297,11 @@
             "domain": "TcHmiUserManagement",
             "userName": "__SystemAdministrator"
         },
+        "955f7b21c7cb5ec53f0e3088db9e342c73d557ae5434c730e2f365b3e52b88b96552103117659147870e9af2397ae1d2c878d9ac43ed630430f955691a52f205": {
+            "created": "2026-09-30T14:29:11.2580857Z",
+            "domain": "TcHmiUserManagement",
+            "userName": "Engineer"
+        },
         "95aaf8356e00f5e5dde47e96839debf77d2caf6c15e120879ef1171085470ec70567a27e1f096bad2f83fcdcfe8e726438029ab4bdb8772c07e94ed984bd29da": {
             "created": "2026-05-26T15:45:22.9308958Z",
             "domain": "TcHmiUserManagement",
