@@ -167,6 +167,10 @@ VAR
 	tonMainDoorNotClosed 		  : TON;
 	tonStopRequest 				  : TON;
 	
+	tonRejectBinFull     		  : TON;
+	bRejectBinFull       		  : BOOL;
+	bRejectBinFullTimer  		  : TIME := T#2S;
+	
 	
 	bStopRequested 				  : BOOL;
     // =====================================================
@@ -2037,6 +2041,31 @@ E_MachineState.ReadyToStart:
     )
 		);
 		
+		// Reject bin full supervision.
+		tonRejectBinFull(
+			IN := stInputs.bRejectChutePartPresent,
+			PT := bRejectBinFullTimer
+		);
+		
+		IF tonRejectBinFull.Q THEN
+			bRejectBinFull := TRUE;
+		END_IF;
+		
+		IF bRejectBinFull THEN
+			bStopRequested := TRUE;
+		END_IF;
+		
+		// Clear the reject bin full condition only after the operator
+		// acknowledges the popup and the reject bin is physically empty.
+		IF GVL_HMI.bCloseBinPopup
+		   AND NOT stInputs.bRejectChutePartPresent THEN
+		
+			bRejectBinFull := FALSE;
+			GVL_HMI.bCloseBinPopup := FALSE;
+		
+		END_IF
+		
+		
 		// FEEDBACK DEFAULTS
 		bIndexRequestAcceptedFeedback := FALSE;
 		bIndexRecoveryRequestAcceptedFeedback := FALSE;
@@ -2960,9 +2989,13 @@ stStatus.sOperatorMessage 					:= fbOperatorStation.GetMessage();
 // =========================================================
 // MACHINE MESSAGE SELECTION
 // =========================================================
+IF bRejectBinFull THEN
+
+    stStatus.sMachineMessage :=
+        'Reject bin full - empty the bin to resume the process';
 
 // Row 0 of the event DataGrid is exclusively the current automatic-cycle instruction.
-IF eMachineState = E_MachineState.AutoCycle THEN
+ELSIF eMachineState = E_MachineState.AutoCycle THEN
 
     IF stIndexStatus.eState = E_IndexState.WrongPositionRecovery THEN
         stStatus.sMachineMessage :='Index wrong position - place both hands on the safety controls to recover';

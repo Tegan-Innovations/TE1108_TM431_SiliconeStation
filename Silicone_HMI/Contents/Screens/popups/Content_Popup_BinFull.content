@@ -182,7 +182,7 @@
   }
 ]
 </script>
-<div id="TcHmiButton_126" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="60" data-tchmi-height-unit="px" data-tchmi-left="165" data-tchmi-left-unit="px" data-tchmi-text="Acknowledge" data-tchmi-top="262" data-tchmi-top-unit="px" data-tchmi-width="150" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-size="200" data-tchmi-text-font-weight="Bold">
+<div id="TcHmiButton_126" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiButton" data-tchmi-height="60" data-tchmi-height-unit="px" data-tchmi-left="165" data-tchmi-left-unit="px" data-tchmi-text="Acknowledge" data-tchmi-top="262" data-tchmi-top-unit="px" data-tchmi-width="150" data-tchmi-width-unit="px" data-tchmi-word-wrap="True" data-tchmi-text-font-size-unit="%" data-tchmi-text-font-size="200" data-tchmi-text-font-weight="Bold" data-tchmi-is-enabled="%f%!%s%ADS.PLC1.GVL_MASTER.stSensors.bPartPresent_Reject%/s%%/f%">
 
 
 
@@ -198,50 +198,22 @@
 }
 </script>
 
+
+
 <script data-tchmi-target-attribute="data-tchmi-trigger" type="application/json">
 [
   {
     "event": "%ctx%owner::Id|EventRegistrationMode=Resolve%/ctx%.onPressed",
     "actions": [
       {
-        "objectType": "Condition",
+        "objectType": "WriteToSymbol",
         "active": true,
-        "parts": [
-          {
-            "if": [
-              {
-                "compare1": {
-                  "objectType": "Symbol",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "symbolExpression": "%s%ADS.PLC1.PRG_MachineControl.bRejectBinFull%/s%"
-                },
-                "compare2": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:general#/definitions/BOOL",
-                  "value": false
-                },
-                "compareOperator": "==",
-                "logic": null
-              }
-            ],
-            "then": [
-              {
-                "objectType": "WriteToSymbol",
-                "active": true,
-                "symbolExpression": "%ctrl%Region_Popup::Visibility%/ctrl%",
-                "value": {
-                  "objectType": "StaticValue",
-                  "valueType": "tchmi:framework#/definitions/Visibility",
-                  "value": "Collapsed"
-                },
-                "asyncWait": true
-              }
-            ]
-          },
-          {
-            "else": []
-          }
-        ],
+        "symbolExpression": "%s%ADS.PLC1.GVL_HMI.bCloseBinPopup%/s%",
+        "value": {
+          "objectType": "StaticValue",
+          "valueType": "tchmi:general#/definitions/BOOL",
+          "value": true
+        },
         "asyncWait": true
       }
     ]

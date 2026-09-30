@@ -52,6 +52,8 @@ VAR_GLOBAL
     bIvekSettingsHeartbeatLost : BOOL;
     bIvekSettingsActTimeout    : BOOL;
 	
+	bCloseBinPopup 				: BOOL;
+	
 END_VAR
 
 VAR_GLOBAL CONSTANT
