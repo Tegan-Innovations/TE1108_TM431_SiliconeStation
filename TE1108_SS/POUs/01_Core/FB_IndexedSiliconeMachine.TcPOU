@@ -2032,7 +2032,9 @@ E_MachineState.ReadyToStart:
 			//Timeout process
 		tonAutoCycleIdleTimeout(
 			IN := stProcessCycleStatus.eState = E_CycleState.WaitingForProcessCycleTrigger,
-			PT := T#2M
+			    PT := UDINT_TO_TIME(
+        UINT_TO_UDINT(GVL_Config.uiAutoCycleIdleTimeoutMin) * 60000
+    )
 		);
 		
 		// FEEDBACK DEFAULTS

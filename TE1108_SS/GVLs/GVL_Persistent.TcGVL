@@ -15,6 +15,8 @@ VAR_GLOBAL PERSISTENT RETAIN
 		usiSelectedReservoir := 1
 	);
 	
+
+	
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>
