@@ -277,6 +277,9 @@
     <Content Include="Contents\Screens\popups\Content_Popup_BinFull.content">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Contents\Screens\popups\Content_Popup_IncompletePart.content">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Contents\Screens\popups\Content_Popup_Logout.content">
       <SubType>Content</SubType>
     </Content>

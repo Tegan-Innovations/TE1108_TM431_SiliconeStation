@@ -776,15 +776,6 @@
 			</Properties>
 		</DataType>
 		<DataType>
-			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
-			<BitSize>64</BitSize>
-			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
-			<ArrayInfo>
-				<LBound>1</LBound>
-				<Elements>4</Elements>
-			</ArrayInfo>
-		</DataType>
-		<DataType>
 			<Name GUID="{501A31C3-933E-B0B2-BAFF-4BB78E0FAF10}" AutoDeleteType="true">ST_SiliconeSupplyConfig</Name>
 			<BitSize>928</BitSize>
 			<SubItem>
@@ -1627,6 +1618,15 @@
 			</SubItem>
 		</DataType>
 		<DataType>
+			<Name GUID="{27309956-790C-165B-9452-FE8C4B2C982E}" IecBaseType="true" AutoDeleteType="true">ARRAY [1..4] OF UINT</Name>
+			<BitSize>64</BitSize>
+			<BaseType GUID="{18071995-0000-0000-0000-000000000005}">UINT</BaseType>
+			<ArrayInfo>
+				<LBound>1</LBound>
+				<Elements>4</Elements>
+			</ArrayInfo>
+		</DataType>
+		<DataType>
 			<Name GUID="{2438F91B-E188-4ED7-8594-54354F9ED6A4}" Namespace="Safety" TcBaseType="true">FSOE_6</Name>
 			<BitSize>48</BitSize>
 			<SubItem>
@@ -1817,24 +1817,14 @@
 		</System>
 		<Plc>
 			<Project GUID="{27898324-A5DD-41BF-8E53-B2D13AEEC64A}" Name="TE1108_SS" PrjFilePath="TE1108_SS\TE1108_SS.plcproj" TmcFilePath="TE1108_SS\TE1108_SS.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{601BBEDA-9CB1-D98C-9EEE-8B0DE9E85DA4}" TmcPath="TE1108_SS\TE1108_SS.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcHash="{B9997C53-A7BB-70F5-A09C-11FC6822D18A}" TmcPath="TE1108_SS\TE1108_SS.tmc">
 					<Name>TE1108_SS Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="8" AreaNo="4">
 						<Name>PlcTask Retains</Name>
 						<Var>
-							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
-							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
 							<Name>GVL_Config.usiDefaultIvekRecipe</Name>
 							<Type>USINT</Type>
-							<InOut>7</InOut>
-						</Var>
-						<Var>
-							<Name>GVL_Config.uiAutoCycleIdleTimeoutMin</Name>
-							<Type>UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 						<Var>
@@ -1876,6 +1866,16 @@
 						<Var>
 							<Name>GVL_Persistent.stSiliconeSupply</Name>
 							<Type GUID="{EDD38FAB-5BAA-9388-2D7D-5173435AF951}">ST_SiliconeSupplyPersistent</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>GVL_Config.uiAutoCycleIdleTimeoutMin</Name>
+							<Type>UINT</Type>
+							<InOut>7</InOut>
+						</Var>
+						<Var>
+							<Name>PRG_Main.fbMachine.fbNestManager.aPositionToNest</Name>
+							<Type GUID="{27309956-790C-165B-9452-FE8C4B2C982E}">ARRAY [1..4] OF UINT</Type>
 							<InOut>7</InOut>
 						</Var>
 					</Vars>
@@ -4780,7 +4780,7 @@ C:\Program Files (x86)\Beckhoff\TwinCAT\3.1\Config\Io\EtherNetIP\05F1002B0003020
 					</EthernetIp>
 				</Box>
 				<Ethernet DeviceDesc="EL6652 EtherNet/IP Scanner (Master)" SpecialTask="true" TaskPort="301"/>
-				<EtherNetIPMasterDev m_EthIpMasterDevPar="02000000446576696365203220284543415420454950205363616e6e65722028454c36360c0000006c000000fa190000010100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000140aa8c000ffffff000000000000800001001e000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
+				<EtherNetIPMasterDev m_EthIpMasterDevPar="02000000446576696365203220284543415420454950205363616e6e65722028454c36360c0000006c000000fa19000001010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010582411e140aa8c000ffffff000000000000800001001e000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">
 					<Ethernet/>
 				</EtherNetIPMasterDev>
 			</Device>

@@ -53,6 +53,7 @@ VAR_GLOBAL
     bIvekSettingsActTimeout    : BOOL;
 	
 	bCloseBinPopup 				: BOOL;
+	bIncompletePartPopup 		: BOOL;
 	
 END_VAR
 

@@ -1243,7 +1243,32 @@ THEN
 END_IF
 
 
-
+		
+		// Reject bin full supervision.
+		tonRejectBinFull(
+			IN := GVL_IO.stInputs.bRejectChutePartPresent  
+					AND eMachineState <> E_MachineState.Fault,
+			PT := bRejectBinFullTimer
+		);
+		
+		IF tonRejectBinFull.Q THEN
+			bRejectBinFull := TRUE;
+		END_IF;
+		
+		IF bRejectBinFull THEN
+			bStopRequested := TRUE;
+		END_IF;
+		
+		// Clear the reject bin full condition only after the operator
+		// acknowledges the popup and the reject bin is physically empty.
+		IF GVL_HMI.bCloseBinPopup
+		   AND NOT GVL_IO.stInputs.bRejectChutePartPresent THEN
+		
+			bRejectBinFull := FALSE;
+			GVL_HMI.bCloseBinPopup := FALSE;
+		
+		END_IF
+		
 // =========================================================
 // MACHINE STATE MANAGEMENT
 // =========================================================
@@ -2068,31 +2093,7 @@ E_MachineState.ReadyToStart:
         UINT_TO_UDINT(GVL_Config.uiAutoCycleIdleTimeoutMin) * 60000
     )
 		);
-		
-		// Reject bin full supervision.
-		tonRejectBinFull(
-			IN := stInputs.bRejectChutePartPresent,
-			PT := bRejectBinFullTimer
-		);
-		
-		IF tonRejectBinFull.Q THEN
-			bRejectBinFull := TRUE;
-		END_IF;
-		
-		IF bRejectBinFull THEN
-			bStopRequested := TRUE;
-		END_IF;
-		
-		// Clear the reject bin full condition only after the operator
-		// acknowledges the popup and the reject bin is physically empty.
-		IF GVL_HMI.bCloseBinPopup
-		   AND NOT stInputs.bRejectChutePartPresent THEN
-		
-			bRejectBinFull := FALSE;
-			GVL_HMI.bCloseBinPopup := FALSE;
-		
-		END_IF
-		
+
 		
 		// FEEDBACK DEFAULTS
 		bIndexRequestAcceptedFeedback := FALSE;

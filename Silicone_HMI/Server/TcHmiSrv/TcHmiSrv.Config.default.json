@@ -2083,6 +2083,16 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_Config.uiAutoCycleIdleTimeoutMin": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_Config::uiAutoCycleIdleTimeoutMin",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/UINT"
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -4928,6 +4938,16 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.bCloseBinPopup": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bCloseBinPopup",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6789,6 +6809,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.bRejectChutePartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::bRejectChutePartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 15
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -7520,6 +7557,23 @@
             "DOMAIN": "ADS",
             "DYNAMIC": true,
             "MAPPING": "PLC1::PRG_Main::fbMachine::bAirSupplyEnable",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 91
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.PRG_Main.fbMachine.bRejectBinFull": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::PRG_Main::fbMachine::bRejectBinFull",
             "SCHEMA": {
                 "allOf": [
                     {
@@ -10817,6 +10871,7 @@
                 "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.rSiliconePressureMin": 3,
                 "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.tDegassingDuration": 3,
                 "ADS.PLC1.GVL_Config.stMachine.stSiliconeSupply.tDegassingVacuumTimeout": 3,
+                "ADS.PLC1.GVL_Config.uiAutoCycleIdleTimeoutMin": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch1": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch10": 3,
                 "ADS.PLC1.GVL_EtherCAT.stTerm10_EL2809.iEL2809_Ch11": 3,
@@ -10969,6 +11024,7 @@
                 "ADS.PLC1.GVL_HMI.astActiveEvents": 3,
                 "ADS.PLC1.GVL_HMI.astEventsHistory": 3,
                 "ADS.PLC1.GVL_HMI.astTestHistory": 3,
+                "ADS.PLC1.GVL_HMI.bCloseBinPopup": 3,
                 "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": 3,
                 "ADS.PLC1.GVL_HMI.bHMIAlive": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": 3,
@@ -11087,6 +11143,7 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekReferencePermissive": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bIvekReferenceRequired": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bMainDoorLocked": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.bRejectChutePartPresent": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bRejectPopup": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bReservoir1DegassingPopupEnabled": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bReservoir2DegassingPopupEnabled": 3,
@@ -11140,6 +11197,7 @@
                 "ADS.PLC1.PRG_MachineControl.bKistlerReady": 3,
                 "ADS.PLC1.PRG_MachineControl.eCurrentNestPos": 3,
                 "ADS.PLC1.PRG_Main.fbMachine.bAirSupplyEnable": 3,
+                "ADS.PLC1.PRG_Main.fbMachine.bRejectBinFull": 3,
                 "ChangeUserSettings": 3,
                 "ConfirmAlarm": 3,
                 "CreateEvent": 3,
