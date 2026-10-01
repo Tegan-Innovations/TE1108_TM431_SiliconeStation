@@ -72,6 +72,8 @@ VAR
 
     stLastResult                : ST_ProcessResult;
 	bDisabledNestPartPresent 	: BOOL;
+	bIncompleteOperatorPart     : BOOL;
+	bIncompletePartPopupRequest : BOOL;
 
     // =====================================================
     // COMPONENT STATUS
@@ -694,6 +696,31 @@ bDisabledNestPartPresent :=
         OR stInputs.bReservoirPartPresent
     );
 
+
+// Detect incomplete part loading at the operator station.
+// Indexing is not allowed when only one of the two required parts is present.
+bIncompleteOperatorPart :=stInputs.bGearboxAssemblyPartPresent
+    						XOR stInputs.bReservoirPartPresent;
+							
+							// Request the incomplete part popup only when the operator
+// attempts to start the cycle with an incomplete part loaded.
+IF bIncompleteOperatorPart
+   AND stInputs.bTwoHandsSafe
+   AND eMachineState = E_MachineState.AutoCycle THEN
+
+    bIncompletePartPopupRequest := TRUE;
+
+END_IF;
+
+// Automatically clear the popup request when the loading
+// condition is corrected.
+IF NOT bIncompleteOperatorPart THEN
+    bIncompletePartPopupRequest := FALSE;
+END_IF;
+
+// Map the incomplete part popup request to the HMI.
+GVL_HMI.bIncompletePartPopup := bIncompletePartPopupRequest;
+
 // =========================================================
 // MANUAL MODE - NEW PART / NEST RESULT RESET
 // =========================================================
@@ -916,7 +943,8 @@ stPermissives.bIndexMoveAllowed :=
 											stPermissives.bSafetyIndexPermissive
 											//AND stPermissives.bOperatorIndexPermissive
 											AND stPermissives.bProcessIndexPermissive
-											AND NOT bDisabledNestPartPresent;
+											AND NOT bDisabledNestPartPresent
+											AND NOT bIncompleteOperatorPart;
 
 
 stPermissives.bProcessStartAllowed 		:= 	stInputs.stSafety.bProcessSafetyPermitted
@@ -2993,6 +3021,11 @@ IF bRejectBinFull THEN
 
     stStatus.sMachineMessage :=
         'Reject bin full - empty the bin to resume the process';
+		
+ELSIF bIncompleteOperatorPart THEN
+
+    stStatus.sMachineMessage :=
+        'Incomplete part - load both components or remove the part to continue';
 
 // Row 0 of the event DataGrid is exclusively the current automatic-cycle instruction.
 ELSIF eMachineState = E_MachineState.AutoCycle THEN
