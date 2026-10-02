@@ -26,6 +26,8 @@ VAR
     fbIvekSettingsLauncher      : FB_IvekSettingsLauncher;
 
     ipEquipment                 : I_ProcessEquipment;
+	
+	tonIncompletePartPopup 		: TON;
 
 	// =====================================================
     // SILICONE SUPPLY 
@@ -703,19 +705,29 @@ bIncompleteOperatorPart :=stInputs.bGearboxAssemblyPartPresent
     						XOR stInputs.bReservoirPartPresent;
 							
 							// Request the incomplete part popup only when the operator
-// attempts to start the cycle with an incomplete part loaded.
-IF bIncompleteOperatorPart
-   AND stInputs.bTwoHandsSafe
-   AND eMachineState = E_MachineState.AutoCycle THEN
+// Delay the incomplete part popup to allow the operator nest
+// status to be updated after an index movement.
+tonIncompletePartPopup(
+    IN := bIncompleteOperatorPart
+          AND NOT stOperatorNest.stResult.bValid
+          AND stInputs.bTwoHandsSafe
+          AND eMachineState = E_MachineState.AutoCycle,
+    PT := T#500MS
+);
 
+// Request the popup only if the incomplete condition
+// remains valid after the delay.
+IF tonIncompletePartPopup.Q THEN
     bIncompletePartPopupRequest := TRUE;
-
 END_IF;
 
-// Automatically clear the popup request when the loading
-// condition is corrected.
-IF NOT bIncompleteOperatorPart THEN
+// Clear when the loading condition is corrected or when
+// the nest already contains a valid final result.
+IF NOT bIncompleteOperatorPart
+   OR stOperatorNest.stResult.bValid THEN
+
     bIncompletePartPopupRequest := FALSE;
+
 END_IF;
 
 // Map the incomplete part popup request to the HMI.
@@ -3023,7 +3035,7 @@ IF bRejectBinFull THEN
     stStatus.sMachineMessage :=
         'Reject bin full - empty the bin to resume the process';
 		
-ELSIF bIncompleteOperatorPart THEN
+ELSIF bIncompletePartPopupRequest THEN
 
     stStatus.sMachineMessage :=
         'Incomplete part - load both components or remove the part to continue';

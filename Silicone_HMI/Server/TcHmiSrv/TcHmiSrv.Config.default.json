@@ -349,6 +349,44 @@
                 ],
                 "type": "integer"
             },
+            "ADS-PLC1.E_TablePosition": {
+                "attributes": {
+                    "generate_implicit_init_function": "",
+                    "qualified_only": "",
+                    "strict": "",
+                    "to_string": ""
+                },
+                "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "options": [
+                    {
+                        "label": "Unknown",
+                        "value": 0
+                    },
+                    {
+                        "label": "Position1",
+                        "value": 1
+                    },
+                    {
+                        "label": "Position2",
+                        "value": 2
+                    },
+                    {
+                        "label": "Position3",
+                        "value": 3
+                    },
+                    {
+                        "label": "Position4",
+                        "value": 4
+                    }
+                ],
+                "type": "integer"
+            },
             "ADS-PLC1.STRING-120": {
                 "allOf": [
                     {
@@ -4975,6 +5013,16 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.bIncompletePartPopup": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::bIncompletePartPopup",
+            "SCHEMA": {
+                "$ref": "tchmi:general#/definitions/BOOL"
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6945,6 +6993,23 @@
             },
             "USEMAPPING": true
         },
+        "ADS.PLC1.GVL_HMI.stStatus.eCurrentIndexPosition": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::eCurrentIndexPosition",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.E_TablePosition"
+                    },
+                    {
+                        "propertyOrder": 9
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
         "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": {
             "ACCESS": 3,
             "DOMAIN": "ADS",
@@ -6974,6 +7039,40 @@
                     },
                     {
                         "propertyOrder": 10
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stIndex.eCurrentPosition": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stIndex::eCurrentPosition",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:server#/definitions/ADS-PLC1.E_TablePosition"
+                    },
+                    {
+                        "propertyOrder": 3
+                    }
+                ]
+            },
+            "USEMAPPING": true
+        },
+        "ADS.PLC1.GVL_HMI.stStatus.stMachine.bDisabledNestPartPresent": {
+            "ACCESS": 3,
+            "DOMAIN": "ADS",
+            "DYNAMIC": true,
+            "MAPPING": "PLC1::GVL_HMI::stStatus::stMachine::bDisabledNestPartPresent",
+            "SCHEMA": {
+                "allOf": [
+                    {
+                        "$ref": "tchmi:general#/definitions/BOOL"
+                    },
+                    {
+                        "propertyOrder": 45
                     }
                 ]
             },
@@ -11027,6 +11126,7 @@
                 "ADS.PLC1.GVL_HMI.bCloseBinPopup": 3,
                 "ADS.PLC1.GVL_HMI.bCmdOpenIvekSettings": 3,
                 "ADS.PLC1.GVL_HMI.bHMIAlive": 3,
+                "ADS.PLC1.GVL_HMI.bIncompletePartPopup": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsAccessAllowed": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsActTimeout": 3,
                 "ADS.PLC1.GVL_HMI.bIvekSettingsActive": 3,
@@ -11151,8 +11251,11 @@
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationManualStartPermissive": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationPartPresent": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.bSiliconeStationReady": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.eCurrentIndexPosition": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iNestRotationAngle": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.iPowerCountdown": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stIndex.eCurrentPosition": 3,
+                "ADS.PLC1.GVL_HMI.stStatus.stMachine.bDisabledNestPartPresent": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.bIvekHeaterTemperatureOutOfRange": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.rIvekHeaterTemperature": 3,
                 "ADS.PLC1.GVL_HMI.stStatus.stMachine.stPermissives.bAirSupplyReady": 3,
