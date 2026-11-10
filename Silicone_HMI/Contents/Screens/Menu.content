@@ -64,6 +64,11 @@
     "accessright": "observe",
     "group": "Operator",
     "permission": "Deny"
+  },
+  {
+    "accessright": "operate",
+    "group": "Tech",
+    "permission": "Deny"
   }
 ]
 </script>
@@ -183,6 +188,11 @@
     "accessright": "observe",
     "group": "Engineer",
     "permission": "Allow"
+  },
+  {
+    "accessright": "operate",
+    "group": "Tech",
+    "permission": "Allow"
   }
 ]
 </script>
@@ -230,6 +240,11 @@
     "accessright": "operate",
     "group": "Administrator",
     "permission": "Allow"
+  },
+  {
+    "accessright": "operate",
+    "group": "Tech",
+    "permission": "Deny"
   }
 ]
 </script>
